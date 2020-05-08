@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Photography.Services.Post.Infrastructure</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Post.Domain\Post.Domain.csproj" />
+    <ProjectReference Include="..\Post.Infrastructure.EF\Post.Infrastructure.EF.csproj" />
+  </ItemGroup>
+
+</Project>
