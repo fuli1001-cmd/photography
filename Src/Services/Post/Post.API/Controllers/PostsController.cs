@@ -13,13 +13,13 @@ namespace Photography.Services.Post.API.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [ApiVersion("1.0")]
-    public class PostController : ControllerBase
+    public class PostsController : ControllerBase
     {
-        private readonly ILogger<PostController> _logger;
+        private readonly ILogger<PostsController> _logger;
         private readonly IPostQueries _postQueries;
         private readonly IMediator _mediator;
 
-        public PostController(IMediator mediator, IPostQueries postQueries, ILogger<PostController> logger)
+        public PostsController(IMediator mediator, IPostQueries postQueries, ILogger<PostsController> logger)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _postQueries = postQueries ?? throw new ArgumentNullException(nameof(postQueries));

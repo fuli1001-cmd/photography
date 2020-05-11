@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using Photography.Services.Post.Infrastructure.EF.Extensions;
 using System.Data;
+using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
 
 namespace Photography.Services.Post.Infrastructure.EF
 {
@@ -21,6 +22,7 @@ namespace Photography.Services.Post.Infrastructure.EF
         public DbSet<Domain.AggregatesModel.PostAggregate.Post> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<PostAttachment> PostAttachments { get; set; }
+        public DbSet<User> Users { get; set; }
 
 
         private readonly IMediator _mediator;

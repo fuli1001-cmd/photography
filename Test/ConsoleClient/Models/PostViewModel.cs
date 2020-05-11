@@ -1,11 +1,8 @@
-﻿using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
-using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace Photography.Services.Post.API.Query.ViewModels
+namespace ConsoleClient.Models
 {
     public class PostViewModel
     {
@@ -38,5 +35,33 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public string Url { get; set; }
         public string Text { get; set; }
         public PostAttachmentType PostFileType { get; set; }
+    }
+
+    public class Location
+    {
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public string Name { get; set; }
+        public string Address { get; set; }
+    }
+
+    public enum ShareType
+    {
+        All,
+        None,
+        Friends
+    }
+
+    public enum UserType
+    {
+        Unknown,
+        Photographer,
+        Model
+    }
+
+    public enum PostAttachmentType
+    {
+        Image,
+        Video
     }
 }
