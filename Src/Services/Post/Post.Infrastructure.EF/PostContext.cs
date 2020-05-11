@@ -18,8 +18,11 @@ namespace Photography.Services.Post.Infrastructure.EF
 {
     public class PostContext : DbContext, IUnitOfWork
     {
-        public DbSet<Domain.AggregatesModel.PostAggregate.Post> Games { get; set; }
-        
+        public DbSet<Domain.AggregatesModel.PostAggregate.Post> Posts { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<PostAttachment> PostAttachments { get; set; }
+
+
         private readonly IMediator _mediator;
         private IDbContextTransaction _currentTransaction;
 
@@ -38,19 +41,19 @@ namespace Photography.Services.Post.Infrastructure.EF
         {
             modelBuilder.ApplyConfiguration(new PostEntityTypeConfiguration());
 
-            foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
-            {
-                string tableName = entityType.GetTableName();
-                entityType.SetTableName(tableName.ToLower());
-                entityType.GetProperties().ToList().ForEach(p => p.SetColumnName(p.GetColumnName().ToLower()));
-            }
+            //foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
+            //{
+            //    string tableName = entityType.GetTableName();
+            //    entityType.SetTableName(tableName.ToLower());
+            //    entityType.GetProperties().ToList().ForEach(p => p.SetColumnName(p.GetColumnName().ToLower()));
+            //}
 
-            modelBuilder.Model.GetEntityTypes().ToList()
-                .ForEach(e =>
-                {
-                    e.SetTableName(e.GetTableName().ToLower());
-                    e.GetProperties().ToList().ForEach(p => p.SetColumnName(p.GetColumnName().ToLower()));
-                });
+            //modelBuilder.Model.GetEntityTypes().ToList()
+            //    .ForEach(e =>
+            //    {
+            //        e.SetTableName(e.GetTableName().ToLower());
+            //        e.GetProperties().ToList().ForEach(p => p.SetColumnName(p.GetColumnName().ToLower()));
+            //    });
         }
 
         public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default(CancellationToken))

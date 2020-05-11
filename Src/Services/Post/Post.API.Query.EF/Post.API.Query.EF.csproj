@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Photography.Services.Post.API.Query.EF</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Post.API.Query\Post.API.Query.csproj" />
+    <ProjectReference Include="..\Post.Infrastructure.EF\Post.Infrastructure.EF.csproj" />
+  </ItemGroup>
+
+</Project>

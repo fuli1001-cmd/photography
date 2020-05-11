@@ -1,7 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Photography.Services.Post.API.Application.Queries;
+using Photography.Services.Post.API.Query;
+using Photography.Services.Post.API.Query.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,14 @@ namespace Photography.Services.Post.API.Controllers
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _postQueries = postQueries ?? throw new ArgumentNullException(nameof(postQueries));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        [HttpGet]
+        [Route("hot")]
+        public async Task<ActionResult<IEnumerable<PostViewModel>>> GetPostsAsync()
+        {
+            var posts = _postQueries.GetPostsAsync(PostType.Hot);
+            return Ok(posts);
         }
     }
 }

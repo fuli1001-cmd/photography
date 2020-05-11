@@ -1,4 +1,6 @@
 ﻿using Autofac;
+using Photography.Services.Post.API.Query;
+using Photography.Services.Post.API.Query.EF;
 using Photography.Services.Post.Domain.Seedwork;
 using Photography.Services.Post.Infrastructure.Repositories;
 using System;
@@ -16,6 +18,12 @@ namespace Photography.Services.Post.API.Infrastructure.AutofacModules
             // register repositories
             builder.RegisterAssemblyTypes(typeof(PostRepository).GetTypeInfo().Assembly)
                 .AsClosedTypesOf(typeof(IRepository<>))
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
+
+            // register queries
+            builder.RegisterAssemblyTypes(typeof(PostQueries).GetTypeInfo().Assembly)
+                .AsClosedTypesOf(typeof(IPostQueries))
                 .AsImplementedInterfaces()
                 .InstancePerLifetimeScope();
         }

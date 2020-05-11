@@ -11,6 +11,13 @@ namespace Photography.Services.Post.Infrastructure.EF.EntityConfigurations
         public void Configure(EntityTypeBuilder<Domain.AggregatesModel.PostAggregate.Post> builder)
         {
             builder.Ignore(b => b.DomainEvents);
+
+            //navigation properties
+            var attachmentsNavigation = builder.Metadata.FindNavigation(nameof(Domain.AggregatesModel.PostAggregate.Post.PostAttachments));
+            attachmentsNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            //Location value object persisted as owned entity
+            builder.OwnsOne(o => o.Location);
         }
     }
 }

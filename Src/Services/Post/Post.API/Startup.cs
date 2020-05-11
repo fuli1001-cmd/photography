@@ -17,7 +17,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Photography.Services.Post.API.Application.Behaviors;
 using Photography.Services.Post.API.Application.Commands;
-using Photography.Services.Post.API.Application.Queries;
 using Photography.Services.Post.API.Application.Validators;
 using Photography.Services.Post.API.Infrastructure.AutofacModules;
 using Photography.Services.Post.API.Infrastructure.Filters;
@@ -56,15 +55,15 @@ namespace Photography.Services.Post.API
             });
 
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
-            services.AddScoped<IPostQueries>(sp => new PostQueries(Configuration["ConnectionString"]));
+            //services.AddScoped<IPostQueries>(sp => new PostQueries(Configuration.GetConnectionString("PostConnection")));
 
             //var dbSettings = new DbSettings();
             //Configuration.GetSection("DbSettings").Bind(dbSettings);
-            services.AddDataAccessServices(Configuration["ConnectionString"], typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
+            services.AddDataAccessServices(Configuration.GetConnectionString("PostConnection"), typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "TexasHoldem API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Photography.Post API", Version = "v1" });
             });
         }
 
