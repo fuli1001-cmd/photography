@@ -15,8 +15,8 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         // for hot posts
         public int Points { get; private set; }
         public DateTime Timestamp { get; private set; }
-        public bool Commentable { get; private set; }
-        public bool Forwardable { get; private set; }
+        public bool? Commentable { get; private set; }
+        public ForwardType ForwardType { get; private set; }
         public ShareType ShareType { get; private set; }
         public Visibility Visibility { get; private set; }
         public string ViewPassword { get; private set; }
@@ -30,5 +30,27 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
 
         public User User { get; private set; }
         public Guid UserId { get; private set; }
+    }
+
+    public enum ForwardType
+    {
+        Allowed,
+        Forbidden,
+        Friends
+    }
+
+    public enum ShareType
+    {
+        Allowed,
+        Forbidden,
+        Friends
+    }
+
+    public enum Visibility
+    {
+        Public,
+        Friends,
+        SelectedFriends,
+        Password
     }
 }

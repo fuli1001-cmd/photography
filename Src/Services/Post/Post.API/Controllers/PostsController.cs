@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Photography.Services.Post.API.Query;
@@ -13,6 +14,7 @@ namespace Photography.Services.Post.API.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [ApiVersion("1.0")]
+    [Authorize]
     public class PostsController : ControllerBase
     {
         private readonly ILogger<PostsController> _logger;

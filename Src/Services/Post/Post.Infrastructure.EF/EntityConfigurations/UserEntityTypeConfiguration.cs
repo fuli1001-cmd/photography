@@ -11,8 +11,11 @@ namespace Photography.Services.Post.Infrastructure.EF.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.Ignore(b => b.DomainEvents);
-            builder.Property<string>("Code").IsRequired();
+            builder.Ignore(e => e.DomainEvents);
+            builder.Property(u => u.Code).IsRequired();
+            builder.Property(u => u.RealNameRegistered).HasDefaultValue(false);
+            builder.Property(u => u.UserType).HasDefaultValue(UserType.Unknown);
+            builder.Property(u => u.Points).HasDefaultValue(0);
 
             //navigation properties
             var postsNavigation = builder.Metadata.FindNavigation(nameof(User.Posts));

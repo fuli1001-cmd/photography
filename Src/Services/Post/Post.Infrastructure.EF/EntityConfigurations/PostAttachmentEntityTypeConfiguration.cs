@@ -11,8 +11,8 @@ namespace Photography.Services.Post.Infrastructure.EF.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<PostAttachment> builder)
         {
-            builder.Ignore(b => b.DomainEvents);
-            builder.Property<string>("Url").IsRequired();
+            builder.Ignore(e => e.DomainEvents);
+            builder.Property(p => p.Url).IsRequired();
         }
     }
 }

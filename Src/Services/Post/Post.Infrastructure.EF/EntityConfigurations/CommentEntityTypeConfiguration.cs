@@ -11,8 +11,9 @@ namespace Photography.Services.Post.Infrastructure.EF.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Comment> builder)
         {
-            builder.Ignore(b => b.DomainEvents);
-            builder.Property<string>("Text").IsRequired();
+            builder.Ignore(e => e.DomainEvents);
+            builder.Property(c => c.Text).IsRequired();
+            builder.Property(c => c.Timestamp).HasDefaultValue(DateTime.UtcNow);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
+﻿using AutoMapper;
+using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public int CommentCount { get; set; }
         public DateTime Timestamp { get; set; }
         public bool Commentable { get; set; }
-        public bool Forwardable { get; set; }
+        public ForwardType ForwardType { get; set; }
         public ShareType ShareType { get; set; }
         public string ViewPassword { get; set; }
         public Location Location { get; set; }
@@ -38,5 +39,15 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public string Url { get; set; }
         public string Text { get; set; }
         public PostAttachmentType PostFileType { get; set; }
+    }
+
+    public class PostViewModelProfile : Profile
+    {
+        public PostViewModelProfile()
+        {
+            CreateMap<Domain.AggregatesModel.PostAggregate.Post, PostViewModel>();
+            CreateMap<User, UserViewModel>();
+            CreateMap<PostAttachment, PostAttachmentViewModel>();
+        }
     }
 }

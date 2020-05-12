@@ -42,6 +42,9 @@ namespace Photography.Services.Post.Infrastructure.EF
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new PostEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new CommentEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new PostAttachmentEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
 
             //foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
             //{

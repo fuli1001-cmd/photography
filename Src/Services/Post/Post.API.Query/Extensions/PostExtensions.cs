@@ -9,12 +9,12 @@ namespace Photography.Services.Post.API.Query.Extensions
 {
     public static class PostExtensions
     {
-        public static PostViewModel ToPostViewModel(this Post.Domain.AggregatesModel.PostAggregate.Post post)
-        {
-            var postViewModel = JsonConvert.DeserializeObject<PostViewModel>(JsonConvert.SerializeObject(post));
-            postViewModel.PostAttachments = post.PostAttachments.Select(a => JsonConvert.DeserializeObject<PostAttachmentViewModel>(JsonConvert.SerializeObject(a))).ToList();
-            postViewModel.User = JsonConvert.DeserializeObject<UserViewModel>(JsonConvert.SerializeObject(post.User));
-            return postViewModel;
-        }
+        //public static PostViewModel ToPostViewModel(this Post.Domain.AggregatesModel.PostAggregate.Post post)
+        //{
+        //    var postViewModel = JsonConvert.DeserializeObject<PostViewModel>(JsonConvert.SerializeObject(post));
+        //    postViewModel.PostAttachments = post.PostAttachments.Select(a => JsonConvert.DeserializeObject<PostAttachmentViewModel>(JsonConvert.SerializeObject(a))).ToList();
+        //    postViewModel.User = JsonConvert.DeserializeObject<UserViewModel>(JsonConvert.SerializeObject(post.User));
+        //    return postViewModel;
+        //}
     }
 }

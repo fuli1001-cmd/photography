@@ -23,7 +23,6 @@ namespace Photography.Services.Post.API.Infrastructure.AutofacModules
 
             // register queries
             builder.RegisterAssemblyTypes(typeof(PostQueries).GetTypeInfo().Assembly)
-                .AsClosedTypesOf(typeof(IPostQueries))
                 .AsImplementedInterfaces()
                 .InstancePerLifetimeScope();
         }

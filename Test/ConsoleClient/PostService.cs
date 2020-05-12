@@ -1,4 +1,5 @@
 ﻿using ConsoleClient.Models;
+using IdentityModel.Client;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -20,13 +21,21 @@ namespace ConsoleClient
 
         public async Task<List<PostViewModel>> GetPosts(string accessToken)
         {
-            //Client.SetBearerToken(accessToken);
+            try
+            {
+                Client.SetBearerToken(accessToken);
 
-            var response = await Client.GetAsync("/api/posts/hot?api-version=1.0");
+                var response = await Client.GetAsync("/api/posts/hot?api-version=1.0");
 
-            response.EnsureSuccessStatusCode();
+                response.EnsureSuccessStatusCode();
 
-            return JsonConvert.DeserializeObject<List<PostViewModel>>(await response.Content.ReadAsStringAsync());
+                return JsonConvert.DeserializeObject<List<PostViewModel>>(await response.Content.ReadAsStringAsync());
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
         }
     }
 }

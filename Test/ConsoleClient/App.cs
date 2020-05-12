@@ -1,4 +1,6 @@
 ﻿using ConsoleClient.Models;
+using IdentityModel.Client;
+using IdentityModel.OidcClient;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -15,8 +17,6 @@ namespace ConsoleClient
         private readonly PostService _postService;
         private readonly ILogger<App> _logger;
 
-        private string _authority = "https://localhost:10001";
-
         public App(PostService postService, ILogger<App> logger)
         {
             _postService = postService;
@@ -31,7 +31,7 @@ namespace ConsoleClient
                 //var loginResult = await Login();
                 //ShowLoginResult(loginResult);
                 //await ConnectSignalHubAsync(loginResult.AccessToken);
-                await GetPostsAsync("");
+                await GetPostsAsync(await Login());
             }
             catch (HttpRequestException ex)
             {
@@ -43,6 +43,38 @@ namespace ConsoleClient
         {
             var posts = await _postService.GetPosts(accessToken);
             _logger.LogDebug("{@Posts}", posts);
+        }
+
+        private async Task<string> Login()
+        {
+            // discover endpoints from metadata
+            var client = new HttpClient();
+            var disco = await client.GetDiscoveryDocumentAsync("https://localhost:10001");
+            if (disco.IsError)
+            {
+                Console.WriteLine(disco.Error);
+                return string.Empty;
+            }
+
+            var tokenResponse = await client.RequestPasswordTokenAsync(new PasswordTokenRequest
+            {
+                Address = disco.TokenEndpoint,
+                ClientId = "ro.client",
+                ClientSecret = "511536EF-F270-4058-80CA-1C89C192F69A",
+
+                UserName = "4420533@qq.com",
+                Password = "Fl1001!@",
+                Scope = "Photography.Post.API"
+            });
+
+            if (tokenResponse.IsError)
+            {
+                Console.WriteLine(tokenResponse.Error);
+                return string.Empty;
+            }
+
+            Console.WriteLine(tokenResponse.Json);
+            return tokenResponse.AccessToken;
         }
     }
 }

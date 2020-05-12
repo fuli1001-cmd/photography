@@ -4,8 +4,10 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Autofac;
+using AutoMapper;
 using FluentValidation.AspNetCore;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -20,6 +22,8 @@ using Photography.Services.Post.API.Application.Commands;
 using Photography.Services.Post.API.Application.Validators;
 using Photography.Services.Post.API.Infrastructure.AutofacModules;
 using Photography.Services.Post.API.Infrastructure.Filters;
+using Photography.Services.Post.API.Query.ViewModels;
+using Photography.Services.Post.API.Settings;
 using Photography.Services.Post.Infrastructure.EF.Extensions;
 
 namespace Photography.Services.Post.API
@@ -36,12 +40,24 @@ namespace Photography.Services.Post.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer("Bearer", options =>
+                {
+                    options.Authority = "https://localhost:10001";
+                    options.Audience = "Photography.Post.API";
+                });
+
+            services.Configure<StreamingSettings>(Configuration.GetSection("StreamingSettings"));
+
             services.AddMediatR(typeof(PublishPostCommandHandler));
+
             services.AddControllers(options =>
             {
                 options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+                options.Filters.Add(typeof(DisableFormValueModelBindingAttribute));
             })
             .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<PublishPostCommandValidator>());
+
             services.AddApiVersioning(options =>
             {
                 // Specify the default API Version as 1.0
@@ -61,6 +77,8 @@ namespace Photography.Services.Post.API
             //Configuration.GetSection("DbSettings").Bind(dbSettings);
             services.AddDataAccessServices(Configuration.GetConnectionString("PostConnection"), typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
 
+            services.AddAutoMapper(typeof(PostViewModelProfile).Assembly);
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Photography.Post API", Version = "v1" });
@@ -79,6 +97,7 @@ namespace Photography.Services.Post.API
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -93,7 +112,7 @@ namespace Photography.Services.Post.API
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "TexasHoldem API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Photography.Post API V1");
             });
         }
 
