@@ -21,7 +21,7 @@ namespace Photography.Services.Post.API.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [ApiVersion("1.0")]
-    //[Authorize]
+    [Authorize]
     public class StreamingController : ControllerBase
     {
         private readonly ILogger<StreamingController> _logger;

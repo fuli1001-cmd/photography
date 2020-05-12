@@ -64,7 +64,7 @@ namespace ConsoleClient
 
                 UserName = "4420533@qq.com",
                 Password = "Fl1001!@",
-                Scope = "Photography.Post.API"
+                Scope = "Photography.Post.API Arise.FileUploadService"
             });
 
             if (tokenResponse.IsError)
