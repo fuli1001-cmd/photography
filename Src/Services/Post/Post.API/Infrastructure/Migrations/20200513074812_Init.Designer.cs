@@ -10,7 +10,7 @@ using Photography.Services.Post.Infrastructure.EF;
 namespace Photography.Services.Post.API.Infrastructure.Migrations
 {
     [DbContext(typeof(PostContext))]
-    [Migration("20200512094554_Init")]
+    [Migration("20200513074812_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,6 +30,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<int>("Likes")
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("ParentCommentId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("PostId")
                         .HasColumnType("uniqueidentifier");
 
@@ -40,11 +43,18 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<DateTime>("Timestamp")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 5, 12, 9, 45, 54, 330, DateTimeKind.Utc).AddTicks(3544));
+                        .HasDefaultValue(new DateTime(2020, 5, 13, 7, 48, 12, 593, DateTimeKind.Utc).AddTicks(3141));
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ParentCommentId");
+
                     b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Comments");
                 });
@@ -69,6 +79,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(0);
+
+                    b.Property<Guid?>("ForwardedPostId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("LikeCount")
                         .ValueGeneratedOnAdd()
@@ -96,7 +109,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<DateTime>("Timestamp")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 5, 12, 9, 45, 54, 297, DateTimeKind.Utc).AddTicks(8500));
+                        .HasDefaultValue(new DateTime(2020, 5, 13, 7, 48, 12, 556, DateTimeKind.Utc).AddTicks(6953));
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -110,6 +123,8 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         .HasDefaultValue(0);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ForwardedPostId");
 
                     b.HasIndex("UserId");
 
@@ -208,17 +223,54 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.UserRelation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FollowedUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FollowerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FollowedUserId");
+
+                    b.HasIndex("FollowerId");
+
+                    b.ToTable("UserRelations");
+                });
+
             modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.PostAggregate.Comment", b =>
                 {
+                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.PostAggregate.Comment", "ParentComment")
+                        .WithMany("SubComments")
+                        .HasForeignKey("ParentCommentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Photography.Services.Post.Domain.AggregatesModel.PostAggregate.Post", "Post")
                         .WithMany("Comments")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "User")
+                        .WithMany("Comments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.PostAggregate.Post", b =>
                 {
+                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.PostAggregate.Post", "ForwardedPost")
+                        .WithMany("ForwardingPosts")
+                        .HasForeignKey("ForwardedPostId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "User")
                         .WithMany("Posts")
                         .HasForeignKey("UserId")
@@ -257,6 +309,21 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         .WithMany("PostAttachments")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.UserRelation", b =>
+                {
+                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "FollowedUser")
+                        .WithMany("FollowedUsers")
+                        .HasForeignKey("FollowedUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "Follower")
+                        .WithMany("Followers")
+                        .HasForeignKey("FollowerId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

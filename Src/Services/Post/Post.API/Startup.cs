@@ -47,6 +47,8 @@ namespace Photography.Services.Post.API
                     options.Audience = "Photography.Post.API";
                 });
 
+            services.AddHttpContextAccessor();
+
             services.Configure<StreamingSettings>(Configuration.GetSection("StreamingSettings"));
 
             services.AddMediatR(typeof(PublishPostCommandHandler));

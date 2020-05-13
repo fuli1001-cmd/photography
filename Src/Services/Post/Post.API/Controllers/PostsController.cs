@@ -7,6 +7,7 @@ using Photography.Services.Post.API.Query.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Photography.Services.Post.API.Controllers
@@ -30,9 +31,22 @@ namespace Photography.Services.Post.API.Controllers
 
         [HttpGet]
         [Route("hot")]
-        public async Task<ActionResult<IEnumerable<PostViewModel>>> GetPostsAsync()
+        public async Task<ActionResult<IEnumerable<PostViewModel>>> GetHotPostsAsync()
         {
-            var posts = _postQueries.GetPostsAsync(PostType.Hot);
+            _logger.LogInformation("-----UserId: {UserId}-----", User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            _logger.LogInformation("-----UserName: {UserName}-----", User.FindFirst(ClaimTypes.Name)?.Value);
+            _logger.LogInformation("-----UserName: {UserName}-----", User.Identity.Name);
+            _logger.LogInformation("-----Authed: {Authed}-----", User.Identity.IsAuthenticated);
+            _logger.LogInformation("-----AuthType: {AuthType}-----", User.Identity.AuthenticationType);
+            var posts = await _postQueries.GetPostsAsync(PostType.Hot);
+            return Ok(posts);
+        }
+
+        [HttpGet]
+        [Route("followed")]
+        public async Task<ActionResult<IEnumerable<PostViewModel>>> GetFollowedPostsAsync()
+        {
+            var posts = await _postQueries.GetPostsAsync(PostType.Followed);
             return Ok(posts);
         }
     }
