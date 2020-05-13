@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Post.API.Query\Post.API.Query.csproj" />
     <ProjectReference Include="..\Post.Infrastructure.EF\Post.Infrastructure.EF.csproj" />
   </ItemGroup>

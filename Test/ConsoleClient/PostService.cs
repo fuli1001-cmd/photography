@@ -25,11 +25,12 @@ namespace ConsoleClient
             {
                 Client.SetBearerToken(accessToken);
 
-                var response = await Client.GetAsync("/api/posts/hot?api-version=1.0");
+                var response = await Client.GetAsync("/api/posts/followed?api-version=1.0");
 
                 response.EnsureSuccessStatusCode();
 
-                return JsonConvert.DeserializeObject<List<PostViewModel>>(await response.Content.ReadAsStringAsync());
+                return null;
+                //return JsonConvert.DeserializeObject<List<PostViewModel>>(await response.Content.ReadAsStringAsync());
             }
             catch(Exception ex)
             {

@@ -7,6 +7,6 @@ namespace Photography.Services.Post.API.Query
 {
     public interface IPostQueries
     {
-        List<PostViewModel> GetPostsAsync(PostType postType);
+        Task<List<PostViewModel>> GetPostsAsync(PostType postType);
     }
 }

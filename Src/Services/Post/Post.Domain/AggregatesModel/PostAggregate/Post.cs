@@ -22,6 +22,12 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         public string ViewPassword { get; private set; }
         public Location Location { get; private set; }
 
+        public Post ForwardedPost { get; private set; }
+        public Guid? ForwardedPostId { get; private set; }
+
+        private readonly List<Post> _forwardingPosts;
+        public IReadOnlyCollection<Post> ForwardingPosts => _forwardingPosts;
+
         private readonly List<PostAttachment> _postAttachments;
         public IReadOnlyCollection<PostAttachment> PostAttachments => _postAttachments;
 

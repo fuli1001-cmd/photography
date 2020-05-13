@@ -17,9 +17,24 @@ namespace Photography.Services.Post.Infrastructure.EF.EntityConfigurations
             builder.Property(u => u.UserType).HasDefaultValue(UserType.Unknown);
             builder.Property(u => u.Points).HasDefaultValue(0);
 
-            //navigation properties
+            //posts navigation properties
             var postsNavigation = builder.Metadata.FindNavigation(nameof(User.Posts));
             postsNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            //comments navigation properties
+            var commentsNavigation = builder.Metadata.FindNavigation(nameof(User.Comments));
+            commentsNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            ////followers navigation properties
+            //var followersNavigation = builder.Metadata.FindNavigation(nameof(User.Followers));
+            //followersNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            ////followerUsers navigation properties
+            //var followedUsersNavigation = builder.Metadata.FindNavigation(nameof(User.FollowedUsers));
+            //followedUsersNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            builder.HasMany(u => u.FollowedUsers).WithOne(ur => ur.FollowedUser).HasForeignKey(ur => ur.FollowedUserId).OnDelete(DeleteBehavior.Restrict);
+            builder.HasMany(u => u.Followers).WithOne(ur => ur.Follower).HasForeignKey(ur => ur.FollowerId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

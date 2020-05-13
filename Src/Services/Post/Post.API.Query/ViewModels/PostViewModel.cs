@@ -8,10 +8,14 @@ using System.Threading.Tasks;
 
 namespace Photography.Services.Post.API.Query.ViewModels
 {
-    public class PostViewModel
+    public class BasePostViewModel
     {
         public Guid Id { get; set; }
         public string Text { get; set; }
+    }
+
+    public class PostViewModel : BasePostViewModel
+    {
         public int LikeCount { get; set; }
         public int ShareCount { get; set; }
         public int CommentCount { get; set; }
@@ -23,12 +27,24 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public Location Location { get; set; }
         public List<PostAttachmentViewModel> PostAttachments { get; set; }
         public UserViewModel User { get; set; }
+        public ForwardedPostViewModel ForwardedPost { get; set; }
     }
 
-    public class UserViewModel
+    public class ForwardedPostViewModel : BasePostViewModel
+    {
+        public List<PostAttachmentViewModel> PostAttachments { get; set; }
+        public BaseUserViewModel User { get; set; }
+        public ForwardedPostViewModel ForwardedPost { get; set; }
+    }
+
+    public class BaseUserViewModel
     {
         public Guid Id { get; set; }
         public string Nickname { get; set; }
+    }
+
+    public class UserViewModel : BaseUserViewModel
+    {
         public string Avatar { get; set; }
         public UserType UserType { get; set; }
     }
@@ -38,7 +54,7 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public Guid Id { get; set; }
         public string Url { get; set; }
         public string Text { get; set; }
-        public PostAttachmentType PostFileType { get; set; }
+        public PostAttachmentType PostAttachmentType { get; set; }
     }
 
     public class PostViewModelProfile : Profile
@@ -46,6 +62,9 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public PostViewModelProfile()
         {
             CreateMap<Domain.AggregatesModel.PostAggregate.Post, PostViewModel>();
+            CreateMap<Domain.AggregatesModel.PostAggregate.Post, BasePostViewModel>();
+            CreateMap<Domain.AggregatesModel.PostAggregate.Post, ForwardedPostViewModel>();
+            CreateMap<User, BaseUserViewModel>();
             CreateMap<User, UserViewModel>();
             CreateMap<PostAttachment, PostAttachmentViewModel>();
         }

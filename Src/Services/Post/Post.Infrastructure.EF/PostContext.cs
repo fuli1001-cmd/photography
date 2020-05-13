@@ -23,6 +23,7 @@ namespace Photography.Services.Post.Infrastructure.EF
         public DbSet<Comment> Comments { get; set; }
         public DbSet<PostAttachment> PostAttachments { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<UserRelation> UserRelations { get; set; }
 
 
         private readonly IMediator _mediator;

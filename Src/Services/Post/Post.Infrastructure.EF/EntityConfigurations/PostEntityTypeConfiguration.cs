@@ -22,9 +22,16 @@ namespace Photography.Services.Post.Infrastructure.EF.EntityConfigurations
             builder.Property(p => p.ForwardType).HasDefaultValue(ForwardType.Allowed);
             builder.Property(p => p.Visibility).HasDefaultValue(Visibility.Public);
 
-            //navigation properties
+            //attachments navigation properties
             var attachmentsNavigation = builder.Metadata.FindNavigation(nameof(Domain.AggregatesModel.PostAggregate.Post.PostAttachments));
             attachmentsNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            //comments navigation properties
+            var commentsNavigation = builder.Metadata.FindNavigation(nameof(Domain.AggregatesModel.PostAggregate.Post.Comments));
+            commentsNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            // self navigation properties
+            builder.HasMany(p => p.ForwardingPosts).WithOne(p => p.ForwardedPost).HasForeignKey(p => p.ForwardedPostId).IsRequired(false).OnDelete(DeleteBehavior.Restrict);
 
             //Location value object persisted as owned entity
             builder.OwnsOne(o => o.Location);
