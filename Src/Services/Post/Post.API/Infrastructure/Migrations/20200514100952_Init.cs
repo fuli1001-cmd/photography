@@ -22,10 +22,10 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     Province = table.Column<string>(nullable: true),
                     City = table.Column<string>(nullable: true),
                     Sign = table.Column<string>(nullable: true),
-                    LikedCount = table.Column<int>(nullable: true),
-                    FollowingCount = table.Column<int>(nullable: true),
-                    FollowerCount = table.Column<int>(nullable: true),
-                    Points = table.Column<int>(nullable: false, defaultValue: 0),
+                    LikedCount = table.Column<int>(nullable: false, defaultValue: 0),
+                    FollowingCount = table.Column<int>(nullable: false, defaultValue: 0),
+                    FollowerCount = table.Column<int>(nullable: false, defaultValue: 0),
+                    Score = table.Column<int>(nullable: false, defaultValue: 0),
                     Code = table.Column<string>(nullable: false),
                     RealNameRegistered = table.Column<bool>(nullable: false, defaultValue: false)
                 },
@@ -43,17 +43,19 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     LikeCount = table.Column<int>(nullable: false, defaultValue: 0),
                     ShareCount = table.Column<int>(nullable: false, defaultValue: 0),
                     CommentCount = table.Column<int>(nullable: false, defaultValue: 0),
-                    Points = table.Column<int>(nullable: false, defaultValue: 0),
-                    Timestamp = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2020, 5, 13, 7, 48, 12, 556, DateTimeKind.Utc).AddTicks(6953)),
+                    Score = table.Column<int>(nullable: false, defaultValue: 0),
+                    Timestamp = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2020, 5, 14, 10, 9, 52, 612, DateTimeKind.Utc).AddTicks(958)),
                     Commentable = table.Column<bool>(nullable: true, defaultValue: true),
                     ForwardType = table.Column<int>(nullable: false, defaultValue: 0),
                     ShareType = table.Column<int>(nullable: false, defaultValue: 0),
                     Visibility = table.Column<int>(nullable: false, defaultValue: 0),
                     ViewPassword = table.Column<string>(nullable: true),
-                    Location_Latitude = table.Column<double>(nullable: true),
-                    Location_Longitude = table.Column<double>(nullable: true),
-                    Location_Name = table.Column<string>(nullable: true),
-                    Location_Address = table.Column<string>(nullable: true),
+                    Province = table.Column<string>(nullable: true),
+                    City = table.Column<string>(nullable: true),
+                    Latitude = table.Column<double>(nullable: true),
+                    Longitude = table.Column<double>(nullable: true),
+                    LocationName = table.Column<string>(nullable: true),
+                    Address = table.Column<string>(nullable: true),
                     ForwardedPostId = table.Column<Guid>(nullable: true),
                     UserId = table.Column<Guid>(nullable: false)
                 },
@@ -106,7 +108,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     Text = table.Column<string>(nullable: false),
                     Likes = table.Column<int>(nullable: false),
-                    Timestamp = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2020, 5, 13, 7, 48, 12, 593, DateTimeKind.Utc).AddTicks(3141)),
+                    Timestamp = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2020, 5, 14, 10, 9, 52, 622, DateTimeKind.Utc).AddTicks(7618)),
                     PostId = table.Column<Guid>(nullable: false),
                     UserId = table.Column<Guid>(nullable: false),
                     ParentCommentId = table.Column<Guid>(nullable: true)
@@ -139,7 +141,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    Url = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
                     Text = table.Column<string>(nullable: true),
                     PostAttachmentType = table.Column<int>(nullable: false),
                     PostId = table.Column<Guid>(nullable: false)
@@ -153,6 +155,31 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         principalTable: "Posts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PostsForUsers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    PostId = table.Column<Guid>(nullable: false),
+                    UserId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostsForUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PostsForUsers_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PostsForUsers_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -186,6 +213,16 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PostsForUsers_PostId",
+                table: "PostsForUsers",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PostsForUsers_UserId",
+                table: "PostsForUsers",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserRelations_FollowedUserId",
                 table: "UserRelations",
                 column: "FollowedUserId");
@@ -203,6 +240,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "PostAttachments");
+
+            migrationBuilder.DropTable(
+                name: "PostsForUsers");
 
             migrationBuilder.DropTable(
                 name: "UserRelations");

@@ -22,6 +22,7 @@ using Photography.Services.Post.API.Application.Commands;
 using Photography.Services.Post.API.Application.Validators;
 using Photography.Services.Post.API.Infrastructure.AutofacModules;
 using Photography.Services.Post.API.Infrastructure.Filters;
+using Photography.Services.Post.API.Query.MapperProfiles;
 using Photography.Services.Post.API.Query.ViewModels;
 using Photography.Services.Post.API.Settings;
 using Photography.Services.Post.Infrastructure.EF.Extensions;
@@ -50,6 +51,7 @@ namespace Photography.Services.Post.API
             services.AddHttpContextAccessor();
 
             services.Configure<StreamingSettings>(Configuration.GetSection("StreamingSettings"));
+            services.Configure<ServerSettings>(Configuration.GetSection("ServerSettings"));
 
             services.AddMediatR(typeof(PublishPostCommandHandler));
 

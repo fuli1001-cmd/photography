@@ -24,6 +24,7 @@ namespace Photography.Services.Post.Infrastructure.EF
         public DbSet<PostAttachment> PostAttachments { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<UserRelation> UserRelations { get; set; }
+        public DbSet<PostForUser> PostsForUsers { get; set; }
 
 
         private readonly IMediator _mediator;

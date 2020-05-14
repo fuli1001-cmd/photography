@@ -15,7 +15,10 @@ namespace Photography.Services.Post.Infrastructure.EF.EntityConfigurations
             builder.Property(u => u.Code).IsRequired();
             builder.Property(u => u.RealNameRegistered).HasDefaultValue(false);
             builder.Property(u => u.UserType).HasDefaultValue(UserType.Unknown);
-            builder.Property(u => u.Points).HasDefaultValue(0);
+            builder.Property(u => u.Score).HasDefaultValue(0);
+            builder.Property(u => u.LikedCount).HasDefaultValue(0);
+            builder.Property(u => u.FollowerCount).HasDefaultValue(0);
+            builder.Property(u => u.FollowingCount).HasDefaultValue(0);
 
             //posts navigation properties
             var postsNavigation = builder.Metadata.FindNavigation(nameof(User.Posts));
@@ -24,6 +27,9 @@ namespace Photography.Services.Post.Infrastructure.EF.EntityConfigurations
             //comments navigation properties
             var commentsNavigation = builder.Metadata.FindNavigation(nameof(User.Comments));
             commentsNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            //postForUser navigation properties
+            builder.HasMany(u => u.PostForUsers).WithOne(pu => pu.User).HasForeignKey(pu => pu.UserId).OnDelete(DeleteBehavior.Restrict);
 
             ////followers navigation properties
             //var followersNavigation = builder.Metadata.FindNavigation(nameof(User.Followers));

@@ -12,7 +12,7 @@ namespace Photography.Services.Post.Infrastructure.EF.EntityConfigurations
         public void Configure(EntityTypeBuilder<Domain.AggregatesModel.PostAggregate.Post> builder)
         {
             builder.Ignore(e => e.DomainEvents);
-            builder.Property(p => p.Points).HasDefaultValue(0);
+            builder.Property(p => p.Score).HasDefaultValue(0);
             builder.Property(p => p.LikeCount).HasDefaultValue(0);
             builder.Property(p => p.ShareCount).HasDefaultValue(0);
             builder.Property(p => p.CommentCount).HasDefaultValue(0);
@@ -33,8 +33,8 @@ namespace Photography.Services.Post.Infrastructure.EF.EntityConfigurations
             // self navigation properties
             builder.HasMany(p => p.ForwardingPosts).WithOne(p => p.ForwardedPost).HasForeignKey(p => p.ForwardedPostId).IsRequired(false).OnDelete(DeleteBehavior.Restrict);
 
-            //Location value object persisted as owned entity
-            builder.OwnsOne(o => o.Location);
+            //postForUser navigation properties
+            builder.HasMany(p => p.PostForUsers).WithOne(pu => pu.Post).HasForeignKey(pu => pu.PostId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

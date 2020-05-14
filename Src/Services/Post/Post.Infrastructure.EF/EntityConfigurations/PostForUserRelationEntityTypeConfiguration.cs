@@ -7,12 +7,12 @@ using System.Text;
 
 namespace Photography.Services.Post.Infrastructure.EF.EntityConfigurations
 {
-    class PostAttachmentEntityTypeConfiguration : IEntityTypeConfiguration<PostAttachment>
+    public class PostForUserRelationEntityTypeConfiguration : IEntityTypeConfiguration<PostForUser>
     {
-        public void Configure(EntityTypeBuilder<PostAttachment> builder)
+        public void Configure(EntityTypeBuilder<PostForUser> builder)
         {
             builder.Ignore(e => e.DomainEvents);
-            builder.Property(p => p.Name).IsRequired();
+            builder.HasKey(pu => new { pu.UserId, pu.PostId });
         }
     }
 }

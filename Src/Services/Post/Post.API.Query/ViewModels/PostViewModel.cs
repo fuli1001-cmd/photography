@@ -24,9 +24,12 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public ForwardType ForwardType { get; set; }
         public ShareType ShareType { get; set; }
         public string ViewPassword { get; set; }
-        public Location Location { get; set; }
+
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+
         public List<PostAttachmentViewModel> PostAttachments { get; set; }
-        public UserViewModel User { get; set; }
+        public PostUserViewModel User { get; set; }
         public ForwardedPostViewModel ForwardedPost { get; set; }
     }
 
@@ -37,36 +40,11 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public ForwardedPostViewModel ForwardedPost { get; set; }
     }
 
-    public class BaseUserViewModel
-    {
-        public Guid Id { get; set; }
-        public string Nickname { get; set; }
-    }
-
-    public class UserViewModel : BaseUserViewModel
-    {
-        public string Avatar { get; set; }
-        public UserType UserType { get; set; }
-    }
-
     public class PostAttachmentViewModel
     {
         public Guid Id { get; set; }
-        public string Url { get; set; }
+        public string Name { get; set; }
         public string Text { get; set; }
         public PostAttachmentType PostAttachmentType { get; set; }
-    }
-
-    public class PostViewModelProfile : Profile
-    {
-        public PostViewModelProfile()
-        {
-            CreateMap<Domain.AggregatesModel.PostAggregate.Post, PostViewModel>();
-            CreateMap<Domain.AggregatesModel.PostAggregate.Post, BasePostViewModel>();
-            CreateMap<Domain.AggregatesModel.PostAggregate.Post, ForwardedPostViewModel>();
-            CreateMap<User, BaseUserViewModel>();
-            CreateMap<User, UserViewModel>();
-            CreateMap<PostAttachment, PostAttachmentViewModel>();
-        }
     }
 }

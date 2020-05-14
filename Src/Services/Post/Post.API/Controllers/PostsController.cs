@@ -2,11 +2,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Photography.Services.Post.API.Application.Commands;
 using Photography.Services.Post.API.Query;
+using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -38,7 +41,7 @@ namespace Photography.Services.Post.API.Controllers
             _logger.LogInformation("-----UserName: {UserName}-----", User.Identity.Name);
             _logger.LogInformation("-----Authed: {Authed}-----", User.Identity.IsAuthenticated);
             _logger.LogInformation("-----AuthType: {AuthType}-----", User.Identity.AuthenticationType);
-            var posts = await _postQueries.GetPostsAsync(PostType.Hot);
+            var posts = await _postQueries.GetHotPostsAsync();
             return Ok(posts);
         }
 
@@ -46,8 +49,23 @@ namespace Photography.Services.Post.API.Controllers
         [Route("followed")]
         public async Task<ActionResult<IEnumerable<PostViewModel>>> GetFollowedPostsAsync()
         {
-            var posts = await _postQueries.GetPostsAsync(PostType.Followed);
+            var posts = await _postQueries.GetFollowedPostsAsync();
             return Ok(posts);
+        }
+
+        [HttpGet]
+        [Route("samecity/{province}/{city}")]
+        public async Task<ActionResult<IEnumerable<PostViewModel>>> GetSameCityPostsAsync(string province, string city)
+        {
+            var posts = await _postQueries.GetSameCityPostsAsync(province, city);
+            return Ok(posts);
+        }
+
+        [HttpPost]
+        [Route("post")]
+        public async Task<ActionResult<PostViewModel>> PublishPostAsync([FromBody] PublishPostCommand publishPostCommand)
+        {
+            return StatusCode((int)HttpStatusCode.Created, await _mediator.Send(publishPostCommand));
         }
     }
 }

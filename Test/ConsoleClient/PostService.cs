@@ -25,7 +25,7 @@ namespace ConsoleClient
             {
                 Client.SetBearerToken(accessToken);
 
-                var response = await Client.GetAsync("/api/posts/followed?api-version=1.0");
+                var response = await Client.GetAsync("/api/users/friends?api-version=1.0");
 
                 response.EnsureSuccessStatusCode();
 

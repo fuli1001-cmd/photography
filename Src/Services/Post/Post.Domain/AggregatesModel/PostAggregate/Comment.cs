@@ -21,7 +21,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         public Comment ParentComment { get; private set; }
         public Guid? ParentCommentId { get; private set; }
 
-        private readonly List<Comment> _subComments;
+        private readonly List<Comment> _subComments = null;
         public IReadOnlyCollection<Comment> SubComments => _subComments;
     }
 }
