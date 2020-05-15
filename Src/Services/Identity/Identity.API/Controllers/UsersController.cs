@@ -1,20 +1,12 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Photography.Services.Post.API.Query.Interfaces;
-using Photography.Services.Post.API.Query.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Photography.Services.Post.API.Controllers
+namespace Photography.Services.Identity.API.Controllers
 {
-    /// <summary>
-    /// 用户控制器
-    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     [ApiVersion("1.0")]

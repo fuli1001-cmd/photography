@@ -5,6 +5,9 @@
     <RootNamespace>Photography.Services.Post.API</RootNamespace>
     <UserSecretsId>51a8a754-515b-43a2-a894-902468405c8e</UserSecretsId>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>D:\svn\Photography\Src\Services\Post\Post.API\Post.API.xml</DocumentationFile>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Application\Queries\**" />
     <Content Remove="Application\Queries\**" />

@@ -1,25 +1,15 @@
-﻿using AutoMapper;
-using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Photography.Services.Post.API.Query.ViewModels
+namespace Identity.API.Query.ViewModels
 {
-    public class BaseUserViewModel
+    public class UserViewModel
     {
         public Guid Id { get; set; }
         public string Nickname { get; set; }
-    }
-
-    public class PostUserViewModel : BaseUserViewModel
-    {
         public string Avatar { get; set; }
         public UserType? UserType { get; set; }
-    }
-
-    public class UserViewModel : PostUserViewModel
-    {
         public string UserName { get; set; }
         public string Phonenumber { get; set; }
         public bool? Gender { get; set; }
@@ -34,5 +24,11 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public int Score { get; set; }
         public string Code { get; set; }
         public bool RealNameRegistered { get; set; }
+    }
+
+    public enum UserType
+    {
+        Photographer,
+        Model
     }
 }

@@ -25,12 +25,15 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public ShareType ShareType { get; set; }
         public string ViewPassword { get; set; }
 
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
-
         public List<PostAttachmentViewModel> PostAttachments { get; set; }
         public PostUserViewModel User { get; set; }
         public ForwardedPostViewModel ForwardedPost { get; set; }
+    }
+
+    public class SameCityPostViewModel : PostViewModel
+    {
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
     }
 
     public class ForwardedPostViewModel : BasePostViewModel
@@ -45,6 +48,6 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Text { get; set; }
-        public PostAttachmentType PostAttachmentType { get; set; }
+        public string ContentType { get; set; }
     }
 }

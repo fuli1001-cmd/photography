@@ -86,6 +86,8 @@ namespace Photography.Services.Post.API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Photography.Post API", Version = "v1" });
+                c.IncludeXmlComments(string.Format(@"{0}\Post.API.xml", System.AppDomain.CurrentDomain.BaseDirectory));
+                c.DescribeAllEnumsAsStrings();
             });
         }
 

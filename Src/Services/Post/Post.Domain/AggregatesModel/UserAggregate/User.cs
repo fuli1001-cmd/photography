@@ -1,4 +1,5 @@
 ﻿using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
+using Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggregate;
 using Photography.Services.Post.Domain.Seedwork;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
         public string Avatar { get; private set; }
         public bool? Gender { get; private set; }
         public DateTime? Birthday { get; private set; }
-        public UserType UserType { get; private set; }
+        public UserType? UserType { get; private set; }
         public string Province { get; private set; }
         public string City { get; private set; }
         public string Sign { get; private set; }
@@ -32,8 +33,8 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
         private readonly List<Comment> _comments = null;
         public IReadOnlyCollection<Comment> Comments => _comments;
 
-        private readonly List<PostForUser> _postForUsers = null;
-        public IReadOnlyCollection<PostForUser> PostForUsers => _postForUsers;
+        private readonly List<UserPostRelation> _userPostRelations = null;
+        public IReadOnlyCollection<UserPostRelation> UserPostRelations => _userPostRelations;
 
         // Note: self reference many to many relations can't use field, so use property directly here.
         //private readonly List<UserRelation> _followers;
@@ -48,7 +49,6 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
 
     public enum UserType
     {
-        Unknown,
         Photographer,
         Model
     }

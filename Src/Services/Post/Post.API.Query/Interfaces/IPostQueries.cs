@@ -7,8 +7,10 @@ namespace Photography.Services.Post.API.Query.Interfaces
 {
     public interface IPostQueries
     {
+        Task<List<PostViewModel>> GetMyPostsAsync();
+        Task<List<PostViewModel>> GetLikedPostsAsync();
         Task<List<PostViewModel>> GetHotPostsAsync();
         Task<List<PostViewModel>> GetFollowedPostsAsync();
-        Task<List<PostViewModel>> GetSameCityPostsAsync(string province, string city);
+        Task<List<SameCityPostViewModel>> GetSameCityPostsAsync(string province, string city);
     }
 }

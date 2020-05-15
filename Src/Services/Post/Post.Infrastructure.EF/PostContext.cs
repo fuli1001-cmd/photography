@@ -14,6 +14,7 @@ using System.Threading;
 using Photography.Services.Post.Infrastructure.EF.Extensions;
 using System.Data;
 using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
+using Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggregate;
 
 namespace Photography.Services.Post.Infrastructure.EF
 {
@@ -24,7 +25,7 @@ namespace Photography.Services.Post.Infrastructure.EF
         public DbSet<PostAttachment> PostAttachments { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<UserRelation> UserRelations { get; set; }
-        public DbSet<PostForUser> PostsForUsers { get; set; }
+        public DbSet<UserPostRelation> UserPostRelations { get; set; }
 
 
         private readonly IMediator _mediator;
@@ -47,6 +48,8 @@ namespace Photography.Services.Post.Infrastructure.EF
             modelBuilder.ApplyConfiguration(new CommentEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new PostAttachmentEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new UserRelationEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new UserPostRelationEntityTypeConfiguration());
 
             //foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
             //{

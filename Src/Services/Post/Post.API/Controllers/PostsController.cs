@@ -1,8 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Photography.Services.Post.API.Application.Commands;
+using Photography.Services.Post.API.Infrastructure;
 using Photography.Services.Post.API.Query;
 using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
@@ -15,6 +17,9 @@ using System.Threading.Tasks;
 
 namespace Photography.Services.Post.API.Controllers
 {
+    /// <summary>
+    /// 帖子和约拍的控制器
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     [ApiVersion("1.0")]
@@ -32,8 +37,13 @@ namespace Photography.Services.Post.API.Controllers
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// 获取热门帖子列表
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("hot")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<PostViewModel>>> GetHotPostsAsync()
         {
             _logger.LogInformation("-----UserId: {UserId}-----", User.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -42,30 +52,86 @@ namespace Photography.Services.Post.API.Controllers
             _logger.LogInformation("-----Authed: {Authed}-----", User.Identity.IsAuthenticated);
             _logger.LogInformation("-----AuthType: {AuthType}-----", User.Identity.AuthenticationType);
             var posts = await _postQueries.GetHotPostsAsync();
-            return Ok(posts);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
         }
 
+        /// <summary>
+        /// 获取关注用户的帖子列表
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("followed")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<PostViewModel>>> GetFollowedPostsAsync()
         {
             var posts = await _postQueries.GetFollowedPostsAsync();
-            return Ok(posts);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
         }
 
+        /// <summary>
+        /// 获取同城帖子列表
+        /// </summary>
+        /// <param name="province"></param>
+        /// <param name="city"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("samecity/{province}/{city}")]
-        public async Task<ActionResult<IEnumerable<PostViewModel>>> GetSameCityPostsAsync(string province, string city)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<SameCityPostViewModel>>> GetSameCityPostsAsync(string province, string city)
         {
             var posts = await _postQueries.GetSameCityPostsAsync(province, city);
-            return Ok(posts);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
         }
 
+        /// <summary>
+        /// 我的帖子
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("mine")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<SameCityPostViewModel>>> GetMyPostsAsync()
+        {
+            var posts = await _postQueries.GetMyPostsAsync();
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
+        }
+
+        /// <summary>
+        /// 我赞过的帖子
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("likes")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<SameCityPostViewModel>>> GetLikedPostsAsync()
+        {
+            var posts = await _postQueries.GetLikedPostsAsync();
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
+        }
+
+        /// <summary>
+        /// 创建帖子
+        /// </summary>
+        /// <param name="publishPostCommand"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("post")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<PostViewModel>> PublishPostAsync([FromBody] PublishPostCommand publishPostCommand)
         {
             return StatusCode((int)HttpStatusCode.Created, await _mediator.Send(publishPostCommand));
+        }
+
+        /// <summary>
+        /// 赞一个帖子
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("like")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<PostViewModel>> LikePostAsync([FromBody] LikePostCommand likePostCommand)
+        {
+            return StatusCode((int)HttpStatusCode.Created, await _mediator.Send(likePostCommand));
         }
     }
 }

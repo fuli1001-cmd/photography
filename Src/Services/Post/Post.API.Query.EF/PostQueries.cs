@@ -7,6 +7,7 @@ using Photography.Services.Post.API.Query.Extensions;
 using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
 using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
+using Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggregate;
 using Photography.Services.Post.Infrastructure.EF;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,25 @@ namespace Photography.Services.Post.API.Query.EF
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        public async Task<List<PostViewModel>> GetMyPostsAsync()
+        {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var myPosts = _postContext.Posts.Where(p => p.UserId.ToString() == userId);
+            var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(myPosts);
+            return _mapper.Map<List<PostViewModel>>(await postsWithNavigationProperties.ToListAsync());
+        }
+
+        public async Task<List<PostViewModel>> GetLikedPostsAsync()
+        {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var likedPostIds = _postContext.UserPostRelations
+                .Where(upr => upr.UserId.ToString() == userId && upr.UserPostRelationType == UserPostRelationType.Like)
+                .Select(upr => upr.PostId);
+            var likedPosts = _postContext.Posts.Where(p => likedPostIds.Contains(p.Id));
+            var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(likedPosts);
+            return _mapper.Map<List<PostViewModel>>(await postsWithNavigationProperties.ToListAsync());
+        }
+
         public async Task<List<PostViewModel>> GetHotPostsAsync()
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -62,14 +82,14 @@ namespace Photography.Services.Post.API.Query.EF
             return _mapper.Map<List<PostViewModel>>(await postsWithNavigationProperties.ToListAsync());
         }
 
-        public async Task<List<PostViewModel>> GetSameCityPostsAsync(string province, string city)
+        public async Task<List<SameCityPostViewModel>> GetSameCityPostsAsync(string province, string city)
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             var availablePosts = GetAvailablePosts(userId);
             var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(availablePosts);
-            var sameCityPosts = (await postsWithNavigationProperties.ToListAsync()).Where(p => p.Province.ToLower() == province.ToLower() && p.City.ToLower() == city.ToLower());
-            return _mapper.Map<List<PostViewModel>>(sameCityPosts);
+            var sameCityPosts = (await postsWithNavigationProperties.ToListAsync()).Where(p => p.Province?.ToLower() == province.ToLower() && p.City?.ToLower() == city.ToLower());
+            return _mapper.Map<List<SameCityPostViewModel>>(sameCityPosts);
 
             //var sameCityPosts = availablePosts.Where(p => p.Province.ToLower() == province.ToLower() && p.City.ToLower() == city.ToLower());
             //return await GetPostViewModelsAsync(sameCityPosts);
@@ -84,9 +104,9 @@ namespace Photography.Services.Post.API.Query.EF
             // 指定朋友可见的帖子
             var selectedFriendsViewPosts = _postContext.Posts.Where(p => p.Visibility == Domain.AggregatesModel.PostAggregate.Visibility.SelectedFriends);
             selectedFriendsViewPosts = from p in selectedFriendsViewPosts
-                                       join pu in _postContext.PostsForUsers
-                                       on p.Id equals pu.PostId
-                                       where pu.UserId.ToString() == userId
+                                       join upr in _postContext.UserPostRelations
+                                       on p.Id equals upr.PostId
+                                       where upr.UserId.ToString() == userId && upr.UserPostRelationType == UserPostRelationType.View
                                        select p;
 
             // 公开和密码查看的帖子

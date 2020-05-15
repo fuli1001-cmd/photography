@@ -1,18 +1,9 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Photography.Services.Post.API.Query.Interfaces;
-using Photography.Services.Post.API.Query.ViewModels;
-using Photography.Services.Post.Infrastructure.EF;
+﻿using Identity.API.Query.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Photography.Services.Post.API.Query.EF
+namespace Identity.API.Query.EF
 {
     public class UserQueries : IUserQueries
     {

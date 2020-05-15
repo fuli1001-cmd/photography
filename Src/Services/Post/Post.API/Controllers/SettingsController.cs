@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -10,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace Photography.Services.Post.API.Controllers
 {
+    /// <summary>
+    /// 设置控制器
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     [ApiVersion("1.0")]
@@ -25,8 +29,13 @@ namespace Photography.Services.Post.API.Controllers
             _serverSettings = serverSettings ?? throw new ArgumentNullException(nameof(serverSettings));
         }
 
+        /// <summary>
+        /// 获取配置信息
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<ServerSettings> GetServerSettings()
         {
             return Ok(_serverSettings.Value);

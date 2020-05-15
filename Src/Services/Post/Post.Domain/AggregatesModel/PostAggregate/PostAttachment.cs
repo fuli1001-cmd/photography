@@ -9,7 +9,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
     {
         public string Name { get; private set; }
         public string Text { get; private set; }
-        public PostAttachmentType PostAttachmentType { get; private set; }
+        public string ContentType { get; private set; }
 
         public Post Post { get; private set; }
         public Guid PostId { get; private set; }
@@ -19,11 +19,5 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             Name = name;
             Text = text;
         }
-    }
-
-    public enum PostAttachmentType
-    {
-        Image,
-        Video
     }
 }

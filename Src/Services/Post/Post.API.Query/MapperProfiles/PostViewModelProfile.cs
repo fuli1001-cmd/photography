@@ -20,4 +20,12 @@ namespace Photography.Services.Post.API.Query.MapperProfiles
             CreateMap<PostAttachment, PostAttachmentViewModel>();
         }
     }
+
+    public class SameCityPostViewModelProfile : PostViewModelProfile
+    {
+        public SameCityPostViewModelProfile() : base()
+        {
+            CreateMap<Domain.AggregatesModel.PostAggregate.Post, SameCityPostViewModel>();
+        }
+    }
 }

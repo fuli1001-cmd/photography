@@ -13,6 +13,7 @@ namespace Photography.Services.Post.Infrastructure.EF.EntityConfigurations
         {
             builder.Ignore(e => e.DomainEvents);
             builder.Property(p => p.Name).IsRequired();
+            builder.Property(p => p.ContentType).IsRequired();
         }
     }
 }

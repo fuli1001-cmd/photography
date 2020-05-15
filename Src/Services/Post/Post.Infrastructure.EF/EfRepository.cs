@@ -10,7 +10,7 @@ namespace Photography.Services.Post.Infrastructure.EF
 {
     public class EfRepository<T> : IRepository<T> where T : Entity, IAggregateRoot
     {
-        private readonly PostContext _context;
+        protected readonly PostContext _context;
         public IUnitOfWork UnitOfWork => _context;
 
         public EfRepository(PostContext context)

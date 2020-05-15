@@ -21,6 +21,7 @@ namespace Photography.Services.Post.Infrastructure.EF.EntityConfigurations
             builder.Property(p => p.ShareType).HasDefaultValue(ShareType.Allowed);
             builder.Property(p => p.ForwardType).HasDefaultValue(ForwardType.Allowed);
             builder.Property(p => p.Visibility).HasDefaultValue(Visibility.Public);
+            builder.Property(p => p.Commentable).HasDefaultValue(true);
 
             //attachments navigation properties
             var attachmentsNavigation = builder.Metadata.FindNavigation(nameof(Domain.AggregatesModel.PostAggregate.Post.PostAttachments));
@@ -34,7 +35,7 @@ namespace Photography.Services.Post.Infrastructure.EF.EntityConfigurations
             builder.HasMany(p => p.ForwardingPosts).WithOne(p => p.ForwardedPost).HasForeignKey(p => p.ForwardedPostId).IsRequired(false).OnDelete(DeleteBehavior.Restrict);
 
             //postForUser navigation properties
-            builder.HasMany(p => p.PostForUsers).WithOne(pu => pu.Post).HasForeignKey(pu => pu.PostId).OnDelete(DeleteBehavior.Restrict);
+            builder.HasMany(p => p.UserPostRelations).WithOne(pu => pu.Post).HasForeignKey(pu => pu.PostId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
