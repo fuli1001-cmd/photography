@@ -1,0 +1,120 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Photography.Services.User.API.Application.Commands.LikePost;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Photography.Services.User.API.Application.Behaviors;
+using System.Reflection;
+using AutoMapper;
+using Microsoft.OpenApi.Models;
+using FluentValidation.AspNetCore;
+using Photography.Services.User.API.Application.Validators;
+using Autofac;
+using Photography.Services.User.API.Infrastructure.AutofacModules;
+using Photography.Services.User.API.Query.MapperProfiles;
+using Photography.Services.User.Infrastructure;
+using Arise.DDD.Infrastructure.Extensions;
+using Arise.DDD.API.Filters;
+
+namespace Photography.Services.User.API
+{
+    public class Startup
+    {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public IConfiguration Configuration { get; }
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer("Bearer", options =>
+                {
+                    options.Authority = Configuration["Auth:Authority"];
+                    options.Audience = Configuration["Auth:Audience"];
+                });
+
+            services.AddHttpContextAccessor();
+
+            services.AddMediatR(typeof(LikePostCommandHandler));
+
+            services.AddControllers(options =>
+            {
+                options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+            })
+            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<PublishPostCommandValidator>());
+
+            services.AddApiVersioning(options =>
+            {
+                // Specify the default API Version as 1.0
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                // If the client hasn't specified the API version in the request, use the default API version number
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                // Advertise the API versions supported for the particular endpoint
+                options.ReportApiVersions = true;
+                // default query paramter for version is api-version
+                //options.ApiVersionReader = new QueryStringApiVersionReader("v");
+            });
+
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+
+            services.AddSqlDataAccessServices<UserContext>(Configuration.GetConnectionString("UserConnection"), typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
+
+            services.AddAutoMapper(typeof(UserViewModelProfile).Assembly);
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Photography.User API", Version = "v1" });
+                c.IncludeXmlComments(string.Format(@"{0}\User.API.xml", System.AppDomain.CurrentDomain.BaseDirectory));
+                c.DescribeAllEnumsAsStrings();
+            });
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
+            app.UseHttpsRedirection();
+
+            app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Photography.User API V1");
+            });
+        }
+
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterModule(new ApplicationModule());
+        }
+    }
+}

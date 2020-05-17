@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Arise.DDD.Domain.SeedWork;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Photography.Services.Post.Domain.Seedwork;
 
 namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
 {
@@ -14,10 +14,11 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         public Post Post { get; private set; }
         public Guid PostId { get; private set; }
 
-        public PostAttachment(string name, string text)
+        public PostAttachment(string name, string text, string contentType)
         {
             Name = name;
             Text = text;
+            ContentType = contentType;
         }
     }
 }

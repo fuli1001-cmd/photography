@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Post.API.Query\Post.API.Query.csproj" />
-    <ProjectReference Include="..\Post.Infrastructure.EF\Post.Infrastructure.EF.csproj" />
+    <ProjectReference Include="..\Post.Infrastructure\Post.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,43 @@
+version: '3.4'
+
+services:
+  apigwbase:
+    environment:
+      #- ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_HTTPS_PORT=44301
+      - Auth__Authority=authservice
+      - Auth__Audience=Photography.ApiGateway
+      - ServerSettings__ChatServer=N/A
+      - ServerSettings__FileServer=N/A
+      - ServerSettings__AgoraAppId=N/A
+      - ServerSettings__TrtcAppId=N/A
+      - ServerSettings__TrtcEnabled=false
+    ports:
+      - "44300:80"
+      - "44301:443"
+    #volumes:
+    #  - ${APPDATA}/Microsoft/UserSecrets:C:\Users\ContainerUser\AppData\Roaming\Microsoft\UserSecrets:ro
+    #  - ${APPDATA}/ASP.NET/Https:C:\Users\ContainerUser\AppData\Roaming\ASP.NET\Https:ro
+
+  post.api:
+    environment:
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_HTTPS_PORT=44311
+      - ConnectionStrings__PostConnection=Server=47.108.194.52;Database=Photography.Post;User Id=fuli;Password=fl511304;
+      - Auth__Authority=authservice
+      - Auth__Audience=Photography.User.API
+    ports:
+      - "44310:80"
+      - "44311:443"
+
+  user.api:
+    environment:
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_HTTPS_PORT=44321
+      - ConnectionStrings__UserConnection=Server=47.108.194.52;Database=Photography.User;User Id=fuli;Password=fl511304;
+      - Auth__Authority=authservice
+      - Auth__Audience=Photography.Post.API
+    ports:
+      - "44320:80"
+      - "44321:443"

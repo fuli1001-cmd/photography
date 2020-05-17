@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Photography.Services.Post.API.Query.ViewModels;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 using System;
 using System.Collections.Generic;
@@ -7,10 +8,10 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
-namespace Photography.Services.Post.API.Application.Commands
+namespace Photography.Services.Post.API.Application.Commands.PublishPost
 {
     [DataContract]
-    public class PublishPostCommand : IRequest<bool>
+    public class PublishPostCommand : IRequest<SameCityPostViewModel>
     {
         /// <summary>
         /// 文字描述
@@ -116,11 +117,18 @@ namespace Photography.Services.Post.API.Application.Commands
         /// <summary>
         /// 附件文件名
         /// </summary>
+        [Required]
         public string Name { get; set; }
 
         /// <summary>
         /// 附件描述
         /// </summary>
         public string Text { get; set; }
+
+        /// <summary>
+        /// 文件类型
+        /// </summary>
+        [Required]
+        public string ContentType { get; set; }
     }
 }

@@ -1,11 +1,12 @@
-﻿using MediatR;
+﻿using Arise.DDD.API;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Photography.Services.Post.API.Application.Commands;
+using Photography.Services.Post.API.Application.Commands.LikePost;
+using Photography.Services.Post.API.Application.Commands.PublishPost;
 using Photography.Services.Post.API.Infrastructure;
-using Photography.Services.Post.API.Query;
 using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
 using System;
@@ -117,9 +118,10 @@ namespace Photography.Services.Post.API.Controllers
         [HttpPost]
         [Route("post")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<PostViewModel>> PublishPostAsync([FromBody] PublishPostCommand publishPostCommand)
+        public async Task<ActionResult<SameCityPostViewModel>> PublishPostAsync([FromBody] PublishPostCommand publishPostCommand)
         {
-            return StatusCode((int)HttpStatusCode.Created, await _mediator.Send(publishPostCommand));
+            var post = await _mediator.Send(publishPostCommand);
+            return StatusCode((int)HttpStatusCode.Created, ResponseWrapper.CreateOkResponseWrapper(post));
         }
 
         /// <summary>

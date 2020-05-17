@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Identity.API.Query.ViewModels
+namespace Photography.Services.Identity.API.Query.ViewModels
 {
-    public class UserViewModel
+    public class UserViewModel : BaseUserViewModel
     {
-        public Guid Id { get; set; }
-        public string Nickname { get; set; }
         public string Avatar { get; set; }
         public UserType? UserType { get; set; }
         public string UserName { get; set; }
@@ -24,6 +22,12 @@ namespace Identity.API.Query.ViewModels
         public int Score { get; set; }
         public string Code { get; set; }
         public bool RealNameRegistered { get; set; }
+    }
+
+    public class BaseUserViewModel
+    {
+        public Guid Id { get; set; }
+        public string Nickname { get; set; }
     }
 
     public enum UserType

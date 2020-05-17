@@ -2,10 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Photography.Services.Identity.API.Query.EF</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Identity.API.Query\Identity.API.Query.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Domain.SeedWork">
+      <HintPath>..\..\..\..\..\Arise\DDD\Infrastructure.Data.EF\bin\Debug\netcoreapp3.1\Domain.SeedWork.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

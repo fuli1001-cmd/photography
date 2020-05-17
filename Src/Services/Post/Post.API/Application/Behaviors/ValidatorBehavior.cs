@@ -1,8 +1,8 @@
-﻿using FluentValidation;
+﻿using Arise.DDD.Domain.SeedWork.Exceptions;
+using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Photography.Services.Post.API.Extensions;
-using Photography.Services.Post.Domain.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +38,7 @@ namespace Photography.Services.Post.API.Application.Behaviors
             {
                 _logger.LogWarning("Validation errors - {CommandType} - Command: {@Command} - Errors: {@ValidationErrors}", typeName, request, failures);
 
-                throw new PostDomainException(
+                throw new DomainException(
                     $"Command Validation Errors for type {typeof(TRequest).Name}", new ValidationException("Validation exception", failures));
             }
 

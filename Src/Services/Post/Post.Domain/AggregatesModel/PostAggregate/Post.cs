@@ -1,6 +1,6 @@
-﻿using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
+﻿using Arise.DDD.Domain.SeedWork;
+using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggregate;
-using Photography.Services.Post.Domain.Seedwork;
 using System;
 using System.Collections.Generic;
 using System.Linq;

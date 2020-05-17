@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Photography.Services.Post.API.Application.Commands;
+using Photography.Services.Post.API.Application.Commands.PublishPost;
 using System;
 using System.Collections.Generic;
 using System.Linq;

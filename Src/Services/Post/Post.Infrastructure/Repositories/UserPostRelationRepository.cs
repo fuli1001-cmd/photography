@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Arise.DDD.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggregate;
-using Photography.Services.Post.Infrastructure.EF;
+using Photography.Services.Post.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Photography.Services.Post.Infrastructure.Repositories
 {
-    public class UserPostRelationRepository : EfRepository<UserPostRelation>, IUserPostRelationRepository
+    public class UserPostRelationRepository : EfRepository<UserPostRelation, PostContext>, IUserPostRelationRepository
     {
         public UserPostRelationRepository(PostContext context) : base(context)
         {

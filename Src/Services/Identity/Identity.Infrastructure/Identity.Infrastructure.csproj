@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Photography.Services.Identity.Infrastructure</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Domain.SeedWork">
+      <HintPath>..\..\..\..\..\Arise\DDD\Infrastructure.Data.EF\bin\Debug\netcoreapp3.1\Domain.SeedWork.dll</HintPath>
+    </Reference>
+    <Reference Include="Infrastructure.Data.EF">
+      <HintPath>..\..\..\..\..\Arise\DDD\Infrastructure.Data.EF\bin\Debug\netcoreapp3.1\Infrastructure.Data.EF.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

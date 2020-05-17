@@ -1,7 +1,7 @@
-﻿using Autofac;
+﻿using Arise.DDD.Domain.SeedWork;
+using Autofac;
 using Photography.Services.Post.API.Query;
 using Photography.Services.Post.API.Query.EF;
-using Photography.Services.Post.Domain.Seedwork;
 using Photography.Services.Post.Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;

@@ -32,7 +32,7 @@ namespace Photography.Services.Post.API.Application.Commands.LikePost
             if (userPostRelation == null)
             {
                 userPostRelation = new UserPostRelation(userId, request.PostId, UserPostRelationType.Like);
-                await _userPostRelationRepository.AddAsync(userPostRelation);
+                _userPostRelationRepository.Add(userPostRelation);
                 return await _userPostRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
             }
             else

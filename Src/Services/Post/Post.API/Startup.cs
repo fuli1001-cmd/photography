@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Arise.DDD.API.Filters;
+using Arise.DDD.Infrastructure.Extensions;
 using Autofac;
 using AutoMapper;
 using FluentValidation.AspNetCore;
@@ -19,13 +21,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Photography.Services.Post.API.Application.Behaviors;
 using Photography.Services.Post.API.Application.Commands;
+using Photography.Services.Post.API.Application.Commands.PublishPost;
 using Photography.Services.Post.API.Application.Validators;
 using Photography.Services.Post.API.Infrastructure.AutofacModules;
-using Photography.Services.Post.API.Infrastructure.Filters;
 using Photography.Services.Post.API.Query.MapperProfiles;
 using Photography.Services.Post.API.Query.ViewModels;
 using Photography.Services.Post.API.Settings;
-using Photography.Services.Post.Infrastructure.EF.Extensions;
+using Photography.Services.Post.Infrastructure;
 
 namespace Photography.Services.Post.API
 {
@@ -44,21 +46,17 @@ namespace Photography.Services.Post.API
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer("Bearer", options =>
                 {
-                    options.Authority = "https://localhost:10001";
-                    options.Audience = "Photography.Post.API";
+                    options.Authority = Configuration["Auth:Authority"];
+                    options.Audience = Configuration["Auth:Audience"];
                 });
 
             services.AddHttpContextAccessor();
-
-            services.Configure<StreamingSettings>(Configuration.GetSection("StreamingSettings"));
-            services.Configure<ServerSettings>(Configuration.GetSection("ServerSettings"));
 
             services.AddMediatR(typeof(PublishPostCommandHandler));
 
             services.AddControllers(options =>
             {
                 options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-                options.Filters.Add(typeof(DisableFormValueModelBindingAttribute));
             })
             .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<PublishPostCommandValidator>());
 
@@ -79,7 +77,7 @@ namespace Photography.Services.Post.API
 
             //var dbSettings = new DbSettings();
             //Configuration.GetSection("DbSettings").Bind(dbSettings);
-            services.AddDataAccessServices(Configuration.GetConnectionString("PostConnection"), typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
+            services.AddSqlDataAccessServices<PostContext>(Configuration.GetConnectionString("PostConnection"), typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
 
             services.AddAutoMapper(typeof(PostViewModelProfile).Assembly);
 

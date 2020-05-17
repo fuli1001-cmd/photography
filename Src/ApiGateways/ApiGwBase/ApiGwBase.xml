@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ApiGwBase</name>
+    </assembly>
+    <members>
+        <member name="T:Photography.ApiGateways.ApiGwBase.Controllers.SettingsController">
+            <summary>
+            设置控制器
+            </summary>
+        </member>
+        <member name="M:Photography.ApiGateways.ApiGwBase.Controllers.SettingsController.GetServerSettings">
+            <summary>
+            获取配置信息
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.ChatServer">
+            <summary>
+            聊天服务器地址
+            </summary>
+        </member>
+        <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.FileServer">
+            <summary>
+            文件服务器地址
+            </summary>
+        </member>
+        <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.AgoraAppId">
+            <summary>
+            声网appId
+            </summary>
+        </member>
+        <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.TrtcAppId">
+            <summary>
+            腾讯语音appId
+            </summary>
+        </member>
+        <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.TrtcEnabled">
+            <summary>
+            腾讯语音是否启用
+            </summary>
+        </member>
+    </members>
+</doc>

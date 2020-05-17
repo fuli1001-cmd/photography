@@ -6,8 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Arise.DDD.Infrastructure" Version="1.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Post.Domain\Post.Domain.csproj" />
-    <ProjectReference Include="..\Post.Infrastructure.EF\Post.Infrastructure.EF.csproj" />
   </ItemGroup>
 
 </Project>

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Photography.Services.Post.Infrastructure.EF;
+using Photography.Services.Post.Infrastructure;
 
 namespace Photography.Services.Post.API.Infrastructure.Migrations
 {
@@ -15,7 +15,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.3")
+                .HasAnnotation("ProductVersion", "3.1.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -41,7 +41,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<DateTime>("Timestamp")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 5, 14, 10, 9, 52, 622, DateTimeKind.Utc).AddTicks(7618));
+                        .HasDefaultValue(new DateTime(2020, 5, 16, 10, 20, 30, 869, DateTimeKind.Utc).AddTicks(3834));
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -125,7 +125,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<DateTime>("Timestamp")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 5, 14, 10, 9, 52, 612, DateTimeKind.Utc).AddTicks(958));
+                        .HasDefaultValue(new DateTime(2020, 5, 16, 10, 20, 30, 832, DateTimeKind.Utc).AddTicks(4778));
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -153,12 +153,13 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("ContentType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PostAttachmentType")
-                        .HasColumnType("int");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uniqueidentifier");
@@ -173,27 +174,6 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.ToTable("PostAttachments");
                 });
 
-            modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.PostAggregate.PostForUser", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("PostId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PostId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("PostsForUsers");
-                });
-
             modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -203,63 +183,11 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<string>("Avatar")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("Birthday")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("City")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("FollowerCount")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
-
-                    b.Property<int>("FollowingCount")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
-
-                    b.Property<bool?>("Gender")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("LikedCount")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
-
                     b.Property<string>("Nickname")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Phonenumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Province")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("RealNameRegistered")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<int>("Score")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
-
-                    b.Property<string>("Sign")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserType")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
+                    b.Property<int?>("UserType")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -285,6 +213,30 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.HasIndex("FollowerId");
 
                     b.ToTable("UserRelations");
+                });
+
+            modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggregate.UserPostRelation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("UserPostRelationType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserPostRelations");
                 });
 
             modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.PostAggregate.Comment", b =>
@@ -330,21 +282,6 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.PostAggregate.PostForUser", b =>
-                {
-                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.PostAggregate.Post", "Post")
-                        .WithMany("PostForUsers")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "User")
-                        .WithMany("PostForUsers")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.UserRelation", b =>
                 {
                     b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "FollowedUser")
@@ -356,6 +293,21 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "Follower")
                         .WithMany("Followers")
                         .HasForeignKey("FollowerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggregate.UserPostRelation", b =>
+                {
+                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.PostAggregate.Post", "Post")
+                        .WithMany("UserPostRelations")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "User")
+                        .WithMany("UserPostRelations")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
-namespace Photography.Services.Post.API.Application.Commands
+namespace Photography.Services.Post.API.Application.Commands.LikePost
 {
     [DataContract]
     public class LikePostCommand : IRequest<bool>

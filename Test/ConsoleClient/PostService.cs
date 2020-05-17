@@ -15,7 +15,7 @@ namespace ConsoleClient
 
         public PostService(HttpClient client)
         {
-            client.BaseAddress = new Uri("https://localhost:5001/");
+            client.BaseAddress = new Uri("https://localhost:6001/");
             Client = client;
         }
 
@@ -29,6 +29,7 @@ namespace ConsoleClient
 
                 response.EnsureSuccessStatusCode();
 
+                Console.WriteLine("成功");
                 return null;
                 //return JsonConvert.DeserializeObject<List<PostViewModel>>(await response.Content.ReadAsStringAsync());
             }

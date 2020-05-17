@@ -1,4 +1,4 @@
-﻿using Photography.Services.Post.Domain.Seedwork;
+﻿using Arise.DDD.Domain.SeedWork;
 using System;
 using System.Collections.Generic;
 using System.Text;

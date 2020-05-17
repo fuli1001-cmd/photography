@@ -1,5 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Photography.Services.Identity.API.Query.Interfaces;
+using Photography.Services.Identity.API.Query.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
