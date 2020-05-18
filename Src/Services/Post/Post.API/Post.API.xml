@@ -4,22 +4,22 @@
         <name>Post.API</name>
     </assembly>
     <members>
-        <member name="T:Photography.Services.Post.API.Application.Commands.PublishPostCommand">
+        <member name="P:Photography.Services.Post.API.Application.Commands.LikePost.LikePostCommand.PostId">
             <summary>
-            创建帖子
+            点赞的帖子id
             </summary>
         </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPostCommand.Text">
+        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.PublishPostCommand.Text">
             <summary>
             文字描述
             </summary>
         </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPostCommand.Commentable">
+        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.PublishPostCommand.Commentable">
             <summary>
             是否允许评论
             </summary>
         </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPostCommand.ForwardType">
+        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.PublishPostCommand.ForwardType">
             <summary>
             转发类型
             0： 可转发
@@ -27,7 +27,7 @@
             2：仅好友可转发
             </summary>
         </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPostCommand.ShareType">
+        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.PublishPostCommand.ShareType">
             <summary>
             分享类型
             0： 可分享
@@ -35,7 +35,7 @@
             2：仅好友可分享
             </summary>
         </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPostCommand.Visibility">
+        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.PublishPostCommand.Visibility">
             <summary>
             谁可以看
             0：公开
@@ -44,64 +44,69 @@
             3：密码查看
             </summary>
         </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPostCommand.ViewPassword">
+        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.PublishPostCommand.ViewPassword">
             <summary>
             查看密码
             </summary>
         </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPostCommand.friendIds">
+        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.PublishPostCommand.friendIds">
             <summary>
             可查看帖子的好友id数组
             </summary>
         </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPostCommand.attachments">
+        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.PublishPostCommand.attachments">
             <summary>
             附件数组
             </summary>
         </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPostCommand.Province">
+        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.PublishPostCommand.Province">
             <summary>
             省
             </summary>
         </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPostCommand.City">
+        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.PublishPostCommand.City">
             <summary>
             市
             </summary>
         </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPostCommand.Latitude">
+        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.PublishPostCommand.Latitude">
             <summary>
             纬度
             </summary>
         </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPostCommand.Longitude">
+        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.PublishPostCommand.Longitude">
             <summary>
             经度
             </summary>
         </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPostCommand.LocationName">
+        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.PublishPostCommand.LocationName">
             <summary>
             地址名称
             </summary>
         </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPostCommand.Address">
+        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.PublishPostCommand.Address">
             <summary>
             街道地址
             </summary>
         </member>
-        <member name="T:Photography.Services.Post.API.Application.Commands.Attachment">
+        <member name="T:Photography.Services.Post.API.Application.Commands.PublishPost.Attachment">
             <summary>
             附件
             </summary>
         </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.Attachment.Name">
+        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.Attachment.Name">
             <summary>
             附件文件名
             </summary>
         </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.Attachment.Text">
+        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.Attachment.Text">
             <summary>
             附件描述
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.Attachment.ContentType">
+            <summary>
+            文件类型
             </summary>
         </member>
         <member name="T:Photography.Services.Post.API.Controllers.PostsController">
@@ -129,38 +134,28 @@
             <param name="city"></param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.PublishPostAsync(Photography.Services.Post.API.Application.Commands.PublishPostCommand)">
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetMyPostsAsync">
+            <summary>
+            我的帖子
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetLikedPostsAsync">
+            <summary>
+            我赞过的帖子
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.PublishPostAsync(Photography.Services.Post.API.Application.Commands.PublishPost.PublishPostCommand)">
             <summary>
             创建帖子
             </summary>
             <param name="publishPostCommand"></param>
             <returns></returns>
         </member>
-        <member name="T:Photography.Services.Post.API.Controllers.SettingsController">
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.LikePostAsync(Photography.Services.Post.API.Application.Commands.LikePost.LikePostCommand)">
             <summary>
-            设置控制器
-            </summary>
-        </member>
-        <member name="M:Photography.Services.Post.API.Controllers.SettingsController.GetServerSettings">
-            <summary>
-            获取配置信息
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:Photography.Services.Post.API.Controllers.UsersController">
-            <summary>
-            用户控制器
-            </summary>
-        </member>
-        <member name="M:Photography.Services.Post.API.Controllers.UsersController.GetCurrentUserAsync">
-            <summary>
-            获取当前用户信息
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Photography.Services.Post.API.Controllers.UsersController.GetFriendsAsync">
-            <summary>
-            获取朋友列表
+            赞一个帖子
             </summary>
             <returns></returns>
         </member>

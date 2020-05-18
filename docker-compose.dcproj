@@ -3,7 +3,7 @@
   <PropertyGroup Label="Globals">
     <ProjectVersion>2.1</ProjectVersion>
     <DockerTargetOS>Linux</DockerTargetOS>
-    <ProjectGuid>ea13a24f-14b5-4d15-9b97-8606ac304385</ProjectGuid>
+    <ProjectGuid>91e929b6-3fea-48df-a8fd-fa04aab65185</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}</DockerServiceUrl>
     <DockerServiceName>apigwbase</DockerServiceName>

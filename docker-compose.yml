@@ -7,16 +7,16 @@ services:
       context: .
       dockerfile: Src/ApiGateways/ApiGwBase/Dockerfile
 
-  user.api:
-    image: fuli1001/photography-userapi:latest
-    build:
-      context: .
-      dockerfile: Src/Services/User/User.API/Dockerfile
-
-
   post.api:
     image: fuli1001/photography-postapi:latest
     build:
       context: .
       dockerfile: Src/Services/Post/Post.API/Dockerfile
+
+
+  user.api:
+    image: fuli1001/photography-userapi:latest
+    build:
+      context: .
+      dockerfile: Src/Services/User/User.API/Dockerfile
 

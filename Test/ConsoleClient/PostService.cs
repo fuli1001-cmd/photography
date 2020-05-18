@@ -15,7 +15,7 @@ namespace ConsoleClient
 
         public PostService(HttpClient client)
         {
-            client.BaseAddress = new Uri("https://localhost:6001/");
+            client.BaseAddress = new Uri("http://192.168.99.100:44310/");
             Client = client;
         }
 
@@ -25,7 +25,7 @@ namespace ConsoleClient
             {
                 Client.SetBearerToken(accessToken);
 
-                var response = await Client.GetAsync("/api/users/friends?api-version=1.0");
+                var response = await Client.GetAsync("/api/posts/hot?api-version=1.0");
 
                 response.EnsureSuccessStatusCode();
 

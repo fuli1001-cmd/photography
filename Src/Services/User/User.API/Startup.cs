@@ -43,6 +43,7 @@ namespace Photography.Services.User.API
                 {
                     options.Authority = Configuration["Auth:Authority"];
                     options.Audience = Configuration["Auth:Audience"];
+                    options.RequireHttpsMetadata = false;
                 });
 
             services.AddHttpContextAccessor();
@@ -76,7 +77,7 @@ namespace Photography.Services.User.API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Photography.User API", Version = "v1" });
-                c.IncludeXmlComments(string.Format(@"{0}\User.API.xml", System.AppDomain.CurrentDomain.BaseDirectory));
+                c.IncludeXmlComments(string.Format(@"{0}/User.API.xml", System.AppDomain.CurrentDomain.BaseDirectory));
                 c.DescribeAllEnumsAsStrings();
             });
         }
@@ -89,7 +90,7 @@ namespace Photography.Services.User.API
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 

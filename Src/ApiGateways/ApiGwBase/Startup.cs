@@ -35,6 +35,7 @@ namespace Photography.ApiGateways.ApiGwBase
                 {
                     options.Authority = Configuration["Auth:Authority"];
                     options.Audience = Configuration["Auth:Audience"];
+                    options.RequireHttpsMetadata = false;
                 });
 
             services.AddOcelot(Configuration);
@@ -58,7 +59,7 @@ namespace Photography.ApiGateways.ApiGwBase
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Photography.ApiGateway API", Version = "v1" });
-                c.IncludeXmlComments(string.Format(@"{0}\ApiGwBase.xml", System.AppDomain.CurrentDomain.BaseDirectory));
+                c.IncludeXmlComments(string.Format(@"{0}/ApiGwBase.xml", System.AppDomain.CurrentDomain.BaseDirectory));
                 c.DescribeAllEnumsAsStrings();
             });
         }

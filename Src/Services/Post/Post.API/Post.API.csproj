@@ -49,4 +49,9 @@
     <ProjectReference Include="..\Post.Domain\Post.Domain.csproj" />
     <ProjectReference Include="..\Post.Infrastructure\Post.Infrastructure.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Post.API.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

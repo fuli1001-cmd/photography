@@ -28,6 +28,7 @@ using Photography.Services.Post.API.Query.MapperProfiles;
 using Photography.Services.Post.API.Query.ViewModels;
 using Photography.Services.Post.API.Settings;
 using Photography.Services.Post.Infrastructure;
+using Serilog;
 
 namespace Photography.Services.Post.API
 {
@@ -43,11 +44,57 @@ namespace Photography.Services.Post.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //try
+            //{
+            //    Log.Logger.Information("**************ASPNETCORE_ENVIRONMENT: {ASPNETCORE_ENVIRONMENT}*************", Configuration.GetValue<string>("ASPNETCORE_ENVIRONMENT"));
+            //}
+            //catch(Exception ex)
+            //{
+            //    Log.Logger.Information("ASPNETCORE_ENVIRONMENT error: " + ex.Message);
+            //    if (ex.InnerException != null)
+            //        Log.Logger.Information("ASPNETCORE_ENVIRONMENT error: " + ex.InnerException.Message);
+            //}
+            //try
+            //{
+            //    Log.Logger.Information("**************Authority: {Authority}*************", Configuration.GetValue<string>("Auth:Authority"));
+            //}
+            //catch (Exception ex)
+            //{
+            //    Log.Logger.Information("Authority error: " + ex.Message);
+            //    if (ex.InnerException != null)
+            //        Log.Logger.Information("Authority error: " + ex.InnerException.Message);
+            //}
+            //try
+            //{
+            //    Log.Logger.Information("**************Audience: {Audience}*************", Configuration.GetValue<string>("Auth:Audience"));
+            //}
+            //catch (Exception ex)
+            //{
+            //    Log.Logger.Information("Audience error: " + ex.Message);
+            //    if (ex.InnerException != null)
+            //        Log.Logger.Information("Audience error: " + ex.InnerException.Message);
+            //}
+            //try
+            //{
+            //    Log.Logger.Information("**************PostConnection: {PostConnection}*************", Configuration.GetConnectionString("PostConnection"));
+            //}
+            //catch (Exception ex)
+            //{
+            //    Log.Logger.Information("PostConnection error: " + ex.Message);
+            //    if (ex.InnerException != null)
+            //        Log.Logger.Information("PostConnection error: " + ex.InnerException.Message);
+            //}
+            var authority = Configuration.GetValue<string>("Auth:Authority");
+            var audience = Configuration.GetValue<string>("Auth:Audience");
+            Log.Logger.Information("**************options.Authority: {optionsAuthority}*************", authority);
+            Log.Logger.Information("**************options.Audience: {optionsAudience}*************", audience);
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer("Bearer", options =>
                 {
-                    options.Authority = Configuration["Auth:Authority"];
-                    options.Audience = Configuration["Auth:Audience"];
+                    options.Authority = authority;
+                    options.Audience = audience;
+                    options.RequireHttpsMetadata = false;
                 });
 
             services.AddHttpContextAccessor();
@@ -84,7 +131,7 @@ namespace Photography.Services.Post.API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Photography.Post API", Version = "v1" });
-                c.IncludeXmlComments(string.Format(@"{0}\Post.API.xml", System.AppDomain.CurrentDomain.BaseDirectory));
+                c.IncludeXmlComments(string.Format(@"{0}/Post.API.xml", System.AppDomain.CurrentDomain.BaseDirectory));
                 c.DescribeAllEnumsAsStrings();
             });
         }
@@ -97,7 +144,7 @@ namespace Photography.Services.Post.API
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 

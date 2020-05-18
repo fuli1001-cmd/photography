@@ -49,7 +49,15 @@ namespace ConsoleClient
         {
             // discover endpoints from metadata
             var client = new HttpClient();
-            var disco = await client.GetDiscoveryDocumentAsync("https://localhost:10001");
+            //var disco = await client.GetDiscoveryDocumentAsync("http://192.168.99.100:5105");
+            var disco = await client.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
+            {
+                Address = "http://192.168.99.100:5105",
+                Policy =
+                {
+                    RequireHttps = false
+                }
+            });
             if (disco.IsError)
             {
                 Console.WriteLine(disco.Error);

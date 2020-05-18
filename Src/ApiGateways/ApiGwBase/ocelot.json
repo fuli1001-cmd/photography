@@ -2,11 +2,11 @@
   "ReRoutes": [
     {
       "DownstreamPathTemplate": "/api/posts/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5001
+          "Host": "postapi",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/api/posts/{everything}",
@@ -14,11 +14,11 @@
     },
     {
       "DownstreamPathTemplate": "/api/users/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 6001
+          "Host": "userapi",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/api/users/{everything}",
@@ -26,11 +26,11 @@
     },
     {
       "DownstreamPathTemplate": "/api/streaming",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 10011
+          "Host": "fileuploadservice",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/api/streaming",
@@ -38,6 +38,5 @@
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:4001"
   }
 }
