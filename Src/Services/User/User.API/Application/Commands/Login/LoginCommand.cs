@@ -18,5 +18,9 @@ namespace Photography.Services.User.API.Application.Commands.Login
         [DataMember]
         [Required]
         public string Password { get; set; }
+
+        [DataMember]
+        [Required]
+        public int ClientType { get; set; }
     }
 }

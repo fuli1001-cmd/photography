@@ -10,7 +10,7 @@ using Photography.Services.Post.Infrastructure;
 namespace Photography.Services.Post.API.Infrastructure.Migrations
 {
     [DbContext(typeof(PostContext))]
-    [Migration("20200516102031_Init")]
+    [Migration("20200519150631_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,7 +43,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<DateTime>("Timestamp")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 5, 16, 10, 20, 30, 869, DateTimeKind.Utc).AddTicks(3834));
+                        .HasDefaultValue(new DateTime(2020, 5, 19, 15, 6, 31, 219, DateTimeKind.Utc).AddTicks(1076));
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -65,10 +65,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("City")
+                    b.Property<string>("CityCode")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CommentCount")
@@ -103,9 +100,6 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<double?>("Longitude")
                         .HasColumnType("float");
 
-                    b.Property<string>("Province")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("Score")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
@@ -127,7 +121,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<DateTime>("Timestamp")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 5, 16, 10, 20, 30, 832, DateTimeKind.Utc).AddTicks(4778));
+                        .HasDefaultValue(new DateTime(2020, 5, 19, 15, 6, 31, 189, DateTimeKind.Utc).AddTicks(9324));
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");

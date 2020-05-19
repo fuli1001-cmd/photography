@@ -34,8 +34,8 @@ namespace Photography.Services.Post.API.Application.Commands.PublishPost
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var attachments = request.attachments.Select(a => new PostAttachment(a.Name, a.Text, a.ContentType)).ToList();
             var post = new Domain.AggregatesModel.PostAggregate.Post(request.Text, request.Commentable, request.ForwardType, request.ShareType,
-                request.Visibility, request.ViewPassword, request.Province, request.City, request.Latitude, request.Longitude, request.LocationName,
-                request.Address, request.friendIds, attachments, Guid.Parse(userId));
+                request.Visibility, request.ViewPassword, request.Latitude, request.Longitude, request.LocationName,
+                request.CityCode, request.friendIds, attachments, Guid.Parse(userId));
             _postRepository.Add(post);
             await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
             _postRepository.LoadUser(post);

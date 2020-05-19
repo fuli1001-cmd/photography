@@ -13,7 +13,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
-using Photography.ApiGateways.ApiGwBase.Services;
 using Photography.ApiGateways.ApiGwBase.Settings;
 
 namespace Photography.ApiGateways.ApiGwBase
@@ -63,8 +62,6 @@ namespace Photography.ApiGateways.ApiGwBase
                 c.IncludeXmlComments(string.Format(@"{0}/ApiGwBase.xml", System.AppDomain.CurrentDomain.BaseDirectory));
                 c.DescribeAllEnumsAsStrings();
             });
-
-            services.AddSingleton(typeof(IRedisService), typeof(RedisService));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

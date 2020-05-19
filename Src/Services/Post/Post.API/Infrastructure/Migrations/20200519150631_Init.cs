@@ -27,7 +27,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     Text = table.Column<string>(nullable: true),
-                    Timestamp = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2020, 5, 16, 10, 20, 30, 832, DateTimeKind.Utc).AddTicks(4778)),
+                    Timestamp = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2020, 5, 19, 15, 6, 31, 189, DateTimeKind.Utc).AddTicks(9324)),
                     LikeCount = table.Column<int>(nullable: false, defaultValue: 0),
                     ShareCount = table.Column<int>(nullable: false, defaultValue: 0),
                     CommentCount = table.Column<int>(nullable: false, defaultValue: 0),
@@ -37,12 +37,10 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     ShareType = table.Column<int>(nullable: false, defaultValue: 0),
                     Visibility = table.Column<int>(nullable: false, defaultValue: 0),
                     ViewPassword = table.Column<string>(nullable: true),
-                    Province = table.Column<string>(nullable: true),
-                    City = table.Column<string>(nullable: true),
                     Latitude = table.Column<double>(nullable: true),
                     Longitude = table.Column<double>(nullable: true),
                     LocationName = table.Column<string>(nullable: true),
-                    Address = table.Column<string>(nullable: true),
+                    CityCode = table.Column<string>(nullable: true),
                     ForwardedPostId = table.Column<Guid>(nullable: true),
                     UserId = table.Column<Guid>(nullable: false)
                 },
@@ -95,7 +93,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     Text = table.Column<string>(nullable: false),
                     Likes = table.Column<int>(nullable: false),
-                    Timestamp = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2020, 5, 16, 10, 20, 30, 869, DateTimeKind.Utc).AddTicks(3834)),
+                    Timestamp = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2020, 5, 19, 15, 6, 31, 219, DateTimeKind.Utc).AddTicks(1076)),
                     PostId = table.Column<Guid>(nullable: false),
                     UserId = table.Column<Guid>(nullable: false),
                     ParentCommentId = table.Column<Guid>(nullable: true)

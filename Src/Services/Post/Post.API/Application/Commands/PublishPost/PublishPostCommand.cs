@@ -73,16 +73,10 @@ namespace Photography.Services.Post.API.Application.Commands.PublishPost
         public List<Attachment> attachments { get; set; }
 
         /// <summary>
-        /// 省
+        /// 城市代码
         /// </summary>
         [DataMember]
-        public string Province { get; set; }
-
-        /// <summary>
-        /// 市
-        /// </summary>
-        [DataMember]
-        public string City { get; set; }
+        public string CityCode { get; set; }
 
         /// <summary>
         /// 纬度
@@ -101,12 +95,6 @@ namespace Photography.Services.Post.API.Application.Commands.PublishPost
         /// </summary>
         [DataMember]
         public string LocationName { get; set; }
-
-        /// <summary>
-        /// 街道地址
-        /// </summary>
-        [DataMember]
-        public string Address { get; set; }
     }
 
     /// <summary>

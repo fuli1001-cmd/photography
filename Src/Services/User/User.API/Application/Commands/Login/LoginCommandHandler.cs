@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Photography.Services.User.API.Infrastructure.Redis;
 using Photography.Services.User.API.Settings;
 using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
@@ -34,16 +35,13 @@ namespace Photography.Services.User.API.Application.Commands.Login
 
         public async Task<string> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            //var accessToken = await GetAccessTokenAsync(request);
+            var accessToken = await GetAccessTokenAsync(request);
             //if (!string.IsNullOrEmpty(accessToken))
             //{
             //    var user = await _userRepository.GetByUserNameAsync(request.UserName);
-            //    if (user != null)
-            //    {
-            //        var chatServerToken = GetChatServerToken(user.Id);
-            //    }
+            //    WriteChatServerUserToRedis(user, request.ClientType);
             //}
-            throw new NotImplementedException();
+            return accessToken;
         }
 
         private async Task<string> GetAccessTokenAsync(LoginCommand loginCommand)
@@ -83,11 +81,21 @@ namespace Photography.Services.User.API.Application.Commands.Login
             return tokenResponse.AccessToken;
         }
 
-        private string GetChatServerToken(int userId, string password)
+        private void WriteChatServerUserToRedis(Domain.AggregatesModel.UserAggregate.User user, int clientType)
         {
-            //var content = userId + "_" + password + "_" + CommonUtil.GetTimestamp(DateTime.Now);
-            //return Encryptor.EncryptDES(content, ENCRYPT_KEY);
-            return null;
+            if (user != null)
+            {
+                var unixEpochTime = new DateTime(1970, 1, 1, 0, 0, 0);
+                var chatServerUser = new ChatServerUser
+                {
+                    userId = user.ChatServerUserId,
+                    username = user.UserName,
+                    nickname = user.Nickname,
+                    clientType = clientType,
+                    loginTime = (long)(DateTime.UtcNow - unixEpochTime).TotalSeconds
+                };
+                _redisService.Set(user.ChatServerUserId.ToString(), JsonConvert.SerializeObject(chatServerUser));
+            }
         }
     }
 }

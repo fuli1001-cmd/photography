@@ -59,14 +59,9 @@
             附件数组
             </summary>
         </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.PublishPostCommand.Province">
+        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.PublishPostCommand.CityCode">
             <summary>
-            省
-            </summary>
-        </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.PublishPostCommand.City">
-            <summary>
-            市
+            城市代码
             </summary>
         </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.PublishPostCommand.Latitude">
@@ -82,11 +77,6 @@
         <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.PublishPostCommand.LocationName">
             <summary>
             地址名称
-            </summary>
-        </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.PublishPost.PublishPostCommand.Address">
-            <summary>
-            街道地址
             </summary>
         </member>
         <member name="T:Photography.Services.Post.API.Application.Commands.PublishPost.Attachment">
@@ -126,12 +116,11 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetSameCityPostsAsync(System.String,System.String)">
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetSameCityPostsAsync(System.String)">
             <summary>
             获取同城帖子列表
             </summary>
-            <param name="province"></param>
-            <param name="city"></param>
+            <param name="cityCode">城市代码</param>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetMyPostsAsync">

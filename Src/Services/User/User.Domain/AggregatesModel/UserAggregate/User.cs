@@ -24,6 +24,8 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         public int Score { get; private set; }
         public string Code { get; private set; }
         public bool RealNameRegistered { get; private set; }
+        // ChatServer needed Property
+        public int ChatServerUserId { get; private set; }
 
         public List<UserRelation> Followers { get; private set; }
         public List<UserRelation> FollowedUsers { get; private set; }

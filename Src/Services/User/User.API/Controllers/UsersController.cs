@@ -41,8 +41,14 @@ namespace Photography.Services.User.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<string>> LoginAsync([FromBody] LoginCommand loginCommand)
         {
-            var token = await _mediator.Send(loginCommand);
-            return StatusCode((int)HttpStatusCode.Created, ResponseWrapper.CreateOkResponseWrapper(token));
+            var accessToken = await _mediator.Send(loginCommand);
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                var code = (int)HttpStatusCode.BadRequest;
+                return StatusCode(code, ResponseWrapper.CreateErrorResponseWrapper(code, new string[] { "登录失败" }));
+            }
+            else
+                return Ok(ResponseWrapper.CreateOkResponseWrapper(accessToken));
         }
 
         /// <summary>

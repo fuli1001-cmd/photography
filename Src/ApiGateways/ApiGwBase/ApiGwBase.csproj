@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>G:\aruis\photography\Src\ApiGateways\ApiGwBase\ApiGwBase.xml</DocumentationFile>
+    <DocumentationFile>.\ApiGwBase.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

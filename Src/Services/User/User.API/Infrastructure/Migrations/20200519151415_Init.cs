@@ -27,7 +27,9 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                     FollowerCount = table.Column<int>(nullable: false, defaultValue: 0),
                     Score = table.Column<int>(nullable: false, defaultValue: 0),
                     Code = table.Column<string>(nullable: false),
-                    RealNameRegistered = table.Column<bool>(nullable: false, defaultValue: false)
+                    RealNameRegistered = table.Column<bool>(nullable: false, defaultValue: false),
+                    ChatServerUserId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1")
                 },
                 constraints: table =>
                 {
