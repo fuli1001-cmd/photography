@@ -72,15 +72,14 @@ namespace Photography.Services.Post.API.Controllers
         /// <summary>
         /// 获取同城帖子列表
         /// </summary>
-        /// <param name="province"></param>
-        /// <param name="city"></param>
+        /// <param name="cityCode">城市代码</param>
         /// <returns></returns>
         [HttpGet]
-        [Route("samecity/{province}/{city}")]
+        [Route("samecity/{cityCode}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<SameCityPostViewModel>>> GetSameCityPostsAsync(string province, string city)
+        public async Task<ActionResult<IEnumerable<SameCityPostViewModel>>> GetSameCityPostsAsync(string cityCode)
         {
-            var posts = await _postQueries.GetSameCityPostsAsync(province, city);
+            var posts = await _postQueries.GetSameCityPostsAsync(cityCode);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
         }
 

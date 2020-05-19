@@ -23,6 +23,7 @@ using Photography.Services.User.API.Query.MapperProfiles;
 using Photography.Services.User.Infrastructure;
 using Arise.DDD.Infrastructure.Extensions;
 using Arise.DDD.API.Filters;
+using Photography.Services.User.API.Settings;
 
 namespace Photography.Services.User.API
 {
@@ -49,6 +50,9 @@ namespace Photography.Services.User.API
             services.AddHttpContextAccessor();
 
             services.AddMediatR(typeof(LikePostCommandHandler));
+
+            services.Configure<AuthSettings>(Configuration.GetSection("AuthSettings"));
+            services.Configure<RedisSettings>(Configuration.GetSection("RedisSettings"));
 
             services.AddControllers(options =>
             {

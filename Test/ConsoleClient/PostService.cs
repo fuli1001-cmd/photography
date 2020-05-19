@@ -15,7 +15,7 @@ namespace ConsoleClient
 
         public PostService(HttpClient client)
         {
-            client.BaseAddress = new Uri("http://192.168.99.100:44310/");
+            client.BaseAddress = new Uri("http://43.225.159.87:5101/");
             Client = client;
         }
 

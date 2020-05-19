@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 using Photography.Services.User.Infrastructure;
 using Arise.DDD.Infrastructure;
+using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Photography.Services.User.Infrastructure.Repositories
 {
@@ -12,6 +15,15 @@ namespace Photography.Services.User.Infrastructure.Repositories
         public UserRepository(UserContext context) : base(context)
         {
 
+        }
+
+        public async Task<Domain.AggregatesModel.UserAggregate.User> GetByUserNameAsync(string userName)
+        {
+            var users = await _context.Users.Where(u => u.UserName == userName).ToListAsync();
+            if (users.Count > 0)
+                return users[0];
+            else
+                return null;
         }
     }
 }

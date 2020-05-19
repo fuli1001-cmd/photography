@@ -1,0 +1,54 @@
+1. API swagger地址：
+ a). 帖子相关：http://43.225.159.87:5102/swagger/index.html
+ b). 用户相关：http://43.225.159.87:5103/swagger/index.html
+ c). 文件上传：http://43.225.159.87:5104/swagger/index.html
+ d). 获取配置信息：http://43.225.159.87:5101/swagger/index.html
+ 
+1. API的base url：http://43.225.159.87:5101/
+
+2. 登录相关（可使用现成的SDK登录：）
+ a). 认证服务器地址：http://43.225.159.87:5100/
+ b). ClientId： ro.client
+ c). ClientSecret： 511536EF-F270-4058-80CA-1C89C192F69A
+ d). Scope: "openid profile Photography.Post.API Photography.User.API Photography.ApiGateway Arise.FileUploadService"
+ e). 测试用户：
+	user1@qq.com
+	user2@qq.com
+	user3@qq.com
+	user4@qq.com
+	user5@qq.com
+ f). 密码均是Qwerty3.
+ e). 可使用现成的SDK登录，iOS：https://github.com/openid/AppAuth-iOS， Android：https://github.com/openid/AppAuth-Android
+ 
+ 
+Enums
+
+	public enum UserType
+    {
+        Photographer,
+        Model
+    }
+	
+	public enum ForwardType
+    {
+        Allowed,
+        Forbidden,
+        Friends
+    }
+
+    public enum ShareType
+    {
+        Allowed,
+        Forbidden,
+        Friends
+    }
+
+    public enum Visibility
+    {
+        Public,
+        Friends,
+        SelectedFriends,
+        Password
+    }
+ 
+

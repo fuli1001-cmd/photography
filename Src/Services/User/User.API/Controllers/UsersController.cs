@@ -4,11 +4,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Photography.Services.User.API.Application.Commands.Login;
 using Photography.Services.User.API.Query.Interfaces;
 using Photography.Services.User.API.Query.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Photography.Services.User.API.Controllers
@@ -28,6 +30,19 @@ namespace Photography.Services.User.API.Controllers
             _userQueries = userQueries ?? throw new ArgumentNullException(nameof(userQueries));
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        /// <summary>
+        /// 获取当前用户信息
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("login")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<string>> LoginAsync([FromBody] LoginCommand loginCommand)
+        {
+            var token = await _mediator.Send(loginCommand);
+            return StatusCode((int)HttpStatusCode.Created, ResponseWrapper.CreateOkResponseWrapper(token));
         }
 
         /// <summary>

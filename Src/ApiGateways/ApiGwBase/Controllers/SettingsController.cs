@@ -24,7 +24,8 @@ namespace Photography.ApiGateways.ApiGwBase.Controllers
         private readonly ILogger<SettingsController> _logger;
         private readonly IOptionsSnapshot<ServerSettings> _serverSettings;
 
-        public SettingsController(IOptionsSnapshot<ServerSettings> serverSettings, ILogger<SettingsController> logger)
+        public SettingsController(IOptionsSnapshot<ServerSettings> serverSettings, 
+            ILogger<SettingsController> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _serverSettings = serverSettings ?? throw new ArgumentNullException(nameof(serverSettings));

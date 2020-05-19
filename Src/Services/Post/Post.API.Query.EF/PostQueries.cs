@@ -78,13 +78,13 @@ namespace Photography.Services.Post.API.Query.EF
             return _mapper.Map<List<PostViewModel>>(await postsWithNavigationProperties.ToListAsync());
         }
 
-        public async Task<List<SameCityPostViewModel>> GetSameCityPostsAsync(string province, string city)
+        public async Task<List<SameCityPostViewModel>> GetSameCityPostsAsync(string cityCode)
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             var availablePosts = GetAvailablePosts(userId);
             var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(availablePosts);
-            var sameCityPosts = (await postsWithNavigationProperties.ToListAsync()).Where(p => p.Province?.ToLower() == province.ToLower() && p.City?.ToLower() == city.ToLower());
+            var sameCityPosts = (await postsWithNavigationProperties.ToListAsync()).Where(p => p.CityCode?.ToLower() == cityCode.ToLower());
             return _mapper.Map<List<SameCityPostViewModel>>(sameCityPosts);
 
             //var sameCityPosts = availablePosts.Where(p => p.Province.ToLower() == province.ToLower() && p.City.ToLower() == city.ToLower());

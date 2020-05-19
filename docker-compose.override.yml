@@ -5,7 +5,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
-      - Auth__Authority=http://192.168.99.100:5105
+      - Auth__Authority=http://43.225.159.87:5100
       - Auth__Audience=Photography.ApiGateway
       - ServerSettings__ChatServer=N/A
       - ServerSettings__FileServer=N/A
@@ -13,24 +13,27 @@ services:
       - ServerSettings__TrtcAppId=N/A
       - ServerSettings__TrtcEnabled=false
     ports:
-      - "44300:80"
+      - "5101:80"
       
   postapi:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
       - ConnectionStrings__PostConnection=Server=47.108.194.52;Database=Photography.Post;User Id=fuli;Password=fl511304;
-      - Auth__Authority=http://192.168.99.100:5105
+      - Auth__Authority=http://43.225.159.87:5100
       - Auth__Audience=Photography.Post.API
     ports:
-      - "44310:80"
+      - "5102:80"
 
   userapi:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
       - ConnectionStrings__UserConnection=Server=47.108.194.52;Database=Photography.User;User Id=fuli;Password=fl511304;
-      - Auth__Authority=http://192.168.99.100:5105
+      - Auth__Authority=http://43.225.159.87:5100
       - Auth__Audience=Photography.User.API
+      - Auth__ClientId=ro.client
+      - Auth__ClientSecret=511536EF-F270-4058-80CA-1C89C192F69A
+      - Auth__Scope=openid profile Photography.Post.API Photography.User.API Photography.ApiGateway Arise.FileUploadService
     ports:
-      - "44320:80"
+      - "5103:80"

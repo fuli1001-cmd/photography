@@ -52,7 +52,7 @@ namespace ConsoleClient
             //var disco = await client.GetDiscoveryDocumentAsync("http://192.168.99.100:5105");
             var disco = await client.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
             {
-                Address = "http://192.168.99.100:5105",
+                Address = "http://43.225.159.87:5100",
                 Policy =
                 {
                     RequireHttps = false
@@ -70,8 +70,8 @@ namespace ConsoleClient
                 ClientId = "ro.client",
                 ClientSecret = "511536EF-F270-4058-80CA-1C89C192F69A",
 
-                UserName = "4420533@qq.com",
-                Password = "Fl1001!@",
+                UserName = "user1@qq.com",
+                Password = "Qwerty3.",
                 Scope = "openid profile Photography.Post.API Photography.User.API Photography.ApiGateway Arise.FileUploadService"
             });
 

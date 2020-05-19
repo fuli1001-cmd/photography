@@ -25,12 +25,10 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         public string ViewPassword { get; private set; }
 
         #region location properties
-        public string Province { get; private set; }
-        public string City { get; private set; }
         public double? Latitude { get; private set; }
         public double? Longitude { get; private set; }
         public string LocationName { get; private set; }
-        public string Address { get; private set; }
+        public string CityCode { get; private set; }
         #endregion
 
         public Post ForwardedPost { get; private set; }
@@ -57,7 +55,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         }
 
         public Post(string text, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
-            string province, string city, double latitude, double longitude, string locationName, string address, 
+            double latitude, double longitude, string locationName, string cityCode, 
             List<Guid> friendIds, List<PostAttachment> postAttachments, Guid userId)
         {
             Text = text;
@@ -66,12 +64,10 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             ShareType = shareType;
             Visibility = visibility;
             ViewPassword = viewPassword;
-            Province = province;
-            City = city;
             Latitude = latitude;
             Longitude = longitude;
             LocationName = locationName;
-            Address = address;
+            CityCode = cityCode;
             _postAttachments = postAttachments;
             _userPostRelations = friendIds?.Select(id => new UserPostRelation(id, UserPostRelationType.View)).ToList();
             UserId = userId;
@@ -96,7 +92,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
     {
         Public,
         Friends,
-        SelectedFriends,
-        Password
+        Password,
+        SelectedFriends
     }
 }
