@@ -24,6 +24,8 @@ using Photography.Services.User.Infrastructure;
 using Arise.DDD.Infrastructure.Extensions;
 using Arise.DDD.API.Filters;
 using Photography.Services.User.API.Settings;
+using Photography.Services.User.API.Application.Commands.Login;
+using Photography.Services.User.API.Infrastructure.Redis;
 
 namespace Photography.Services.User.API
 {
@@ -42,17 +44,21 @@ namespace Photography.Services.User.API
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer("Bearer", options =>
                 {
-                    options.Authority = Configuration["Auth:Authority"];
-                    options.Audience = Configuration["Auth:Audience"];
+                    options.Authority = Configuration["AuthSettings:Authority"];
+                    options.Audience = Configuration["AuthSettings:Audience"];
                     options.RequireHttpsMetadata = false;
                 });
 
             services.AddHttpContextAccessor();
 
             services.AddMediatR(typeof(LikePostCommandHandler));
+            services.AddMediatR(typeof(LoginCommand));
+
+            services.AddSingleton(typeof(IRedisService), typeof(RedisService));
 
             services.Configure<AuthSettings>(Configuration.GetSection("AuthSettings"));
             services.Configure<RedisSettings>(Configuration.GetSection("RedisSettings"));
+            services.Configure<ServerSettings>(Configuration.GetSection("ServerSettings"));
 
             services.AddControllers(options =>
             {

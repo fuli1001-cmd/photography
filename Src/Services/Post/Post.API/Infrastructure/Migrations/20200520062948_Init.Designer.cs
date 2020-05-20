@@ -10,7 +10,7 @@ using Photography.Services.Post.Infrastructure;
 namespace Photography.Services.Post.API.Infrastructure.Migrations
 {
     [DbContext(typeof(PostContext))]
-    [Migration("20200519150631_Init")]
+    [Migration("20200520062948_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,10 +40,8 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("Timestamp")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 5, 19, 15, 6, 31, 219, DateTimeKind.Utc).AddTicks(1076));
+                    b.Property<double>("Timestamp")
+                        .HasColumnType("float");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -115,13 +113,16 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(0);
 
+                    b.Property<bool?>("ShowOriginalText")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("Timestamp")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 5, 19, 15, 6, 31, 189, DateTimeKind.Utc).AddTicks(9324));
+                    b.Property<double>("Timestamp")
+                        .HasColumnType("float");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");

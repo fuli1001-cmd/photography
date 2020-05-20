@@ -12,7 +12,7 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         public string Phonenumber { get; private set; }
         public string Avatar { get; private set; }
         public bool? Gender { get; private set; }
-        public DateTime? Birthday { get; private set; }
+        public double? Birthday { get; private set; }
         public UserType? UserType { get; private set; }
         public string Province { get; private set; }
         public string City { get; private set; }

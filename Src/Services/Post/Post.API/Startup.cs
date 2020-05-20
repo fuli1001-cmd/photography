@@ -44,8 +44,8 @@ namespace Photography.Services.Post.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var authority = Configuration.GetValue<string>("Auth:Authority");
-            var audience = Configuration.GetValue<string>("Auth:Audience");
+            var authority = Configuration.GetValue<string>("AuthSettings:Authority");
+            var audience = Configuration.GetValue<string>("AuthSettings:Audience");
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer("Bearer", options =>

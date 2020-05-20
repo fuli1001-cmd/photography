@@ -27,7 +27,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     Text = table.Column<string>(nullable: true),
-                    Timestamp = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2020, 5, 19, 15, 6, 31, 189, DateTimeKind.Utc).AddTicks(9324)),
+                    Timestamp = table.Column<double>(nullable: false),
                     LikeCount = table.Column<int>(nullable: false, defaultValue: 0),
                     ShareCount = table.Column<int>(nullable: false, defaultValue: 0),
                     CommentCount = table.Column<int>(nullable: false, defaultValue: 0),
@@ -37,6 +37,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     ShareType = table.Column<int>(nullable: false, defaultValue: 0),
                     Visibility = table.Column<int>(nullable: false, defaultValue: 0),
                     ViewPassword = table.Column<string>(nullable: true),
+                    ShowOriginalText = table.Column<bool>(nullable: true, defaultValue: true),
                     Latitude = table.Column<double>(nullable: true),
                     Longitude = table.Column<double>(nullable: true),
                     LocationName = table.Column<string>(nullable: true),
@@ -93,7 +94,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     Text = table.Column<string>(nullable: false),
                     Likes = table.Column<int>(nullable: false),
-                    Timestamp = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2020, 5, 19, 15, 6, 31, 219, DateTimeKind.Utc).AddTicks(1076)),
+                    Timestamp = table.Column<double>(nullable: false),
                     PostId = table.Column<Guid>(nullable: false),
                     UserId = table.Column<Guid>(nullable: false),
                     ParentCommentId = table.Column<Guid>(nullable: true)

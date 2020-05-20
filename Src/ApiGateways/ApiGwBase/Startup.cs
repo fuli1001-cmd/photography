@@ -33,8 +33,8 @@ namespace Photography.ApiGateways.ApiGwBase
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer("Bearer", options =>
                 {
-                    options.Authority = Configuration["Auth:Authority"];
-                    options.Audience = Configuration["Auth:Audience"];
+                    options.Authority = Configuration["AuthSettings:Authority"];
+                    options.Audience = Configuration["AuthSettings:Audience"];
                     options.RequireHttpsMetadata = false;
                 });
 

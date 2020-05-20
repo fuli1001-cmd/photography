@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Photography.Services.User.API.BackwardCompatibility.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 namespace Photography.Services.User.API.Application.Commands.Login
 {
     [DataContract]
-    public class LoginCommand : IRequest<string>
+    public class LoginCommand : IRequest<TokensViewModel>
     {
         [DataMember]
         [Required]
@@ -22,5 +23,9 @@ namespace Photography.Services.User.API.Application.Commands.Login
         [DataMember]
         [Required]
         public int ClientType { get; set; }
+
+        [DataMember]
+        [Required]
+        public string RegistrationId { get; set; }
     }
 }

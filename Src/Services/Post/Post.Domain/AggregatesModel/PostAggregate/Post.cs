@@ -11,7 +11,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
     public class Post : Entity, IAggregateRoot
     {
         public string Text { get; private set; }
-        public DateTime Timestamp { get; private set; }
+        public double Timestamp { get; private set; }
 
         public int LikeCount { get; private set; }
         public int ShareCount { get; private set; }
@@ -23,6 +23,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         public ShareType ShareType { get; private set; }
         public Visibility Visibility { get; private set; }
         public string ViewPassword { get; private set; }
+        public bool? ShowOriginalText { get; private set; }
 
         #region location properties
         public double? Latitude { get; private set; }
@@ -71,6 +72,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             _postAttachments = postAttachments;
             _userPostRelations = friendIds?.Select(id => new UserPostRelation(id, UserPostRelationType.View)).ToList();
             UserId = userId;
+            Timestamp = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
     }
 

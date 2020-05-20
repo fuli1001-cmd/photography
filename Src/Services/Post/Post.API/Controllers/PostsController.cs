@@ -45,11 +45,11 @@ namespace Photography.Services.Post.API.Controllers
         [HttpGet]
         [Route("hot")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<PostViewModel>>> GetHotPostsAsync()
         {
-            _logger.LogInformation("-----UserId: {UserId}-----", User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            _logger.LogInformation("-----UserId: {UserId}-----", User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             _logger.LogInformation("-----UserName: {UserName}-----", User.FindFirst(ClaimTypes.Name)?.Value);
-            _logger.LogInformation("-----UserName: {UserName}-----", User.Identity.Name);
             _logger.LogInformation("-----Authed: {Authed}-----", User.Identity.IsAuthenticated);
             _logger.LogInformation("-----AuthType: {AuthType}-----", User.Identity.AuthenticationType);
             var posts = await _postQueries.GetHotPostsAsync();
@@ -77,7 +77,8 @@ namespace Photography.Services.Post.API.Controllers
         [HttpGet]
         [Route("samecity/{cityCode}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<SameCityPostViewModel>>> GetSameCityPostsAsync(string cityCode)
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<PostViewModel>>> GetSameCityPostsAsync(string cityCode)
         {
             var posts = await _postQueries.GetSameCityPostsAsync(cityCode);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
@@ -90,7 +91,7 @@ namespace Photography.Services.Post.API.Controllers
         [HttpGet]
         [Route("mine")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<SameCityPostViewModel>>> GetMyPostsAsync()
+        public async Task<ActionResult<IEnumerable<PostViewModel>>> GetMyPostsAsync()
         {
             var posts = await _postQueries.GetMyPostsAsync();
             return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
@@ -103,7 +104,7 @@ namespace Photography.Services.Post.API.Controllers
         [HttpGet]
         [Route("likes")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<SameCityPostViewModel>>> GetLikedPostsAsync()
+        public async Task<ActionResult<IEnumerable<PostViewModel>>> GetLikedPostsAsync()
         {
             var posts = await _postQueries.GetLikedPostsAsync();
             return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
@@ -117,7 +118,7 @@ namespace Photography.Services.Post.API.Controllers
         [HttpPost]
         [Route("post")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<SameCityPostViewModel>> PublishPostAsync([FromBody] PublishPostCommand publishPostCommand)
+        public async Task<ActionResult<PostViewModel>> PublishPostAsync([FromBody] PublishPostCommand publishPostCommand)
         {
             var post = await _mediator.Send(publishPostCommand);
             return StatusCode((int)HttpStatusCode.Created, ResponseWrapper.CreateOkResponseWrapper(post));

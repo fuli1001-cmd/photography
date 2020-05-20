@@ -17,7 +17,7 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                     Phonenumber = table.Column<string>(nullable: true),
                     Avatar = table.Column<string>(nullable: true),
                     Gender = table.Column<bool>(nullable: true),
-                    Birthday = table.Column<DateTime>(nullable: true),
+                    Birthday = table.Column<double>(nullable: true),
                     UserType = table.Column<int>(nullable: true),
                     Province = table.Column<string>(nullable: true),
                     City = table.Column<string>(nullable: true),

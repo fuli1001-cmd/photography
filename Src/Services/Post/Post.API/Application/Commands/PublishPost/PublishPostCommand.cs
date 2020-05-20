@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Photography.Services.Post.API.Application.Commands.PublishPost
 {
     [DataContract]
-    public class PublishPostCommand : IRequest<SameCityPostViewModel>
+    public class PublishPostCommand : IRequest<PostViewModel>
     {
         /// <summary>
         /// 文字描述

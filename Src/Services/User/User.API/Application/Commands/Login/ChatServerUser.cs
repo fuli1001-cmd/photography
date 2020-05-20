@@ -8,9 +8,15 @@ namespace Photography.Services.User.API.Application.Commands.Login
     public class ChatServerUser
     {
         public int userId { get; set; }
-        public string username { get; set; }
         public string nickname { get; set; }
-        public long loginTime { get; set; }
+        public string registrationId { get; set; }
+        public string avatar { get; set; }
+        public string tel { get; set; }
+        public string username { get; set; }
+        public string password { get; set; }
+        public string remarks { get; set; }
+        public bool muted { get; set; }
+        public int stateCode { get; set; }
         public int clientType { get; set; }
     }
 }

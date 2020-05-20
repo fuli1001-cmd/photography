@@ -19,21 +19,19 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public int LikeCount { get; set; }
         public int ShareCount { get; set; }
         public int CommentCount { get; set; }
-        public DateTime Timestamp { get; set; }
+        public double Timestamp { get; set; }
         public bool Commentable { get; set; }
         public ForwardType ForwardType { get; set; }
         public ShareType ShareType { get; set; }
         public string ViewPassword { get; set; }
+        public bool Liked { get; set; }
+        public bool? ShowOriginalText { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
 
         public List<PostAttachmentViewModel> PostAttachments { get; set; }
         public PostUserViewModel User { get; set; }
         public ForwardedPostViewModel ForwardedPost { get; set; }
-    }
-
-    public class SameCityPostViewModel : PostViewModel
-    {
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
     }
 
     public class ForwardedPostViewModel : BasePostViewModel

@@ -16,12 +16,12 @@ namespace Photography.Services.Post.Infrastructure.EntityConfigurations
             builder.Property(p => p.LikeCount).HasDefaultValue(0);
             builder.Property(p => p.ShareCount).HasDefaultValue(0);
             builder.Property(p => p.CommentCount).HasDefaultValue(0);
-            builder.Property(p => p.Timestamp).HasDefaultValue(DateTime.UtcNow);
             builder.Property(p => p.Commentable).HasDefaultValue(true);
             builder.Property(p => p.ShareType).HasDefaultValue(ShareType.Allowed);
             builder.Property(p => p.ForwardType).HasDefaultValue(ForwardType.Allowed);
             builder.Property(p => p.Visibility).HasDefaultValue(Visibility.Public);
             builder.Property(p => p.Commentable).HasDefaultValue(true);
+            builder.Property(p => p.ShowOriginalText).HasDefaultValue(true);
 
             //attachments navigation properties
             var attachmentsNavigation = builder.Metadata.FindNavigation(nameof(Domain.AggregatesModel.PostAggregate.Post.PostAttachments));

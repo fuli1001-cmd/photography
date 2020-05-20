@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Photography.Services.Post.API.Application.Commands.PublishPost
 {
-    public class PublishPostCommandHandler : IRequestHandler<PublishPostCommand, SameCityPostViewModel>
+    public class PublishPostCommandHandler : IRequestHandler<PublishPostCommand, PostViewModel>
     {
         private readonly IPostRepository _postRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -29,7 +29,7 @@ namespace Photography.Services.Post.API.Application.Commands.PublishPost
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<SameCityPostViewModel> Handle(PublishPostCommand request, CancellationToken cancellationToken)
+        public async Task<PostViewModel> Handle(PublishPostCommand request, CancellationToken cancellationToken)
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var attachments = request.attachments.Select(a => new PostAttachment(a.Name, a.Text, a.ContentType)).ToList();
@@ -39,7 +39,7 @@ namespace Photography.Services.Post.API.Application.Commands.PublishPost
             _postRepository.Add(post);
             await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
             _postRepository.LoadUser(post);
-            return _mapper.Map<SameCityPostViewModel>(post);
+            return _mapper.Map<PostViewModel>(post);
         }
     }
 }

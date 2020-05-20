@@ -28,8 +28,8 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                     b.Property<string>("Avatar")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("Birthday")
-                        .HasColumnType("datetime2");
+                    b.Property<double?>("Birthday")
+                        .HasColumnType("float");
 
                     b.Property<int>("ChatServerUserId")
                         .ValueGeneratedOnAdd()

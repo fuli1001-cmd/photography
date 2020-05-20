@@ -10,7 +10,7 @@ using Photography.Services.User.Infrastructure;
 namespace Photography.Services.User.API.Infrastructure.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20200519151415_Init")]
+    [Migration("20200520070119_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,8 +30,8 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                     b.Property<string>("Avatar")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("Birthday")
-                        .HasColumnType("datetime2");
+                    b.Property<double?>("Birthday")
+                        .HasColumnType("float");
 
                     b.Property<int>("ChatServerUserId")
                         .ValueGeneratedOnAdd()

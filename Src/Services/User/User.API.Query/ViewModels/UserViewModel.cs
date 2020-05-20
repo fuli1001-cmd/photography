@@ -11,7 +11,7 @@ namespace Photography.Services.User.API.Query.ViewModels
         public string UserName { get; set; }
         public string Phonenumber { get; set; }
         public bool? Gender { get; set; }
-        public DateTime? Birthday { get; set; }
+        public double? Birthday { get; set; }
         public string Province { get; set; }
         public string City { get; set; }
         public string Sign { get; set; }
@@ -22,6 +22,7 @@ namespace Photography.Services.User.API.Query.ViewModels
         public int Score { get; set; }
         public string Code { get; set; }
         public bool RealNameRegistered { get; set; }
+        public int ChatServerUserId { get; private set; }
     }
 
     public class BaseUserViewModel

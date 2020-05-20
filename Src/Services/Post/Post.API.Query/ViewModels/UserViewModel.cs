@@ -16,5 +16,6 @@ namespace Photography.Services.Post.API.Query.ViewModels
     {
         public string Avatar { get; set; }
         public UserType? UserType { get; set; }
+        public bool Followed { get; set; }
     }
 }
