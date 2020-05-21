@@ -33,7 +33,7 @@ namespace Photography.Services.User.API.Infrastructure.Redis
         {
             using (var redis = await ConnectAsync())
             {
-                var db = redis.GetDatabase();
+                var db = redis.GetDatabase(0);
                 await db.StringSetAsync(key, value);
             }
         }
