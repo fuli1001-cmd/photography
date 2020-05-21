@@ -117,6 +117,6 @@ namespace Photography.Services.Post.API.Application.Commands.PublishPost
         /// 文件类型
         /// </summary>
         [Required]
-        public string ContentType { get; set; }
+        public AttachmentType AttachmentType { get; set; }
     }
 }

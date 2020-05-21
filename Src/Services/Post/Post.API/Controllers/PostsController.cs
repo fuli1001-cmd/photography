@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 namespace Photography.Services.Post.API.Controllers
 {
     /// <summary>
-    /// 帖子和约拍的控制器
+    /// 帖子控制器
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]

@@ -37,12 +37,11 @@ namespace Photography.Services.Post.API.Query.EF
         public async Task<List<PostViewModel>> GetMyPostsAsync()
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var myPosts = _postContext.Posts.Where(p => p.UserId.ToString() == userId);
+            var myPosts = _postContext.Posts.Where(p => p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post && p.UserId.ToString() == userId);
             var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(myPosts);
             var posts = _mapper.Map<List<PostViewModel>>(await postsWithNavigationProperties.ToListAsync());
 
-            // set liked status
-            await SetLikedStatusAsync(posts, userId);
+            await SetPropertiesAsync(posts, userId, false, true);
 
             return posts;
         }
@@ -51,13 +50,11 @@ namespace Photography.Services.Post.API.Query.EF
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var likedPostIds = GetLikedPostIds(userId);
-            var likedPosts = _postContext.Posts.Where(p => likedPostIds.Contains(p.Id));
+            var likedPosts = _postContext.Posts.Where(p => likedPostIds.Contains(p.Id) && p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post);
             var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(likedPosts);
             var posts = _mapper.Map<List<PostViewModel>>(await postsWithNavigationProperties.ToListAsync());
 
-            // set liked status
-            posts.ForEach(p => p.Liked = true);
-            await SetFollowedStatusAsync(posts, userId);
+            await SetPropertiesAsync(posts, userId, true, false);
 
             return posts;
         }
@@ -69,8 +66,7 @@ namespace Photography.Services.Post.API.Query.EF
             var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(availablePosts);
             var posts = _mapper.Map<List<PostViewModel>>(await postsWithNavigationProperties.ToListAsync());
 
-            // set status
-            await SetPropertiesAsync(posts, userId);
+            await SetPropertiesAsync(posts, userId, false, false);
 
             return posts;
         }
@@ -89,9 +85,7 @@ namespace Photography.Services.Post.API.Query.EF
 
             var posts = _mapper.Map<List<PostViewModel>>(await postsWithNavigationProperties.ToListAsync());
 
-            // set status
-            posts.ForEach(p => p.User.Followed = true);
-            await SetLikedStatusAsync(posts, userId);
+            await SetPropertiesAsync(posts, userId, false, true);
 
             return posts;
         }
@@ -105,8 +99,7 @@ namespace Photography.Services.Post.API.Query.EF
             var sameCityPosts = (await postsWithNavigationProperties.ToListAsync()).Where(p => p.CityCode?.ToLower() == cityCode.ToLower());
             var posts = _mapper.Map<List<PostViewModel>>(sameCityPosts);
 
-            // set status
-            await SetPropertiesAsync(posts, userId);
+            await SetPropertiesAsync(posts, userId, false, false);
 
             return posts;
 
@@ -116,6 +109,8 @@ namespace Photography.Services.Post.API.Query.EF
 
         private IQueryable<Domain.AggregatesModel.PostAggregate.Post> GetAvailablePosts(string userId)
         {
+            IQueryable<Domain.AggregatesModel.PostAggregate.Post> query;
+
             // 公开和密码查看的帖子
             var otherPosts = _postContext.Posts.Where(p => p.Visibility != Domain.AggregatesModel.PostAggregate.Visibility.Friends && p.Visibility != Domain.AggregatesModel.PostAggregate.Visibility.SelectedFriends);
 
@@ -133,10 +128,12 @@ namespace Photography.Services.Post.API.Query.EF
                                            where upr.UserId.ToString() == userId && upr.UserPostRelationType == UserPostRelationType.View
                                            select p;
 
-                return friendsViewPosts.Union(selectedFriendsViewPosts).Union(otherPosts);
+                query = friendsViewPosts.Union(selectedFriendsViewPosts).Union(otherPosts);
             }
             else
-                return otherPosts;
+                query = otherPosts;
+
+            return query.Where(p => p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post);
         }
 
         private IQueryable<Guid> GetLikedPostIds(string userId)
@@ -151,29 +148,6 @@ namespace Photography.Services.Post.API.Query.EF
             return _postContext.UserRelations
                 .Where(ur => ur.FollowerId.ToString() == userId)
                 .Select(ur => ur.FollowedUserId);
-        }
-
-        private async Task SetPropertiesAsync(List<PostViewModel> posts, string userId)
-        {
-            var likedPostIds = await GetLikedPostIds(userId).ToListAsync();
-            var followedUserIds = await GetFollowedUserIds(userId).ToListAsync();
-            posts.ForEach(p =>
-            {
-                p.Liked = likedPostIds.Contains(p.Id) ? true : false;
-                p.User.Followed = followedUserIds.Contains(p.User.Id) ? true : false;
-            });
-        }
-
-        private async Task SetLikedStatusAsync(List<PostViewModel> posts, string userId)
-        {
-            var likedPostIds = await GetLikedPostIds(userId).ToListAsync();
-            posts.ForEach(p => p.Liked = likedPostIds.Contains(p.Id) ? true : false);
-        }
-
-        private async Task SetFollowedStatusAsync(List<PostViewModel> posts, string userId)
-        {
-            var followedUserIds = await GetFollowedUserIds(userId).ToListAsync();
-            posts.ForEach(p => p.User.Followed = followedUserIds.Contains(p.User.Id) ? true : false);
         }
 
         private IQueryable<Domain.AggregatesModel.PostAggregate.Post> GetPostsWithNavigationPropertiesAsync(IQueryable<Domain.AggregatesModel.PostAggregate.Post> query)
@@ -197,6 +171,45 @@ namespace Photography.Services.Post.API.Query.EF
                                select ur1.FollowedUserId;
 
             return friendsQuery;
+        }
+
+        private async Task SetPropertiesAsync(List<PostViewModel> posts, string userId, bool allLiked, bool allFollowed)
+        {
+            List<Guid> likedPostIds = null;
+            List<Guid> followedUserIds = null;
+
+            if (!allLiked)
+                likedPostIds = await GetLikedPostIds(userId).ToListAsync();
+
+            if (!allFollowed)
+                followedUserIds = await GetFollowedUserIds(userId).ToListAsync();
+
+            posts.ForEach(p =>
+            {
+                p.Liked = allLiked ? true : (likedPostIds.Contains(p.Id) ? true : false);
+                p.User.Followed = allFollowed ? true : (followedUserIds.Contains(p.User.Id) ? true : false);
+                SetAttachmentProperties(p);
+            });
+        }
+
+
+        private void SetAttachmentProperties(PostViewModel post)
+        {
+            post.PostAttachments.ForEach(a =>
+                {
+                    var sections = a.Name.Split('$');
+                    try
+                    {
+                        a.Width = int.Parse(sections[1]);
+                        a.Height = int.Parse(sections[2]);
+                        if (a.AttachmentType == Domain.AggregatesModel.PostAggregate.AttachmentType.Video)
+                            a.Thumbnail = a.Name.Substring(0, a.Name.LastIndexOf('.')) + ".jpg";
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError("SetAttachmentProperties: {SetAttachmentProperties}", ex.Message);
+                    }
+                });
         }
     }
 }

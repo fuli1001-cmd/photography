@@ -61,6 +61,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<double>("AppointedTime")
+                        .HasColumnType("float");
+
                     b.Property<string>("CityCode")
                         .HasColumnType("nvarchar(max)");
 
@@ -95,6 +98,15 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
 
                     b.Property<double?>("Longitude")
                         .HasColumnType("float");
+
+                    b.Property<int>("PayerType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PostType")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Score")
                         .ValueGeneratedOnAdd()
@@ -148,9 +160,8 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("AttachmentType")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()

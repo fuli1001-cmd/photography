@@ -24,12 +24,19 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         public Visibility Visibility { get; private set; }
         public string ViewPassword { get; private set; }
         public bool? ShowOriginalText { get; private set; }
+        public PostType PostType { get; private set; }
 
         #region location properties
         public double? Latitude { get; private set; }
         public double? Longitude { get; private set; }
         public string LocationName { get; private set; }
         public string CityCode { get; private set; }
+        #endregion
+
+        #region appointment only properties
+        public double AppointedTime { get; private set; }
+        public decimal Price { get; private set; }
+        public PayerType PayerType { get; private set; }
         #endregion
 
         public Post ForwardedPost { get; private set; }
@@ -55,6 +62,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
 
         }
 
+        // 构造帖子对象
         public Post(string text, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
             double latitude, double longitude, string locationName, string cityCode, 
             List<Guid> friendIds, List<PostAttachment> postAttachments, Guid userId)
@@ -73,6 +81,25 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             _userPostRelations = friendIds?.Select(id => new UserPostRelation(id, UserPostRelationType.View)).ToList();
             UserId = userId;
             Timestamp = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+            PostType = PostType.Post;
+        }
+
+        // 构造约拍对象
+        public Post(string text, double appointedTime, decimal price, PayerType payerType, double latitude, double longitude, string locationName, string cityCode,
+            List<PostAttachment> postAttachments, Guid userId)
+        {
+            Text = text;
+            AppointedTime = appointedTime;
+            Price = price;
+            PayerType = payerType;
+            Latitude = latitude;
+            Longitude = longitude;
+            LocationName = locationName;
+            CityCode = cityCode;
+            _postAttachments = postAttachments;
+            UserId = userId;
+            Timestamp = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+            PostType = PostType.Appointment;
         }
     }
 
@@ -96,5 +123,18 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         Friends,
         Password,
         SelectedFriends
+    }
+
+    public enum PostType
+    {
+        Post,
+        Appointment
+    }
+
+    public enum PayerType
+    {
+        Free,
+        Me,
+        You
     }
 }

@@ -38,10 +38,14 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     Visibility = table.Column<int>(nullable: false, defaultValue: 0),
                     ViewPassword = table.Column<string>(nullable: true),
                     ShowOriginalText = table.Column<bool>(nullable: true, defaultValue: true),
+                    PostType = table.Column<int>(nullable: false),
                     Latitude = table.Column<double>(nullable: true),
                     Longitude = table.Column<double>(nullable: true),
                     LocationName = table.Column<string>(nullable: true),
                     CityCode = table.Column<string>(nullable: true),
+                    AppointedTime = table.Column<double>(nullable: false),
+                    Price = table.Column<decimal>(nullable: false),
+                    PayerType = table.Column<int>(nullable: false),
                     ForwardedPostId = table.Column<Guid>(nullable: true),
                     UserId = table.Column<Guid>(nullable: false)
                 },
@@ -129,7 +133,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(nullable: false),
                     Text = table.Column<string>(nullable: true),
-                    ContentType = table.Column<string>(nullable: false),
+                    AttachmentType = table.Column<int>(nullable: false),
                     PostId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>

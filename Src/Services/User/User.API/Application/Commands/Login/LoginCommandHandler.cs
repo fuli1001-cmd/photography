@@ -1,4 +1,5 @@
-﻿using IdentityModel.Client;
+﻿using ChatServerLib.Util;
+using IdentityModel.Client;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -106,12 +107,25 @@ namespace Photography.Services.User.API.Application.Commands.Login
                         registrationId = loginCommand.RegistrationId
                     };
                     string json = SerializeUtil.SerializeToJson(chatServerUser);
+                    _logger.LogInformation("*************{json}*************", json);
                     await _redisService.SetAsync(user.ChatServerUserId.ToString(), SerializeUtil.SerializeStringToBytes(json, true));
+
+                    //var redis = new RedisHelper(0);
+                    //if (redis != null)
+                    //{
+                    //    redis.StringSet<byte[]>(user.ChatServerUserId.ToString(), SerializeUtil.SerializeStringToBytes(json, true));
+                    //}
+                    //else
+                    //{
+                    //    _logger.LogError("**************redis is null**********");
+                    //}
                 }
             }
             catch(Exception ex)
             {
                 _logger.LogError("WriteChatServerUserToRedisAsync: {ChatServerError}", ex.Message);
+                if (ex.InnerException != null)
+                    _logger.LogError("WriteChatServerUserToRedisAsync: {ChatServerInnerError}", ex.InnerException.Message);
             }
         }
     }

@@ -11,17 +11,17 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Photography.Services.Post.API.Application.Commands.PublishPost
+namespace Photography.Services.Post.API.Application.Commands.PublishAppointment
 {
-    public class PublishPostCommandHandler : IRequestHandler<PublishPostCommand, PostViewModel>
+    public class PublishAppointmentCommandHandler : IRequestHandler<PublishAppointmentCommand, AppointmentViewModel>
     {
         private readonly IPostRepository _postRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
-        private readonly ILogger<PublishPostCommandHandler> _logger;
+        private readonly ILogger<PublishAppointmentCommandHandler> _logger;
 
-        public PublishPostCommandHandler(IPostRepository postRepository, IHttpContextAccessor httpContextAccessor,
-            IMapper mapper, ILogger<PublishPostCommandHandler> logger)
+        public PublishAppointmentCommandHandler(IPostRepository postRepository, IHttpContextAccessor httpContextAccessor,
+            IMapper mapper, ILogger<PublishAppointmentCommandHandler> logger)
         {
             _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
@@ -29,17 +29,16 @@ namespace Photography.Services.Post.API.Application.Commands.PublishPost
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<PostViewModel> Handle(PublishPostCommand request, CancellationToken cancellationToken)
+        public async Task<AppointmentViewModel> Handle(PublishAppointmentCommand request, CancellationToken cancellationToken)
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var attachments = request.attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType)).ToList();
-            var post = new Domain.AggregatesModel.PostAggregate.Post(request.Text, request.Commentable, request.ForwardType, request.ShareType,
-                request.Visibility, request.ViewPassword, request.Latitude, request.Longitude, request.LocationName,
-                request.CityCode, request.friendIds, attachments, Guid.Parse(userId));
+            var post = new Domain.AggregatesModel.PostAggregate.Post(request.Text, request.AppointedTime, request.Price, request.PayerType,
+                request.Latitude, request.Longitude, request.LocationName, request.CityCode, attachments, Guid.Parse(userId));
             _postRepository.Add(post);
             await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
             _postRepository.LoadUser(post);
-            return _mapper.Map<PostViewModel>(post);
+            return _mapper.Map<AppointmentViewModel>(post);
         }
     }
 }

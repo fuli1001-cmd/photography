@@ -18,4 +18,11 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public UserType? UserType { get; set; }
         public bool Followed { get; set; }
     }
+
+    public class AppointmentUserViewModel : BaseUserViewModel
+    {
+        public string Avatar { get; set; }
+        public UserType? UserType { get; set; }
+        public int Score { get; set; }
+    }
 }

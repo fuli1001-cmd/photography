@@ -43,9 +43,11 @@ namespace Photography.Services.Post.API.Query.ViewModels
 
     public class PostAttachmentViewModel
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Text { get; set; }
-        public string ContentType { get; set; }
+        public AttachmentType AttachmentType { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public string Thumbnail { get; set; }
     }
 }
