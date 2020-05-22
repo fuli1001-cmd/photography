@@ -63,14 +63,14 @@ namespace Photography.Services.Post.API.Application.Commands.PublishPost
         /// 可查看帖子的好友id数组
         /// </summary>
         [DataMember]
-        public List<Guid> friendIds { get; set; }
+        public List<Guid> FriendIds { get; set; }
 
         /// <summary>
         /// 附件数组
         /// </summary>
         [DataMember]
         [Required]
-        public List<Attachment> attachments { get; set; }
+        public List<Attachment> Attachments { get; set; }
 
         /// <summary>
         /// 城市代码
@@ -95,6 +95,12 @@ namespace Photography.Services.Post.API.Application.Commands.PublishPost
         /// </summary>
         [DataMember]
         public string LocationName { get; set; }
+
+        /// <summary>
+        /// 地址
+        /// </summary>
+        [DataMember]
+        public string Address { get; private set; }
     }
 
     /// <summary>

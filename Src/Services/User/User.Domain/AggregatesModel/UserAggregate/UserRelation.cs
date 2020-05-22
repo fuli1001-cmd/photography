@@ -14,5 +14,7 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         // 被关注者
         public Guid FollowedUserId { get; private set; }
         public User FollowedUser { get; private set; }
+
+        public bool MutedFollowedUser { get; private set; }
     }
 }

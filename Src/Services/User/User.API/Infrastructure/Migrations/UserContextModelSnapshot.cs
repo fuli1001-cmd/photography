@@ -106,6 +106,11 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                     b.Property<Guid>("FollowerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("MutedFollowedUser")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.HasKey("Id");
 
                     b.HasIndex("FollowedUserId");

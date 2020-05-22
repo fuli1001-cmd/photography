@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Photography.Services.Post.API.Query.ViewModels;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 using System;
 using System.Collections.Generic;
@@ -11,17 +10,17 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Photography.Services.Post.API.Application.Commands.PublishPost
+namespace Photography.Services.Post.API.Application.Commands.Appoint
 {
-    public class PublishPostCommandHandler : IRequestHandler<PublishPostCommand, PostViewModel>
+    public class AppointCommandHandler : IRequestHandler<AppointCommand, bool>
     {
         private readonly IPostRepository _postRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
-        private readonly ILogger<PublishPostCommandHandler> _logger;
+        private readonly ILogger<AppointCommandHandler> _logger;
 
-        public PublishPostCommandHandler(IPostRepository postRepository, IHttpContextAccessor httpContextAccessor,
-            IMapper mapper, ILogger<PublishPostCommandHandler> logger)
+        public AppointCommandHandler(IPostRepository postRepository, IHttpContextAccessor httpContextAccessor,
+            IMapper mapper, ILogger<AppointCommandHandler> logger)
         {
             _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
@@ -29,17 +28,14 @@ namespace Photography.Services.Post.API.Application.Commands.PublishPost
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<PostViewModel> Handle(PublishPostCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(AppointCommand request, CancellationToken cancellationToken)
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType)).ToList();
-            var post = new Domain.AggregatesModel.PostAggregate.Post(request.Text, request.Commentable, request.ForwardType, request.ShareType,
-                request.Visibility, request.ViewPassword, request.Latitude, request.Longitude, request.LocationName,
-                request.CityCode, request.FriendIds, attachments, Guid.Parse(userId));
+            var appointment = await _postRepository.GetByIdAsync(request.AppointmentId);
+            var post = new Domain.AggregatesModel.PostAggregate.Post(request.Text, attachments, request.AppointmentId, Guid.Parse(userId));
             _postRepository.Add(post);
-            await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
-            _postRepository.LoadUser(post);
-            return _mapper.Map<PostViewModel>(post);
+            return await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
         }
     }
 }

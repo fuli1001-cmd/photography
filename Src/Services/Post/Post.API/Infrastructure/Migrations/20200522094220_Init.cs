@@ -28,6 +28,13 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     Text = table.Column<string>(nullable: true),
                     Timestamp = table.Column<double>(nullable: false),
+                    PostType = table.Column<int>(nullable: false),
+                    UserId = table.Column<Guid>(nullable: false),
+                    Latitude = table.Column<double>(nullable: true),
+                    Longitude = table.Column<double>(nullable: true),
+                    LocationName = table.Column<string>(nullable: true),
+                    Address = table.Column<string>(nullable: true),
+                    CityCode = table.Column<string>(nullable: true),
                     LikeCount = table.Column<int>(nullable: false, defaultValue: 0),
                     ShareCount = table.Column<int>(nullable: false, defaultValue: 0),
                     CommentCount = table.Column<int>(nullable: false, defaultValue: 0),
@@ -38,20 +45,21 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     Visibility = table.Column<int>(nullable: false, defaultValue: 0),
                     ViewPassword = table.Column<string>(nullable: true),
                     ShowOriginalText = table.Column<bool>(nullable: true, defaultValue: true),
-                    PostType = table.Column<int>(nullable: false),
-                    Latitude = table.Column<double>(nullable: true),
-                    Longitude = table.Column<double>(nullable: true),
-                    LocationName = table.Column<string>(nullable: true),
-                    CityCode = table.Column<string>(nullable: true),
-                    AppointedTime = table.Column<double>(nullable: false),
-                    Price = table.Column<decimal>(nullable: false),
-                    PayerType = table.Column<int>(nullable: false),
                     ForwardedPostId = table.Column<Guid>(nullable: true),
-                    UserId = table.Column<Guid>(nullable: false)
+                    AppointedTime = table.Column<double>(nullable: true),
+                    Price = table.Column<decimal>(nullable: true),
+                    PayerType = table.Column<int>(nullable: true),
+                    AppointmentedUserId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Posts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Posts_Users_AppointmentedUserId",
+                        column: x => x.AppointmentedUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Posts_Posts_ForwardedPostId",
                         column: x => x.ForwardedPostId,
@@ -192,6 +200,11 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 name: "IX_PostAttachments_PostId",
                 table: "PostAttachments",
                 column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_AppointmentedUserId",
+                table: "Posts",
+                column: "AppointmentedUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_ForwardedPostId",

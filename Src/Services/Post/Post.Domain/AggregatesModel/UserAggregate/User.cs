@@ -16,6 +16,9 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
         private readonly List<PostAggregate.Post> _posts = null;
         public IReadOnlyCollection<PostAggregate.Post> Posts => _posts;
 
+        private readonly List<PostAggregate.Post> _appointments = null;
+        public IReadOnlyCollection<PostAggregate.Post> Appointments => _appointments;
+
         private readonly List<Comment> _comments = null;
         public IReadOnlyCollection<Comment> Comments => _comments;
 

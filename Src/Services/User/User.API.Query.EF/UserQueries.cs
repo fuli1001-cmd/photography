@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.Extensions.Logging;
+using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
 
 namespace Photography.Services.User.API.Query.EF
 {
@@ -36,13 +37,17 @@ namespace Photography.Services.User.API.Query.EF
         public List<FriendViewModel> GetFriendsAsync()
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var friendsIds = GetFriendsIds(userId);
+            var userRelations = GetFriends(userId);
             var friends = _identityContext.Users
-                .Where(u => friendsIds.Contains(u.Id));
-            return _mapper.Map<List<FriendViewModel>>(friends);
+                .Where(u => userRelations.Select(ur => ur.FollowedUserId).Contains(u.Id));
+            var friendViewModels = _mapper.Map<List<FriendViewModel>>(friends);
+
+            friendViewModels.ForEach(f => f.Muted = userRelations.SingleOrDefault(ur => ur.FollowedUserId == f.Id)?.MutedFollowedUser ?? false);
+
+            return friendViewModels;
         }
 
-        private IQueryable<Guid> GetFriendsIds(string userId)
+        private IQueryable<UserRelation> GetFriends(string userId)
         {
             var friendsQuery = from ur1 in _identityContext.UserRelations
                                join ur2 in _identityContext.UserRelations on
@@ -50,7 +55,7 @@ namespace Photography.Services.User.API.Query.EF
                                equals
                                new { C1 = ur2.FollowedUserId, C2 = ur2.FollowerId }
                                where ur1.FollowerId.ToString() == userId
-                               select ur1.FollowedUserId;
+                               select ur1;
 
             return friendsQuery;
         }

@@ -10,7 +10,7 @@ using Photography.Services.User.Infrastructure;
 namespace Photography.Services.User.API.Infrastructure.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20200520070119_Init")]
+    [Migration("20200522025548_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -107,6 +107,11 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
 
                     b.Property<Guid>("FollowerId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("MutedFollowedUser")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.HasKey("Id");
 

@@ -61,8 +61,14 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<double>("AppointedTime")
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("AppointedTime")
                         .HasColumnType("float");
+
+                    b.Property<Guid?>("AppointmentedUserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CityCode")
                         .HasColumnType("nvarchar(max)");
@@ -99,13 +105,13 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<double?>("Longitude")
                         .HasColumnType("float");
 
-                    b.Property<int>("PayerType")
+                    b.Property<int?>("PayerType")
                         .HasColumnType("int");
 
                     b.Property<int>("PostType")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Price")
+                    b.Property<decimal?>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Score")
@@ -146,6 +152,8 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         .HasDefaultValue(0);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppointmentedUserId");
 
                     b.HasIndex("ForwardedPostId");
 
@@ -267,6 +275,11 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
 
             modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.PostAggregate.Post", b =>
                 {
+                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "AppointmentedUser")
+                        .WithMany("Appointments")
+                        .HasForeignKey("AppointmentedUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Photography.Services.Post.Domain.AggregatesModel.PostAggregate.Post", "ForwardedPost")
                         .WithMany("ForwardingPosts")
                         .HasForeignKey("ForwardedPostId")

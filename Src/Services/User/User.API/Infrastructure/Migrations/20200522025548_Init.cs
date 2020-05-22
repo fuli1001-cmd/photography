@@ -42,7 +42,8 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     FollowerId = table.Column<Guid>(nullable: false),
-                    FollowedUserId = table.Column<Guid>(nullable: false)
+                    FollowedUserId = table.Column<Guid>(nullable: false),
+                    MutedFollowedUser = table.Column<bool>(nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {

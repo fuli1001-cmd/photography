@@ -16,6 +16,7 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using Photography.Services.Post.API.Query.Extensions;
 
 namespace Photography.Services.Post.API.Query.EF
 {
@@ -79,7 +80,7 @@ namespace Photography.Services.Post.API.Query.EF
 
             var followedUserIds = GetFollowedUserIds(userId);
 
-            var followedUsersPosts = availablePosts.Where(p => followedUserIds.Contains(p.UserId)).OrderByDescending(p => p.Timestamp);
+            var followedUsersPosts = availablePosts.Where(p => p.UserId.ToString() == userId || followedUserIds.Contains(p.UserId)).OrderByDescending(p => p.Timestamp);
 
             var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(followedUsersPosts);
 
@@ -109,31 +110,29 @@ namespace Photography.Services.Post.API.Query.EF
 
         private IQueryable<Domain.AggregatesModel.PostAggregate.Post> GetAvailablePosts(string userId)
         {
-            IQueryable<Domain.AggregatesModel.PostAggregate.Post> query;
+            var posts = _postContext.Posts.Where(p => p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post);
 
             // 公开和密码查看的帖子
-            var otherPosts = _postContext.Posts.Where(p => p.Visibility != Domain.AggregatesModel.PostAggregate.Visibility.Friends && p.Visibility != Domain.AggregatesModel.PostAggregate.Visibility.SelectedFriends);
+            var otherPosts = posts.Where(p => p.Visibility != Domain.AggregatesModel.PostAggregate.Visibility.Friends && p.Visibility != Domain.AggregatesModel.PostAggregate.Visibility.SelectedFriends);
 
             if (!string.IsNullOrEmpty(userId))
             {
                 // 朋友可见的帖子
-                var friendsViewPosts = _postContext.Posts.Where(p => p.Visibility == Domain.AggregatesModel.PostAggregate.Visibility.Friends);
+                var friendsViewPosts = posts.Where(p => p.Visibility == Domain.AggregatesModel.PostAggregate.Visibility.Friends);
                 friendsViewPosts = friendsViewPosts.Where(p => GetFriendsIds(userId).Contains(p.UserId));
 
                 // 指定朋友可见的帖子
-                var selectedFriendsViewPosts = _postContext.Posts.Where(p => p.Visibility == Domain.AggregatesModel.PostAggregate.Visibility.SelectedFriends);
+                var selectedFriendsViewPosts = posts.Where(p => p.Visibility == Domain.AggregatesModel.PostAggregate.Visibility.SelectedFriends);
                 selectedFriendsViewPosts = from p in selectedFriendsViewPosts
                                            join upr in _postContext.UserPostRelations
                                            on p.Id equals upr.PostId
                                            where upr.UserId.ToString() == userId && upr.UserPostRelationType == UserPostRelationType.View
                                            select p;
 
-                query = friendsViewPosts.Union(selectedFriendsViewPosts).Union(otherPosts);
+                return friendsViewPosts.Union(selectedFriendsViewPosts).Union(otherPosts);
             }
             else
-                query = otherPosts;
-
-            return query.Where(p => p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post);
+                return otherPosts;
         }
 
         private IQueryable<Guid> GetLikedPostIds(string userId)
@@ -188,28 +187,29 @@ namespace Photography.Services.Post.API.Query.EF
             {
                 p.Liked = allLiked ? true : (likedPostIds.Contains(p.Id) ? true : false);
                 p.User.Followed = allFollowed ? true : (followedUserIds.Contains(p.User.Id) ? true : false);
-                SetAttachmentProperties(p);
+                p.SetAttachmentProperties(_logger);
+                //SetAttachmentProperties(p);
             });
         }
 
 
-        private void SetAttachmentProperties(PostViewModel post)
-        {
-            post.PostAttachments.ForEach(a =>
-                {
-                    var sections = a.Name.Split('$');
-                    try
-                    {
-                        a.Width = int.Parse(sections[1]);
-                        a.Height = int.Parse(sections[2]);
-                        if (a.AttachmentType == Domain.AggregatesModel.PostAggregate.AttachmentType.Video)
-                            a.Thumbnail = a.Name.Substring(0, a.Name.LastIndexOf('.')) + ".jpg";
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError("SetAttachmentProperties: {SetAttachmentProperties}", ex.Message);
-                    }
-                });
-        }
+        //private void SetAttachmentProperties(PostViewModel post)
+        //{
+        //    post.PostAttachments.ForEach(a =>
+        //        {
+        //            var sections = a.Name.Split('$');
+        //            try
+        //            {
+        //                a.Width = int.Parse(sections[1]);
+        //                a.Height = int.Parse(sections[2]);
+        //                if (a.AttachmentType == Domain.AggregatesModel.PostAggregate.AttachmentType.Video)
+        //                    a.Thumbnail = a.Name.Substring(0, a.Name.LastIndexOf('.')) + ".jpg";
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                _logger.LogError("SetAttachmentProperties: {SetAttachmentProperties}", ex.Message);
+        //            }
+        //        });
+        //}
     }
 }

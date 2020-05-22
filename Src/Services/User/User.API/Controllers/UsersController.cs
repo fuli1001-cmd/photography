@@ -53,7 +53,7 @@ namespace Photography.Services.User.API.Controllers
             if (string.IsNullOrEmpty(tokensViewModel.AccessToken))
             {
                 var code = (int)HttpStatusCode.BadRequest;
-                return StatusCode(code, ResponseWrapper.CreateErrorResponseWrapper(code, new string[] { "登录失败" }));
+                return StatusCode(code, ResponseWrapper.CreateErrorResponseWrapper(code, "登录失败"));
             }
             else
                 return Ok(ResponseWrapper.CreateOkResponseWrapper(tokensViewModel));

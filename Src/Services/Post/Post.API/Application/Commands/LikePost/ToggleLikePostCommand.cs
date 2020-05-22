@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Photography.Services.Post.API.Application.Commands.LikePost
 {
     [DataContract]
-    public class LikePostCommand : IRequest<bool>
+    public class ToggleLikePostCommand : IRequest<bool>
     {
         /// <summary>
         /// 点赞的帖子id

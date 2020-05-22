@@ -116,7 +116,7 @@ namespace Photography.Services.Post.API.Controllers
         /// <param name="publishPostCommand"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("post")]
+        [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<PostViewModel>> PublishPostAsync([FromBody] PublishPostCommand publishPostCommand)
         {
@@ -125,15 +125,16 @@ namespace Photography.Services.Post.API.Controllers
         }
 
         /// <summary>
-        /// 赞一个帖子
+        /// 赞或取消赞一个帖子
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [Route("like")]
+        [Route("togglelike")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<PostViewModel>> LikePostAsync([FromBody] LikePostCommand likePostCommand)
+        public async Task<ActionResult<PostViewModel>> LikePostAsync([FromBody] ToggleLikePostCommand likePostCommand)
         {
-            return StatusCode((int)HttpStatusCode.Created, await _mediator.Send(likePostCommand));
+            var result = await _mediator.Send(likePostCommand);
+            return StatusCode((int)HttpStatusCode.Created, ResponseWrapper.CreateOkResponseWrapper(result));
         }
     }
 }

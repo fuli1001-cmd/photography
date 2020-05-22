@@ -1,5 +1,5 @@
 ﻿using Arise.DDD.API.Extensions;
-using Arise.DDD.Domain.SeedWork.Exceptions;
+using Arise.DDD.Domain.Exceptions;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;

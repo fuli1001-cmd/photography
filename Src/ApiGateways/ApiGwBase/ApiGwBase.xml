@@ -15,14 +15,34 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.ChatServer">
+        <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.ChatSocket">
             <summary>
-            聊天服务器地址
+            聊天socket服务器地址
+            </summary>
+        </member>
+        <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.ChatSocketPort">
+            <summary>
+            聊天socket服务器端口
+            </summary>
+        </member>
+        <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.ChatAPI">
+            <summary>
+            聊天服务API地址
+            </summary>
+        </member>
+        <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.ChatAPIPort">
+            <summary>
+            聊天服务API端口
             </summary>
         </member>
         <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.FileServer">
             <summary>
             文件服务器地址
+            </summary>
+        </member>
+        <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.FileServerPort">
+            <summary>
+            文件服务器端口
             </summary>
         </member>
         <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.AgoraAppId">

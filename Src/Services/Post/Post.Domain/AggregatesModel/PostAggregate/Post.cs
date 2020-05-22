@@ -12,7 +12,21 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
     {
         public string Text { get; private set; }
         public double Timestamp { get; private set; }
+        public PostType PostType { get; private set; }
 
+
+        public User User { get; private set; }
+        public Guid UserId { get; private set; }
+
+        #region location properties
+        public double? Latitude { get; private set; }
+        public double? Longitude { get; private set; }
+        public string LocationName { get; private set; }
+        public string Address { get; private set; }
+        public string CityCode { get; private set; }
+        #endregion
+
+        #region post only properties
         public int LikeCount { get; private set; }
         public int ShareCount { get; private set; }
         public int CommentCount { get; private set; }
@@ -24,20 +38,6 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         public Visibility Visibility { get; private set; }
         public string ViewPassword { get; private set; }
         public bool? ShowOriginalText { get; private set; }
-        public PostType PostType { get; private set; }
-
-        #region location properties
-        public double? Latitude { get; private set; }
-        public double? Longitude { get; private set; }
-        public string LocationName { get; private set; }
-        public string CityCode { get; private set; }
-        #endregion
-
-        #region appointment only properties
-        public double AppointedTime { get; private set; }
-        public decimal Price { get; private set; }
-        public PayerType PayerType { get; private set; }
-        #endregion
 
         public Post ForwardedPost { get; private set; }
         public Guid? ForwardedPostId { get; private set; }
@@ -53,9 +53,16 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
 
         private readonly List<Comment> _comments = null;
         public IReadOnlyCollection<Comment> Comments => _comments;
+        #endregion
 
-        public User User { get; private set; }
-        public Guid UserId { get; private set; }
+        #region appointment only properties
+        public double? AppointedTime { get; private set; }
+        public decimal? Price { get; private set; }
+        public PayerType? PayerType { get; private set; }
+
+        public User AppointmentedUser { get; private set; }
+        public Guid? AppointmentedUserId { get; private set; }
+        #endregion
 
         public Post()
         {
@@ -101,6 +108,16 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             Timestamp = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
             PostType = PostType.Appointment;
         }
+
+        public Post(string text, List<PostAttachment> postAttachments, Guid appointmentId, Guid userId)
+        {
+            Text = text;
+            _postAttachments = postAttachments;
+            ForwardedPostId = appointmentId;
+            UserId = userId;
+            Timestamp = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+            PostType = PostType.LinkedAppointment;
+        }
     }
 
     public enum ForwardType
@@ -128,7 +145,8 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
     public enum PostType
     {
         Post,
-        Appointment
+        Appointment,
+        LinkedAppointment
     }
 
     public enum PayerType

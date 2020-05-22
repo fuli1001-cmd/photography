@@ -18,9 +18,9 @@ namespace Photography.Services.Post.Infrastructure.Repositories
 
         }
 
-        public async Task<UserPostRelation> GetAsync(Guid userId, Guid postId)
+        public async Task<UserPostRelation> GetAsync(Guid userId, Guid postId, UserPostRelationType relationType)
         {
-            var uprs = await _context.UserPostRelations.Where(upr => upr.UserId == userId && upr.PostId == postId).ToListAsync();
+            var uprs = await _context.UserPostRelations.Where(upr => upr.UserId == userId && upr.PostId == postId && upr.UserPostRelationType == relationType).ToListAsync();
             if (uprs.Count > 0)
                 return uprs[0];
             else

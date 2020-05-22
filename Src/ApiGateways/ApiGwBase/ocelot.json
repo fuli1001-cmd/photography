@@ -13,6 +13,18 @@
       "UpstreamHttpMethod": []
     },
     {
+      "DownstreamPathTemplate": "/api/appointments/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "postapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/appointments/{everything}",
+      "UpstreamHttpMethod": []
+    },
+    {
       "DownstreamPathTemplate": "/api/users/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

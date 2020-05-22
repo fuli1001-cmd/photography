@@ -24,18 +24,21 @@ namespace Photography.Services.Post.API.Application.Commands.PublishAppointment
         /// 约拍时间
         /// </summary>
         [DataMember]
+        [Required]
         public double AppointedTime { get; set; }
 
         /// <summary>
         /// 约拍价格
         /// </summary>
         [DataMember]
+        [Required]
         public decimal Price { get; set; }
 
         /// <summary>
         /// 付费方类型
         /// </summary>
         [DataMember]
+        [Required]
         public PayerType PayerType { get; set; }
 
         /// <summary>
@@ -43,7 +46,7 @@ namespace Photography.Services.Post.API.Application.Commands.PublishAppointment
         /// </summary>
         [DataMember]
         [Required]
-        public List<Attachment> attachments { get; set; }
+        public List<Attachment> Attachments { get; set; }
 
         /// <summary>
         /// 城市代码
@@ -55,18 +58,28 @@ namespace Photography.Services.Post.API.Application.Commands.PublishAppointment
         /// 纬度
         /// </summary>
         [DataMember]
+        [Required]
         public double Latitude { get; set; }
 
         /// <summary>
         /// 经度
         /// </summary>
         [DataMember]
+        [Required]
         public double Longitude { get; set; }
 
         /// <summary>
         /// 地址名称
         /// </summary>
         [DataMember]
+        [Required]
         public string LocationName { get; set; }
+
+        /// <summary>
+        /// 地址
+        /// </summary>
+        [DataMember]
+        [Required]
+        public string Address { get; private set; }
     }
 }

@@ -32,7 +32,7 @@ namespace Photography.Services.Post.API.Application.Commands.PublishAppointment
         public async Task<AppointmentViewModel> Handle(PublishAppointmentCommand request, CancellationToken cancellationToken)
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var attachments = request.attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType)).ToList();
+            var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType)).ToList();
             var post = new Domain.AggregatesModel.PostAggregate.Post(request.Text, request.AppointedTime, request.Price, request.PayerType,
                 request.Latitude, request.Longitude, request.LocationName, request.CityCode, attachments, Guid.Parse(userId));
             _postRepository.Add(post);

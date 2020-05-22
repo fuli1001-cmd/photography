@@ -4,8 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Photography.Services.Post.API.Application.Commands.Appoint;
 using Photography.Services.Post.API.Application.Commands.PublishAppointment;
+using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
+using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,10 +28,12 @@ namespace Photography.Services.Post.API.Controllers
     {
         private readonly ILogger<AppointmentsController> _logger;
         private readonly IMediator _mediator;
+        private readonly IAppointmentQueries _appointmentQueries;
 
-        public AppointmentsController(IMediator mediator, ILogger<AppointmentsController> logger)
+        public AppointmentsController(IMediator mediator, IAppointmentQueries appointmentQueries, ILogger<AppointmentsController> logger)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            _appointmentQueries = appointmentQueries ?? throw new ArgumentNullException(nameof(appointmentQueries));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -40,23 +45,37 @@ namespace Photography.Services.Post.API.Controllers
         [HttpPost]
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<AppointmentViewModel>> PublishPostAsync([FromBody] PublishAppointmentCommand publishAppointmentCommand)
+        public async Task<ActionResult<AppointmentViewModel>> PublishAsync([FromBody] PublishAppointmentCommand publishAppointmentCommand)
         {
             var post = await _mediator.Send(publishAppointmentCommand);
             return StatusCode((int)HttpStatusCode.Created, ResponseWrapper.CreateOkResponseWrapper(post));
         }
 
         /// <summary>
-        /// 获取热门帖子列表
+        /// 约拍
+        /// </summary>
+        /// <param name="appointCommand"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("appoint")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<AppointmentViewModel>> AppointAsync([FromBody] AppointCommand appointCommand)
+        {
+            var result = await _mediator.Send(appointCommand);
+            return StatusCode((int)HttpStatusCode.Created, ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 获取约拍广场的约拍列表
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<AppointmentViewModel>>> GetAppointmentsAsync()
+        public async Task<ActionResult<IEnumerable<AppointmentViewModel>>> GetAppointmentsAsync([FromQuery(Name = "payertype")] PayerType? payerType, [FromQuery(Name = "appointmentseconds")] double? appointmentSeconds)
         {
-            throw new NotImplementedException();
+            var appointments = await _appointmentQueries.GetAppointmentsAsync(payerType, appointmentSeconds);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(appointments));
         }
     }
 }

@@ -39,13 +39,17 @@ namespace Photography.Services.User.API.Application.Commands.Login
         public async Task<TokensViewModel> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
             var accessToken = await GetAccessTokenAsync(request);
+            string oldToken = null;
 
             #region Backward compatibility code
             var user = await _userRepository.GetByUserNameAsync(request.UserName);
-            // 生成老式token，供聊天服务使用
-            var oldToken = OldTokenUtil.GetTokenString(user.ChatServerUserId, request.Password);
-            // 向redis中写入用户信息，供聊天服务使用
-            await WriteChatServerUserToRedisAsync(request, user);
+            if (user != null)
+            {
+                // 生成老式token，供聊天服务使用
+                oldToken = OldTokenUtil.GetTokenString(user.ChatServerUserId, request.Password);
+                // 向redis中写入用户信息，供聊天服务使用
+                await WriteChatServerUserToRedisAsync(request, user);
+            }
             #endregion
 
             return new TokensViewModel { AccessToken = accessToken, OldToken = oldToken };
@@ -92,38 +96,35 @@ namespace Photography.Services.User.API.Application.Commands.Login
         {
             try
             {
-                if (user != null)
+                var chatServerUser = new ChatServerUser
                 {
-                    var chatServerUser = new ChatServerUser
-                    {
-                        userId = user.ChatServerUserId,
-                        username = user.UserName,
-                        nickname = user.Nickname,
-                        clientType = loginCommand.ClientType,
-                        avatar = user.Avatar,
-                        tel = user.Phonenumber,
-                        password = loginCommand.Password,
-                        registrationId = loginCommand.RegistrationId
-                    };
-                    string json = SerializeUtil.SerializeToJson(chatServerUser);
-                    _logger.LogInformation("*************json 1: {json}*************", json);
-                    var bytes = SerializeUtil.SerializeStringToBytes(json, true);
-                    json = JsonConvert.SerializeObject(bytes);
-                    _logger.LogInformation("*************json 2: {json}*************", json);
-                    await _redisService.SetAsync(user.ChatServerUserId.ToString(), json);
+                    userId = user.ChatServerUserId,
+                    username = user.UserName,
+                    nickname = user.Nickname,
+                    clientType = loginCommand.ClientType,
+                    avatar = user.Avatar,
+                    tel = user.Phonenumber,
+                    password = loginCommand.Password,
+                    registrationId = loginCommand.RegistrationId
+                };
+                string json = SerializeUtil.SerializeToJson(chatServerUser);
+                _logger.LogInformation("*************json 1: {json}*************", json);
+                var bytes = SerializeUtil.SerializeStringToBytes(json, true);
+                json = JsonConvert.SerializeObject(bytes);
+                _logger.LogInformation("*************json 2: {json}*************", json);
+                await _redisService.SetAsync(user.ChatServerUserId.ToString(), json);
 
-                    //var redis = new RedisHelper(0);
-                    //if (redis != null)
-                    //{
-                    //    redis.StringSet<byte[]>(user.ChatServerUserId.ToString(), SerializeUtil.SerializeStringToBytes(json, true));
-                    //}
-                    //else
-                    //{
-                    //    _logger.LogError("**************redis is null**********");
-                    //}
-                }
+                //var redis = new RedisHelper(0);
+                //if (redis != null)
+                //{
+                //    redis.StringSet<byte[]>(user.ChatServerUserId.ToString(), SerializeUtil.SerializeStringToBytes(json, true));
+                //}
+                //else
+                //{
+                //    _logger.LogError("**************redis is null**********");
+                //}
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("WriteChatServerUserToRedisAsync: {ChatServerError}", ex.Message);
                 if (ex.InnerException != null)

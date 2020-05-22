@@ -8,6 +8,6 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggre
 {
     public interface IUserPostRelationRepository : IRepository<UserPostRelation>
     {
-        Task<UserPostRelation> GetAsync(Guid userId, Guid postId);
+        Task<UserPostRelation> GetAsync(Guid userId, Guid postId, UserPostRelationType relationType);
     }
 }
