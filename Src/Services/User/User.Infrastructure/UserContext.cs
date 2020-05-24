@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
+using Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate;
 using Photography.Services.User.Infrastructure.EntityConfigurations;
 using System;
 using System.Collections.Generic;

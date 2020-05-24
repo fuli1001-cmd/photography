@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
-using MediatR;
 using Microsoft.EntityFrameworkCore.Storage;
 using Photography.Services.Post.Infrastructure.EntityConfigurations;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -15,6 +14,8 @@ using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggregate;
 using Arise.DDD.Domain.SeedWork;
 using Arise.DDD.Infrastructure.Extensions;
+using MediatR;
+using Photography.Services.Post.Domain.AggregatesModel.CommentAggregate;
 
 namespace Photography.Services.Post.Infrastructure
 {

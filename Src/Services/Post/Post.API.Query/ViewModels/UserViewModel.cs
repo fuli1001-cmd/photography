@@ -25,4 +25,9 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public UserType? UserType { get; set; }
         public int Score { get; set; }
     }
+
+    public class CommentUserViewModel : BaseUserViewModel
+    {
+        public string Avatar { get; set; }
+    }
 }

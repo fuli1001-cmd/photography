@@ -1,0 +1,52 @@
+﻿using Arise.DDD.API.Extensions;
+using MediatR;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using NServiceBus;
+using Photography.Messages.Events;
+using Photography.Services.Order.API.Application.Commands.CreateOrder;
+using Serilog.Context;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Photography.Services.Order.API.Application.IntegrationEvents
+{
+    public class AppointmentDealConfirmedEventHandler : IHandleMessages<AppointmentDealConfirmedEvent>
+    {
+        private readonly IMediator _mediator;
+        private readonly ILogger<AppointmentDealConfirmedEventHandler> _logger;
+
+        public AppointmentDealConfirmedEventHandler(IMediator mediator, ILogger<AppointmentDealConfirmedEventHandler> logger)
+        {
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public async Task Handle(AppointmentDealConfirmedEvent message, IMessageHandlerContext context)
+        {
+            using (LogContext.PushProperty("IntegrationEventContext", $"{message.Id}-{Program.AppName}"))
+            {
+                _logger.LogInformation("----- Handling integration event: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
+
+                var command = new CreateOrderCommand
+                {
+                    User1Id = message.User1Id,
+                    User2Id = message.User2Id,
+                    DealId = message.DealId,
+                    Price = message.Price,
+                    AppointedTime = message.AppointedTime,
+                    PayerId = message.PayerId,
+                    Text = message.Text,
+                    Latitude = message.Latitude,
+                    Longitude = message.Longitude,
+                    LocationName = message.LocationName,
+                    Address = message.Address
+                };
+
+                await _mediator.Send(command);
+            }
+        }
+    }
+}

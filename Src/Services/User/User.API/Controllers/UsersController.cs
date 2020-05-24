@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Photography.Services.User.API.Application.Commands.Login;
+using Photography.Services.User.API.Application.Commands.ToggleFollow;
 using Photography.Services.User.API.BackwardCompatibility.ViewModels;
 using Photography.Services.User.API.Query.BackwardCompatibility.ViewModels;
 using Photography.Services.User.API.Query.Interfaces;
@@ -97,6 +98,19 @@ namespace Photography.Services.User.API.Controllers
         {
             var friends = _userQueries.GetFriendsAsync();
             return Ok(ResponseWrapper.CreateOkResponseWrapper(friends));
+        }
+
+        /// <summary>
+        /// 关注或取消关注
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("togglefollow")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<bool>> ToggleFollowAsync([FromBody] ToggleFollowCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
     }
 }

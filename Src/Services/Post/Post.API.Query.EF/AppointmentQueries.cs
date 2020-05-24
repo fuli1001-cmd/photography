@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Arise.DDD.Domain.Exceptions;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -10,6 +11,7 @@ using Photography.Services.Post.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -30,13 +32,24 @@ namespace Photography.Services.Post.API.Query.EF
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        // 获取约拍广场的约拍列表
         public async Task<List<AppointmentViewModel>> GetAppointmentsAsync(PayerType? payerType, double? appointmentSeconds)
         {
-            var posts = _postContext.Posts.Where(p => p.PostType == PostType.Appointment);
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var curUserType = _postContext.Users.SingleOrDefault(u => u.Id.ToString() == userId)?.UserType ?? throw new DomainException("当前用户类型不确定。");
+
+            // 与当前用户不同类型的用户所发的约拍
+            var posts = from p in _postContext.Posts
+                        join u in _postContext.Users on p.UserId equals u.Id
+                        where u.UserType != curUserType && p.PostType == PostType.Appointment
+                        select p;
             
+            // 筛选支付方类型
             if (payerType != null)
                 posts = posts.Where(p => p.PayerType == payerType);
 
+            // 筛选指定日期当天的约拍
             if (appointmentSeconds != null)
             {
                 var epoch = new DateTime(1970, 1, 1, 0, 0, 0);
@@ -48,18 +61,20 @@ namespace Photography.Services.Post.API.Query.EF
 
             posts = GetPostsWithNavigationPropertiesAsync(posts);
             var appointments = _mapper.Map<List<AppointmentViewModel>>(await posts.OrderByDescending(p => p.Timestamp).ToListAsync());
+            // 设置附件属性：宽、高、视频缩略图
             appointments.ForEach(a => a.SetAttachmentProperties(_logger));
             return appointments;
         }
 
-        public Task<List<AppointmentViewModel>> GetReceivedAppointmentsAsync()
+        public async Task<List<AppointmentViewModel>> GetMyAppointmentsAsync()
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<AppointmentViewModel>> GetSentAppointmentsAsync()
-        {
-            throw new NotImplementedException();
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var posts = _postContext.Posts.Where(p => p.UserId.ToString() == userId && p.PostType == PostType.Appointment);
+            posts = GetPostsWithNavigationPropertiesAsync(posts);
+            var appointments = _mapper.Map<List<AppointmentViewModel>>(await posts.OrderByDescending(p => p.Timestamp).ToListAsync());
+            // 设置附件属性：宽、高、视频缩略图
+            appointments.ForEach(a => a.SetAttachmentProperties(_logger));
+            return appointments;
         }
 
         private IQueryable<Domain.AggregatesModel.PostAggregate.Post> GetPostsWithNavigationPropertiesAsync(IQueryable<Domain.AggregatesModel.PostAggregate.Post> query)

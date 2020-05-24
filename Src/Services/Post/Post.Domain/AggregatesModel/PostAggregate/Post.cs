@@ -1,4 +1,6 @@
-﻿using Arise.DDD.Domain.SeedWork;
+﻿using Arise.DDD.Domain.Exceptions;
+using Arise.DDD.Domain.SeedWork;
+using Photography.Services.Post.Domain.AggregatesModel.CommentAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggregate;
 using System;
@@ -17,6 +19,9 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
 
         public User User { get; private set; }
         public Guid UserId { get; private set; }
+
+        private readonly List<PostAttachment> _postAttachments = null;
+        public IReadOnlyCollection<PostAttachment> PostAttachments => _postAttachments;
 
         #region location properties
         public double? Latitude { get; private set; }
@@ -45,9 +50,6 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         private readonly List<Post> _forwardingPosts = null;
         public IReadOnlyCollection<Post> ForwardingPosts => _forwardingPosts;
 
-        private readonly List<PostAttachment> _postAttachments = null;
-        public IReadOnlyCollection<PostAttachment> PostAttachments => _postAttachments;
-
         private readonly List<UserPostRelation> _userPostRelations = null;
         public IReadOnlyCollection<UserPostRelation> UserPostRelations => _userPostRelations;
 
@@ -59,9 +61,16 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         public double? AppointedTime { get; private set; }
         public decimal? Price { get; private set; }
         public PayerType? PayerType { get; private set; }
+        public AppointmentDealStatus? AppointmentDealStatus { get; private set; }
 
         public User AppointmentedUser { get; private set; }
         public Guid? AppointmentedUserId { get; private set; }
+
+        public Post AppointmentedToPost { get; private set; }
+        public Guid? AppointmentedToPostId { get; private set; }
+
+        private readonly List<Post> _appointmentedFromPosts = null;
+        public IReadOnlyCollection<Post> AppointmentedFromPosts => _appointmentedFromPosts;
         #endregion
 
         public Post()
@@ -69,54 +78,121 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
 
         }
 
-        // 构造帖子对象
-        public Post(string text, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
-            double latitude, double longitude, string locationName, string cityCode, 
-            List<Guid> friendIds, List<PostAttachment> postAttachments, Guid userId)
+        // constructor to set common properties
+        private Post(string text, double? latitude, double? longitude, string? locationName, string address, 
+            string cityCode, List<PostAttachment> postAttachments, Guid userId)
         {
             Text = text;
+            Latitude = latitude;
+            Longitude = longitude;
+            LocationName = locationName;
+            Address = address;
+            CityCode = cityCode;
+            _postAttachments = postAttachments;
+            UserId = userId;
+            Timestamp = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+        }
+
+        // 构造帖子对象
+        private Post(string text, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
+            double latitude, double longitude, string locationName, string address, string cityCode, 
+            List<Guid> friendIds, List<PostAttachment> postAttachments, Guid userId)
+            : this(text, latitude, longitude, locationName, address, cityCode, postAttachments, userId)
+        {
             Commentable = commentable;
             ForwardType = forwardType;
             ShareType = shareType;
             Visibility = visibility;
             ViewPassword = viewPassword;
-            Latitude = latitude;
-            Longitude = longitude;
-            LocationName = locationName;
-            CityCode = cityCode;
-            _postAttachments = postAttachments;
             _userPostRelations = friendIds?.Select(id => new UserPostRelation(id, UserPostRelationType.View)).ToList();
-            UserId = userId;
-            Timestamp = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
             PostType = PostType.Post;
         }
 
         // 构造约拍对象
-        public Post(string text, double appointedTime, decimal price, PayerType payerType, double latitude, double longitude, string locationName, string cityCode,
-            List<PostAttachment> postAttachments, Guid userId)
+        private Post(string text, double? appointedTime, decimal? price, PayerType? payerType, double? latitude, double? longitude, 
+            string locationName, string address, string cityCode, List<PostAttachment> postAttachments, Guid userId)
+            : this(text, latitude, longitude, locationName, address, cityCode, postAttachments, userId)
         {
-            Text = text;
             AppointedTime = appointedTime;
             Price = price;
             PayerType = payerType;
-            Latitude = latitude;
-            Longitude = longitude;
-            LocationName = locationName;
-            CityCode = cityCode;
-            _postAttachments = postAttachments;
-            UserId = userId;
-            Timestamp = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
             PostType = PostType.Appointment;
         }
 
-        public Post(string text, List<PostAttachment> postAttachments, Guid appointmentId, Guid userId)
+        // 构造关联约拍对象
+        private Post(string text, double? appointedTime, decimal? price, PayerType? payerType, double? latitude, double? longitude,
+            string locationName, string address, string cityCode, List<PostAttachment> postAttachments, Guid userId, 
+            Guid appointmentedUserId, Guid? appointmentedToPostId)
+            : this(text, appointedTime, price, payerType, latitude, longitude, locationName, address, cityCode, postAttachments, userId)
         {
-            Text = text;
-            _postAttachments = postAttachments;
-            ForwardedPostId = appointmentId;
-            UserId = userId;
-            Timestamp = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
-            PostType = PostType.LinkedAppointment;
+            AppointmentedUserId = appointmentedUserId;
+            AppointmentedToPostId = appointmentedToPostId;
+            PostType = PostType.AppointmentDeal;
+            AppointmentDealStatus = PostAggregate.AppointmentDealStatus.Created;
+        }
+
+        // 创建帖子对象
+        public static Post CreatePost(string text, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
+            double latitude, double longitude, string locationName, string address, string cityCode,
+            List<Guid> friendIds, List<PostAttachment> postAttachments, Guid userId)
+        {
+            return new Post(text, commentable, forwardType, shareType, visibility, viewPassword, latitude, longitude,
+                locationName, address, cityCode, friendIds, postAttachments, userId);
+        }
+
+        // 创建约拍对象
+        public static Post CreateAppointment(string text, double? appointedTime, decimal? price, PayerType payerType, double? latitude, double? longitude,
+            string locationName, string address, string cityCode, List<PostAttachment> postAttachments, Guid userId)
+        {
+            return new Post(text, appointedTime, price, payerType, latitude, longitude, locationName, address, cityCode, postAttachments, userId);
+        }
+
+        // 创建约拍交易对象
+        public static Post CreateAppointmentDeal(string text, double? appointedTime, decimal? price, PayerType? payerType, double? latitude, double? longitude,
+            string locationName, string address, string cityCode, List<PostAttachment> postAttachments, Guid userId, Guid appointmentedUserId, Guid? appointmentedToPostId)
+        {
+            return new Post(text, appointedTime, price, payerType, latitude, longitude, locationName, address, cityCode, postAttachments, userId, appointmentedUserId, appointmentedToPostId);
+        }
+
+        public void SetForwardPostId(Guid forwardedPostId)
+        {
+            ForwardedPostId = forwardedPostId;
+        }
+
+        public void CancelAppointmentDeal(string userId)
+        {
+            //  当前操作用户必须为发出该交易的用户
+            if (UserId.ToString() != userId)
+                throw new DomainException("无权取消别人发出的约拍。");
+
+            if (AppointmentDealStatus != PostAggregate.AppointmentDealStatus.Created)
+                throw new DomainException("状态错误，设置失败。");
+
+            AppointmentDealStatus = PostAggregate.AppointmentDealStatus.Canceled;
+        }
+
+        public void CanfirmAppointmentDeal(string userId)
+        {
+            //  当前操作用户必须为收到该交易的用户
+            if (AppointmentedUserId.ToString() != userId)
+                throw new DomainException("无权确认此约拍。");
+
+            if (AppointmentDealStatus != PostAggregate.AppointmentDealStatus.Created)
+                throw new DomainException("状态错误，设置失败。");
+
+            AppointmentDealStatus = PostAggregate.AppointmentDealStatus.WaitingForShooting;
+        }
+
+        public void RejectAppointmentDeal(string userId)
+        {
+            // 当前操作用户必须为收到该交易的用户
+            if (AppointmentedUserId.ToString() != userId)
+                throw new DomainException("无权拒绝此约拍。");
+
+            if (AppointmentDealStatus != PostAggregate.AppointmentDealStatus.Created)
+                throw new DomainException("状态错误，设置失败。");
+
+            AppointmentDealStatus = PostAggregate.AppointmentDealStatus.Rejected;
         }
     }
 
@@ -146,7 +222,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
     {
         Post,
         Appointment,
-        LinkedAppointment
+        AppointmentDeal
     }
 
     public enum PayerType
@@ -154,5 +230,28 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         Free,
         Me,
         You
+    }
+
+    // 约拍生命流程状态
+    public enum AppointmentDealStatus
+    {
+        // 已创建
+        Created,
+        // 待拍片
+        WaitingForShooting,
+        // 待上传拍摄的照片
+        WaitingForUploadingOriginal,
+        // 待选片
+        WaitingForSelection,
+        // 待上传处理后的照片
+        WaitingForUploadProcessed,
+        // 待验收
+        WaitingForCheck,
+        // 已完成
+        Finished,
+        // 已取消
+        Canceled,
+        // 已拒绝
+        Rejected
     }
 }

@@ -8,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Photography.Services.User.API.Application.Commands.LikePost;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Photography.Services.User.API.Application.Behaviors;
@@ -51,8 +50,7 @@ namespace Photography.Services.User.API
 
             services.AddHttpContextAccessor();
 
-            services.AddMediatR(typeof(LikePostCommandHandler));
-            services.AddMediatR(typeof(LoginCommand));
+            services.AddMediatR(typeof(LoginCommand).GetTypeInfo().Assembly);
 
             services.AddSingleton(typeof(IRedisService), typeof(RedisService));
 
@@ -64,7 +62,7 @@ namespace Photography.Services.User.API
             {
                 options.Filters.Add(typeof(HttpGlobalExceptionFilter));
             })
-            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<PublishPostCommandValidator>());
+            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<FollowCommandValidator>());
 
             services.AddApiVersioning(options =>
             {

@@ -12,10 +12,7 @@ namespace Photography.Services.Post.API.Query.Interfaces
         // 获取约拍广场的约拍列表
         Task<List<AppointmentViewModel>> GetAppointmentsAsync(PayerType? payerType, double? appointmentSeconds);
 
-        // 获取我发起的约拍列表
-        Task<List<AppointmentViewModel>> GetSentAppointmentsAsync();
-
-        // 获取我收到的约拍列表
-        Task<List<AppointmentViewModel>> GetReceivedAppointmentsAsync();
+        // 获取我发布的约拍
+        Task<List<AppointmentViewModel>> GetMyAppointmentsAsync();
     }
 }

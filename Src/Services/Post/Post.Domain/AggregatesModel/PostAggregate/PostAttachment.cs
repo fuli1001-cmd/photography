@@ -10,6 +10,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         public string Name { get; private set; }
         public string Text { get; private set; }
         public AttachmentType AttachmentType { get; private set; }
+        public AppointmentDealAttachmentType? AppointmentDealAttachmentType { get; private set; }
 
         public Post Post { get; private set; }
         public Guid PostId { get; private set; }
@@ -20,11 +21,22 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             Text = text;
             AttachmentType = attachmentType;
         }
+
+        public void SetAppointmentDealAttachmentType(AppointmentDealAttachmentType type)
+        {
+            AppointmentDealAttachmentType = type;
+        }
     }
 
     public enum AttachmentType
     {
         Image,
         Video
+    }
+
+    public enum AppointmentDealAttachmentType
+    {
+        Original,
+        Processed
     }
 }

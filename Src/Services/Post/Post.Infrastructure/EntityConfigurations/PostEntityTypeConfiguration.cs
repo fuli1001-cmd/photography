@@ -34,6 +34,9 @@ namespace Photography.Services.Post.Infrastructure.EntityConfigurations
             // self navigation properties
             builder.HasMany(p => p.ForwardingPosts).WithOne(p => p.ForwardedPost).HasForeignKey(p => p.ForwardedPostId).IsRequired(false).OnDelete(DeleteBehavior.Restrict);
 
+            // self navigation properties
+            builder.HasMany(p => p.AppointmentedFromPosts).WithOne(p => p.AppointmentedToPost).HasForeignKey(p => p.AppointmentedToPostId).IsRequired(false).OnDelete(DeleteBehavior.Restrict);
+
             // UserPostRelations navigation properties
             builder.HasMany(p => p.UserPostRelations).WithOne(pu => pu.Post).HasForeignKey(pu => pu.PostId).OnDelete(DeleteBehavior.Restrict);
 

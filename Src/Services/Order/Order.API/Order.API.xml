@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Order.API</name>
+    </assembly>
+    <members>
+        <member name="P:Photography.Services.Order.API.Application.Commands.CheckProcessed.CheckProcessedCommand.OrderId">
+            <summary>
+            验收精修片的订单ID
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Order.API.Application.Commands.ConfirmShot.ConfirmShotCommand.OrderId">
+            <summary>
+            确认已拍片的订单ID
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Order.API.Application.Commands.SelectOriginal.SelectOriginalCommand.OrderId">
+            <summary>
+            上传原片的订单ID
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Order.API.Application.Commands.SelectOriginal.SelectOriginalCommand.Attachments">
+            <summary>
+            附件名称数组
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Order.API.Application.Commands.UploadOriginal.UploadOriginalCommand.OrderId">
+            <summary>
+            上传原片的订单ID
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Order.API.Application.Commands.UploadOriginal.UploadOriginalCommand.Attachments">
+            <summary>
+            附件名称数组
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Order.API.Application.Commands.UploadProcessed.UploadProcessedCommand.OrderId">
+            <summary>
+            上传精修片的订单ID
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Order.API.Application.Commands.UploadProcessed.UploadProcessedCommand.Attachments">
+            <summary>
+            附件名称数组
+            </summary>
+        </member>
+        <member name="T:Photography.Services.Order.API.Controllers.OrdersController">
+            <summary>
+            订单控制器
+            </summary>
+        </member>
+        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetWaitingForShootingOrdersAsync">
+            <summary>
+            获取待拍片订单列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetWaitingForUploadOriginalOrdersAsync">
+            <summary>
+            获取待上传原片订单列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetWaitingForSelectionOrdersAsync">
+            <summary>
+            获取待选片订单列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetWaitingForUploadProcessedOrdersAsync">
+            <summary>
+            获取待出片订单列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetWaitingForCheckOrdersAsync">
+            <summary>
+            获取待出片订单列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetFinishedOrdersAsync">
+            <summary>
+            获取已完成订单列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetFinishedOrdersAsync(Photography.Services.Order.API.Application.Commands.ConfirmShot.ConfirmShotCommand)">
+            <summary>
+            确认已拍片
+            </summary>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

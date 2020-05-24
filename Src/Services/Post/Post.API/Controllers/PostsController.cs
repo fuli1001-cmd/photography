@@ -4,8 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Photography.Services.Post.API.Application.Commands.LikePost;
-using Photography.Services.Post.API.Application.Commands.PublishPost;
+using Photography.Services.Post.API.Application.Commands.Post.ForwardPosts;
+using Photography.Services.Post.API.Application.Commands.Post.PublishPost;
+using Photography.Services.Post.API.Application.Commands.Post.ReplyComment;
+using Photography.Services.Post.API.Application.Commands.Post.ReplyPost;
+using Photography.Services.Post.API.Application.Commands.Post.ToggleLikePost;
 using Photography.Services.Post.API.Infrastructure;
 using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
@@ -85,15 +88,16 @@ namespace Photography.Services.Post.API.Controllers
         }
 
         /// <summary>
-        /// 我的帖子
+        /// 用户的帖子
         /// </summary>
+        /// <param name="userId">用户id</param>
         /// <returns></returns>
         [HttpGet]
-        [Route("mine")]
+        [Route("user/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<PostViewModel>>> GetMyPostsAsync()
+        public async Task<ActionResult<IEnumerable<PostViewModel>>> GetMyPostsAsync(string userId)
         {
-            var posts = await _postQueries.GetMyPostsAsync();
+            var posts = await _postQueries.GetUserPostsAsync(userId);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
         }
 
@@ -131,10 +135,51 @@ namespace Photography.Services.Post.API.Controllers
         [HttpPost]
         [Route("togglelike")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<PostViewModel>> LikePostAsync([FromBody] ToggleLikePostCommand likePostCommand)
+        public async Task<ActionResult<bool>> ToggleLikePostAsync([FromBody] ToggleLikePostCommand likePostCommand)
         {
             var result = await _mediator.Send(likePostCommand);
-            return StatusCode((int)HttpStatusCode.Created, ResponseWrapper.CreateOkResponseWrapper(result));
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 转发帖子
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("forward")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<bool>> ForwardPostAsync([FromBody] ForwardPostsCommand forwardPostsCommand)
+        {
+            var posts = await _mediator.Send(forwardPostsCommand);
+            return StatusCode((int)HttpStatusCode.Created, ResponseWrapper.CreateOkResponseWrapper(posts));
+        }
+
+        /// <summary>
+        /// 回复帖子
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("replypost")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<bool>> ReplyPostAsync([FromBody] ReplyPostCommand command)
+        {
+            var posts = await _mediator.Send(command);
+            return StatusCode((int)HttpStatusCode.Created, ResponseWrapper.CreateOkResponseWrapper(posts));
+        }
+
+        /// <summary>
+        /// 回复评论
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("replycomment")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<bool>> ReplyCommentAsync([FromBody] ReplyCommentCommand command)
+        {
+            var posts = await _mediator.Send(command);
+            return StatusCode((int)HttpStatusCode.Created, ResponseWrapper.CreateOkResponseWrapper(posts));
         }
     }
 }

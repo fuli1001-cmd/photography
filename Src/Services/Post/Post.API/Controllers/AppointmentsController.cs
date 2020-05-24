@@ -4,8 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Photography.Services.Post.API.Application.Commands.Appoint;
-using Photography.Services.Post.API.Application.Commands.PublishAppointment;
+using Photography.Services.Post.API.Application.Commands.Appointment.PublishAppointment;
 using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
@@ -52,22 +51,10 @@ namespace Photography.Services.Post.API.Controllers
         }
 
         /// <summary>
-        /// 约拍
-        /// </summary>
-        /// <param name="appointCommand"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("appoint")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<AppointmentViewModel>> AppointAsync([FromBody] AppointCommand appointCommand)
-        {
-            var result = await _mediator.Send(appointCommand);
-            return StatusCode((int)HttpStatusCode.Created, ResponseWrapper.CreateOkResponseWrapper(result));
-        }
-
-        /// <summary>
         /// 获取约拍广场的约拍列表
         /// </summary>
+        /// <param name="payerType">付款方类型</param>
+        /// <param name="appointmentSeconds">约拍日期时间戳（距unix epoch的秒数）</param>
         /// <returns></returns>
         [HttpGet]
         [Route("")]
@@ -75,6 +62,19 @@ namespace Photography.Services.Post.API.Controllers
         public async Task<ActionResult<IEnumerable<AppointmentViewModel>>> GetAppointmentsAsync([FromQuery(Name = "payertype")] PayerType? payerType, [FromQuery(Name = "appointmentseconds")] double? appointmentSeconds)
         {
             var appointments = await _appointmentQueries.GetAppointmentsAsync(payerType, appointmentSeconds);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(appointments));
+        }
+
+        /// <summary>
+        /// 获取我发布的约拍
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("mine")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<AppointmentViewModel>>> GetMyAppointmentsAsync()
+        {
+            var appointments = await _appointmentQueries.GetMyAppointmentsAsync();
             return Ok(ResponseWrapper.CreateOkResponseWrapper(appointments));
         }
     }

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Security.Claims;
 using Microsoft.Extensions.Logging;
 using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
+using Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate;
 
 namespace Photography.Services.User.API.Query.EF
 {

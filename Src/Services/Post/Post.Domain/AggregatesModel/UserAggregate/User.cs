@@ -1,5 +1,5 @@
 ﻿using Arise.DDD.Domain.SeedWork;
-using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
+using Photography.Services.Post.Domain.AggregatesModel.CommentAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggregate;
 using System;
 using System.Collections.Generic;

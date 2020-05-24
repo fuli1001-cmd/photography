@@ -30,7 +30,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
+    <PackageReference Include="NServiceBus.Extensions.Hosting" Version="1.0.1" />
+    <PackageReference Include="NServiceBus.RabbitMQ" Version="5.2.0" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="3.0.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
@@ -44,6 +45,7 @@
     <Folder Include="Infrastructure\Migrations\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Messages\Messages.csproj" />
     <ProjectReference Include="..\Post.API.Query.EF\Post.API.Query.EF.csproj" />
     <ProjectReference Include="..\Post.API.Query\Post.API.Query.csproj" />
     <ProjectReference Include="..\Post.Domain\Post.Domain.csproj" />

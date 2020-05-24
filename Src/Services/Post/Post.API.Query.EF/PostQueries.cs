@@ -35,9 +35,8 @@ namespace Photography.Services.Post.API.Query.EF
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<List<PostViewModel>> GetMyPostsAsync()
+        public async Task<List<PostViewModel>> GetUserPostsAsync(string userId)
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var myPosts = _postContext.Posts.Where(p => p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post && p.UserId.ToString() == userId);
             var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(myPosts);
             var posts = _mapper.Map<List<PostViewModel>>(await postsWithNavigationProperties.ToListAsync());
