@@ -10,7 +10,7 @@ using Photography.Services.Post.Infrastructure;
 namespace Photography.Services.Post.API.Infrastructure.Migrations
 {
     [DbContext(typeof(PostContext))]
-    [Migration("20200522094220_Init")]
+    [Migration("20200525093635_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,11 +21,14 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.PostAggregate.Comment", b =>
+            modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.CommentAggregate.Comment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("CreatedTime")
+                        .HasColumnType("float");
 
                     b.Property<int>("Likes")
                         .HasColumnType("int");
@@ -33,15 +36,12 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<Guid?>("ParentCommentId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("PostId")
+                    b.Property<Guid?>("PostId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Timestamp")
-                        .HasColumnType("float");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -69,6 +69,12 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<double?>("AppointedTime")
                         .HasColumnType("float");
 
+                    b.Property<int?>("AppointmentDealStatus")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("AppointmentedToPostId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("AppointmentedUserId")
                         .HasColumnType("uniqueidentifier");
 
@@ -84,6 +90,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
+
+                    b.Property<double>("CreatedTime")
+                        .HasColumnType("float");
 
                     b.Property<int>("ForwardType")
                         .ValueGeneratedOnAdd()
@@ -139,9 +148,6 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Timestamp")
-                        .HasColumnType("float");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
@@ -154,6 +160,8 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         .HasDefaultValue(0);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppointmentedToPostId");
 
                     b.HasIndex("AppointmentedUserId");
 
@@ -169,6 +177,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("AttachmentStatus")
+                        .HasColumnType("int");
 
                     b.Property<int>("AttachmentType")
                         .HasColumnType("int");
@@ -201,6 +212,11 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
 
                     b.Property<string>("Nickname")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Score")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<int?>("UserType")
                         .HasColumnType("int");
@@ -255,18 +271,16 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.ToTable("UserPostRelations");
                 });
 
-            modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.PostAggregate.Comment", b =>
+            modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.CommentAggregate.Comment", b =>
                 {
-                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.PostAggregate.Comment", "ParentComment")
+                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.CommentAggregate.Comment", "ParentComment")
                         .WithMany("SubComments")
                         .HasForeignKey("ParentCommentId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Photography.Services.Post.Domain.AggregatesModel.PostAggregate.Post", "Post")
                         .WithMany("Comments")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PostId");
 
                     b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "User")
                         .WithMany("Comments")
@@ -277,6 +291,11 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
 
             modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.PostAggregate.Post", b =>
                 {
+                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.PostAggregate.Post", "AppointmentedToPost")
+                        .WithMany("AppointmentedFromPosts")
+                        .HasForeignKey("AppointmentedToPostId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "AppointmentedUser")
                         .WithMany("Appointments")
                         .HasForeignKey("AppointmentedUserId")

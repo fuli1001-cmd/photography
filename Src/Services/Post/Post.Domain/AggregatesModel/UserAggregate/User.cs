@@ -12,6 +12,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
         public string Nickname { get; private set; }
         public string Avatar { get; private set; }
         public UserType? UserType { get; private set; }
+        public int Score { get; private set; }
 
         private readonly List<PostAggregate.Post> _posts = null;
         public IReadOnlyCollection<PostAggregate.Post> Posts => _posts;

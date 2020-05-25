@@ -14,7 +14,7 @@ namespace Photography.Services.Order.Infrastructure.EntityConfigurations
             builder.Ignore(e => e.DomainEvents);
 
             //posts navigation properties
-            var ordersNavigation = builder.Metadata.FindNavigation(nameof(User.Orders));
+            var ordersNavigation = builder.Metadata.FindNavigation(nameof(User.User1Orders));
             ordersNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
         }
     }

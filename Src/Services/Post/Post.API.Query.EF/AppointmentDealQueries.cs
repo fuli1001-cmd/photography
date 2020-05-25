@@ -30,18 +30,18 @@ namespace Photography.Services.Post.API.Query.EF
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<List<AppointmentDealViewModel>> GetReceivedAppointmentDealsAsync()
+        public async Task<List<AppointmentViewModel>> GetReceivedAppointmentDealsAsync()
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             var deals = await _postContext.Posts
-                .Where(p => p.AppointmentedUserId.ToString() == userId && p.PostType == PostType.AppointmentDeal)
+                .Where(p => p.AppointmentedUserId.ToString() == userId && p.PostType == PostType.AppointmentDeal && p.AppointmentDealStatus == AppointmentDealStatus.Created)
                 .OrderBy(p => p.AppointedTime)
                 .Include(p => p.PostAttachments)
                 .Include(p => p.User)
                 .ToListAsync();
 
-            var vms = _mapper.Map<List<AppointmentDealViewModel>>(deals);
+            var vms = _mapper.Map<List<AppointmentViewModel>>(deals);
 
             // 设置付款方，由于这里查询的是收到的约拍交易，支付视角相对于发出的约拍交易是反的,
             // 而约拍交易是由交易发出人创建的，所以支付方需要对调一下。
@@ -56,18 +56,32 @@ namespace Photography.Services.Post.API.Query.EF
             return vms;
         }
 
-        public async Task<List<AppointmentDealViewModel>> GetSentAppointmentDealsAsync()
+        public async Task<List<AppointmentViewModel>> GetSentAppointmentDealsAsync()
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             var deals = await _postContext.Posts
-                .Where(p => p.UserId.ToString() == userId && p.PostType == PostType.AppointmentDeal)
+                .Where(p => p.UserId.ToString() == userId && p.PostType == PostType.AppointmentDeal && p.AppointmentDealStatus == AppointmentDealStatus.Created)
                 .OrderBy(p => p.AppointedTime)
                 .Include(p => p.PostAttachments)
                 .Include(p => p.AppointmentedUser)
                 .ToListAsync();
 
-            return _mapper.Map<List<AppointmentDealViewModel>>(deals);
+            var dealsViewModel = _mapper.Map<List<AppointmentViewModel>>(deals);
+            dealsViewModel.ForEach(dvm =>
+            {
+                var deal = deals.FirstOrDefault(d => d.Id == dvm.Id);
+                dvm.User = new AppointmentUserViewModel
+                {
+                    Id = deal.AppointmentedUser.Id,
+                    Nickname = deal.AppointmentedUser.Nickname,
+                    Avatar = deal.AppointmentedUser.Avatar,
+                    UserType = deal.AppointmentedUser.UserType,
+                    Score = deal.AppointmentedUser.Score
+                };
+            });
+
+            return dealsViewModel;
         }
     }
 }

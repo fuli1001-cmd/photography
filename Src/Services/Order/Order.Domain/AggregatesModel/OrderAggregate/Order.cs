@@ -28,6 +28,8 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
 
         public double CreatedTime { get; private set; }
 
+        public double ClosedTime { get; private set; }
+
         // 约拍时间
         public double AppointedTime { get; private set; }
 
@@ -63,6 +65,22 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
             OrderStatus = OrderStatus.Created;
         }
 
+        public void Cancel()
+        {
+            if (OrderStatus != OrderStatus.Created)
+                throw new DomainException("当前订单状态不能取消。");
+
+            OrderStatus = OrderStatus.Canceled;
+        }
+
+        public void Reject()
+        {
+            if (OrderStatus != OrderStatus.Created)
+                throw new DomainException("当前订单状态不能拒绝。");
+
+            OrderStatus = OrderStatus.Rejected;
+        }
+
         public void ConfirmShot()
         {
             if (OrderStatus != OrderStatus.WaitingForShooting)
@@ -71,34 +89,39 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
             OrderStatus = OrderStatus.WaitingForUploadOriginal;
         }
 
+        // 上传原片
         public void UploadOriginalFiles(IEnumerable<Attachment> attachments)
         {
             AddAttachments(AttachmentStatus.Original, attachments);
             OrderStatus = OrderStatus.WaitingForSelection;
         }
 
+        // 选择原片
         public void SelectOriginalFiles(IEnumerable<string> attachments)
         {
-            // 直保留选择的原片文件
-            _attachments.Where(a => a.AttachmentStatus == AttachmentStatus.Original)
+            _attachments.Where(a => a.AttachmentStatus == AttachmentStatus.Original || a.AttachmentStatus == AttachmentStatus.SelectedOriginal)
                 .ToList().ForEach(a =>
                 {
                     if (!attachments.Contains(a.Id.ToString()))
-                        _attachments.Remove(a);
+                        throw new DomainException("找不到选择的原片。");
+                    a.SetAttachmentStatus(AttachmentStatus.SelectedOriginal);
                 });
 
             OrderStatus = OrderStatus.WaitingForUploadProcessed;
         }
 
+        // 上传精修片
         public void UploadProcessedFiles(IEnumerable<Attachment> attachments)
         {
             AddAttachments(AttachmentStatus.Processed, attachments);
             OrderStatus = OrderStatus.WaitingForCheck;
         }
 
+        // 接受精修片
         public void AcceptProcessedFiles()
         {
             OrderStatus = OrderStatus.Finished;
+            ClosedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
 
         private void AddAttachments(AttachmentStatus status, IEnumerable<Attachment> attachments)

@@ -4,6 +4,11 @@
         <name>Post.API</name>
     </assembly>
     <members>
+        <member name="P:Photography.Services.Post.API.Application.Commands.AppointmentDeal.AcceptAppointmentDeal.AcceptAppointmentDealCommand.AppointmentId">
+            <summary>
+            要接受的约拍交易Id
+            </summary>
+        </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.AppointmentDeal.AppointTask.AppointTaskCommand.AppointmentId">
             <summary>
             要约拍的帖子Id
@@ -27,11 +32,6 @@
         <member name="P:Photography.Services.Post.API.Application.Commands.AppointmentDeal.CancelAppointmentDeal.CancelAppointmentDealCommand.AppointmentId">
             <summary>
             要取消的约拍交易Id
-            </summary>
-        </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.AppointmentDeal.ConfirmAppointmentDeal.ConfirmAppointmentDealCommand.AppointmentId">
-            <summary>
-            要确认的约拍交易Id
             </summary>
         </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.AppointmentDeal.RejectAppointmentDeal.RejectAppointmentDealCommand.AppointmentId">
@@ -87,6 +87,31 @@
         <member name="P:Photography.Services.Post.API.Application.Commands.Appointment.PublishAppointment.PublishAppointmentCommand.Address">
             <summary>
             地址
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Comment.LikeComment.LikeCommentCommand.CommentId">
+            <summary>
+            要赞的评论id
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Comment.ReplyComment.ReplyCommentCommand.Text">
+            <summary>
+            评论内容
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Comment.ReplyComment.ReplyCommentCommand.CommentId">
+            <summary>
+            要评论的评论id
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Comment.ReplyPost.ReplyPostCommand.Text">
+            <summary>
+            评论内容
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Comment.ReplyPost.ReplyPostCommand.PostId">
+            <summary>
+            要评论的帖子id
             </summary>
         </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.Post.PublishPost.PublishPostCommand.Attachments">
@@ -184,26 +209,6 @@
             地址
             </summary>
         </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.Post.ReplyComment.ReplyCommentCommand.Text">
-            <summary>
-            评论内容
-            </summary>
-        </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.Post.ReplyComment.ReplyCommentCommand.CommentId">
-            <summary>
-            要评论的评论id
-            </summary>
-        </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.Post.ReplyPost.ReplyPostCommand.Text">
-            <summary>
-            评论内容
-            </summary>
-        </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.Post.ReplyPost.ReplyPostCommand.PostId">
-            <summary>
-            要评论的帖子id
-            </summary>
-        </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.Post.ToggleLikePost.ToggleLikePostCommand.PostId">
             <summary>
             点赞的帖子id
@@ -234,7 +239,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.AppointmentDealsController.ConfirmAppointmentDealAsync(Photography.Services.Post.API.Application.Commands.AppointmentDeal.ConfirmAppointmentDeal.ConfirmAppointmentDealCommand)">
+        <member name="M:Photography.Services.Post.API.Controllers.AppointmentDealsController.AcceptAppointmentDealAsync(Photography.Services.Post.API.Application.Commands.AppointmentDeal.AcceptAppointmentDeal.AcceptAppointmentDealCommand)">
             <summary>
             确认别人发出的约拍交易
             </summary>
@@ -282,6 +287,32 @@
             <summary>
             获取我发布的约拍
             </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Photography.Services.Post.API.Controllers.CommentsController">
+            <summary>
+            帖子控制器
+            </summary>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.CommentsController.GetPostCommentsAsync(System.Guid)">
+            <summary>
+            获取某个帖子的评论
+            </summary>
+            <param name="postId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.CommentsController.ReplyPostAsync(Photography.Services.Post.API.Application.Commands.Comment.ReplyPost.ReplyPostCommand)">
+            <summary>
+            回复帖子
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.CommentsController.ReplyCommentAsync(Photography.Services.Post.API.Application.Commands.Comment.ReplyComment.ReplyCommentCommand)">
+            <summary>
+            回复评论
+            </summary>
+            <param name="command"></param>
             <returns></returns>
         </member>
         <member name="T:Photography.Services.Post.API.Controllers.PostsController">
@@ -338,20 +369,6 @@
             <summary>
             转发帖子
             </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.ReplyPostAsync(Photography.Services.Post.API.Application.Commands.Post.ReplyPost.ReplyPostCommand)">
-            <summary>
-            回复帖子
-            </summary>
-            <param name="command"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.ReplyCommentAsync(Photography.Services.Post.API.Application.Commands.Post.ReplyComment.ReplyCommentCommand)">
-            <summary>
-            回复评论
-            </summary>
-            <param name="command"></param>
             <returns></returns>
         </member>
     </members>

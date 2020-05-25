@@ -9,9 +9,9 @@ namespace Photography.Services.Post.API.Query.Interfaces
     public interface IAppointmentDealQueries
     {
         // 获取我发出的约拍交易列表
-        Task<List<AppointmentDealViewModel>> GetSentAppointmentDealsAsync();
+        Task<List<AppointmentViewModel>> GetSentAppointmentDealsAsync();
 
         // 获取我收到的约拍交易列表
-        Task<List<AppointmentDealViewModel>> GetReceivedAppointmentDealsAsync();
+        Task<List<AppointmentViewModel>> GetReceivedAppointmentDealsAsync();
     }
 }

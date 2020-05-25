@@ -12,6 +12,7 @@ namespace Photography.Services.Post.Infrastructure.EntityConfigurations
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.Ignore(e => e.DomainEvents);
+            builder.Property(u => u.Score).HasDefaultValue(0);
 
             //posts navigation properties
             var postsNavigation = builder.Metadata.FindNavigation(nameof(User.Posts));

@@ -53,8 +53,8 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(0);
 
-                    b.Property<bool?>("Gender")
-                        .HasColumnType("bit");
+                    b.Property<int?>("Gender")
+                        .HasColumnType("int");
 
                     b.Property<int>("LikedCount")
                         .ValueGeneratedOnAdd()
@@ -70,10 +70,10 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                     b.Property<string>("Province")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("RealNameRegistered")
+                    b.Property<int>("RealNameRegistrationStatus")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<int>("Score")
                         .ValueGeneratedOnAdd()
@@ -94,7 +94,7 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Photography.Services.User.Domain.AggregatesModel.UserAggregate.UserRelation", b =>
+            modelBuilder.Entity("Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate.UserRelation", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -120,7 +120,7 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                     b.ToTable("UserRelations");
                 });
 
-            modelBuilder.Entity("Photography.Services.User.Domain.AggregatesModel.UserAggregate.UserRelation", b =>
+            modelBuilder.Entity("Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate.UserRelation", b =>
                 {
                     b.HasOne("Photography.Services.User.Domain.AggregatesModel.UserAggregate.User", "FollowedUser")
                         .WithMany("FollowedUsers")

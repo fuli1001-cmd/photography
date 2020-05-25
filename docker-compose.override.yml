@@ -38,7 +38,7 @@ services:
       - AuthSettings__Audience=Photography.User.API
       - AuthSettings__ClientId=ro.client
       - AuthSettings__ClientSecret=511536EF-F270-4058-80CA-1C89C192F69A
-      - AuthSettings__Scope=openid profile Photography.Post.API Photography.User.API Photography.ApiGateway Arise.FileUploadService
+      - AuthSettings__Scope=openid profile Photography.Post.API Photography.User.API Photography.Order.API Photography.ApiGateway Arise.FileUploadService
       - ServerSettings__ChatSocket=47.108.194.52
       - ServerSettings__ChatSocketPort=9022
       - ServerSettings__ChatAPI=47.108.194.52
@@ -50,3 +50,13 @@ services:
       - ServerSettings__TrtcEnabled=true
     ports:
       - "5103:80"
+
+  orderapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__UserConnection=Server=47.108.194.52;Database=Photography.Order;User Id=fuli;Password=fl511304;
+      - AuthSettings__Authority=http://43.225.159.87:5100
+      - AuthSettings__Audience=Photography.Order.API
+    ports:
+      - "5104:80"

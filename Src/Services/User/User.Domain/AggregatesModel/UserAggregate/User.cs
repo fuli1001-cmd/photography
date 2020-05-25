@@ -13,7 +13,7 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         public string Nickname { get; private set; }
         public string Phonenumber { get; private set; }
         public string Avatar { get; private set; }
-        public bool? Gender { get; private set; }
+        public Gender? Gender { get; private set; }
         public double? Birthday { get; private set; }
         public UserType? UserType { get; private set; }
         public string Province { get; private set; }
@@ -25,7 +25,7 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         // 约拍值
         public int Score { get; private set; }
         public string Code { get; private set; }
-        public bool RealNameRegistered { get; private set; }
+        public RealNameRegistrationStatus RealNameRegistrationStatus { get; private set; }
         // ChatServer needed Property
         public int ChatServerUserId { get; private set; }
 
@@ -37,5 +37,18 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
     {
         Photographer,
         Model
+    }
+
+    public enum Gender
+    {
+        Female,
+        Male
+    }
+
+    public enum RealNameRegistrationStatus
+    {
+        NotRegister,
+        Authenticating,
+        Authenticated
     }
 }

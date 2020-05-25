@@ -80,6 +80,6 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.Publish
         /// </summary>
         [DataMember]
         [Required]
-        public string Address { get; private set; }
+        public string Address { get; set; }
     }
 }

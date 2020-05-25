@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Photography.Services.Post.API.Application.Commands.Post.ForwardPosts;
 using Photography.Services.Post.API.Application.Commands.Post.PublishPost;
-using Photography.Services.Post.API.Application.Commands.Post.ReplyComment;
-using Photography.Services.Post.API.Application.Commands.Post.ReplyPost;
 using Photography.Services.Post.API.Application.Commands.Post.ToggleLikePost;
 using Photography.Services.Post.API.Infrastructure;
 using Photography.Services.Post.API.Query.Interfaces;
@@ -151,34 +149,6 @@ namespace Photography.Services.Post.API.Controllers
         public async Task<ActionResult<bool>> ForwardPostAsync([FromBody] ForwardPostsCommand forwardPostsCommand)
         {
             var posts = await _mediator.Send(forwardPostsCommand);
-            return StatusCode((int)HttpStatusCode.Created, ResponseWrapper.CreateOkResponseWrapper(posts));
-        }
-
-        /// <summary>
-        /// 回复帖子
-        /// </summary>
-        /// <param name="command"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("replypost")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<bool>> ReplyPostAsync([FromBody] ReplyPostCommand command)
-        {
-            var posts = await _mediator.Send(command);
-            return StatusCode((int)HttpStatusCode.Created, ResponseWrapper.CreateOkResponseWrapper(posts));
-        }
-
-        /// <summary>
-        /// 回复评论
-        /// </summary>
-        /// <param name="command"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("replycomment")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<bool>> ReplyCommentAsync([FromBody] ReplyCommentCommand command)
-        {
-            var posts = await _mediator.Send(command);
             return StatusCode((int)HttpStatusCode.Created, ResponseWrapper.CreateOkResponseWrapper(posts));
         }
     }

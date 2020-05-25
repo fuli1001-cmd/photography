@@ -1,0 +1,26 @@
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
+WORKDIR /src
+COPY ["Src/Services/Order/Order.API/Order.API.csproj", "Src/Services/Order/Order.API/"]
+COPY ["Src/Messages/Messages.csproj", "Src/Messages/"]
+COPY ["Src/Services/Order/Order.Infrastructure/Order.Infrastructure.csproj", "Src/Services/Order/Order.Infrastructure/"]
+COPY ["Src/Services/Order/Order.API.Queries/Order.API.Query.csproj", "Src/Services/Order/Order.API.Queries/"]
+COPY ["Src/Services/Order/Order.Domain/Order.Domain.csproj", "Src/Services/Order/Order.Domain/"]
+RUN dotnet restore "Src/Services/Order/Order.API/Order.API.csproj"
+COPY . .
+WORKDIR "/src/Src/Services/Order/Order.API"
+RUN dotnet build "Order.API.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "Order.API.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "Order.API.dll"]

@@ -40,18 +40,19 @@ namespace Photography.Services.Post.API
                 .UseNServiceBus(hostBuilderContext =>
                 {
                     var endpointConfiguration = new EndpointConfiguration("postapi");
-                    var transport = endpointConfiguration.UseTransport<LearningTransport>();
-                    //var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
+                    //var transport = endpointConfiguration.UseTransport<LearningTransport>();
+                    var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
                     //transport.ConnectionString("host=rabbitmq");
-                    //transport.UseConventionalRoutingTopology();
-                    //endpointConfiguration.EnableInstallers();
-                    
+                    transport.ConnectionString("host=43.225.159.87");
+                    transport.UseConventionalRoutingTopology();
+                    endpointConfiguration.EnableInstallers();
+
                     //endpointConfiguration.SendFailedMessagesTo("error");
                     //endpointConfiguration.AuditProcessedMessagesTo("audit");
                     //endpointConfiguration.SendHeartbeatTo("Particular.ServiceControl");
                     //var metrics = endpointConfiguration.EnableMetrics();
                     //metrics.SendMetricDataToServiceControl("Particular.Monitoring", TimeSpan.FromMilliseconds(500));
-                    
+
                     return endpointConfiguration;
                 })
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())

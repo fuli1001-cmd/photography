@@ -14,7 +14,8 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     Nickname = table.Column<string>(nullable: true),
                     Avatar = table.Column<string>(nullable: true),
-                    UserType = table.Column<int>(nullable: true)
+                    UserType = table.Column<int>(nullable: true),
+                    Score = table.Column<int>(nullable: false, defaultValue: 0)
                 },
                 constraints: table =>
                 {
@@ -27,7 +28,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     Text = table.Column<string>(nullable: true),
-                    Timestamp = table.Column<double>(nullable: false),
+                    CreatedTime = table.Column<double>(nullable: false),
                     PostType = table.Column<int>(nullable: false),
                     UserId = table.Column<Guid>(nullable: false),
                     Latitude = table.Column<double>(nullable: true),
@@ -49,11 +50,19 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     AppointedTime = table.Column<double>(nullable: true),
                     Price = table.Column<decimal>(nullable: true),
                     PayerType = table.Column<int>(nullable: true),
-                    AppointmentedUserId = table.Column<Guid>(nullable: true)
+                    AppointmentDealStatus = table.Column<int>(nullable: true),
+                    AppointmentedUserId = table.Column<Guid>(nullable: true),
+                    AppointmentedToPostId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Posts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Posts_Posts_AppointmentedToPostId",
+                        column: x => x.AppointmentedToPostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Posts_Users_AppointmentedUserId",
                         column: x => x.AppointmentedUserId,
@@ -106,8 +115,8 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     Text = table.Column<string>(nullable: false),
                     Likes = table.Column<int>(nullable: false),
-                    Timestamp = table.Column<double>(nullable: false),
-                    PostId = table.Column<Guid>(nullable: false),
+                    CreatedTime = table.Column<double>(nullable: false),
+                    PostId = table.Column<Guid>(nullable: true),
                     UserId = table.Column<Guid>(nullable: false),
                     ParentCommentId = table.Column<Guid>(nullable: true)
                 },
@@ -125,7 +134,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         column: x => x.PostId,
                         principalTable: "Posts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Comments_Users_UserId",
                         column: x => x.UserId,
@@ -142,6 +151,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     Name = table.Column<string>(nullable: false),
                     Text = table.Column<string>(nullable: true),
                     AttachmentType = table.Column<int>(nullable: false),
+                    AttachmentStatus = table.Column<int>(nullable: true),
                     PostId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
@@ -200,6 +210,11 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 name: "IX_PostAttachments_PostId",
                 table: "PostAttachments",
                 column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_AppointmentedToPostId",
+                table: "Posts",
+                column: "AppointmentedToPostId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_AppointmentedUserId",

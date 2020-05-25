@@ -79,7 +79,7 @@ namespace Photography.Services.Post.API.Query.EF
 
             var followedUserIds = GetFollowedUserIds(userId);
 
-            var followedUsersPosts = availablePosts.Where(p => p.UserId.ToString() == userId || followedUserIds.Contains(p.UserId)).OrderByDescending(p => p.Timestamp);
+            var followedUsersPosts = availablePosts.Where(p => p.UserId.ToString() == userId || followedUserIds.Contains(p.UserId)).OrderByDescending(p => p.CreatedTime);
 
             var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(followedUsersPosts);
 

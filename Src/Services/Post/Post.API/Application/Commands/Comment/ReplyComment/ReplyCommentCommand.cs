@@ -6,10 +6,10 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
-namespace Photography.Services.Post.API.Application.Commands.Post.ReplyPost
+namespace Photography.Services.Post.API.Application.Commands.Comment.ReplyComment
 {
     [DataContract]
-    public class ReplyPostCommand : IRequest<bool>
+    public class ReplyCommentCommand : IRequest<bool>
     {
         /// <summary>
         /// 评论内容
@@ -19,10 +19,10 @@ namespace Photography.Services.Post.API.Application.Commands.Post.ReplyPost
         public string Text { get; set; }
 
         /// <summary>
-        /// 要评论的帖子id
+        /// 要评论的评论id
         /// </summary>
         [DataMember]
         [Required]
-        public Guid PostId { get; set; }
+        public Guid CommentId { get; set; }
     }
 }

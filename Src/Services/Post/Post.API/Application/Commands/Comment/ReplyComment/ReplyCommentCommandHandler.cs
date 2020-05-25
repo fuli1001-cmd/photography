@@ -9,7 +9,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Photography.Services.Post.API.Application.Commands.Post.ReplyComment
+namespace Photography.Services.Post.API.Application.Commands.Comment.ReplyComment
 {
     public class ReplyCommentCommandHandler : IRequestHandler<ReplyCommentCommand, bool>
     {
@@ -27,7 +27,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.ReplyComment
         public async Task<bool> Handle(ReplyCommentCommand request, CancellationToken cancellationToken)
         {
             var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            var comment = new Comment(request.Text, null, request.CommentId, userId);
+            var comment = new Domain.AggregatesModel.CommentAggregate.Comment(request.Text, null, request.CommentId, userId);
             _commentRepository.Add(comment);
             return await _commentRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
         }

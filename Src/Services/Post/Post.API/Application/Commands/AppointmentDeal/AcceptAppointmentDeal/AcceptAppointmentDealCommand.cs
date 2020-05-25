@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Photography.Services.Post.API.Query.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -6,13 +7,13 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
-namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.ConfirmAppointmentDeal
+namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.AcceptAppointmentDeal
 {
     [DataContract]
-    public class ConfirmAppointmentDealCommand : IRequest<bool>
+    public class AcceptAppointmentDealCommand : IRequest<AppointmentViewModel>
     {
         /// <summary>
-        /// 要确认的约拍交易Id
+        /// 要接受的约拍交易Id
         /// </summary>
         [DataMember]
         [Required]

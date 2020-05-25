@@ -16,7 +16,7 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                     Nickname = table.Column<string>(nullable: true),
                     Phonenumber = table.Column<string>(nullable: true),
                     Avatar = table.Column<string>(nullable: true),
-                    Gender = table.Column<bool>(nullable: true),
+                    Gender = table.Column<int>(nullable: true),
                     Birthday = table.Column<double>(nullable: true),
                     UserType = table.Column<int>(nullable: true),
                     Province = table.Column<string>(nullable: true),
@@ -27,7 +27,7 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                     FollowerCount = table.Column<int>(nullable: false, defaultValue: 0),
                     Score = table.Column<int>(nullable: false, defaultValue: 0),
                     Code = table.Column<string>(nullable: false),
-                    RealNameRegistered = table.Column<bool>(nullable: false, defaultValue: false),
+                    RealNameRegistrationStatus = table.Column<int>(nullable: false, defaultValue: 0),
                     ChatServerUserId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1")
                 },

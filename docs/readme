@@ -1,6 +1,7 @@
 1. API swagger地址：
  a). 帖子相关：http://43.225.159.87:5102/swagger/index.html
  b). 用户相关：http://43.225.159.87:5103/swagger/index.html
+ c). 订单：http://43.225.159.87:5105/swagger/index.html
  c). 文件上传：http://43.225.159.87:5104/swagger/index.html
  d). 获取配置信息：http://43.225.159.87:5101/swagger/index.html
  
@@ -15,8 +16,6 @@
 	user1@qq.com
 	user2@qq.com
 	user3@qq.com
-	user4@qq.com
-	user5@qq.com
  f). 密码均是Qwerty3.
  e). 可使用现成的SDK登录，iOS：https://github.com/openid/AppAuth-iOS， Android：https://github.com/openid/AppAuth-Android
  

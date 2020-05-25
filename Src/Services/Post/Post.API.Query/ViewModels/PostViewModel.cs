@@ -20,7 +20,7 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public int LikeCount { get; set; }
         public int ShareCount { get; set; }
         public int CommentCount { get; set; }
-        public double Timestamp { get; set; }
+        public double CreatedTime { get; set; }
         public bool Commentable { get; set; }
         public ForwardType ForwardType { get; set; }
         public ShareType ShareType { get; set; }

@@ -13,7 +13,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
     public class Post : Entity, IAggregateRoot
     {
         public string Text { get; private set; }
-        public double Timestamp { get; private set; }
+        public double CreatedTime { get; private set; }
         public PostType PostType { get; private set; }
 
 
@@ -90,7 +90,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             CityCode = cityCode;
             _postAttachments = postAttachments;
             UserId = userId;
-            Timestamp = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+            CreatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
 
         // 构造帖子对象
@@ -171,7 +171,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             AppointmentDealStatus = PostAggregate.AppointmentDealStatus.Canceled;
         }
 
-        public void CanfirmAppointmentDeal(string userId)
+        public void AcceptAppointmentDeal(string userId)
         {
             //  当前操作用户必须为收到该交易的用户
             if (AppointmentedUserId.ToString() != userId)
@@ -180,7 +180,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             if (AppointmentDealStatus != PostAggregate.AppointmentDealStatus.Created)
                 throw new DomainException("状态错误，设置失败。");
 
-            AppointmentDealStatus = PostAggregate.AppointmentDealStatus.WaitingForShooting;
+            AppointmentDealStatus = PostAggregate.AppointmentDealStatus.Accepted;
         }
 
         public void RejectAppointmentDeal(string userId)
@@ -237,18 +237,8 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
     {
         // 已创建
         Created,
-        // 待拍片
-        WaitingForShooting,
-        // 待上传拍摄的照片
-        WaitingForUploadingOriginal,
-        // 待选片
-        WaitingForSelection,
-        // 待上传处理后的照片
-        WaitingForUploadProcessed,
-        // 待验收
-        WaitingForCheck,
-        // 已完成
-        Finished,
+        // 已接受
+        Accepted,
         // 已取消
         Canceled,
         // 已拒绝

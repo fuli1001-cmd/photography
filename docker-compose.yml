@@ -20,3 +20,9 @@ services:
       context: .
       dockerfile: Src/Services/User/User.API/Dockerfile
 
+  orderapi:
+    image: fuli1001/photography-orderapi:latest
+    build:
+      context: .
+      dockerfile: Src/Services/Order/Order.API/Dockerfile
+

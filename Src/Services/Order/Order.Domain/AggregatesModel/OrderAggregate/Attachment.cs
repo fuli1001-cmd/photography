@@ -37,6 +37,7 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
     public enum AttachmentStatus
     {
         Original,
+        SelectedOriginal,
         Processed
     }
 }

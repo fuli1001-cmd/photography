@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -10,7 +11,7 @@ namespace Photography.Services.User.API.Query.ViewModels
         public UserType? UserType { get; set; }
         public string UserName { get; set; }
         public string Phonenumber { get; set; }
-        public bool? Gender { get; set; }
+        public Gender? Gender { get; set; }
         public double? Birthday { get; set; }
         public string Province { get; set; }
         public string City { get; set; }
@@ -21,7 +22,7 @@ namespace Photography.Services.User.API.Query.ViewModels
         // 约拍值
         public int Score { get; set; }
         public string Code { get; set; }
-        public bool RealNameRegistered { get; set; }
+        public RealNameRegistrationStatus RealNameRegistrationStatus { get; set; }
         public int ChatServerUserId { get; private set; }
     }
 

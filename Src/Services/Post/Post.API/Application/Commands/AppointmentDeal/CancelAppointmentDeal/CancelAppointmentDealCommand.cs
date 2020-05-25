@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Photography.Services.Post.API.Query.ViewModels;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.CancelAppointmentDeal
 {
     [DataContract]
-    public class CancelAppointmentDealCommand : IRequest<bool>
+    public class CancelAppointmentDealCommand : IRequest<AppointmentViewModel>
     {
         /// <summary>
         /// 要取消的约拍交易Id

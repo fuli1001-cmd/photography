@@ -10,7 +10,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         public string Name { get; private set; }
         public string Text { get; private set; }
         public AttachmentType AttachmentType { get; private set; }
-        public AppointmentDealAttachmentType? AppointmentDealAttachmentType { get; private set; }
+        public AttachmentStatus? AttachmentStatus { get; private set; }
 
         public Post Post { get; private set; }
         public Guid PostId { get; private set; }
@@ -22,9 +22,9 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             AttachmentType = attachmentType;
         }
 
-        public void SetAppointmentDealAttachmentType(AppointmentDealAttachmentType type)
+        public void SetAttachmentStatus(AttachmentStatus type)
         {
-            AppointmentDealAttachmentType = type;
+            AttachmentStatus = type;
         }
     }
 
@@ -34,7 +34,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         Video
     }
 
-    public enum AppointmentDealAttachmentType
+    public enum AttachmentStatus
     {
         Original,
         Processed

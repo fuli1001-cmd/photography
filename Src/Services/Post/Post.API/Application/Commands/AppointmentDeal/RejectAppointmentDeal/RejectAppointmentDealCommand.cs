@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Photography.Services.Post.API.Query.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.RejectAppointmentDeal
 {
     [DataContract]
-    public class RejectAppointmentDealCommand : IRequest<bool>
+    public class RejectAppointmentDealCommand : IRequest<AppointmentViewModel>
     {
         /// <summary>
         /// 要拒绝的约拍交易Id

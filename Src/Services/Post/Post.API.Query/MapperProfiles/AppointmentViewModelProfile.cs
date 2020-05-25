@@ -19,12 +19,4 @@ namespace Photography.Services.Post.API.Query.MapperProfiles
             CreateMap<PostAttachment, PostAttachmentViewModel>();
         }
     }
-
-    public class AppointmentDealViewModelProfile : AppointmentViewModelProfile
-    {
-        public AppointmentDealViewModelProfile() : base()
-        {
-            CreateMap<Domain.AggregatesModel.PostAggregate.Post, AppointmentDealViewModel>();
-        }
-    }
 }

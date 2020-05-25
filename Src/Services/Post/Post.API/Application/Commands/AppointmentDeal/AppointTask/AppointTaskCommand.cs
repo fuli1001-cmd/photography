@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Photography.Services.Post.API.Application.Commands.Post.PublishPost;
+using Photography.Services.Post.API.Query.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.AppointTask
 {
     [DataContract]
-    public class AppointTaskCommand : IRequest<bool>
+    public class AppointTaskCommand : IRequest<AppointmentViewModel>
     {
         /// <summary>
         /// 要约拍的帖子Id

@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Photography.Services.Post.API.Application.Commands.AppointmentDeal.AcceptAppointmentDeal;
 using Photography.Services.Post.API.Application.Commands.AppointmentDeal.AppointTask;
 using Photography.Services.Post.API.Application.Commands.AppointmentDeal.AppointUser;
 using Photography.Services.Post.API.Application.Commands.AppointmentDeal.CancelAppointmentDeal;
-using Photography.Services.Post.API.Application.Commands.AppointmentDeal.ConfirmAppointmentDeal;
 using Photography.Services.Post.API.Application.Commands.AppointmentDeal.RejectAppointmentDeal;
 using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
@@ -85,9 +85,9 @@ namespace Photography.Services.Post.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPut]
-        [Route("confirm")]
+        [Route("accept")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<bool>> ConfirmAppointmentDealAsync([FromBody] ConfirmAppointmentDealCommand command)
+        public async Task<ActionResult<bool>> AcceptAppointmentDealAsync([FromBody] AcceptAppointmentDealCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
@@ -113,7 +113,7 @@ namespace Photography.Services.Post.API.Controllers
         [HttpGet]
         [Route("sent")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<AppointmentDealViewModel>>> GetSentAppointmentDealsAsync()
+        public async Task<ActionResult<IEnumerable<AppointmentViewModel>>> GetSentAppointmentDealsAsync()
         {
             var deals = await _appointmentDealQueries.GetSentAppointmentDealsAsync();
             return Ok(ResponseWrapper.CreateOkResponseWrapper(deals));
@@ -126,7 +126,7 @@ namespace Photography.Services.Post.API.Controllers
         [HttpGet]
         [Route("received")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<AppointmentDealViewModel>>> GetReceivedAppointmentDealsAsync()
+        public async Task<ActionResult<IEnumerable<AppointmentViewModel>>> GetReceivedAppointmentDealsAsync()
         {
             var deals = await _appointmentDealQueries.GetReceivedAppointmentDealsAsync();
             return Ok(ResponseWrapper.CreateOkResponseWrapper(deals));

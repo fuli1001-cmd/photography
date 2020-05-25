@@ -13,18 +13,18 @@ using System.Threading.Tasks;
 
 namespace Photography.Services.Order.API.Application.IntegrationEvents
 {
-    public class AppointmentDealConfirmedEventHandler : IHandleMessages<AppointmentDealConfirmedEvent>
+    public class AppointmentDealCreatedEventHandler : IHandleMessages<AppointmentDealCreatedEvent>
     {
         private readonly IMediator _mediator;
-        private readonly ILogger<AppointmentDealConfirmedEventHandler> _logger;
+        private readonly ILogger<AppointmentDealCreatedEventHandler> _logger;
 
-        public AppointmentDealConfirmedEventHandler(IMediator mediator, ILogger<AppointmentDealConfirmedEventHandler> logger)
+        public AppointmentDealCreatedEventHandler(IMediator mediator, ILogger<AppointmentDealCreatedEventHandler> logger)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Handle(AppointmentDealConfirmedEvent message, IMessageHandlerContext context)
+        public async Task Handle(AppointmentDealCreatedEvent message, IMessageHandlerContext context)
         {
             using (LogContext.PushProperty("IntegrationEventContext", $"{message.Id}-{Program.AppName}"))
             {

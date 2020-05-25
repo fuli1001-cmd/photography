@@ -60,7 +60,7 @@ namespace Photography.Services.Post.API.Query.EF
             }
 
             posts = GetPostsWithNavigationPropertiesAsync(posts);
-            var appointments = _mapper.Map<List<AppointmentViewModel>>(await posts.OrderByDescending(p => p.Timestamp).ToListAsync());
+            var appointments = _mapper.Map<List<AppointmentViewModel>>(await posts.OrderByDescending(p => p.CreatedTime).ToListAsync());
             // 设置附件属性：宽、高、视频缩略图
             appointments.ForEach(a => a.SetAttachmentProperties(_logger));
             return appointments;
@@ -71,7 +71,7 @@ namespace Photography.Services.Post.API.Query.EF
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var posts = _postContext.Posts.Where(p => p.UserId.ToString() == userId && p.PostType == PostType.Appointment);
             posts = GetPostsWithNavigationPropertiesAsync(posts);
-            var appointments = _mapper.Map<List<AppointmentViewModel>>(await posts.OrderByDescending(p => p.Timestamp).ToListAsync());
+            var appointments = _mapper.Map<List<AppointmentViewModel>>(await posts.OrderByDescending(p => p.CreatedTime).ToListAsync());
             // 设置附件属性：宽、高、视频缩略图
             appointments.ForEach(a => a.SetAttachmentProperties(_logger));
             return appointments;
