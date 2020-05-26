@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Logging;
 using NServiceBus;
 using Photography.Messages.Events;
+using Photography.Services.Order.API.Application.Commands.CancelOrder;
+using Serilog.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,9 +22,16 @@ namespace Photography.Services.Order.API.Application.IntegrationEvents
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public Task Handle(AppointmentDealCanceledEvent message, IMessageHandlerContext context)
+        public async Task Handle(AppointmentDealCanceledEvent message, IMessageHandlerContext context)
         {
-            throw new NotImplementedException();    
+            using (LogContext.PushProperty("IntegrationEventContext", $"{message.Id}-{Program.AppName}"))
+            {
+                _logger.LogInformation("----- Handling integration event: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
+
+                var command = new CancelOrderCommand { DealId = message.DealId };
+
+                await _mediator.Send(command);
+            }
         }
     }
 }

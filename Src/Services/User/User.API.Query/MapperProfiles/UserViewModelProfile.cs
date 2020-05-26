@@ -12,6 +12,7 @@ namespace Photography.Services.User.API.Query.MapperProfiles
         public UserViewModelProfile()
         {
             CreateMap<Domain.AggregatesModel.UserAggregate.User, UserViewModel>();
+            CreateMap<Domain.AggregatesModel.UserAggregate.User, MeViewModel>();
         }
     }
 }

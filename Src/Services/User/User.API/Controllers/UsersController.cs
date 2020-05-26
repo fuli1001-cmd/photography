@@ -61,16 +61,16 @@ namespace Photography.Services.User.API.Controllers
         }
 
         /// <summary>
-        /// 获取用户及配置信息
+        /// 获取当前用户及配置信息
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [Route("info")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<UserViewModel> GetInfoAsync()
+        public ActionResult<MeViewModel> GetInfoAsync()
         {
             var user = _userQueries.GetCurrentUserAsync();
-            var info = new InfoViewModel { UserViewModel = user, ServerSettings = _serverSettings.Value };
+            var info = new InfoViewModel { MeViewModel = user, ServerSettings = _serverSettings.Value };
             return Ok(ResponseWrapper.CreateOkResponseWrapper(info));
         }
 
@@ -81,9 +81,22 @@ namespace Photography.Services.User.API.Controllers
         [HttpGet]
         [Route("me")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<UserViewModel> GetCurrentUserAsync()
+        public ActionResult<MeViewModel> GetCurrentUserAsync()
         {
             var user = _userQueries.GetCurrentUserAsync();
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(user));
+        }
+
+        /// <summary>
+        /// 获取用户信息
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<UserViewModel> GetUserAsync([FromQuery(Name = "userId")] Guid? userId, [FromQuery(Name = "oldUserId")] int? oldUserId, [FromQuery(Name = "nickName")] string nickName)
+        {
+            var user = _userQueries.GetUserAsync(userId, oldUserId, nickName);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(user));
         }
 

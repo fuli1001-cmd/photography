@@ -10,7 +10,6 @@ namespace Photography.Services.User.API.Query.ViewModels
         public string Avatar { get; set; }
         public UserType? UserType { get; set; }
         public string UserName { get; set; }
-        public string Phonenumber { get; set; }
         public Gender? Gender { get; set; }
         public double? Birthday { get; set; }
         public string Province { get; set; }
@@ -21,9 +20,14 @@ namespace Photography.Services.User.API.Query.ViewModels
         public int FollowerCount { get; set; }
         // 约拍值
         public int Score { get; set; }
+
+        public int ChatServerUserId { get; private set; }
+    }
+
+    public class MeViewModel : UserViewModel
+    {
         public string Code { get; set; }
         public RealNameRegistrationStatus RealNameRegistrationStatus { get; set; }
-        public int ChatServerUserId { get; private set; }
     }
 
     public class BaseUserViewModel

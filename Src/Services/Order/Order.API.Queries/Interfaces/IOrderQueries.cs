@@ -9,6 +9,6 @@ namespace Photography.Services.Order.API.Query.Interfaces
 {
     public interface IOrderQueries
     {
-        Task<List<OrderViewModel>> GetOrdersAsync(OrderStatus orderStatus);
+        Task<List<OrderViewModel>> GetOrdersAsync(IEnumerable<OrderStatus> orderStatus);
     }
 }

@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Photography.Services.Post.API.Application.Commands.Comment.LikeComment;
 using Photography.Services.Post.API.Application.Commands.Comment.ReplyComment;
 using Photography.Services.Post.API.Application.Commands.Comment.ReplyPost;
+using Photography.Services.Post.API.Application.Commands.Comment.ToggleLikeComment;
 using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
 using System;
@@ -62,7 +62,7 @@ namespace Photography.Services.Post.API.Controllers
         public async Task<ActionResult<bool>> ReplyPostAsync([FromBody] ReplyPostCommand command)
         {
             var posts = await _mediator.Send(command);
-            return StatusCode((int)HttpStatusCode.Created, ResponseWrapper.CreateOkResponseWrapper(posts));
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
         }
 
         /// <summary>
@@ -76,15 +76,16 @@ namespace Photography.Services.Post.API.Controllers
         public async Task<ActionResult<bool>> ReplyCommentAsync([FromBody] ReplyCommentCommand command)
         {
             var posts = await _mediator.Send(command);
-            return StatusCode((int)HttpStatusCode.Created, ResponseWrapper.CreateOkResponseWrapper(posts));
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
         }
 
         [HttpPut]
-        [Route("like")]
+        [Route("togglelike")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<bool>> LikeCommentAsync([FromBody] LikeCommentCommand command)
+        public async Task<ActionResult<bool>> ToggleLikeCommentAsync([FromBody] ToggleLikeCommentCommand command)
         {
-            throw new NotImplementedException();
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
     }
 }

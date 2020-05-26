@@ -16,6 +16,7 @@ using Arise.DDD.Domain.SeedWork;
 using Arise.DDD.Infrastructure.Extensions;
 using MediatR;
 using Photography.Services.Post.Domain.AggregatesModel.CommentAggregate;
+using Photography.Services.Post.Domain.AggregatesModel.UserCommentRelationAggregate;
 
 namespace Photography.Services.Post.Infrastructure
 {
@@ -27,6 +28,8 @@ namespace Photography.Services.Post.Infrastructure
         public DbSet<User> Users { get; set; }
         public DbSet<UserRelation> UserRelations { get; set; }
         public DbSet<UserPostRelation> UserPostRelations { get; set; }
+
+        public DbSet<UserCommentRelation> UserCommentRelations { get; set; }
 
 
         private readonly IMediator _mediator;

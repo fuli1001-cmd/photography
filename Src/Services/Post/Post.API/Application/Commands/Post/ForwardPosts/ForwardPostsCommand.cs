@@ -13,5 +13,6 @@ namespace Photography.Services.Post.API.Application.Commands.Post.ForwardPosts
     public class ForwardPostsCommand : BasePostCommand, IRequest<IEnumerable<PostViewModel>>
     {
         public List<Guid> ForwardPostIds { get; set; }
+        public bool ShowOriginalText { get; set; }
     }
 }

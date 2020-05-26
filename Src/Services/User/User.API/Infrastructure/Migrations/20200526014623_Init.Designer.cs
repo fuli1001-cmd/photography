@@ -10,7 +10,7 @@ using Photography.Services.User.Infrastructure;
 namespace Photography.Services.User.API.Infrastructure.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20200525093525_Init")]
+    [Migration("20200526014623_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

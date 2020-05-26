@@ -32,6 +32,7 @@ namespace Photography.Services.Order.API.Infrastructure.Migrations
                     PayerId = table.Column<Guid>(nullable: true),
                     Price = table.Column<decimal>(nullable: false),
                     CreatedTime = table.Column<double>(nullable: false),
+                    ClosedTime = table.Column<double>(nullable: false),
                     AppointedTime = table.Column<double>(nullable: false),
                     Text = table.Column<string>(nullable: true),
                     OrderStatus = table.Column<int>(nullable: false),

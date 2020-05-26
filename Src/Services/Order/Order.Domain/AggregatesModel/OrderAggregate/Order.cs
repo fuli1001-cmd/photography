@@ -47,8 +47,15 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
         public string Address { get; private set; }
         #endregion
 
+        public Order()
+        {
+            CreatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+            OrderStatus = OrderStatus.Created;
+        }
+
         public Order(Guid user1Id, Guid user2Id, Guid dealId, Guid? payerId, decimal price, double appointedTime, 
             string text, double latitude, double longitude, string locationName, string address)
+            : this()
         {
             User1Id = user1Id;
             User2Id = user2Id;
@@ -61,8 +68,14 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
             Longitude = longitude;
             LocationName = locationName;
             Address = address;
-            CreatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
-            OrderStatus = OrderStatus.Created;
+        }
+
+        public void Accept()
+        {
+            if (OrderStatus != OrderStatus.Created)
+                throw new DomainException("当前订单状态不能确认。");
+
+            OrderStatus = OrderStatus.WaitingForShooting;
         }
 
         public void Cancel()
@@ -99,13 +112,13 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
         // 选择原片
         public void SelectOriginalFiles(IEnumerable<string> attachments)
         {
-            _attachments.Where(a => a.AttachmentStatus == AttachmentStatus.Original || a.AttachmentStatus == AttachmentStatus.SelectedOriginal)
-                .ToList().ForEach(a =>
-                {
-                    if (!attachments.Contains(a.Id.ToString()))
-                        throw new DomainException("找不到选择的原片。");
-                    a.SetAttachmentStatus(AttachmentStatus.SelectedOriginal);
-                });
+            foreach (var name in attachments)
+            {
+                var attachment = _attachments.FirstOrDefault(a => a.Name == name && (a.AttachmentStatus == AttachmentStatus.Original || a.AttachmentStatus == AttachmentStatus.SelectedOriginal));
+                if (attachment == null)
+                    throw new DomainException("找不到选择的原片。");
+                attachment.SetAttachmentStatus(AttachmentStatus.SelectedOriginal);
+            }
 
             OrderStatus = OrderStatus.WaitingForUploadProcessed;
         }

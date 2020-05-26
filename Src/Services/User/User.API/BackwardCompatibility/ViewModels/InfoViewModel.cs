@@ -8,7 +8,7 @@ namespace Photography.Services.User.API.Query.BackwardCompatibility.ViewModels
 {
     public class InfoViewModel
     {
-        public UserViewModel UserViewModel { get; set; }
+        public MeViewModel MeViewModel { get; set; }
         public ServerSettings ServerSettings { get; set; }
     }
 }

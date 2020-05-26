@@ -36,4 +36,9 @@
     <ProjectReference Include="..\..\..\Messages\Messages.csproj" />
     <ProjectReference Include="..\Order.Infrastructure\Order.Infrastructure.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Order.API.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

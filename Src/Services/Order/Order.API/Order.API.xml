@@ -57,25 +57,13 @@
         </member>
         <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetWaitingForUploadOriginalOrdersAsync">
             <summary>
-            获取待上传原片订单列表
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetWaitingForSelectionOrdersAsync">
-            <summary>
-            获取待选片订单列表
+            获取待上传原片和待选择原片订单列表
             </summary>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetWaitingForUploadProcessedOrdersAsync">
             <summary>
-            获取待出片订单列表
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetWaitingForCheckOrdersAsync">
-            <summary>
-            获取待出片订单列表
+            获取待出片和待验收订单列表
             </summary>
             <returns></returns>
         </member>
@@ -85,10 +73,38 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetFinishedOrdersAsync(Photography.Services.Order.API.Application.Commands.ConfirmShot.ConfirmShotCommand)">
+        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.ConfirmShotAsync(Photography.Services.Order.API.Application.Commands.ConfirmShot.ConfirmShotCommand)">
             <summary>
             确认已拍片
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.UploadOriginalAsync(Photography.Services.Order.API.Application.Commands.UploadOriginal.UploadOriginalCommand)">
+            <summary>
+            上传原片
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.SelectOriginalAsync(Photography.Services.Order.API.Application.Commands.SelectOriginal.SelectOriginalCommand)">
+            <summary>
+            选择原片
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.UploadProcessedAsync(Photography.Services.Order.API.Application.Commands.UploadProcessed.UploadProcessedCommand)">
+            <summary>
+            上传精修片
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.CheckProcessedAsync(Photography.Services.Order.API.Application.Commands.CheckProcessed.CheckProcessedCommand)">
+            <summary>
+            确认精修片
+            </summary>
+            <param name="command"></param>
             <returns></returns>
         </member>
     </members>

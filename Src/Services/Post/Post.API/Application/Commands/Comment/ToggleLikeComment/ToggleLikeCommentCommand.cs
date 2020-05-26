@@ -6,10 +6,10 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
-namespace Photography.Services.Post.API.Application.Commands.Comment.LikeComment
+namespace Photography.Services.Post.API.Application.Commands.Comment.ToggleLikeComment
 {
     [DataContract]
-    public class LikeCommentCommand : IRequest<bool>
+    public class ToggleLikeCommentCommand : IRequest<bool>
     {
         /// <summary>
         /// 要赞的评论id

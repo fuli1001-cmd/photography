@@ -27,7 +27,8 @@ namespace Photography.Services.Post.API.Application.Commands.Comment.ReplyPost
         public async Task<bool> Handle(ReplyPostCommand request, CancellationToken cancellationToken)
         {
             var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            var comment = new Domain.AggregatesModel.CommentAggregate.Comment(request.Text, request.PostId, null, userId);
+            var comment = new Domain.AggregatesModel.CommentAggregate.Comment();
+            comment.ReplyPost(request.Text, request.PostId, userId);
             _commentRepository.Add(comment);
             return await _commentRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
             //_postRepository.LoadUser(post);

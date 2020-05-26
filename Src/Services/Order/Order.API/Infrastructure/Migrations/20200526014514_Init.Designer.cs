@@ -10,7 +10,7 @@ using Photography.Services.Order.Infrastructure;
 namespace Photography.Services.Order.API.Infrastructure.Migrations
 {
     [DbContext(typeof(OrderContext))]
-    [Migration("20200525064951_Init")]
+    [Migration("20200526014514_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -60,6 +60,9 @@ namespace Photography.Services.Order.API.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("AppointedTime")
+                        .HasColumnType("float");
+
+                    b.Property<double>("ClosedTime")
                         .HasColumnType("float");
 
                     b.Property<double>("CreatedTime")

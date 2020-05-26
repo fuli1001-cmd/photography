@@ -24,6 +24,7 @@
       "UpstreamPathTemplate": "/api/posts/{everything}",
       "UpstreamHttpMethod": []
     },
+
     {
       "DownstreamPathTemplate": "/api/appointments",
       "DownstreamScheme": "http",
@@ -48,6 +49,7 @@
       "UpstreamPathTemplate": "/api/appointments/{everything}",
       "UpstreamHttpMethod": []
     },
+
     {
       "DownstreamPathTemplate": "/api/appointmentdeals/{everything}",
       "DownstreamScheme": "http",
@@ -58,6 +60,32 @@
         }
       ],
       "UpstreamPathTemplate": "/api/appointmentdeals/{everything}",
+      "UpstreamHttpMethod": []
+    },
+
+    {
+      "DownstreamPathTemplate": "/api/comments/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "postapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/comments/{everything}",
+      "UpstreamHttpMethod": []
+    },
+
+    {
+      "DownstreamPathTemplate": "/api/users",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "userapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/users",
       "UpstreamHttpMethod": []
     },
     {
@@ -72,6 +100,7 @@
       "UpstreamPathTemplate": "/api/users/{everything}",
       "UpstreamHttpMethod": []
     },
+
     {
       "DownstreamPathTemplate": "/api/orders/{everything}",
       "DownstreamScheme": "http",
@@ -84,6 +113,7 @@
       "UpstreamPathTemplate": "/api/orders/{everything}",
       "UpstreamHttpMethod": []
     },
+
     {
       "DownstreamPathTemplate": "/api/streaming",
       "DownstreamScheme": "http",

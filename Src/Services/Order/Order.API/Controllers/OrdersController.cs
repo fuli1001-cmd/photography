@@ -4,7 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Photography.Services.Order.API.Application.Commands.CheckProcessed;
 using Photography.Services.Order.API.Application.Commands.ConfirmShot;
+using Photography.Services.Order.API.Application.Commands.SelectOriginal;
+using Photography.Services.Order.API.Application.Commands.UploadOriginal;
+using Photography.Services.Order.API.Application.Commands.UploadProcessed;
 using Photography.Services.Order.API.Query.Interfaces;
 using Photography.Services.Order.API.Query.ViewModels;
 using Photography.Services.Order.Domain.AggregatesModel.OrderAggregate;
@@ -44,61 +48,89 @@ namespace Photography.Services.Order.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<OrderViewModel>>> GetWaitingForShootingOrdersAsync()
         {
-            var orders = await _orderQueries.GetOrdersAsync(OrderStatus.WaitingForShooting);
+            var orders = await _orderQueries.GetOrdersAsync(new List<OrderStatus> { OrderStatus.WaitingForShooting });
             return Ok(ResponseWrapper.CreateOkResponseWrapper(orders));
         }
 
         /// <summary>
-        /// 获取待上传原片订单列表
+        /// 获取待上传原片和待选择原片订单列表
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("waitingforuploadoriginal")]
+        [Route("waitingforuploadandselectoriginal")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<OrderViewModel>>> GetWaitingForUploadOriginalOrdersAsync()
         {
-            var orders = await _orderQueries.GetOrdersAsync(OrderStatus.WaitingForUploadOriginal);
+            var status = new List<OrderStatus> { OrderStatus.WaitingForUploadOriginal, OrderStatus.WaitingForSelection };
+            var orders = await _orderQueries.GetOrdersAsync(status);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(orders));
         }
 
-        /// <summary>
-        /// 获取待选片订单列表
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("waitingforselection")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<OrderViewModel>>> GetWaitingForSelectionOrdersAsync()
-        {
-            var orders = await _orderQueries.GetOrdersAsync(OrderStatus.WaitingForSelection);
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(orders));
-        }
+        ///// <summary>
+        ///// 获取待上传原片订单列表
+        ///// </summary>
+        ///// <returns></returns>
+        //[HttpGet]
+        //[Route("waitingforuploadoriginal")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //public async Task<ActionResult<IEnumerable<OrderViewModel>>> GetWaitingForUploadOriginalOrdersAsync()
+        //{
+        //    var orders = await _orderQueries.GetOrdersAsync(OrderStatus.WaitingForUploadOriginal);
+        //    return Ok(ResponseWrapper.CreateOkResponseWrapper(orders));
+        //}
+
+        ///// <summary>
+        ///// 获取待选片订单列表
+        ///// </summary>
+        ///// <returns></returns>
+        //[HttpGet]
+        //[Route("waitingforselection")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //public async Task<ActionResult<IEnumerable<OrderViewModel>>> GetWaitingForSelectionOrdersAsync()
+        //{
+        //    var orders = await _orderQueries.GetOrdersAsync(OrderStatus.WaitingForSelection);
+        //    return Ok(ResponseWrapper.CreateOkResponseWrapper(orders));
+        //}
 
         /// <summary>
-        /// 获取待出片订单列表
+        /// 获取待出片和待验收订单列表
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("waitingforuploadprocessed")]
+        [Route("waitingforuploadandcheckprocessed")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<OrderViewModel>>> GetWaitingForUploadProcessedOrdersAsync()
         {
-            var orders = await _orderQueries.GetOrdersAsync(OrderStatus.WaitingForUploadProcessed);
+            var status = new List<OrderStatus> { OrderStatus.WaitingForUploadProcessed, OrderStatus.WaitingForCheck };
+            var orders = await _orderQueries.GetOrdersAsync(status);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(orders));
         }
 
-        /// <summary>
-        /// 获取待出片订单列表
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("waitingforcheck")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<OrderViewModel>>> GetWaitingForCheckOrdersAsync()
-        {
-            var orders = await _orderQueries.GetOrdersAsync(OrderStatus.WaitingForCheck);
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(orders));
-        }
+        ///// <summary>
+        ///// 获取待出片订单列表
+        ///// </summary>
+        ///// <returns></returns>
+        //[HttpGet]
+        //[Route("waitingforuploadprocessed")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //public async Task<ActionResult<IEnumerable<OrderViewModel>>> GetWaitingForUploadProcessedOrdersAsync()
+        //{
+        //    var orders = await _orderQueries.GetOrdersAsync(OrderStatus.WaitingForUploadProcessed);
+        //    return Ok(ResponseWrapper.CreateOkResponseWrapper(orders));
+        //}
+
+        ///// <summary>
+        ///// 获取待验收订单列表
+        ///// </summary>
+        ///// <returns></returns>
+        //[HttpGet]
+        //[Route("waitingforcheck")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //public async Task<ActionResult<IEnumerable<OrderViewModel>>> GetWaitingForCheckOrdersAsync()
+        //{
+        //    var orders = await _orderQueries.GetOrdersAsync(OrderStatus.WaitingForCheck);
+        //    return Ok(ResponseWrapper.CreateOkResponseWrapper(orders));
+        //}
 
         /// <summary>
         /// 获取已完成订单列表
@@ -109,7 +141,8 @@ namespace Photography.Services.Order.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<OrderViewModel>>> GetFinishedOrdersAsync()
         {
-            var orders = await _orderQueries.GetOrdersAsync(OrderStatus.Finished);
+            var status = new List<OrderStatus> { OrderStatus.Finished, OrderStatus.Canceled, OrderStatus.Rejected };
+            var orders = await _orderQueries.GetOrdersAsync(status);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(orders));
         }
 
@@ -118,9 +151,65 @@ namespace Photography.Services.Order.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPut]
-        [Route("shot")]
+        [Route("confirmshot")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<bool>> GetFinishedOrdersAsync([FromBody] ConfirmShotCommand command)
+        public async Task<ActionResult<bool>> ConfirmShotAsync([FromBody] ConfirmShotCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 上传原片
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("uploadoriginal")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<bool>> UploadOriginalAsync([FromBody] UploadOriginalCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 选择原片
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("selectoriginal")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<bool>> SelectOriginalAsync([FromBody] SelectOriginalCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 上传精修片
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("uploadprocessed")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<bool>> UploadProcessedAsync([FromBody] UploadProcessedCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 确认精修片
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("checkprocessed")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<bool>> CheckProcessedAsync([FromBody] CheckProcessedCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));

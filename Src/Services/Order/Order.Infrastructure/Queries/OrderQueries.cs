@@ -30,12 +30,12 @@ namespace Photography.Services.Order.Infrastructure.Queries
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<List<OrderViewModel>> GetOrdersAsync(OrderStatus orderStatus)
+        public async Task<List<OrderViewModel>> GetOrdersAsync(IEnumerable<OrderStatus> orderStatus)
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var orders = from o in _dbContext.Orders
-                     where o.OrderStatus == orderStatus
+                     where orderStatus.Contains(o.OrderStatus)
                      && (o.User1Id.ToString() == userId || o.User2Id.ToString() == userId)
                      select new OrderViewModel
                      {

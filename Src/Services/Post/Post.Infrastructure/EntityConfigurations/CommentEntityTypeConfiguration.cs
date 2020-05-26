@@ -16,6 +16,9 @@ namespace Photography.Services.Post.Infrastructure.EntityConfigurations
             builder.Property(c => c.Text).IsRequired();
             builder.HasOne(c => c.User).WithMany(u => u.Comments).HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.Restrict);
             builder.HasMany(c => c.SubComments).WithOne(c => c.ParentComment).HasForeignKey(c => c.ParentCommentId).IsRequired(false).OnDelete(DeleteBehavior.Restrict);
+
+            // UserPostRelations navigation properties
+            builder.HasMany(C => C.UserCommentRelations).WithOne(uc => uc.Comment).HasForeignKey(pu => pu.CommentId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

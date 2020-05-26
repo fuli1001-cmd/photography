@@ -26,8 +26,11 @@ namespace Photography.Services.Post.Infrastructure.EntityConfigurations
             var appointmentsNavigation = builder.Metadata.FindNavigation(nameof(User.Appointments));
             appointmentsNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 
-            //postForUser navigation properties
+            //UserPostRelations navigation properties
             builder.HasMany(u => u.UserPostRelations).WithOne(pu => pu.User).HasForeignKey(pu => pu.UserId).OnDelete(DeleteBehavior.Restrict);
+
+            //UserCommentRelations navigation properties
+            builder.HasMany(u => u.UserCommentRelations).WithOne(pu => pu.User).HasForeignKey(pu => pu.UserId).OnDelete(DeleteBehavior.Restrict);
 
             ////followers navigation properties
             //var followersNavigation = builder.Metadata.FindNavigation(nameof(User.Followers));

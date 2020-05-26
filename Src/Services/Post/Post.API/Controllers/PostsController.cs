@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Photography.Services.Post.API.Application.Commands.Post.ForwardPosts;
 using Photography.Services.Post.API.Application.Commands.Post.PublishPost;
+using Photography.Services.Post.API.Application.Commands.Post.SharePost;
 using Photography.Services.Post.API.Application.Commands.Post.ToggleLikePost;
 using Photography.Services.Post.API.Infrastructure;
 using Photography.Services.Post.API.Query.Interfaces;
@@ -123,7 +124,7 @@ namespace Photography.Services.Post.API.Controllers
         public async Task<ActionResult<PostViewModel>> PublishPostAsync([FromBody] PublishPostCommand publishPostCommand)
         {
             var post = await _mediator.Send(publishPostCommand);
-            return StatusCode((int)HttpStatusCode.Created, ResponseWrapper.CreateOkResponseWrapper(post));
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(post));
         }
 
         /// <summary>
@@ -149,7 +150,16 @@ namespace Photography.Services.Post.API.Controllers
         public async Task<ActionResult<bool>> ForwardPostAsync([FromBody] ForwardPostsCommand forwardPostsCommand)
         {
             var posts = await _mediator.Send(forwardPostsCommand);
-            return StatusCode((int)HttpStatusCode.Created, ResponseWrapper.CreateOkResponseWrapper(posts));
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
+        }
+
+        [HttpPut]
+        [Route("share")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<int>> ShareAsync([FromBody] SharePostCommand sharePostCommand)
+        {
+            var result = await _mediator.Send(sharePostCommand);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
     }
 }

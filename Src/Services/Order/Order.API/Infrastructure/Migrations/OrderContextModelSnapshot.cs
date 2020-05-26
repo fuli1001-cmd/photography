@@ -60,6 +60,9 @@ namespace Photography.Services.Order.API.Infrastructure.Migrations
                     b.Property<double>("AppointedTime")
                         .HasColumnType("float");
 
+                    b.Property<double>("ClosedTime")
+                        .HasColumnType("float");
+
                     b.Property<double>("CreatedTime")
                         .HasColumnType("float");
 

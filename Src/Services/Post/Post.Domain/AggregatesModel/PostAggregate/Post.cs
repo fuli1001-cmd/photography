@@ -94,7 +94,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         }
 
         // 构造帖子对象
-        private Post(string text, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
+        private Post(string text, bool? showOriginalText, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
             double latitude, double longitude, string locationName, string address, string cityCode, 
             List<Guid> friendIds, List<PostAttachment> postAttachments, Guid userId)
             : this(text, latitude, longitude, locationName, address, cityCode, postAttachments, userId)
@@ -106,6 +106,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             ViewPassword = viewPassword;
             _userPostRelations = friendIds?.Select(id => new UserPostRelation(id, UserPostRelationType.View)).ToList();
             PostType = PostType.Post;
+            ShowOriginalText = showOriginalText;
         }
 
         // 构造约拍对象
@@ -134,9 +135,9 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         // 创建帖子对象
         public static Post CreatePost(string text, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
             double latitude, double longitude, string locationName, string address, string cityCode,
-            List<Guid> friendIds, List<PostAttachment> postAttachments, Guid userId)
+            List<Guid> friendIds, List<PostAttachment> postAttachments, Guid userId, bool? showOriginalText = null)
         {
-            return new Post(text, commentable, forwardType, shareType, visibility, viewPassword, latitude, longitude,
+            return new Post(text, showOriginalText, commentable, forwardType, shareType, visibility, viewPassword, latitude, longitude,
                 locationName, address, cityCode, friendIds, postAttachments, userId);
         }
 
@@ -193,6 +194,27 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
                 throw new DomainException("状态错误，设置失败。");
 
             AppointmentDealStatus = PostAggregate.AppointmentDealStatus.Rejected;
+        }
+
+        public void Like()
+        {
+            LikeCount++;
+        }
+
+        public void UnLike()
+        {
+            LikeCount = System.Math.Max(LikeCount - 1, 0);
+        }
+
+        public void Share()
+        {
+            ShareCount++;
+        }
+
+        public void Comment()
+        {
+            if (Commentable != null && Commentable.Value)
+                CommentCount++;
         }
     }
 

@@ -40,13 +40,19 @@
         </member>
         <member name="M:Photography.Services.User.API.Controllers.UsersController.GetInfoAsync">
             <summary>
-            获取用户及配置信息
+            获取当前用户及配置信息
             </summary>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.User.API.Controllers.UsersController.GetCurrentUserAsync">
             <summary>
             获取当前用户信息
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.UsersController.GetUserAsync(System.Nullable{System.Guid},System.Nullable{System.Int32},System.String)">
+            <summary>
+            获取用户信息
             </summary>
             <returns></returns>
         </member>

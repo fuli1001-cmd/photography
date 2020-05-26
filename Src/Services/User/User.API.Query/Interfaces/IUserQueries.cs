@@ -8,7 +8,10 @@ namespace Photography.Services.User.API.Query.Interfaces
 {
     public interface IUserQueries
     {
-        UserViewModel GetCurrentUserAsync();
+        MeViewModel GetCurrentUserAsync();
+
+        UserViewModel GetUserAsync(Guid? userId, int? oldUserId, string nickName);
+
         List<FriendViewModel> GetFriendsAsync();
     }
 }

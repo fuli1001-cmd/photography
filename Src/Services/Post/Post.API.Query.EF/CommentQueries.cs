@@ -27,7 +27,7 @@ namespace Photography.Services.Post.API.Query.EF
 
         public async Task<List<CommentViewModel>> GetPostCommentsAsync(Guid postId)
         {
-            var comments = await _postContext.Comments.Where(c => c.PostId != null && c.PostId.Value == postId)
+            var comments = await _postContext.Comments.Where(c => c.PostId != null && c.PostId == postId && c.ParentCommentId == null)
                 .Include(c => c.User)
                 .Include(c => c.SubComments)
                 .OrderByDescending(c => c.CreatedTime)

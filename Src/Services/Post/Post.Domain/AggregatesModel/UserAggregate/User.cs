@@ -1,5 +1,6 @@
 ﻿using Arise.DDD.Domain.SeedWork;
 using Photography.Services.Post.Domain.AggregatesModel.CommentAggregate;
+using Photography.Services.Post.Domain.AggregatesModel.UserCommentRelationAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggregate;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,9 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
 
         private readonly List<UserPostRelation> _userPostRelations = null;
         public IReadOnlyCollection<UserPostRelation> UserPostRelations => _userPostRelations;
+
+        private readonly List<UserCommentRelation> _userCommentRelations = null;
+        public IReadOnlyCollection<UserCommentRelation> UserCommentRelations => _userCommentRelations;
 
         // Note: self reference many to many relations can't use field, so use property directly here.
         //private readonly List<UserRelation> _followers;

@@ -42,7 +42,8 @@ namespace Photography.Services.Order.API
                     var endpointConfiguration = new EndpointConfiguration("orderapi");
                     //var transport = endpointConfiguration.UseTransport<LearningTransport>();
                     var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
-                    transport.ConnectionString("host=rabbitmq");
+                    //transport.ConnectionString("host=rabbitmq");
+                    transport.ConnectionString("host=43.225.159.87");
                     transport.UseConventionalRoutingTopology();
                     endpointConfiguration.EnableInstallers();
 

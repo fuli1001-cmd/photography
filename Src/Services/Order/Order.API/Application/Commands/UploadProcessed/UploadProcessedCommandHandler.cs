@@ -22,7 +22,7 @@ namespace Photography.Services.Order.API.Application.Commands.UploadProcessed
 
         public async Task<bool> Handle(UploadProcessedCommand request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetByIdAsync(request.OrderId);
+            var order = await _orderRepository.GetOrderWithAttachmentsAsync(request.OrderId);
             var attachments = request.Attachments.Select(name => new Attachment(name));
             order.UploadProcessedFiles(attachments);
             return await _orderRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);

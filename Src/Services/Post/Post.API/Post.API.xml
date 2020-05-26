@@ -89,11 +89,6 @@
             地址
             </summary>
         </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.Comment.LikeComment.LikeCommentCommand.CommentId">
-            <summary>
-            要赞的评论id
-            </summary>
-        </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.Comment.ReplyComment.ReplyCommentCommand.Text">
             <summary>
             评论内容
@@ -112,6 +107,11 @@
         <member name="P:Photography.Services.Post.API.Application.Commands.Comment.ReplyPost.ReplyPostCommand.PostId">
             <summary>
             要评论的帖子id
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Comment.ToggleLikeComment.ToggleLikeCommentCommand.CommentId">
+            <summary>
+            要赞的评论id
             </summary>
         </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.Post.PublishPost.PublishPostCommand.Attachments">
@@ -207,6 +207,11 @@
         <member name="P:Photography.Services.Post.API.Application.Commands.Post.PublishPost.BasePostCommand.Address">
             <summary>
             地址
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Post.SharePost.SharePostCommand.PostId">
+            <summary>
+            点分享的帖子id
             </summary>
         </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.Post.ToggleLikePost.ToggleLikePostCommand.PostId">

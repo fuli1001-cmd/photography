@@ -27,15 +27,17 @@ namespace Photography.Services.Post.API.Application.Commands.Post.ToggleLikePost
 
         public async Task<bool> Handle(ToggleLikePostCommand request, CancellationToken cancellationToken)
         {
-            var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var userPostRelation = await _userPostRelationRepository.GetAsync(userId, request.PostId, UserPostRelationType.Like);
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userPostRelation = await _userPostRelationRepository.GetAsync(Guid.Parse(userId), request.PostId, UserPostRelationType.Like);
             if (userPostRelation == null)
             {
-                userPostRelation = new UserPostRelation(userId, request.PostId, UserPostRelationType.Like);
+                userPostRelation = new UserPostRelation(userId, request.PostId);
+                userPostRelation.Like();
                 _userPostRelationRepository.Add(userPostRelation);
             }
             else
             {
+                userPostRelation.UnLike();
                 _userPostRelationRepository.Remove(userPostRelation);
             }
             return await _userPostRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);

@@ -50,7 +50,7 @@ namespace Photography.Services.Post.API.Controllers
         public async Task<ActionResult<bool>> AppointTaskAsync([FromBody] AppointTaskCommand appointCommand)
         {
             var result = await _mediator.Send(appointCommand);
-            return StatusCode((int)HttpStatusCode.Created, ResponseWrapper.CreateOkResponseWrapper(result));
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace Photography.Services.Post.API.Controllers
         public async Task<ActionResult<bool>> AppointUserAsync([FromBody] AppointUserCommand appointCommand)
         {
             var result = await _mediator.Send(appointCommand);
-            return StatusCode((int)HttpStatusCode.Created, ResponseWrapper.CreateOkResponseWrapper(true));
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(true));
         }
 
         /// <summary>

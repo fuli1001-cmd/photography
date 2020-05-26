@@ -9,5 +9,6 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
     public interface IOrderRepository : IRepository<Order>
     {
         Task<Order> GetbyDealIdAsync(Guid dealId);
+        Task<Order> GetOrderWithAttachmentsAsync(Guid orderId);
     }
 }

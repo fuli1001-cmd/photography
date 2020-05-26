@@ -47,7 +47,7 @@ namespace Photography.Services.Post.API.Controllers
         public async Task<ActionResult<AppointmentViewModel>> PublishAsync([FromBody] PublishAppointmentCommand publishAppointmentCommand)
         {
             var post = await _mediator.Send(publishAppointmentCommand);
-            return StatusCode((int)HttpStatusCode.Created, ResponseWrapper.CreateOkResponseWrapper(post));
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(post));
         }
 
         /// <summary>

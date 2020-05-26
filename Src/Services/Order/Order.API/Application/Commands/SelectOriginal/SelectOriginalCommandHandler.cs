@@ -26,7 +26,7 @@ namespace Photography.Services.Order.API.Application.Commands.SelectOriginal
 
         public async Task<bool> Handle(SelectOriginalCommand request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetByIdAsync(request.OrderId);
+            var order = await _orderRepository.GetOrderWithAttachmentsAsync(request.OrderId);
             order.SelectOriginalFiles(request.Attachments);
             return await _orderRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
         }

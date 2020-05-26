@@ -1,5 +1,7 @@
 ﻿using Arise.DDD.Domain.SeedWork;
+using Microsoft.VisualBasic.CompilerServices;
 using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
+using Photography.Services.Post.Domain.Events;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,21 +18,46 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggre
 
         public UserPostRelationType UserPostRelationType { get; set; }
 
+        public UserPostRelation(string userId, Guid postId)
+        {
+            UserId = Guid.Parse(userId);
+            PostId = postId;
+        }
+
         public UserPostRelation(Guid userId, UserPostRelationType userPostRelationType)
         {
             UserId = userId;
             UserPostRelationType = userPostRelationType;
         }
 
-        public UserPostRelation(Guid userId, Guid postId, UserPostRelationType userPostRelationType) : this(userId, userPostRelationType)
+        public void Like()
         {
-            PostId = postId;
+            UserPostRelationType = UserPostRelationType.Like;
+            AddUserLikedPostDomainEvent();
+        }
+
+        public void UnLike()
+        {
+            AddUserUnLikedPostDomainEvent();
+        }
+
+        private void AddUserLikedPostDomainEvent()
+        {
+            var userLikedPostDomainEvent = new UserLikedPostDomainEvent(PostId);
+            AddDomainEvent(userLikedPostDomainEvent);
+        }
+
+        private void AddUserUnLikedPostDomainEvent()
+        {
+            var userUnLikedPostDomainEvent = new UserUnLikedPostDomainEvent(PostId);
+            AddDomainEvent(userUnLikedPostDomainEvent);
         }
     }
 
     public enum UserPostRelationType
     {
         View,
-        Like
+        Like,
+        Share
     }
 }

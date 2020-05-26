@@ -24,5 +24,19 @@ namespace Photography.Services.Order.Infrastructure.Repositories
             else
                 return null;
         }
+
+        public async Task<Domain.AggregatesModel.OrderAggregate.Order> GetOrderWithAttachmentsAsync(Guid orderId)
+        {
+            var orders = await _context.Orders.Where(o => o.Id == orderId).Include(o => o.Attachments).ToListAsync();
+            if (orders.Count > 0)
+                return orders[0];
+            else
+                return null;
+        }
+
+        //public void LoadAttachments(Domain.AggregatesModel.OrderAggregate.Order order)
+        //{
+        //    _context.Entry(order).Reference(o => o.Attachments).Load();
+        //}
     }
 }

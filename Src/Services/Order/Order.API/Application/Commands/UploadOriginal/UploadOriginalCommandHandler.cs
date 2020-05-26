@@ -26,7 +26,7 @@ namespace Photography.Services.Order.API.Application.Commands.UploadOriginal
 
         public async Task<bool> Handle(UploadOriginalCommand request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetByIdAsync(request.OrderId);
+            var order = await _orderRepository.GetOrderWithAttachmentsAsync(request.OrderId);
             var attachments = request.Attachments.Select(name => new Attachment(name));
             order.UploadOriginalFiles(attachments);
             return await _orderRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);

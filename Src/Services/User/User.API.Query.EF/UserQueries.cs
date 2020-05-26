@@ -28,10 +28,22 @@ namespace Photography.Services.User.API.Query.EF
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public UserViewModel GetCurrentUserAsync()
+        public MeViewModel GetCurrentUserAsync()
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var user = _identityContext.Users.SingleOrDefault(u => u.Id.ToString() == userId);
+            return _mapper.Map<MeViewModel>(user);
+        }
+
+        public UserViewModel GetUserAsync(Guid? userId, int? oldUserId, string nickName)
+        {
+            Domain.AggregatesModel.UserAggregate.User user = null;
+            if (userId != null)
+                user = _identityContext.Users.SingleOrDefault(u => u.Id == userId);
+            else if (nickName != null)
+                user = _identityContext.Users.SingleOrDefault(u => u.Nickname.ToLower() == nickName.ToLower());
+            else if (oldUserId != null)
+                user = _identityContext.Users.SingleOrDefault(u => u.ChatServerUserId == oldUserId);
             return _mapper.Map<UserViewModel>(user);
         }
 
