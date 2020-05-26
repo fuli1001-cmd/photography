@@ -238,24 +238,6 @@
             <param name="appointCommand"></param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.AppointmentDealsController.CancelAppointmentDealAsync(Photography.Services.Post.API.Application.Commands.AppointmentDeal.CancelAppointmentDeal.CancelAppointmentDealCommand)">
-            <summary>
-            取消我发出的约拍交易
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Photography.Services.Post.API.Controllers.AppointmentDealsController.AcceptAppointmentDealAsync(Photography.Services.Post.API.Application.Commands.AppointmentDeal.AcceptAppointmentDeal.AcceptAppointmentDealCommand)">
-            <summary>
-            确认别人发出的约拍交易
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Photography.Services.Post.API.Controllers.AppointmentDealsController.RejectAppointmentDealAsync(Photography.Services.Post.API.Application.Commands.AppointmentDeal.RejectAppointmentDeal.RejectAppointmentDealCommand)">
-            <summary>
-            拒绝别人发出的约拍交易
-            </summary>
-            <returns></returns>
-        </member>
         <member name="M:Photography.Services.Post.API.Controllers.AppointmentDealsController.GetSentAppointmentDealsAsync">
             <summary>
             获取我发出的约拍交易

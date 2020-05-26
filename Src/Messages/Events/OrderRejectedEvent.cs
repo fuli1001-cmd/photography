@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Photography.Messages.Events
 {
-    public class AppointmentDealRejectedEvent : BaseEvent
+    public class OrderRejectedEvent : BaseEvent
     {
         public Guid DealId { get; set; }
     }

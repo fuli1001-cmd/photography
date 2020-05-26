@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Photography.Services.Order.API.Application.IntegrationEvents
+namespace Photography.Services.Order.API.Application.IntegrationEventHandlers
 {
     public class AppointmentDealCreatedEventHandler : IHandleMessages<AppointmentDealCreatedEvent>
     {

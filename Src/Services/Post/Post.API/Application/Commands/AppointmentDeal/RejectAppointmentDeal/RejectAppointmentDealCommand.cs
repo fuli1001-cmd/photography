@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.RejectAppointmentDeal
 {
     [DataContract]
-    public class RejectAppointmentDealCommand : IRequest<AppointmentViewModel>
+    public class RejectAppointmentDealCommand : IRequest<bool>
     {
         /// <summary>
         /// 要拒绝的约拍交易Id

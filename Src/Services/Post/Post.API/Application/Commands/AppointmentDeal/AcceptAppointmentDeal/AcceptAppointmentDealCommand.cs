@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.AcceptAppointmentDeal
 {
     [DataContract]
-    public class AcceptAppointmentDealCommand : IRequest<AppointmentViewModel>
+    public class AcceptAppointmentDealCommand : IRequest<bool>
     {
         /// <summary>
         /// 要接受的约拍交易Id

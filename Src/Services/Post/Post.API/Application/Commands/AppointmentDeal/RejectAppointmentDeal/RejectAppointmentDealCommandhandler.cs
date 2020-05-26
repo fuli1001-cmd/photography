@@ -15,13 +15,11 @@ using System.Threading.Tasks;
 
 namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.RejectAppointmentDeal
 {
-    public class RejectAppointmentDealCommandhandler : IRequestHandler<RejectAppointmentDealCommand, AppointmentViewModel>
+    public class RejectAppointmentDealCommandhandler : IRequestHandler<RejectAppointmentDealCommand, bool>
     {
         private readonly IPostRepository _postRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IMapper _mapper;
         private readonly ILogger<RejectAppointmentDealCommandhandler> _logger;
-        private readonly IServiceProvider _serviceProvider;
 
         private IMessageSession _messageSession;
 
@@ -30,30 +28,15 @@ namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.Rej
         {
             _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<AppointmentViewModel> Handle(RejectAppointmentDealCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(RejectAppointmentDealCommand request, CancellationToken cancellationToken)
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var deal = await _postRepository.GetByIdAsync(request.AppointmentId);
             deal.RejectAppointmentDeal(userId);
-
-            if (await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
-                await SendAppointmentDealRejectedEventAsync(deal);
-
-            _postRepository.LoadUser(deal);
-            return _mapper.Map<AppointmentViewModel>(deal);
-        }
-
-        private async Task SendAppointmentDealRejectedEventAsync(Domain.AggregatesModel.PostAggregate.Post deal)
-        {
-            var @event = new AppointmentDealRejectedEvent { DealId = deal.Id };
-            _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
-            await _messageSession.Publish(@event);
-            _logger.LogInformation("----- Published AppointmentDealRejectedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
+            return await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
         }
     }
 }

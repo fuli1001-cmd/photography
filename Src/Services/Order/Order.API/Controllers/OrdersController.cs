@@ -4,8 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Photography.Services.Order.API.Application.Commands.AcceptOrder;
+using Photography.Services.Order.API.Application.Commands.CancelOrder;
 using Photography.Services.Order.API.Application.Commands.CheckProcessed;
 using Photography.Services.Order.API.Application.Commands.ConfirmShot;
+using Photography.Services.Order.API.Application.Commands.RejectOrder;
 using Photography.Services.Order.API.Application.Commands.SelectOriginal;
 using Photography.Services.Order.API.Application.Commands.UploadOriginal;
 using Photography.Services.Order.API.Application.Commands.UploadProcessed;
@@ -144,6 +147,45 @@ namespace Photography.Services.Order.API.Controllers
             var status = new List<OrderStatus> { OrderStatus.Finished, OrderStatus.Canceled, OrderStatus.Rejected };
             var orders = await _orderQueries.GetOrdersAsync(status);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(orders));
+        }
+
+        /// <summary>
+        /// 确认约拍产生的订单
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("accept")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<OrderViewModel>> AcceptOrderAsync([FromBody] AcceptOrderCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 取消约拍产生的订单
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("cancel")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<OrderViewModel>> CancelOrderAsync([FromBody] CancelOrderCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 拒绝约拍产生的订单
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("reject")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<OrderViewModel>> RejectOrderAsync([FromBody] RejectOrderCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
 
         /// <summary>

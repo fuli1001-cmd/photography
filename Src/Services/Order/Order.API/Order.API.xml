@@ -73,6 +73,24 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.AcceptOrderAsync(Photography.Services.Order.API.Application.Commands.AcceptOrder.AcceptOrderCommand)">
+            <summary>
+            确认约拍产生的订单
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.CancelOrderAsync(Photography.Services.Order.API.Application.Commands.CancelOrder.CancelOrderCommand)">
+            <summary>
+            取消约拍产生的订单
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.RejectOrderAsync(Photography.Services.Order.API.Application.Commands.RejectOrder.RejectOrderCommand)">
+            <summary>
+            拒绝约拍产生的订单
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Photography.Services.Order.API.Controllers.OrdersController.ConfirmShotAsync(Photography.Services.Order.API.Application.Commands.ConfirmShot.ConfirmShotCommand)">
             <summary>
             确认已拍片
