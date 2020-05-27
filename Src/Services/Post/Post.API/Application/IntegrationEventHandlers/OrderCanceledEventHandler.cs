@@ -28,7 +28,7 @@ namespace Photography.Services.Post.API.Application.IntegrationEventHandlers
             {
                 _logger.LogInformation("----- Handling OrderCanceledEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                var command = new CancelAppointmentDealCommand { AppointmentId = message.DealId };
+                var command = new CancelAppointmentDealCommand { UserId = message.UserId, DealId = message.DealId };
 
                 await _mediator.Send(command);
             }

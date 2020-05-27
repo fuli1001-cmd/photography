@@ -1,14 +1,17 @@
 ﻿using Arise.DDD.Domain.Exceptions;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
 using Photography.Messages.Events;
+using Photography.Services.Order.API.Query.Interfaces;
 using Photography.Services.Order.API.Query.ViewModels;
 using Photography.Services.Order.Domain.AggregatesModel.OrderAggregate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,39 +19,44 @@ namespace Photography.Services.Order.API.Application.Commands.AcceptOrder
 {
     public class AcceptOrderCommandHandler : IRequestHandler<AcceptOrderCommand, OrderViewModel>
     {
+        private readonly IOrderQueries _orderQueries;
         private readonly IOrderRepository _orderRepository;
         private readonly ILogger<AcceptOrderCommandHandler> _logger;
         private readonly IServiceProvider _serviceProvider;
-        private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         private IMessageSession _messageSession;
 
-        public AcceptOrderCommandHandler(IOrderRepository postRepository, IServiceProvider serviceProvider, 
-            IMapper mapper, ILogger<AcceptOrderCommandHandler> logger)
+        public AcceptOrderCommandHandler(IOrderQueries orderQueries, IOrderRepository orderRepository, IServiceProvider serviceProvider, 
+            IHttpContextAccessor httpContextAccessor, ILogger<AcceptOrderCommandHandler> logger)
         {
-            _orderRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
+            _orderQueries = orderQueries ?? throw new ArgumentNullException(nameof(orderQueries));
+            _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
         }
 
         public async Task<OrderViewModel> Handle(AcceptOrderCommand request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetbyDealIdAsync(request.DealId);
+            var order = await _orderRepository.GetOrderbyDealIdAsync(request.DealId);
             if (order == null)
                 throw new DomainException("没有与当前约拍交易对应的订单。");
 
             order.Accept();
 
             if (await _orderRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
-                await SendOrderAcceptedEventAsync(request.DealId);
+            {
+                var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+                await SendOrderAcceptedEventAsync(userId, request.DealId);
+            }
 
-            return _mapper.Map<OrderViewModel>(order);
+            return await _orderQueries.GetOrderAsync(order.Id);
         }
 
-        private async Task SendOrderAcceptedEventAsync(Guid dealId)
+        private async Task SendOrderAcceptedEventAsync(Guid userId, Guid dealId)
         {
-            var @event = new OrderAcceptedEvent { DealId = dealId };
+            var @event = new OrderAcceptedEvent { UserId = userId, DealId = dealId };
             _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
             await _messageSession.Publish(@event);
             _logger.LogInformation("----- Published OrderAcceptedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);

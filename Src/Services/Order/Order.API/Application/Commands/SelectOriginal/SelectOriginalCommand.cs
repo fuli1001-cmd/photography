@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Photography.Services.Order.API.Query.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 namespace Photography.Services.Order.API.Application.Commands.SelectOriginal
 {
     [DataContract]
-    public class SelectOriginalCommand : IRequest<bool>
+    public class SelectOriginalCommand : IRequest<OrderViewModel>
     {
         /// <summary>
         /// 上传原片的订单ID
@@ -21,6 +22,8 @@ namespace Photography.Services.Order.API.Application.Commands.SelectOriginal
         /// <summary>
         /// 附件名称数组
         /// </summary>
+        [DataMember]
+        [Required]
         public List<string> Attachments { get; set; }
     }
 }

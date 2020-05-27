@@ -11,6 +11,8 @@ namespace Photography.Services.Order.API.Query.MapperProfiles
         public OrderViewModelProfile()
         {
             CreateMap<Domain.AggregatesModel.OrderAggregate.Order, OrderViewModel>();
+            CreateMap<Domain.AggregatesModel.OrderAggregate.Attachment, AttachmentViewModel>();
+            CreateMap<Domain.AggregatesModel.UserAggregate.User, UserViewModel>();
         }
     }
 }

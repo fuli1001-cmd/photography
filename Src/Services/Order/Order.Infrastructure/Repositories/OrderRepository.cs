@@ -16,9 +16,9 @@ namespace Photography.Services.Order.Infrastructure.Repositories
 
         }
 
-        public async Task<Domain.AggregatesModel.OrderAggregate.Order> GetbyDealIdAsync(Guid dealId)
+        public async Task<Domain.AggregatesModel.OrderAggregate.Order> GetOrderbyDealIdAsync(Guid dealId)
         {
-            var orders = await _context.Orders.Where(o => o.DealId == dealId).Include(o => o.Attachments).ToListAsync();
+            var orders = await _context.Orders.Where(o => o.DealId == dealId).ToListAsync();
             if (orders.Count > 0)
                 return orders[0];
             else
@@ -33,10 +33,5 @@ namespace Photography.Services.Order.Infrastructure.Repositories
             else
                 return null;
         }
-
-        //public void LoadAttachments(Domain.AggregatesModel.OrderAggregate.Order order)
-        //{
-        //    _context.Entry(order).Reference(o => o.Attachments).Load();
-        //}
     }
 }

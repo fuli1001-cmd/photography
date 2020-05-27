@@ -35,7 +35,7 @@ namespace Photography.Services.Post.API.Query.EF
         // 获取约拍广场的约拍列表
         public async Task<List<AppointmentViewModel>> GetAppointmentsAsync(PayerType? payerType, double? appointmentSeconds)
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var curUserType = _postContext.Users.SingleOrDefault(u => u.Id.ToString() == userId)?.UserType ?? throw new DomainException("当前用户类型不确定。");
 

@@ -160,10 +160,10 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             ForwardedPostId = forwardedPostId;
         }
 
-        public void CancelAppointmentDeal(string userId)
+        public void CancelAppointmentDeal(Guid userId)
         {
             //  当前操作用户必须为发出该交易的用户
-            if (UserId.ToString() != userId)
+            if (UserId != userId)
                 throw new DomainException("无权取消别人发出的约拍。");
 
             if (AppointmentDealStatus != PostAggregate.AppointmentDealStatus.Created)
@@ -172,10 +172,10 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             AppointmentDealStatus = PostAggregate.AppointmentDealStatus.Canceled;
         }
 
-        public void AcceptAppointmentDeal(string userId)
+        public void AcceptAppointmentDeal(Guid userId)
         {
             //  当前操作用户必须为收到该交易的用户
-            if (AppointmentedUserId.ToString() != userId)
+            if (AppointmentedUserId != userId)
                 throw new DomainException("无权确认此约拍。");
 
             if (AppointmentDealStatus != PostAggregate.AppointmentDealStatus.Created)
@@ -184,10 +184,10 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             AppointmentDealStatus = PostAggregate.AppointmentDealStatus.Accepted;
         }
 
-        public void RejectAppointmentDeal(string userId)
+        public void RejectAppointmentDeal(Guid userId)
         {
             // 当前操作用户必须为收到该交易的用户
-            if (AppointmentedUserId.ToString() != userId)
+            if (AppointmentedUserId != userId)
                 throw new DomainException("无权拒绝此约拍。");
 
             if (AppointmentDealStatus != PostAggregate.AppointmentDealStatus.Created)

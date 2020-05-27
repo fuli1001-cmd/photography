@@ -1,9 +1,12 @@
 ﻿using Arise.DDD.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 using Photography.Services.Post.Infrastructure;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Photography.Services.Post.Infrastructure.Repositories
 {
@@ -17,6 +20,16 @@ namespace Photography.Services.Post.Infrastructure.Repositories
         public void LoadUser(Domain.AggregatesModel.PostAggregate.Post post)
         {
             _context.Entry(post).Reference(p => p.User).Load();
+        }
+
+        public async Task<Domain.AggregatesModel.PostAggregate.Post> GetPostWithAppointmentedUserById(Guid postId)
+        {
+            var posts = await _context.Posts.Where(p => p.Id == postId).Include(p => p.AppointmentedUser).ToListAsync();
+            
+            if (posts.Count > 0)
+                return posts[0];
+            
+            return null;
         }
     }
 }

@@ -42,6 +42,15 @@ namespace Photography.Services.Order.API.Controllers
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        [HttpGet]
+        [Route("{orderId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<OrderViewModel>>> GetOrderAsync(Guid orderId)
+        {
+            var order = await _orderQueries.GetOrderAsync(orderId);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(order));
+        }
+
         /// <summary>
         /// 获取待拍片订单列表
         /// </summary>
@@ -195,7 +204,7 @@ namespace Photography.Services.Order.API.Controllers
         [HttpPut]
         [Route("confirmshot")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<bool>> ConfirmShotAsync([FromBody] ConfirmShotCommand command)
+        public async Task<ActionResult<OrderViewModel>> ConfirmShotAsync([FromBody] ConfirmShotCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
@@ -209,7 +218,7 @@ namespace Photography.Services.Order.API.Controllers
         [HttpPut]
         [Route("uploadoriginal")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<bool>> UploadOriginalAsync([FromBody] UploadOriginalCommand command)
+        public async Task<ActionResult<OrderViewModel>> UploadOriginalAsync([FromBody] UploadOriginalCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
@@ -223,7 +232,7 @@ namespace Photography.Services.Order.API.Controllers
         [HttpPut]
         [Route("selectoriginal")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<bool>> SelectOriginalAsync([FromBody] SelectOriginalCommand command)
+        public async Task<ActionResult<OrderViewModel>> SelectOriginalAsync([FromBody] SelectOriginalCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
@@ -237,7 +246,7 @@ namespace Photography.Services.Order.API.Controllers
         [HttpPut]
         [Route("uploadprocessed")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<bool>> UploadProcessedAsync([FromBody] UploadProcessedCommand command)
+        public async Task<ActionResult<OrderViewModel>> UploadProcessedAsync([FromBody] UploadProcessedCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));

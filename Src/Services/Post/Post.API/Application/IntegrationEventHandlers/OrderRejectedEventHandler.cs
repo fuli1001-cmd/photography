@@ -28,7 +28,7 @@ namespace Photography.Services.Post.API.Application.IntegrationEventHandlers
             {
                 _logger.LogInformation("----- Handling OrderRejectedEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                var command = new RejectAppointmentDealCommand { AppointmentId = message.DealId };
+                var command = new RejectAppointmentDealCommand { UserId = message.UserId, DealId = message.DealId };
 
                 await _mediator.Send(command);
             }

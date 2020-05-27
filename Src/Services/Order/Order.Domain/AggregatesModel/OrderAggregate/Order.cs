@@ -103,15 +103,21 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
         }
 
         // 上传原片
-        public void UploadOriginalFiles(IEnumerable<Attachment> attachments)
+        public void UploadOriginalFiles(IEnumerable<string> attachmentNames)
         {
-            AddAttachments(AttachmentStatus.Original, attachments);
+            if (!CheckOriginalAttachments(attachmentNames))
+                throw new DomainException("不能删除已被对方选择的原片。");
+
+            UpdateOriginalAttachments(attachmentNames);
+
             OrderStatus = OrderStatus.WaitingForSelection;
         }
 
         // 选择原片
         public void SelectOriginalFiles(IEnumerable<string> attachments)
         {
+            // 首先保证选择的附件都属于原片或已选择的原片
+            // 把选择的附件状态改为SelectedOriginal
             foreach (var name in attachments)
             {
                 var attachment = _attachments.FirstOrDefault(a => a.Name == name && (a.AttachmentStatus == AttachmentStatus.Original || a.AttachmentStatus == AttachmentStatus.SelectedOriginal));
@@ -120,13 +126,22 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
                 attachment.SetAttachmentStatus(AttachmentStatus.SelectedOriginal);
             }
 
+            // 把原来是选择的原片但不属于这次选择的改为Original状态
+            var selectedAttachments = _attachments.Where(a => a.AttachmentStatus == AttachmentStatus.SelectedOriginal);
+            foreach (var attachment in selectedAttachments)
+            {
+                if (!attachments.Contains(attachment.Name.ToLower()))
+                    attachment.SetAttachmentStatus(AttachmentStatus.Original);
+            }
+
+            // 把订单改为待上传精修片状态
             OrderStatus = OrderStatus.WaitingForUploadProcessed;
         }
 
         // 上传精修片
-        public void UploadProcessedFiles(IEnumerable<Attachment> attachments)
+        public void UploadProcessedFiles(IEnumerable<string> attachmentNames)
         {
-            AddAttachments(AttachmentStatus.Processed, attachments);
+            UpdateProcessedAttachments(attachmentNames);
             OrderStatus = OrderStatus.WaitingForCheck;
         }
 
@@ -137,20 +152,43 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
             ClosedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
 
-        private void AddAttachments(AttachmentStatus status, IEnumerable<Attachment> attachments)
+        // 检查上传的原片是否已被对方选择，不能删掉
+        private bool CheckOriginalAttachments(IEnumerable<string> attachmentNames)
         {
-            var existedNames = _attachments.Where(a => a.AttachmentStatus == status)
-                .Select(a => a.Name);
-
-            // 只添加原来没有的文件，避免重复添加
-            foreach (var a in attachments)
+            attachmentNames = attachmentNames.Select(n => n.ToLower());
+            var selectedOriginalFileNames = _attachments.Where(a => a.AttachmentStatus == AttachmentStatus.SelectedOriginal).Select(a => a.Name.ToLower());
+            foreach (var name in selectedOriginalFileNames)
             {
-                if (!existedNames.Contains(a.Name))
-                {
-                    a.SetAttachmentStatus(status);
-                    _attachments.Add(a);
-                }
+                if (!attachmentNames.Contains(name))
+                    return false;
             }
+            return true;
+        }
+
+        private void UpdateOriginalAttachments(IEnumerable<string> attachmentNames)
+        {
+            var otherStatusAttachments = _attachments.Where(a => a.AttachmentStatus != AttachmentStatus.Original).ToList();
+            var selectedAttachmentNames = _attachments.Where(a => a.AttachmentStatus == AttachmentStatus.SelectedOriginal).Select(a => a.Name.ToLower()).ToList();
+
+            _attachments.Clear();
+            _attachments.AddRange(otherStatusAttachments);
+
+            // 上传的原片不能改变已选择原片的状态
+            foreach (var name in attachmentNames)
+            {
+                if (!selectedAttachmentNames.Contains(name.ToLower()))
+                    _attachments.Add(new Attachment(name, AttachmentStatus.Original));
+            }
+        }
+
+        // 客户端每次会把最新的附件列表传上来
+        // 因此只使用每次传上来的附件，之前的同状态附件都删掉
+        private void UpdateProcessedAttachments(IEnumerable<string> attachmentNames)
+        {
+            var otherStatusAttachments = _attachments.Where(a => a.AttachmentStatus != AttachmentStatus.Processed).ToList();
+            _attachments.Clear();
+            _attachments.AddRange(otherStatusAttachments);
+            _attachments.AddRange(attachmentNames.Select(name => new Attachment(name, AttachmentStatus.Processed)));
         }
     }
 

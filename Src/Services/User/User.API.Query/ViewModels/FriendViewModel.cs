@@ -8,6 +8,7 @@ namespace Photography.Services.User.API.Query.ViewModels
     {
         public string Avatar { get; set; }
         public bool Muted { get; set; }
-        public int ChatServerUserId { get; private set; }
+        public string Phonenumber { get; set; }
+        public int ChatServerUserId { get; set; }
     }
 }

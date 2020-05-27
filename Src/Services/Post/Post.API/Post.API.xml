@@ -4,11 +4,6 @@
         <name>Post.API</name>
     </assembly>
     <members>
-        <member name="P:Photography.Services.Post.API.Application.Commands.AppointmentDeal.AcceptAppointmentDeal.AcceptAppointmentDealCommand.AppointmentId">
-            <summary>
-            要接受的约拍交易Id
-            </summary>
-        </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.AppointmentDeal.AppointTask.AppointTaskCommand.AppointmentId">
             <summary>
             要约拍的帖子Id
@@ -27,16 +22,6 @@
         <member name="P:Photography.Services.Post.API.Application.Commands.AppointmentDeal.AppointUser.AppointUserCommand.AppointmentedUserId">
             <summary>
             要约拍的人的id
-            </summary>
-        </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.AppointmentDeal.CancelAppointmentDeal.CancelAppointmentDealCommand.AppointmentId">
-            <summary>
-            要取消的约拍交易Id
-            </summary>
-        </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.AppointmentDeal.RejectAppointmentDeal.RejectAppointmentDealCommand.AppointmentId">
-            <summary>
-            要拒绝的约拍交易Id
             </summary>
         </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.Appointment.PublishAppointment.PublishAppointmentCommand.Text">

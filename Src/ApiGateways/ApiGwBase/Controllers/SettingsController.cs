@@ -18,7 +18,6 @@ namespace Photography.ApiGateways.ApiGwBase.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [ApiVersion("1.0")]
-    [Authorize]
     public class SettingsController : ControllerBase
     {
         private readonly ILogger<SettingsController> _logger;

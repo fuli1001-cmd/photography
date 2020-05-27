@@ -20,8 +20,9 @@ namespace Photography.Services.User.API.Query.ViewModels
         public int FollowerCount { get; set; }
         // 约拍值
         public int Score { get; set; }
+        public string Phonenumber { get; set; }
 
-        public int ChatServerUserId { get; private set; }
+        public int ChatServerUserId { get; set; }
     }
 
     public class MeViewModel : UserViewModel

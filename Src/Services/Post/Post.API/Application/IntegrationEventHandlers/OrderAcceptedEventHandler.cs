@@ -28,7 +28,7 @@ namespace Photography.Services.Post.API.Application.IntegrationEventHandlers
             {
                 _logger.LogInformation("----- Handling OrderAcceptedEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                var command = new AcceptAppointmentDealCommand { AppointmentId = message.DealId };
+                var command = new AcceptAppointmentDealCommand { UserId = message.UserId, DealId = message.DealId };
 
                 await _mediator.Send(command);
             }

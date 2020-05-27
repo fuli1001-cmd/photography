@@ -6,6 +6,7 @@ namespace Photography.Messages.Events
 {
     public class OrderAcceptedEvent : BaseEvent
     {
+        public Guid UserId { get; set; }
         public Guid DealId { get; set; }
     }
 }

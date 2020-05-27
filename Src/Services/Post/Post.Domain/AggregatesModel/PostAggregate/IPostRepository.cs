@@ -9,5 +9,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
     public interface IPostRepository : IRepository<Post>
     {
         void LoadUser(Post post);
+
+        Task<Post> GetPostWithAppointmentedUserById(Guid postId);
     }
 }

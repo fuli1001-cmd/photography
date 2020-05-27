@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Photography.Services.Order.API.Query.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 namespace Photography.Services.Order.API.Application.Commands.ConfirmShot
 {
     [DataContract]
-    public class ConfirmShotCommand : IRequest<bool>
+    public class ConfirmShotCommand : IRequest<OrderViewModel>
     {
         /// <summary>
         /// 确认已拍片的订单ID

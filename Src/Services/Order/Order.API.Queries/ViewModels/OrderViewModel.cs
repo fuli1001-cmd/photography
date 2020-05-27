@@ -23,6 +23,8 @@ namespace Photography.Services.Order.API.Query.ViewModels
 
         public string Text { get; set; }
 
+        public double ClosedTime { get; set; }
+
         public UserViewModel Partner { get; set; }
 
         public IEnumerable<AttachmentViewModel> Attachments { get; set; }

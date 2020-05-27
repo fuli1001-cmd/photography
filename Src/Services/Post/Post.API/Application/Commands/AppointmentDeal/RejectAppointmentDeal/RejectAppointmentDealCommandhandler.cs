@@ -33,9 +33,8 @@ namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.Rej
 
         public async Task<bool> Handle(RejectAppointmentDealCommand request, CancellationToken cancellationToken)
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var deal = await _postRepository.GetByIdAsync(request.AppointmentId);
-            deal.RejectAppointmentDeal(userId);
+            var deal = await _postRepository.GetPostWithAppointmentedUserById(request.DealId);
+            deal.RejectAppointmentDeal(request.UserId);
             return await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
         }
     }

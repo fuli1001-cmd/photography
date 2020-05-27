@@ -15,9 +15,10 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
         public Order Order { get; private set; }
         public Guid OrderId { get; private set; }
 
-        public Attachment(string name)
+        public Attachment(string name, AttachmentStatus attachmentStatus)
         {
             Name = name;
+            AttachmentStatus = attachmentStatus;
             // 目前订单附件只有图片
             AttachmentType = AttachmentType.Image;
         }

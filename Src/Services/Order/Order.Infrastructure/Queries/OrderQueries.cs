@@ -30,6 +30,54 @@ namespace Photography.Services.Order.Infrastructure.Queries
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        public async Task<OrderViewModel> GetOrderAsync(Guid orderId)
+        {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var orders = from o in _dbContext.Orders
+                         where o.Id == orderId && (o.User1Id.ToString() == userId || o.User2Id.ToString() == userId)
+                         select new OrderViewModel
+                         {
+                             Id = o.Id,
+                             Price = o.Price,
+                             OrderStatus = o.OrderStatus,
+                             CreatedTime = o.CreatedTime,
+                             AppointedTime = o.AppointedTime,
+                             PayerId = o.PayerId,
+                             Text = o.Text,
+                             Latitude = o.Latitude,
+                             Longitude = o.Longitude,
+                             LocationName = o.LocationName,
+                             Address = o.Address,
+                             ClosedTime = o.ClosedTime,
+                             Attachments = from a in o.Attachments
+                                           select new AttachmentViewModel
+                                           {
+                                               Id = a.Id,
+                                               Name = a.Name,
+                                               AttachmentStatus = a.AttachmentStatus
+                                           },
+                             Partner = (from u in _dbContext.Users
+                                        where u.Id.ToString() != userId && (u.Id == o.User1Id || u.Id == o.User2Id)
+                                        select new UserViewModel
+                                        {
+                                            Id = u.Id,
+                                            Nickname = u.Nickname,
+                                            Avatar = u.Avatar,
+                                            UserType = u.UserType
+                                        }).SingleOrDefault()
+                         };
+
+            var orderList = await orders.ToListAsync();
+            if (orderList.Count == 0)
+                return null;
+
+            var order = orderList[0];
+            order.SetAttachmentProperties(_logger);
+
+            return order;
+        }
+
         public async Task<List<OrderViewModel>> GetOrdersAsync(IEnumerable<OrderStatus> orderStatus)
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -50,6 +98,7 @@ namespace Photography.Services.Order.Infrastructure.Queries
                          Longitude = o.Longitude,
                          LocationName = o.LocationName,
                          Address = o.Address,
+                         ClosedTime = o.ClosedTime,
                          Attachments = from a in o.Attachments
                                        select new AttachmentViewModel
                                        {
