@@ -40,14 +40,30 @@ namespace Photography.Services.Post.API.Controllers
         /// <summary>
         /// 获取某个帖子的评论
         /// </summary>
-        /// <param name="postId"></param>
+        /// <param name="postId">帖子id</param>
+        /// <param name="maxSubCommentsCount">最多返回的子评论数量</param>
         /// <returns></returns>
         [HttpGet]
-        [Route("post/{postId}")]
+        [Route("post/{postId}/{maxSubCommentsCount}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<CommentViewModel>>> GetPostCommentsAsync(Guid postId)
+        public async Task<ActionResult<IEnumerable<CommentViewModel>>> GetPostCommentsAsync(Guid postId, int maxSubCommentsCount)
         {
-            var comments = await _commentQueries.GetPostCommentsAsync(postId);
+            var comments = await _commentQueries.GetPostCommentsAsync(postId, maxSubCommentsCount);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(comments));
+        }
+
+        /// <summary>
+        /// 获取某个评论的评论
+        /// </summary>
+        /// <param name="commentId">评论id</param>
+        /// <param name="maxSubCommentsCount">最多返回的子评论数量</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("comment/{commentId}/{maxSubCommentsCount}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<CommentViewModel>>> GetCommentCommentsAsync(Guid commentId, int maxSubCommentsCount)
+        {
+            var comments = await _commentQueries.GetPostCommentsAsync(commentId, maxSubCommentsCount);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(comments));
         }
 

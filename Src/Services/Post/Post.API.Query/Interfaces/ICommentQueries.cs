@@ -8,6 +8,8 @@ namespace Photography.Services.Post.API.Query.Interfaces
 {
     public interface ICommentQueries
     {
-        Task<List<CommentViewModel>> GetPostCommentsAsync(Guid postId);
+        Task<List<CommentViewModel>> GetPostCommentsAsync(Guid postId, int subCommentsCount);
+
+        Task<List<CommentViewModel>> GetSubCommentsAsync(Guid commentId, int subCommentsCount);
     }
 }

@@ -33,18 +33,25 @@ namespace Photography.Services.Post.API.Query.EF
         }
 
         // 获取约拍广场的约拍列表
+        // 返回与当前用户不同类型的用户发的约拍
+        // 以及当前用户发的约拍
         public async Task<List<AppointmentViewModel>> GetAppointmentsAsync(PayerType? payerType, double? appointmentSeconds)
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-            var curUserType = _postContext.Users.SingleOrDefault(u => u.Id.ToString() == userId)?.UserType ?? throw new DomainException("当前用户类型不确定。");
+            var curUserType = _postContext.Users.SingleOrDefault(u => u.Id == userId)?.UserType ?? throw new DomainException("当前用户类型不确定。");
 
             // 与当前用户不同类型的用户所发的约拍
             var posts = from p in _postContext.Posts
                         join u in _postContext.Users on p.UserId equals u.Id
                         where u.UserType != curUserType && p.PostType == PostType.Appointment
                         select p;
-            
+
+            // 当前用户发的约拍
+            var myPosts = _postContext.Posts.Where(p => p.UserId == userId && p.PostType == PostType.Appointment);
+
+            posts = posts.Union(myPosts);
+
             // 筛选支付方类型
             if (payerType != null)
                 posts = posts.Where(p => p.PayerType == payerType);
