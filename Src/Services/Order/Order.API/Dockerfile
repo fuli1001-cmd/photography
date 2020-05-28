@@ -8,7 +8,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY ["Src/Services/Order/Order.API/Order.API.csproj", "Src/Services/Order/Order.API/"]
-COPY ["Src/Messages/Messages.csproj", "Src/Messages/"]
+COPY ["Src/ApplicationMessages/ApplicationMessages.csproj", "Src/ApplicationMessages/"]
 COPY ["Src/Services/Order/Order.Infrastructure/Order.Infrastructure.csproj", "Src/Services/Order/Order.Infrastructure/"]
 COPY ["Src/Services/Order/Order.API.Queries/Order.API.Query.csproj", "Src/Services/Order/Order.API.Queries/"]
 COPY ["Src/Services/Order/Order.Domain/Order.Domain.csproj", "Src/Services/Order/Order.Domain/"]

@@ -10,7 +10,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Photography.Messages.Events;
 using NServiceBus;
 using Photography.Services.Post.API.Query.ViewModels;
 

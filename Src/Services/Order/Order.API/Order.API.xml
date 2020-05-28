@@ -49,6 +49,13 @@
             订单控制器
             </summary>
         </member>
+        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetOrderAsync(System.Guid)">
+            <summary>
+            获取订单详情
+            </summary>
+            <param name="orderId"></param>
+            <returns></returns>
+        </member>
         <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetWaitingForShootingOrdersAsync">
             <summary>
             获取待拍片订单列表

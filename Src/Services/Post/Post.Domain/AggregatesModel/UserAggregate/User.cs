@@ -39,6 +39,13 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
 
         public List<UserRelation> Followers { get; private set; }
         public List<UserRelation> FollowedUsers { get; private set; }
+
+        public User() { }
+
+        public User(string id)
+        {
+            Id = Guid.Parse(id);
+        }
     }
 
     public enum UserType

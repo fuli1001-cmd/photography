@@ -155,6 +155,15 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             return new Post(text, appointedTime, price, payerType, latitude, longitude, locationName, address, cityCode, postAttachments, userId, appointmentedUserId, appointmentedToPostId);
         }
 
+        //// 更新帖子对象
+        //public static Post UpdatePost(string text, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
+        //    double latitude, double longitude, string locationName, string address, string cityCode,
+        //    List<Guid> friendIds, List<PostAttachment> postAttachments, Guid userId)
+        //{
+        //    return new Post(text, showOriginalText, commentable, forwardType, shareType, visibility, viewPassword, latitude, longitude,
+        //        locationName, address, cityCode, friendIds, postAttachments, userId);
+        //}
+
         public void SetForwardPostId(Guid forwardedPostId)
         {
             ForwardedPostId = forwardedPostId;

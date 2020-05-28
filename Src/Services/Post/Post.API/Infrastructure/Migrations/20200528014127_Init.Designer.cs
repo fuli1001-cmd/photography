@@ -10,7 +10,7 @@ using Photography.Services.Post.Infrastructure;
 namespace Photography.Services.Post.API.Infrastructure.Migrations
 {
     [DbContext(typeof(PostContext))]
-    [Migration("20200526014507_Init")]
+    [Migration("20200528014127_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,7 +36,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<Guid?>("ParentCommentId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("PostId")
+                    b.Property<Guid>("PostId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Text")
@@ -247,6 +247,27 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.ToTable("UserRelations");
                 });
 
+            modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.UserCommentRelationAggregate.UserCommentRelation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CommentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommentId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserCommentRelations");
+                });
+
             modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggregate.UserPostRelation", b =>
                 {
                     b.Property<Guid>("Id")
@@ -280,7 +301,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
 
                     b.HasOne("Photography.Services.Post.Domain.AggregatesModel.PostAggregate.Post", "Post")
                         .WithMany("Comments")
-                        .HasForeignKey("PostId");
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "User")
                         .WithMany("Comments")
@@ -333,6 +356,21 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "Follower")
                         .WithMany("Followers")
                         .HasForeignKey("FollowerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.UserCommentRelationAggregate.UserCommentRelation", b =>
+                {
+                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.CommentAggregate.Comment", "Comment")
+                        .WithMany("UserCommentRelations")
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "User")
+                        .WithMany("UserCommentRelations")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

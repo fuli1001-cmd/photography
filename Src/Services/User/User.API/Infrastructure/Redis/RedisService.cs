@@ -42,7 +42,7 @@ namespace Photography.Services.User.API.Infrastructure.Redis
         {
             try
             {
-                var configString = $"{_redisSettings.Value.Host}:{_redisSettings.Value.Port},connectRetry=5";
+                var configString = $"{_redisSettings.Value.Host}:{_redisSettings.Value.Port},connectRetry=5,password={_redisSettings.Value.Password}";
                 return await ConnectionMultiplexer.ConnectAsync(configString);
             }
             catch (RedisConnectionException err)

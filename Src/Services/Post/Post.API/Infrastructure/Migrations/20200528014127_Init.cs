@@ -116,7 +116,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     Text = table.Column<string>(nullable: false),
                     Likes = table.Column<int>(nullable: false),
                     CreatedTime = table.Column<double>(nullable: false),
-                    PostId = table.Column<Guid>(nullable: true),
+                    PostId = table.Column<Guid>(nullable: false),
                     UserId = table.Column<Guid>(nullable: false),
                     ParentCommentId = table.Column<Guid>(nullable: true)
                 },
@@ -134,7 +134,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         column: x => x.PostId,
                         principalTable: "Posts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Comments_Users_UserId",
                         column: x => x.UserId,
@@ -191,6 +191,31 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "UserCommentRelations",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    CommentId = table.Column<Guid>(nullable: false),
+                    UserId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserCommentRelations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserCommentRelations_Comments_CommentId",
+                        column: x => x.CommentId,
+                        principalTable: "Comments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserCommentRelations_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_ParentCommentId",
                 table: "Comments",
@@ -232,6 +257,16 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserCommentRelations_CommentId",
+                table: "UserCommentRelations",
+                column: "CommentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserCommentRelations_UserId",
+                table: "UserCommentRelations",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserPostRelations_PostId",
                 table: "UserPostRelations",
                 column: "PostId");
@@ -255,16 +290,19 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Comments");
+                name: "PostAttachments");
 
             migrationBuilder.DropTable(
-                name: "PostAttachments");
+                name: "UserCommentRelations");
 
             migrationBuilder.DropTable(
                 name: "UserPostRelations");
 
             migrationBuilder.DropTable(
                 name: "UserRelations");
+
+            migrationBuilder.DropTable(
+                name: "Comments");
 
             migrationBuilder.DropTable(
                 name: "Posts");

@@ -14,8 +14,14 @@ namespace Photography.Services.Order.Infrastructure.EntityConfigurations
             builder.Ignore(e => e.DomainEvents);
 
             //posts navigation properties
-            var ordersNavigation = builder.Metadata.FindNavigation(nameof(User.User1Orders));
-            ordersNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+            var user1OrdersNavigation = builder.Metadata.FindNavigation(nameof(User.User1Orders));
+            user1OrdersNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            var user2OrdersNavigation = builder.Metadata.FindNavigation(nameof(User.User2Orders));
+            user2OrdersNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            var payerOrdersNavigation = builder.Metadata.FindNavigation(nameof(User.PayerOrders));
+            payerOrdersNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
         }
     }
 }

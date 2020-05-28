@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NServiceBus;
 using Serilog;
 
 namespace Photography.Services.User.API
@@ -36,6 +37,24 @@ namespace Photography.Services.User.API
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .UseNServiceBus(hostBuilderContext =>
+                {
+                    var endpointConfiguration = new EndpointConfiguration("userapi");
+                    //var transport = endpointConfiguration.UseTransport<LearningTransport>();
+                    var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
+                    transport.ConnectionString("host=rabbitmq");
+                    //transport.ConnectionString("host=43.225.159.87");
+                    transport.UseConventionalRoutingTopology();
+                    endpointConfiguration.EnableInstallers();
+
+                    //endpointConfiguration.SendFailedMessagesTo("error");
+                    //endpointConfiguration.AuditProcessedMessagesTo("audit");
+                    //endpointConfiguration.SendHeartbeatTo("Particular.ServiceControl");
+                    //var metrics = endpointConfiguration.EnableMetrics();
+                    //metrics.SendMetricDataToServiceControl("Particular.Monitoring", TimeSpan.FromMilliseconds(500));
+
+                    return endpointConfiguration;
+                })
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureLogging((hostBuilderContext, loggingBuilder) =>
                 {

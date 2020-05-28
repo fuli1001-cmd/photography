@@ -9,7 +9,7 @@ namespace Photography.Services.Order.Domain.AggregatesModel.UserAggregate
     {
         public string Nickname { get; private set; }
         public string Avatar { get; private set; }
-        public UserType UserType { get; private set; }
+        public UserType? UserType { get; private set; }
 
         private readonly List<OrderAggregate.Order> _user1Orders = null;
         public IReadOnlyCollection<OrderAggregate.Order> User1Orders => _user1Orders;
@@ -19,6 +19,16 @@ namespace Photography.Services.Order.Domain.AggregatesModel.UserAggregate
 
         private readonly List<OrderAggregate.Order> _payerOrders = null;
         public IReadOnlyCollection<OrderAggregate.Order> PayerOrders => _payerOrders;
+
+        public User()
+        {
+            
+        }
+
+        public User(string id)
+        {
+            Id = Guid.Parse(id);
+        }
     }
 
     public enum UserType

@@ -1,9 +1,9 @@
-﻿using Arise.DDD.API.Extensions;
+﻿using ApplicationMessages.Events;
+using Arise.DDD.API.Extensions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NServiceBus;
-using Photography.Messages.Events;
 using Photography.Services.Order.API.Application.Commands.CreateOrder;
 using Serilog.Context;
 using System;
@@ -28,7 +28,7 @@ namespace Photography.Services.Order.API.Application.IntegrationEventHandlers
         {
             using (LogContext.PushProperty("IntegrationEventContext", $"{message.Id}-{Program.AppName}"))
             {
-                _logger.LogInformation("----- Handling integration event: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
+                _logger.LogInformation("----- Handling AppointmentDealCreatedEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
                 var command = new CreateOrderCommand
                 {

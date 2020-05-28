@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Photography.Messages.Events
+namespace ApplicationMessages.Events
 {
     public class OrderRejectedEvent : BaseEvent
     {

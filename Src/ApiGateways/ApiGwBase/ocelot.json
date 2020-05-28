@@ -137,6 +137,31 @@
       ],
       "UpstreamPathTemplate": "/api/streaming",
       "UpstreamHttpMethod": []
+    },
+
+    {
+      "DownstreamPathTemplate": "/api/register",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "authservice",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/register",
+      "UpstreamHttpMethod": []
+    },
+    {
+      "DownstreamPathTemplate": "/api/register/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "authservice",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/register/{everything}",
+      "UpstreamHttpMethod": []
     }
   ],
   "GlobalConfiguration": {

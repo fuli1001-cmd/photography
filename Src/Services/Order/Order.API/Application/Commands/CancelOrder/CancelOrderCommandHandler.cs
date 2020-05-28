@@ -1,10 +1,10 @@
-﻿using Arise.DDD.Domain.Exceptions;
+﻿using ApplicationMessages.Events;
+using Arise.DDD.Domain.Exceptions;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
-using Photography.Messages.Events;
 using Photography.Services.Order.API.Query.Interfaces;
 using Photography.Services.Order.API.Query.ViewModels;
 using Photography.Services.Order.Domain.AggregatesModel.OrderAggregate;
@@ -59,7 +59,7 @@ namespace Photography.Services.Order.API.Application.Commands.CancelOrder
             var @event = new OrderCanceledEvent { UserId = userId, DealId = dealId };
             _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
             await _messageSession.Publish(@event);
-            _logger.LogInformation("----- Published OrderAcceptedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
+            _logger.LogInformation("----- Published OrderCanceledEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
         }
     }
 }

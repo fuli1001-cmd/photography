@@ -31,6 +31,32 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
 
         public List<UserRelation> Followers { get; private set; }
         public List<UserRelation> FollowedUsers { get; private set; }
+
+        public User()
+        {
+            Console.WriteLine("**************default user constructor*******************");
+        }
+
+        public User(string id, string userName, string phonenumber, string code)
+        {
+            Console.WriteLine("**************user constructor*******************");
+            Id = Guid.Parse(id);
+            UserName = userName;
+            Phonenumber = phonenumber;
+            Code = code;
+        }
+
+        public void Update(string nickname, Gender? gender, double? birthday, UserType? userType, 
+            string province, string city, string sign)
+        {
+            Nickname = nickname;
+            Gender = gender;
+            Birthday = birthday;
+            UserType = userType;
+            Province = province;
+            City = city;
+            Sign = sign;
+        }
     }
 
     public enum UserType

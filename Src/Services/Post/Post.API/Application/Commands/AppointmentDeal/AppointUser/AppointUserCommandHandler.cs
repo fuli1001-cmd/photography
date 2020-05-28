@@ -1,10 +1,10 @@
-﻿using Arise.DDD.Domain.Exceptions;
+﻿using ApplicationMessages.Events;
+using Arise.DDD.Domain.Exceptions;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
-using Photography.Messages.Events;
 using Photography.Services.Post.API.Query.ViewModels;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 using System;

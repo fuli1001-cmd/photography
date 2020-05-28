@@ -9,5 +9,7 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
     public interface IUserRepository : IRepository<User>
     {
         Task<User> GetByUserNameAsync(string userName);
+
+        Task<Guid?> GetUserIdByCodeAsync(string code);
     }
 }

@@ -19,6 +19,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Arise.DDD.API" Version="1.0.2" />
+    <PackageReference Include="Arise.DDD.Messages" Version="1.0.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.6.2" />
@@ -44,7 +45,7 @@
     <Folder Include="Infrastructure\Migrations\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Messages\Messages.csproj" />
+    <ProjectReference Include="..\..\..\ApplicationMessages\ApplicationMessages.csproj" />
     <ProjectReference Include="..\Post.API.Query.EF\Post.API.Query.EF.csproj" />
     <ProjectReference Include="..\Post.API.Query\Post.API.Query.csproj" />
     <ProjectReference Include="..\Post.Domain\Post.Domain.csproj" />

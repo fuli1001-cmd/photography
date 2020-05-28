@@ -10,6 +10,6 @@ namespace Photography.Services.Order.API.Query.ViewModels
         public Guid Id { get; set; }
         public string Nickname { get; set; }
         public string Avatar { get; set; }
-        public UserType UserType { get; set; }
+        public UserType? UserType { get; set; }
     }
 }

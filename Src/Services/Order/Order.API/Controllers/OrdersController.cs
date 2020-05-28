@@ -42,6 +42,11 @@ namespace Photography.Services.Order.API.Controllers
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// 获取订单详情
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("{orderId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]

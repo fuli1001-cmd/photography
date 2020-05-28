@@ -25,5 +25,20 @@ namespace Photography.Services.User.Infrastructure.Repositories
             else
                 return null;
         }
+
+        public async Task<Guid?> GetUserIdByCodeAsync(string code)
+        {
+            if (code == null)
+                return null;
+
+            var userIds = await (from u in _context.Users
+                                 where u.Code.ToLower() == code.ToLower()
+                                 select u.Id).ToListAsync();
+
+            if (userIds.Count > 0)
+                return userIds[0];
+            else
+                return null;
+        }
     }
 }

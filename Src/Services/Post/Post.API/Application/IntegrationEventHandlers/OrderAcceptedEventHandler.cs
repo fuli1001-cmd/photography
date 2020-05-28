@@ -1,7 +1,8 @@
-﻿using MediatR;
+﻿using ApplicationMessages;
+using ApplicationMessages.Events;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
-using Photography.Messages.Events;
 using Photography.Services.Post.API.Application.Commands.AppointmentDeal.AcceptAppointmentDeal;
 using Serilog.Context;
 using System;

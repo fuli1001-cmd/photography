@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Photography.Services.User.API.Application.Commands.Login;
 using Photography.Services.User.API.Application.Commands.ToggleFollow;
+using Photography.Services.User.API.Application.Commands.UpdateUser;
 using Photography.Services.User.API.BackwardCompatibility.ViewModels;
 using Photography.Services.User.API.Query.BackwardCompatibility.ViewModels;
 using Photography.Services.User.API.Query.Interfaces;
@@ -98,6 +99,20 @@ namespace Photography.Services.User.API.Controllers
         {
             var user = _userQueries.GetUserAsync(userId, oldUserId, nickName);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(user));
+        }
+
+        /// <summary>
+        /// 更新用户
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<bool>> UpdateUserAsync([FromBody] UpdateUserCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
 
         /// <summary>

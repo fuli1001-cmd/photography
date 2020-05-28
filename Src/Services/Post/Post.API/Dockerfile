@@ -8,6 +8,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY ["Src/Services/Post/Post.API/Post.API.csproj", "Src/Services/Post/Post.API/"]
+COPY ["Src/ApplicationMessages/ApplicationMessages.csproj", "Src/ApplicationMessages/"]
 COPY ["Src/Services/Post/Post.Infrastructure/Post.Infrastructure.csproj", "Src/Services/Post/Post.Infrastructure/"]
 COPY ["Src/Services/Post/Post.Domain/Post.Domain.csproj", "Src/Services/Post/Post.Domain/"]
 COPY ["Src/Services/Post/Post.API.Query/Post.API.Query.csproj", "Src/Services/Post/Post.API.Query/"]
