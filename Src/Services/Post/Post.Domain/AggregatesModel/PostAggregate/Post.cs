@@ -14,6 +14,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
     {
         public string Text { get; private set; }
         public double CreatedTime { get; private set; }
+        public double? UpdatedTime { get; private set; }
         public PostType PostType { get; private set; }
 
 
@@ -155,14 +156,31 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             return new Post(text, appointedTime, price, payerType, latitude, longitude, locationName, address, cityCode, postAttachments, userId, appointmentedUserId, appointmentedToPostId);
         }
 
-        //// 更新帖子对象
-        //public static Post UpdatePost(string text, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
-        //    double latitude, double longitude, string locationName, string address, string cityCode,
-        //    List<Guid> friendIds, List<PostAttachment> postAttachments, Guid userId)
-        //{
-        //    return new Post(text, showOriginalText, commentable, forwardType, shareType, visibility, viewPassword, latitude, longitude,
-        //        locationName, address, cityCode, friendIds, postAttachments, userId);
-        //}
+        // 更新帖子对象
+        public void Update(string text, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
+            double latitude, double longitude, string locationName, string address, string cityCode,
+            List<Guid> friendIds, List<PostAttachment> postAttachments)
+        {
+            Text = text;
+            Commentable = commentable;
+            ForwardType = forwardType;
+            ShareType = shareType;
+            Visibility = visibility;
+            ViewPassword = viewPassword;
+            Latitude = latitude;
+            Longitude = longitude;
+            LocationName = locationName;
+            Address = address;
+            CityCode = cityCode;
+            UpdatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+
+            var relations = friendIds?.Select(id => new UserPostRelation(id, UserPostRelationType.View)).ToList() ?? new List<UserPostRelation>();
+            _userPostRelations.Clear();
+            _userPostRelations.AddRange(relations);
+
+            _postAttachments.Clear();
+            _postAttachments.AddRange(postAttachments ?? new List<PostAttachment>());
+        }
 
         public void SetForwardPostId(Guid forwardedPostId)
         {

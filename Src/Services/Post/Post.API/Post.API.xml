@@ -340,6 +340,13 @@
             <param name="publishPostCommand"></param>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.UpdatePostAsync(Photography.Services.Post.API.Application.Commands.Post.UpdatePost.UpdatePostCommand)">
+            <summary>
+            更新帖子
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
         <member name="M:Photography.Services.Post.API.Controllers.PostsController.ToggleLikePostAsync(Photography.Services.Post.API.Application.Commands.Post.ToggleLikePost.ToggleLikePostCommand)">
             <summary>
             赞或取消赞一个帖子

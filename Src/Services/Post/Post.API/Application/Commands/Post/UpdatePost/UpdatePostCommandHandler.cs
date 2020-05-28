@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Arise.DDD.Domain.Exceptions;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -29,19 +30,28 @@ namespace Photography.Services.Post.API.Application.Commands.Post.UpdatePost
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public Task<PostViewModel> Handle(UpdatePostCommand request, CancellationToken cancellationToken)
+        public async Task<PostViewModel> Handle(UpdatePostCommand request, CancellationToken cancellationToken)
         {
-            //var post = _postRepository.GetByIdAsync()
-            //var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            //var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType)).ToList();
-            //var post = Domain.AggregatesModel.PostAggregate.Post.CreatePost(request.Text, request.Commentable, request.ForwardType, request.ShareType,
-            //    request.Visibility, request.ViewPassword, request.Latitude, request.Longitude, request.LocationName,
-            //    request.Address, request.CityCode, request.FriendIds, attachments, Guid.Parse(userId));
-            //_postRepository.Add(post);
-            //await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
-            //_postRepository.LoadUser(post);
-            //return _mapper.Map<PostViewModel>(post);
-            throw new NotImplementedException();
+            var post = await _postRepository.GetPostWithAttachmentsById(request.PostId);
+            var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            if (post.UserId != userId)
+                throw new DomainException("更新失败。");
+
+            var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType)).ToList();
+
+            post.Update(request.Text, request.Commentable, request.ForwardType, request.ShareType, request.Visibility,
+                request.ViewPassword, request.Latitude, request.Longitude, request.LocationName, request.Address,
+                request.CityCode, request.FriendIds, attachments);
+
+            _postRepository.Update(post);
+            if (await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
+            {
+                _postRepository.LoadUser(post);
+                return _mapper.Map<PostViewModel>(post);
+            }
+            else
+                throw new DomainException("更新失败。");
         }
     }
 }

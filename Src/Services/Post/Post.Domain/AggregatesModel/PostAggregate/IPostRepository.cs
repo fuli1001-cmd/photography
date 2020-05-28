@@ -11,5 +11,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         void LoadUser(Post post);
 
         Task<Post> GetPostWithAppointmentedUserById(Guid postId);
+
+        Task<Post> GetPostWithAttachmentsById(Guid postId);
     }
 }

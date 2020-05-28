@@ -31,5 +31,18 @@ namespace Photography.Services.Post.Infrastructure.Repositories
             
             return null;
         }
+
+        public async Task<Domain.AggregatesModel.PostAggregate.Post> GetPostWithAttachmentsById(Guid postId)
+        {
+            var posts = await _context.Posts.Where(p => p.Id == postId)
+                .Include(p => p.PostAttachments)
+                .Include(p => p.UserPostRelations)
+                .ToListAsync();
+
+            if (posts.Count > 0)
+                return posts[0];
+
+            return null;
+        }
     }
 }

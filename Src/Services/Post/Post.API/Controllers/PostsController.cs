@@ -8,6 +8,7 @@ using Photography.Services.Post.API.Application.Commands.Post.ForwardPosts;
 using Photography.Services.Post.API.Application.Commands.Post.PublishPost;
 using Photography.Services.Post.API.Application.Commands.Post.SharePost;
 using Photography.Services.Post.API.Application.Commands.Post.ToggleLikePost;
+using Photography.Services.Post.API.Application.Commands.Post.UpdatePost;
 using Photography.Services.Post.API.Infrastructure;
 using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
@@ -124,6 +125,20 @@ namespace Photography.Services.Post.API.Controllers
         public async Task<ActionResult<PostViewModel>> PublishPostAsync([FromBody] PublishPostCommand publishPostCommand)
         {
             var post = await _mediator.Send(publishPostCommand);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(post));
+        }
+
+        /// <summary>
+        /// 更新帖子
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<PostViewModel>> UpdatePostAsync([FromBody] UpdatePostCommand command)
+        {
+            var post = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(post));
         }
 
