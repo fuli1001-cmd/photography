@@ -21,6 +21,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Photography.Services.Post.API.Application.Behaviors;
 using Photography.Services.Post.API.Application.Commands.Post.PublishPost;
+using Photography.Services.Post.API.Application.Commands.User.CreateUser;
 using Photography.Services.Post.API.Application.Validators;
 using Photography.Services.Post.API.Infrastructure.AutofacModules;
 using Photography.Services.Post.API.Query.MapperProfiles;
@@ -56,7 +57,7 @@ namespace Photography.Services.Post.API
 
             services.AddHttpContextAccessor();
 
-            services.AddMediatR(typeof(PublishPostCommandHandler));
+            services.AddMediatR(typeof(CreateUserCommandHandler));
 
             services.AddControllers(options =>
             {

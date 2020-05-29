@@ -17,6 +17,18 @@ namespace Photography.Services.User.Infrastructure.Repositories
 
         }
 
+        public async Task<Domain.AggregatesModel.UserAggregate.User> GetByNicknameAsync(string nickname)
+        {
+            if (string.IsNullOrEmpty(nickname))
+                return null;
+
+            var users = await _context.Users.Where(u => !string.IsNullOrEmpty(u.Nickname) && u.Nickname.ToLower() == nickname.ToLower()).ToListAsync();
+            if (users.Count > 0)
+                return users[0];
+            else
+                return null;
+        }
+
         public async Task<Domain.AggregatesModel.UserAggregate.User> GetByUserNameAsync(string userName)
         {
             var users = await _context.Users.Where(u => u.UserName == userName).ToListAsync();

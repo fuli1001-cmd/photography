@@ -25,9 +25,10 @@ namespace Photography.Services.Order.Domain.AggregatesModel.UserAggregate
             
         }
 
-        public User(string id)
+        public User(string id, string nickName)
         {
             Id = Guid.Parse(id);
+            Nickname = nickName;
         }
     }
 

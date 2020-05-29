@@ -33,6 +33,10 @@ namespace Photography.Services.Post.API.Application.Commands.Post.UpdatePost
         public async Task<PostViewModel> Handle(UpdatePostCommand request, CancellationToken cancellationToken)
         {
             var post = await _postRepository.GetPostWithAttachmentsById(request.PostId);
+
+            if (post == null)
+                throw new DomainException("更新失败。");
+
             var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
             if (post.UserId != userId)

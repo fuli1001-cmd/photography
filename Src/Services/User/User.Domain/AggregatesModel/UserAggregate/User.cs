@@ -22,6 +22,7 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         public int LikedCount { get; private set; }
         public int FollowingCount { get; private set; }
         public int FollowerCount { get; private set; }
+        public int PostCount { get; private set; }
         // 约拍值
         public int Score { get; private set; }
         public string Code { get; private set; }
@@ -34,16 +35,16 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
 
         public User()
         {
-            Console.WriteLine("**************default user constructor*******************");
+            
         }
 
-        public User(string id, string userName, string phonenumber, string code)
+        public User(string id, string userName, string phonenumber, string code, string nickName)
         {
-            Console.WriteLine("**************user constructor*******************");
             Id = Guid.Parse(id);
             UserName = userName;
             Phonenumber = phonenumber;
             Code = code;
+            Nickname = nickName;
         }
 
         public void Update(string nickname, Gender? gender, double? birthday, UserType? userType, 
@@ -56,6 +57,16 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
             Province = province;
             City = city;
             Sign = sign;
+        }
+
+        public void IncreasePostCount()
+        {
+            PostCount++;
+        }
+
+        public void DecreasePostCount()
+        {
+            PostCount--;
         }
     }
 

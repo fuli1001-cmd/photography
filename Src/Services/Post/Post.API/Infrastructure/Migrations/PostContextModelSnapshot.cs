@@ -146,6 +146,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double?>("UpdatedTime")
+                        .HasColumnType("float");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 

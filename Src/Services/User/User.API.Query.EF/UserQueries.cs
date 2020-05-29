@@ -10,6 +10,8 @@ using System.Security.Claims;
 using Microsoft.Extensions.Logging;
 using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
 using Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace Photography.Services.User.API.Query.EF
 {
@@ -37,14 +39,44 @@ namespace Photography.Services.User.API.Query.EF
 
         public UserViewModel GetUserAsync(Guid? userId, int? oldUserId, string nickName)
         {
-            Domain.AggregatesModel.UserAggregate.User user = null;
+            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            IQueryable<Domain.AggregatesModel.UserAggregate.User> queryableUsers = null;
+
             if (userId != null)
-                user = _identityContext.Users.SingleOrDefault(u => u.Id == userId);
+                queryableUsers = from u in _identityContext.Users where u.Id == userId select u;
             else if (nickName != null)
-                user = _identityContext.Users.SingleOrDefault(u => u.Nickname.ToLower() == nickName.ToLower());
+                queryableUsers = from u in _identityContext.Users where u.Nickname.ToLower() == nickName.ToLower() select u;
             else if (oldUserId != null)
-                user = _identityContext.Users.SingleOrDefault(u => u.ChatServerUserId == oldUserId);
-            return _mapper.Map<UserViewModel>(user);
+                queryableUsers = from u in _identityContext.Users where u.ChatServerUserId == oldUserId select u;
+            else
+                return null;
+
+            var user = (from u in queryableUsers
+                        select new UserViewModel
+                        {
+                            Id = u.Id,
+                            Nickname = u.Nickname,
+                            Avatar = u.Avatar,
+                            UserType = u.UserType,
+                            UserName = u.UserName,
+                            Gender = u.Gender,
+                            Birthday = u.Birthday,
+                            Province = u.Province,
+                            City = u.City,
+                            Sign = u.Sign,
+                            LikedCount = u.LikedCount,
+                            FollowingCount = u.FollowingCount,
+                            FollowerCount = u.FollowerCount,
+                            Score = u.Score,
+                            Phonenumber = u.Phonenumber,
+                            PostCount = u.PostCount,
+                            ChatServerUserId = u.ChatServerUserId,
+                            Followed = (from ur in _identityContext.UserRelations
+                                        where ur.FollowerId == myId && ur.FollowedUserId == userId
+                                        select ur.Id).Count() > 0
+                        }).SingleOrDefault();
+
+            return user;
         }
 
         public List<FriendViewModel> GetFriendsAsync()
@@ -71,6 +103,13 @@ namespace Photography.Services.User.API.Query.EF
                                select ur1;
 
             return friendsQuery;
+        }
+
+        private IQueryable<Guid> GetFollowedUserIds(string userId)
+        {
+            return _identityContext.UserRelations
+                .Where(ur => ur.FollowerId.ToString() == userId)
+                .Select(ur => ur.FollowedUserId);
         }
     }
 }

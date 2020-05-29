@@ -18,6 +18,7 @@ namespace Photography.Services.User.Infrastructure.EntityConfigurations
             builder.Property(u => u.LikedCount).HasDefaultValue(0);
             builder.Property(u => u.FollowerCount).HasDefaultValue(0);
             builder.Property(u => u.FollowingCount).HasDefaultValue(0);
+            builder.Property(u => u.PostCount).HasDefaultValue(0);
             builder.Property(u => u.ChatServerUserId).ValueGeneratedOnAdd();
 
             builder.HasMany(u => u.FollowedUsers).WithOne(ur => ur.FollowedUser).HasForeignKey(ur => ur.FollowedUserId).OnDelete(DeleteBehavior.Restrict);

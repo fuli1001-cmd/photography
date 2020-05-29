@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
+using Photography.Services.Post.Domain.AggregatesModel.UserRelationAggregate;
 using System;
 using System.Collections.Generic;
 using System.Text;

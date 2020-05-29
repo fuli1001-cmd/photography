@@ -10,7 +10,7 @@ using Photography.Services.Post.Infrastructure;
 namespace Photography.Services.Post.API.Infrastructure.Migrations
 {
     [DbContext(typeof(PostContext))]
-    [Migration("20200528014127_Init")]
+    [Migration("20200529012750_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -147,6 +147,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
 
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("UpdatedTime")
+                        .HasColumnType("float");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");

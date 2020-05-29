@@ -42,6 +42,10 @@ namespace Photography.Services.User.API.Infrastructure.Redis
         {
             try
             {
+                _logger.LogInformation("**********redis host: {RedisHost}*************", _redisSettings.Value.Host);
+                _logger.LogInformation("**********redis port: {RedisPort}*************", _redisSettings.Value.Port);
+                _logger.LogInformation("**********redis password: {RedisPassword}*************", _redisSettings.Value.Password);
+
                 var configString = $"{_redisSettings.Value.Host}:{_redisSettings.Value.Port},connectRetry=5,password={_redisSettings.Value.Password}";
                 return await ConnectionMultiplexer.ConnectAsync(configString);
             }

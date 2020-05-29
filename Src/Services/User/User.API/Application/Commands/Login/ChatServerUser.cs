@@ -19,4 +19,13 @@ namespace Photography.Services.User.API.Application.Commands.Login
         public int stateCode { get; set; }
         public int clientType { get; set; }
     }
+
+    public class Token
+    {
+        public int userId { get; set; }
+        public string username { get; set; }
+        public string nickname { get; set; }
+        public long loginTime { get; set; }
+        public int clientType { get; set; }
+    }
 }

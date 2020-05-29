@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
 using Photography.Services.Post.API.Application.Commands.User.CreateUser;
+using Photography.Services.Post.API.Application.Commands.User.FollowEachOther;
 using Serilog.Context;
 using System;
 using System.Collections.Generic;
@@ -28,17 +29,17 @@ namespace Photography.Services.Post.API.Application.IntegrationEventHandlers
             {
                 _logger.LogInformation("----- Handling UserRegisteredEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                var command = new CreateUserCommand { Id = message.Id };
+                var createUserCommand = new CreateUserCommand { UserId = message.Id, UserName = message.UserName };
 
-                try
+                if (await _mediator.Send(createUserCommand) && !string.IsNullOrEmpty(message.InvitingUserCode))
                 {
-                    await _mediator.Send(command);
-                }
-                catch(Exception ex)
-                {
-                    _logger.LogError("{err}", ex.Message);
-                    if (ex.InnerException != null)
-                        _logger.LogError("{err2}", ex.InnerException.Message);
+                    // 如果有推荐人的邀请码，则建立相互关注的关系
+                    var followEachOtherCommand = new FollowEachOtherCommand
+                    {
+                        UserId = message.Id,
+                        InvitingUserCode = message.InvitingUserCode
+                    };
+                    await _mediator.Send(followEachOtherCommand);
                 }
             }
         }

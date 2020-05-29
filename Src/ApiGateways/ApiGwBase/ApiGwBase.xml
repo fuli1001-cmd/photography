@@ -4,6 +4,13 @@
         <name>ApiGwBase</name>
     </assembly>
     <members>
+        <member name="M:Photography.ApiGateways.ApiGwBase.Controllers.LoginController.LoginWithPhoneAsync(Photography.ApiGateways.ApiGwBase.Dtos.LoginPhoneDto)">
+            <summary>
+            电话登录
+            </summary>
+            <param name="loginPhoneDto"></param>
+            <returns></returns>
+        </member>
         <member name="T:Photography.ApiGateways.ApiGwBase.Controllers.SettingsController">
             <summary>
             设置控制器

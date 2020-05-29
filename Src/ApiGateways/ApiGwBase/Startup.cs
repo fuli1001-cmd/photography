@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using Photography.ApiGateways.ApiGwBase.Services;
 using Photography.ApiGateways.ApiGwBase.Settings;
 
 namespace Photography.ApiGateways.ApiGwBase
@@ -41,8 +42,12 @@ namespace Photography.ApiGateways.ApiGwBase
             services.AddOcelot(Configuration);
 
             services.Configure<ServerSettings>(Configuration.GetSection("ServerSettings"));
+            services.Configure<ServiceSettings>(Configuration.GetSection("ServiceSettings"));
 
             services.AddControllers();
+
+            services.AddHttpClient<AuthService>();
+            services.AddHttpClient<UserService>();
 
             services.AddApiVersioning(options =>
             {

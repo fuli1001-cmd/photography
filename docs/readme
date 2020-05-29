@@ -49,5 +49,11 @@ Enums
         SelectedFriends,
         Password
     }
+	
+	public enum AttachmentType
+    {
+        Image,
+        Video
+    }
  
 

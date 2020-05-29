@@ -2,6 +2,7 @@
 using Photography.Services.Post.Domain.AggregatesModel.CommentAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserCommentRelationAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggregate;
+using Photography.Services.Post.Domain.AggregatesModel.UserRelationAggregate;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -42,9 +43,10 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
 
         public User() { }
 
-        public User(string id)
+        public User(string id, string nickName)
         {
             Id = Guid.Parse(id);
+            Nickname = nickName;
         }
     }
 

@@ -49,6 +49,8 @@ namespace Photography.Services.User.API.Application.Commands.Login
                 oldToken = OldTokenUtil.GetTokenString(user.ChatServerUserId, request.Password);
                 // 向redis中写入用户信息，供聊天服务使用
                 await WriteChatServerUserToRedisAsync(request, user);
+                // 向redis中写入老token信息，供聊天服务使用
+                await WriteTokenToRedisAsync(request, user, oldToken);
             }
             #endregion
 
@@ -108,27 +110,41 @@ namespace Photography.Services.User.API.Application.Commands.Login
                     registrationId = loginCommand.RegistrationId
                 };
                 string json = SerializeUtil.SerializeToJson(chatServerUser);
-                _logger.LogInformation("*************json 1: {json}*************", json);
                 var bytes = SerializeUtil.SerializeStringToBytes(json, true);
                 json = JsonConvert.SerializeObject(bytes);
-                _logger.LogInformation("*************json 2: {json}*************", json);
+                _logger.LogInformation("*************json 1: {json1}*************", json);
                 await _redisService.SetAsync(user.ChatServerUserId.ToString(), json);
-
-                //var redis = new RedisHelper(0);
-                //if (redis != null)
-                //{
-                //    redis.StringSet<byte[]>(user.ChatServerUserId.ToString(), SerializeUtil.SerializeStringToBytes(json, true));
-                //}
-                //else
-                //{
-                //    _logger.LogError("**************redis is null**********");
-                //}
             }
             catch (Exception ex)
             {
                 _logger.LogError("WriteChatServerUserToRedisAsync: {ChatServerError}", ex.Message);
                 if (ex.InnerException != null)
                     _logger.LogError("WriteChatServerUserToRedisAsync: {ChatServerInnerError}", ex.InnerException.Message);
+            }
+        }
+
+        private async Task WriteTokenToRedisAsync(LoginCommand loginCommand, Domain.AggregatesModel.UserAggregate.User user, string oldToken)
+        {
+            try
+            {
+                var token = new Token
+                {
+                    userId = user.ChatServerUserId,
+                    username = user.UserName,
+                    nickname = user.Nickname,
+                    clientType = loginCommand.ClientType,
+                    loginTime = CommonUtil.GetTimestamp(DateTime.Now)
+                };
+                var bytes = SerializeUtil.SerializeToJsonBytes(token, true);
+                var json = JsonConvert.SerializeObject(bytes);
+                _logger.LogInformation("*************json 2: {json2}*************", json);
+                await _redisService.SetAsync(oldToken, json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("WriteTokenToRedisAsync: {OldTokenError}", ex.Message);
+                if (ex.InnerException != null)
+                    _logger.LogError("WriteTokenToRedisAsync: {OldTokenInnerError}", ex.InnerException.Message);
             }
         }
     }

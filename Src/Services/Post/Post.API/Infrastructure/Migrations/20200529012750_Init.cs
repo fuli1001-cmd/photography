@@ -29,6 +29,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     Text = table.Column<string>(nullable: true),
                     CreatedTime = table.Column<double>(nullable: false),
+                    UpdatedTime = table.Column<double>(nullable: true),
                     PostType = table.Column<int>(nullable: false),
                     UserId = table.Column<Guid>(nullable: false),
                     Latitude = table.Column<double>(nullable: true),

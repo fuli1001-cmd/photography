@@ -21,6 +21,8 @@ namespace Photography.Services.User.API.Query.ViewModels
         // 约拍值
         public int Score { get; set; }
         public string Phonenumber { get; set; }
+        public bool Followed { get; set; }
+        public int PostCount { get; set; }
 
         public int ChatServerUserId { get; set; }
     }
@@ -35,11 +37,5 @@ namespace Photography.Services.User.API.Query.ViewModels
     {
         public Guid Id { get; set; }
         public string Nickname { get; set; }
-    }
-
-    public enum UserType
-    {
-        Photographer,
-        Model
     }
 }

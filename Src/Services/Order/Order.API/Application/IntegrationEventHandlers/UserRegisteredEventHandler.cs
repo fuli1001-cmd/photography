@@ -28,7 +28,7 @@ namespace Photography.Services.Order.API.Application.IntegrationEventHandlers
             {
                 _logger.LogInformation("----- Handling UserRegisteredEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                var command = new CreateUserCommand { Id = message.Id };
+                var command = new CreateUserCommand { Id = message.Id, UserName = message.UserName };
 
                 await _mediator.Send(command);
             }

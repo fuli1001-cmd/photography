@@ -10,6 +10,8 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
     {
         Task<User> GetByUserNameAsync(string userName);
 
+        Task<User> GetByNicknameAsync(string nickname);
+
         Task<Guid?> GetUserIdByCodeAsync(string code);
     }
 }

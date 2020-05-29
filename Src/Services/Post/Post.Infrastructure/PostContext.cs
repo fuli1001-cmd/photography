@@ -17,6 +17,7 @@ using Arise.DDD.Infrastructure.Extensions;
 using MediatR;
 using Photography.Services.Post.Domain.AggregatesModel.CommentAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserCommentRelationAggregate;
+using Photography.Services.Post.Domain.AggregatesModel.UserRelationAggregate;
 
 namespace Photography.Services.Post.Infrastructure
 {

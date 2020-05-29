@@ -1,7 +1,9 @@
-﻿using AutoMapper;
+﻿using ApplicationMessages.Events;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using NServiceBus;
 using Photography.Services.Post.API.Query.ViewModels;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 using System;
@@ -19,36 +21,49 @@ namespace Photography.Services.Post.API.Application.Commands.Post.ForwardPosts
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
         private readonly ILogger<ForwardPostsCommandHandler> _logger;
+        private readonly IServiceProvider _serviceProvider;
+
+        private IMessageSession _messageSession;
 
         public ForwardPostsCommandHandler(IPostRepository postRepository, IHttpContextAccessor httpContextAccessor,
-            IMapper mapper, ILogger<ForwardPostsCommandHandler> logger)
+            IServiceProvider serviceProvider, IMapper mapper, ILogger<ForwardPostsCommandHandler> logger)
         {
             _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<IEnumerable<PostViewModel>> Handle(ForwardPostsCommand request, CancellationToken cancellationToken)
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var posts = new List<Domain.AggregatesModel.PostAggregate.Post>();
             
             request.ForwardPostIds.ForEach(forwardPostId =>
             {
                 var post = Domain.AggregatesModel.PostAggregate.Post.CreatePost(request.Text, request.Commentable, request.ForwardType, request.ShareType,
                     request.Visibility, request.ViewPassword, request.Latitude, request.Longitude, request.LocationName,
-                    request.Address, request.CityCode, request.FriendIds, null, Guid.Parse(userId), request.ShowOriginalText);
+                    request.Address, request.CityCode, request.FriendIds, null, userId, request.ShowOriginalText);
                 post.SetForwardPostId(forwardPostId);
                 _postRepository.Add(post);
                 posts.Add(post);
             });
 
-            await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
+            if (await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
+                await SendPostPublishedEventAsync(userId);
 
             posts.ForEach(p => _postRepository.LoadUser(p));
             
             return _mapper.Map<List<PostViewModel>>(posts);
+        }
+
+        private async Task SendPostPublishedEventAsync(Guid userId)
+        {
+            var @event = new PostPublishedEvent { UserId = userId };
+            _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
+            await _messageSession.Publish(@event);
+            _logger.LogInformation("----- Published PostPublishedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
         }
     }
 }

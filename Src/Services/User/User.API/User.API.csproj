@@ -45,6 +45,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ApplicationMessages\ApplicationMessages.csproj" />
     <ProjectReference Include="..\User.API.Query.EF\User.API.Query.EF.csproj" />
     <ProjectReference Include="..\User.API.Query\User.API.Query.csproj" />
     <ProjectReference Include="..\User.Domain\User.Domain.csproj" />
