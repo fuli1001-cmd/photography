@@ -35,20 +35,22 @@ namespace Photography.Services.Post.API.Query.EF
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<List<PostViewModel>> GetUserPostsAsync(string userId)
+        public async Task<List<PostViewModel>> GetUserPostsAsync(Guid userId)
         {
-            var myPosts = _postContext.Posts.Where(p => p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post && p.UserId.ToString() == userId);
-            var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(myPosts);
+            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            var userPosts = _postContext.Posts.Where(p => p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post && p.UserId == userId);
+            var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(userPosts);
             var posts = _mapper.Map<List<PostViewModel>>(await postsWithNavigationProperties.ToListAsync());
 
-            await SetPropertiesAsync(posts, userId, false, true);
+            await SetPropertiesAsync(posts, myId, false, myId == userId);
 
             return posts;
         }
 
         public async Task<List<PostViewModel>> GetLikedPostsAsync()
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var likedPostIds = GetLikedPostIds(userId);
             var likedPosts = _postContext.Posts.Where(p => likedPostIds.Contains(p.Id) && p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post);
             var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(likedPosts);
@@ -61,7 +63,8 @@ namespace Photography.Services.Post.API.Query.EF
 
         public async Task<List<PostViewModel>> GetHotPostsAsync()
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            var userId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
             var availablePosts = GetAvailablePosts(userId).OrderByDescending(p => p.LikeCount);
             var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(availablePosts);
             var posts = _mapper.Map<List<PostViewModel>>(await postsWithNavigationProperties.ToListAsync());
@@ -73,13 +76,13 @@ namespace Photography.Services.Post.API.Query.EF
 
         public async Task<List<PostViewModel>> GetFollowedPostsAsync()
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
             var availablePosts = GetAvailablePosts(userId);
 
             var followedUserIds = GetFollowedUserIds(userId);
 
-            var followedUsersPosts = availablePosts.Where(p => p.UserId.ToString() == userId || followedUserIds.Contains(p.UserId)).OrderByDescending(p => p.CreatedTime);
+            var followedUsersPosts = availablePosts.Where(p => p.UserId == userId || followedUserIds.Contains(p.UserId)).OrderByDescending(p => p.CreatedTime);
 
             var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(followedUsersPosts);
 
@@ -92,7 +95,7 @@ namespace Photography.Services.Post.API.Query.EF
 
         public async Task<List<PostViewModel>> GetSameCityPostsAsync(string cityCode)
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
             var availablePosts = GetAvailablePosts(userId);
             var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(availablePosts);
@@ -107,14 +110,14 @@ namespace Photography.Services.Post.API.Query.EF
             //return await GetPostViewModelsAsync(sameCityPosts);
         }
 
-        private IQueryable<Domain.AggregatesModel.PostAggregate.Post> GetAvailablePosts(string userId)
+        private IQueryable<Domain.AggregatesModel.PostAggregate.Post> GetAvailablePosts(Guid userId)
         {
             var posts = _postContext.Posts.Where(p => p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post);
 
             // 公开和密码查看的帖子
             var otherPosts = posts.Where(p => p.Visibility != Domain.AggregatesModel.PostAggregate.Visibility.Friends && p.Visibility != Domain.AggregatesModel.PostAggregate.Visibility.SelectedFriends);
 
-            if (!string.IsNullOrEmpty(userId))
+            if (userId != Guid.Empty)
             {
                 // 朋友可见的帖子
                 var friendsViewPosts = posts.Where(p => p.Visibility == Domain.AggregatesModel.PostAggregate.Visibility.Friends);
@@ -125,7 +128,7 @@ namespace Photography.Services.Post.API.Query.EF
                 selectedFriendsViewPosts = from p in selectedFriendsViewPosts
                                            join upr in _postContext.UserPostRelations
                                            on p.Id equals upr.PostId
-                                           where upr.UserId.ToString() == userId && upr.UserPostRelationType == UserPostRelationType.View
+                                           where upr.UserId == userId && upr.UserPostRelationType == UserPostRelationType.View
                                            select p;
 
                 return friendsViewPosts.Union(selectedFriendsViewPosts).Union(otherPosts);
@@ -134,17 +137,17 @@ namespace Photography.Services.Post.API.Query.EF
                 return otherPosts;
         }
 
-        private IQueryable<Guid> GetLikedPostIds(string userId)
+        private IQueryable<Guid> GetLikedPostIds(Guid userId)
         {
             return _postContext.UserPostRelations
-                .Where(upr => upr.UserId.ToString() == userId && upr.UserPostRelationType == UserPostRelationType.Like)
-                .Select(upr => upr.PostId);
+                .Where(upr => upr.UserId == userId && upr.UserPostRelationType == UserPostRelationType.Like)
+                .Select(upr => upr.PostId.Value);
         }
 
-        private IQueryable<Guid> GetFollowedUserIds(string userId)
+        private IQueryable<Guid> GetFollowedUserIds(Guid userId)
         {
             return _postContext.UserRelations
-                .Where(ur => ur.FollowerId.ToString() == userId)
+                .Where(ur => ur.FollowerId == userId)
                 .Select(ur => ur.FollowedUserId);
         }
 
@@ -158,20 +161,20 @@ namespace Photography.Services.Post.API.Query.EF
                 .Include(p => p.ForwardedPost.ForwardedPost);
         }
 
-        private IQueryable<Guid> GetFriendsIds(string userId)
+        private IQueryable<Guid> GetFriendsIds(Guid userId)
         {
             var friendsQuery = from ur1 in _postContext.UserRelations
                                join ur2 in _postContext.UserRelations on
                                new { C1 = ur1.FollowerId, C2 = ur1.FollowedUserId }
                                equals
                                new { C1 = ur2.FollowedUserId, C2 = ur2.FollowerId }
-                               where ur1.FollowerId.ToString() == userId
+                               where ur1.FollowerId == userId
                                select ur1.FollowedUserId;
 
             return friendsQuery;
         }
 
-        private async Task SetPropertiesAsync(List<PostViewModel> posts, string userId, bool allLiked, bool allFollowed)
+        private async Task SetPropertiesAsync(List<PostViewModel> posts, Guid userId, bool allLiked, bool allFollowed)
         {
             List<Guid> likedPostIds = null;
             List<Guid> followedUserIds = null;

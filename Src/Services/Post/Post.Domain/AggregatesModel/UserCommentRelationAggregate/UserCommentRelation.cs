@@ -7,6 +7,11 @@ using System.Text;
 
 namespace Photography.Services.Post.Domain.AggregatesModel.UserCommentRelationAggregate
 {
+    /// <summary>
+    /// 用户与评论的关系（目前只表示用户点赞评论）
+    /// 一个用户可以点赞多个评论
+    /// 一个评论可以被多个用户点赞
+    /// </summary>
     public class UserCommentRelation : Entity, IAggregateRoot
     {
         public Guid CommentId { get; private set; }
@@ -14,6 +19,8 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserCommentRelationAg
 
         public Guid UserId { get; private set; }
         public User User { get; private set; }
+
+        public UserCommentRelation() { }
 
         public UserCommentRelation(Guid userId, Guid commentId)
         {

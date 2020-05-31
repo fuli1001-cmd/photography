@@ -24,25 +24,34 @@ namespace Photography.Services.Post.Infrastructure.Repositories
 
         public async Task<Domain.AggregatesModel.PostAggregate.Post> GetPostWithAppointmentedUserById(Guid postId)
         {
-            var posts = await _context.Posts.Where(p => p.Id == postId).Include(p => p.AppointmentedUser).ToListAsync();
-            
-            if (posts.Count > 0)
-                return posts[0];
-            
-            return null;
+            return await _context.Posts.Where(p => p.Id == postId)
+                .Include(p => p.AppointmentedUser)
+                .SingleOrDefaultAsync();
         }
 
         public async Task<Domain.AggregatesModel.PostAggregate.Post> GetPostWithAttachmentsById(Guid postId)
         {
-            var posts = await _context.Posts.Where(p => p.Id == postId)
+            return await _context.Posts.Where(p => p.Id == postId)
                 .Include(p => p.PostAttachments)
                 .Include(p => p.UserPostRelations)
-                .ToListAsync();
+                .SingleOrDefaultAsync();
+        }
 
-            if (posts.Count > 0)
-                return posts[0];
+        public async Task<Domain.AggregatesModel.PostAggregate.Post> GetPostWithNavigationPropertiesById(Guid postId)
+        {
+            return await _context.Posts.Where(p => p.Id == postId)
+                .Include(p => p.PostAttachments)
+                .Include(p => p.Comments)
+                .Include(p => p.ForwardingPosts)
+                .SingleOrDefaultAsync();
+        }
 
-            return null;
+        public async Task<Domain.AggregatesModel.PostAggregate.Post> GetAppointmentById(Guid postId)
+        {
+            return await _context.Posts.Where(p => p.Id == postId)
+                .Include(p => p.PostAttachments)
+                .Include(p => p.AppointmentedFromPosts)
+                .SingleOrDefaultAsync();
         }
     }
 }

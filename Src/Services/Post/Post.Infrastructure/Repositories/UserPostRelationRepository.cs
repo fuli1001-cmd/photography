@@ -20,11 +20,13 @@ namespace Photography.Services.Post.Infrastructure.Repositories
 
         public async Task<UserPostRelation> GetAsync(Guid userId, Guid postId, UserPostRelationType relationType)
         {
-            var uprs = await _context.UserPostRelations.Where(upr => upr.UserId == userId && upr.PostId == postId && upr.UserPostRelationType == relationType).ToListAsync();
-            if (uprs.Count > 0)
-                return uprs[0];
-            else
-                return null;
+            return await _context.UserPostRelations
+                .SingleOrDefaultAsync(upr => upr.UserId == userId && upr.PostId == postId && upr.UserPostRelationType == relationType);
+        }
+
+        public async Task<List<UserPostRelation>> GetRelationsByPostIdAsync(Guid postId)
+        {
+            return await _context.UserPostRelations.Where(upr => upr.PostId == postId).ToListAsync();
         }
     }
 }

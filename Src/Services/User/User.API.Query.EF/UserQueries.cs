@@ -104,12 +104,5 @@ namespace Photography.Services.User.API.Query.EF
 
             return friendsQuery;
         }
-
-        private IQueryable<Guid> GetFollowedUserIds(string userId)
-        {
-            return _identityContext.UserRelations
-                .Where(ur => ur.FollowerId.ToString() == userId)
-                .Select(ur => ur.FollowedUserId);
-        }
     }
 }

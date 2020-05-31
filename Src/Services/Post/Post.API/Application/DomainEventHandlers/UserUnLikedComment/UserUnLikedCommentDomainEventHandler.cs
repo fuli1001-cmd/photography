@@ -29,7 +29,6 @@ namespace Photography.Services.Post.API.Application.DomainEventHandlers.UserUnLi
 
             var post = await _postRepository.GetByIdAsync(notification.PostId);
             post.UnLike();
-            await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
         }
     }
 }

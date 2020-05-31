@@ -247,6 +247,13 @@
             <param name="publishPostCommand"></param>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.Post.API.Controllers.AppointmentsController.DeletePostAsync(Photography.Services.Post.API.Application.Commands.Appointment.DeleteAppointment.DeleteAppointmentCommand)">
+            <summary>
+            删除约拍
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
         <member name="M:Photography.Services.Post.API.Controllers.AppointmentsController.GetAppointmentsAsync(System.Nullable{Photography.Services.Post.Domain.AggregatesModel.PostAggregate.PayerType},System.Nullable{System.Double})">
             <summary>
             获取约拍广场的约拍列表
@@ -320,7 +327,7 @@
             <param name="cityCode">城市代码</param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetMyPostsAsync(System.String)">
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetMyPostsAsync(System.Guid)">
             <summary>
             用户的帖子
             </summary>
@@ -347,6 +354,13 @@
             <param name="command"></param>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.DeletePostAsync(Photography.Services.Post.API.Application.Commands.Post.DeletePost.DeletePostCommand)">
+            <summary>
+            删除帖子
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
         <member name="M:Photography.Services.Post.API.Controllers.PostsController.ToggleLikePostAsync(Photography.Services.Post.API.Application.Commands.Post.ToggleLikePost.ToggleLikePostCommand)">
             <summary>
             赞或取消赞一个帖子
@@ -357,6 +371,13 @@
             <summary>
             转发帖子
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.ShareAsync(Photography.Services.Post.API.Application.Commands.Post.SharePost.SharePostCommand)">
+            <summary>
+            分享帖子
+            </summary>
+            <param name="sharePostCommand"></param>
             <returns></returns>
         </member>
     </members>

@@ -26,15 +26,18 @@ namespace Photography.Services.User.API.Application.Commands.UpdateUser
         public double? Birthday { get; set; }
 
         [DataMember]
-        public UserType? UserType { get; private set; }
+        public UserType? UserType { get; set; }
 
         [DataMember]
-        public string Province { get; private set; }
+        public string Province { get; set; }
 
         [DataMember]
-        public string City { get; private set; }
+        public string City { get; set; }
 
         [DataMember]
-        public string Sign { get; private set; }
+        public string Sign { get; set; }
+
+        [DataMember]
+        public string Avatar { get; set; }
     }
 }

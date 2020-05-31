@@ -30,6 +30,8 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public bool? ShowOriginalText { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+        public string LocationName { get; private set; }
+        public string Address { get; private set; }
 
         public PostUserViewModel User { get; set; }
         public ForwardedPostViewModel ForwardedPost { get; set; }

@@ -63,7 +63,7 @@ namespace Photography.Services.Post.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<CommentViewModel>>> GetCommentCommentsAsync(Guid commentId, int maxSubCommentsCount)
         {
-            var comments = await _commentQueries.GetPostCommentsAsync(commentId, maxSubCommentsCount);
+            var comments = await _commentQueries.GetSubCommentsAsync(commentId, maxSubCommentsCount);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(comments));
         }
 

@@ -38,8 +38,8 @@ namespace Photography.Services.User.API.Application.Commands.UpdateUser
                 throw new DomainException("昵称已存在。");
 
             var user = await _userRepository.GetByIdAsync(request.UserId);
-            _logger.LogInformation("****************{@user}******************", user);
-            user.Update(request.Nickname, request.Gender, request.Birthday, request.UserType, request.Province, request.City, request.Sign);
+            user.Update(request.Nickname, request.Gender, request.Birthday, request.UserType, 
+                request.Province, request.City, request.Sign, request.Avatar);
 
             _userRepository.Update(user);
 

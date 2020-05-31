@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Photography.Services.Post.API.Application.Commands.Post.DeletePost;
 using Photography.Services.Post.API.Application.Commands.Post.ForwardPosts;
 using Photography.Services.Post.API.Application.Commands.Post.PublishPost;
 using Photography.Services.Post.API.Application.Commands.Post.SharePost;
@@ -95,7 +96,7 @@ namespace Photography.Services.Post.API.Controllers
         [HttpGet]
         [Route("user/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<PostViewModel>>> GetMyPostsAsync(string userId)
+        public async Task<ActionResult<IEnumerable<PostViewModel>>> GetMyPostsAsync(Guid userId)
         {
             var posts = await _postQueries.GetUserPostsAsync(userId);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
@@ -143,6 +144,20 @@ namespace Photography.Services.Post.API.Controllers
         }
 
         /// <summary>
+        /// 删除帖子
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<bool>> DeletePostAsync([FromBody] DeletePostCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
         /// 赞或取消赞一个帖子
         /// </summary>
         /// <returns></returns>
@@ -168,6 +183,11 @@ namespace Photography.Services.Post.API.Controllers
             return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
         }
 
+        /// <summary>
+        /// 分享帖子
+        /// </summary>
+        /// <param name="sharePostCommand"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("share")]
         [ProducesResponseType(StatusCodes.Status200OK)]

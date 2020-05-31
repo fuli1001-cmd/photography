@@ -9,5 +9,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserCommentRelationAg
     public interface IUserCommentRelationRepository : IRepository<UserCommentRelation>
     {
         Task<UserCommentRelation> GetAsync(Guid userId, Guid commentId);
+
+        Task<List<UserCommentRelation>> GetRelationsByCommentIdsAsync(IEnumerable<Guid> commentIds);
     }
 }

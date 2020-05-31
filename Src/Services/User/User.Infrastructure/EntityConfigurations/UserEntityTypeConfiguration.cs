@@ -20,6 +20,7 @@ namespace Photography.Services.User.Infrastructure.EntityConfigurations
             builder.Property(u => u.FollowingCount).HasDefaultValue(0);
             builder.Property(u => u.PostCount).HasDefaultValue(0);
             builder.Property(u => u.ChatServerUserId).ValueGeneratedOnAdd();
+            builder.Property(u => u.ChatServerUserId).Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
 
             builder.HasMany(u => u.FollowedUsers).WithOne(ur => ur.FollowedUser).HasForeignKey(ur => ur.FollowedUserId).OnDelete(DeleteBehavior.Restrict);
             builder.HasMany(u => u.Followers).WithOne(ur => ur.Follower).HasForeignKey(ur => ur.FollowerId).OnDelete(DeleteBehavior.Restrict);

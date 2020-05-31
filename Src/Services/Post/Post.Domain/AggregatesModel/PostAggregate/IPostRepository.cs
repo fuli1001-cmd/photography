@@ -13,5 +13,9 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         Task<Post> GetPostWithAppointmentedUserById(Guid postId);
 
         Task<Post> GetPostWithAttachmentsById(Guid postId);
+
+        Task<Post> GetPostWithNavigationPropertiesById(Guid postId);
+
+        Task<Post> GetAppointmentById(Guid postId);
     }
 }

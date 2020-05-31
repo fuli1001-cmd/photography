@@ -9,5 +9,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggre
     public interface IUserPostRelationRepository : IRepository<UserPostRelation>
     {
         Task<UserPostRelation> GetAsync(Guid userId, Guid postId, UserPostRelationType relationType);
+
+        Task<List<UserPostRelation>> GetRelationsByPostIdAsync(Guid postId);
     }
 }

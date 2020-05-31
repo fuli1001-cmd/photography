@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Photography.Services.Post.API.Application.Commands.Appointment.DeleteAppointment;
 using Photography.Services.Post.API.Application.Commands.Appointment.PublishAppointment;
 using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
@@ -48,6 +49,20 @@ namespace Photography.Services.Post.API.Controllers
         {
             var post = await _mediator.Send(publishAppointmentCommand);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(post));
+        }
+
+        /// <summary>
+        /// 删除约拍
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<bool>> DeletePostAsync([FromBody] DeleteAppointmentCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
 
         /// <summary>

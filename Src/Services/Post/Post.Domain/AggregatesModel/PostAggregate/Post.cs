@@ -3,6 +3,7 @@ using Arise.DDD.Domain.SeedWork;
 using Photography.Services.Post.Domain.AggregatesModel.CommentAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggregate;
+using Photography.Services.Post.Domain.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -175,11 +176,34 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             UpdatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
 
             var relations = friendIds?.Select(id => new UserPostRelation(id, UserPostRelationType.View)).ToList() ?? new List<UserPostRelation>();
-            _userPostRelations.Clear();
+            for (var i = 0; i < _userPostRelations.Count; i++)
+            {
+                if (_userPostRelations[i].UserPostRelationType == UserPostRelationType.View)
+                {
+                    _userPostRelations.RemoveAt(i);
+                    i--;
+                }
+            }
             _userPostRelations.AddRange(relations);
 
             _postAttachments.Clear();
             _postAttachments.AddRange(postAttachments ?? new List<PostAttachment>());
+        }
+
+        public void Delete()
+        {
+            if (PostType == PostType.Post)
+            {
+                AddDeletedPostDomainEvent();
+                _comments.Clear();
+                _forwardingPosts.Clear();
+            }
+            else if (PostType == PostType.Appointment)
+            {
+                _appointmentedFromPosts.Clear();
+            }
+
+            _postAttachments.Clear();
         }
 
         public void SetForwardPostId(Guid forwardedPostId)
@@ -230,7 +254,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
 
         public void UnLike()
         {
-            LikeCount = System.Math.Max(LikeCount - 1, 0);
+            LikeCount = Math.Max(LikeCount - 1, 0);
         }
 
         public void Share()
@@ -242,6 +266,13 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         {
             if (Commentable != null && Commentable.Value)
                 CommentCount++;
+        }
+
+        private void AddDeletedPostDomainEvent()
+        {
+            var commentIds = _comments.Select(c => c.Id).ToList();
+            var deletedPostDomainEvent = new DeletedPostDomainEvent(Id, commentIds);
+            AddDomainEvent(deletedPostDomainEvent);
         }
     }
 

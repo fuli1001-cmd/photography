@@ -18,11 +18,12 @@ namespace Photography.Services.Post.Infrastructure.Repositories
 
         public async Task<UserCommentRelation> GetAsync(Guid userId, Guid commentId)
         {
-            var ucrs = await _context.UserCommentRelations.Where(ucr => ucr.UserId == userId && ucr.CommentId == commentId).ToListAsync();
-            if (ucrs.Count > 0)
-                return ucrs[0];
-            else
-                return null;
+            return await _context.UserCommentRelations.SingleOrDefaultAsync(ucr => ucr.UserId == userId && ucr.CommentId == commentId);
+        }
+
+        public async Task<List<UserCommentRelation>> GetRelationsByCommentIdsAsync(IEnumerable<Guid> commentIds)
+        {
+            return await _context.UserCommentRelations.Where(ucr => commentIds.Contains(ucr.CommentId)).ToListAsync();
         }
     }
 }

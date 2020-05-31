@@ -16,5 +16,10 @@ namespace Photography.Services.Post.Infrastructure.Repositories
         {
 
         }
+
+        public async Task<UserRelation> GetUserRelationAsync(Guid FollowerId, Guid FollowedUserId)
+        {
+            return await _context.UserRelations.SingleOrDefaultAsync(ur => ur.FollowedUserId == FollowedUserId && ur.FollowerId == FollowerId);
+        }
     }
 }

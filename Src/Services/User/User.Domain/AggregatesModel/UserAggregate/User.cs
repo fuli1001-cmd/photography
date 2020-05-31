@@ -48,7 +48,7 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         }
 
         public void Update(string nickname, Gender? gender, double? birthday, UserType? userType, 
-            string province, string city, string sign)
+            string province, string city, string sign, string avatar)
         {
             Nickname = nickname;
             Gender = gender;
@@ -57,6 +57,7 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
             Province = province;
             City = city;
             Sign = sign;
+            Avatar = avatar;
         }
 
         public void IncreasePostCount()
@@ -66,7 +67,7 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
 
         public void DecreasePostCount()
         {
-            PostCount--;
+            PostCount = Math.Max(0, PostCount - 1);
         }
     }
 

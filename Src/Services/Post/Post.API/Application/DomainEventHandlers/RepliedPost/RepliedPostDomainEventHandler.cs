@@ -30,7 +30,6 @@ namespace Photography.Services.Post.API.Application.DomainEventHandlers.RepliedP
 
             var post = await _postRepository.GetByIdAsync(notification.PostId);
             post.Comment();
-            await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
         }
     }
 }
