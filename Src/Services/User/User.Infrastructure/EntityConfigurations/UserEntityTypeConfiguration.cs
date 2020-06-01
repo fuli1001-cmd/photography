@@ -19,6 +19,8 @@ namespace Photography.Services.User.Infrastructure.EntityConfigurations
             builder.Property(u => u.FollowerCount).HasDefaultValue(0);
             builder.Property(u => u.FollowingCount).HasDefaultValue(0);
             builder.Property(u => u.PostCount).HasDefaultValue(0);
+            builder.Property(u => u.AppointmentCount).HasDefaultValue(0);
+            builder.Property(u => u.LikedPostCount).HasDefaultValue(0);
             builder.Property(u => u.ChatServerUserId).ValueGeneratedOnAdd();
             builder.Property(u => u.ChatServerUserId).Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
 

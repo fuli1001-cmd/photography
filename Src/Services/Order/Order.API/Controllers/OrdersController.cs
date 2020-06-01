@@ -57,6 +57,20 @@ namespace Photography.Services.Order.API.Controllers
         }
 
         /// <summary>
+        /// 根据约拍交易id获取订单详情
+        /// </summary>
+        /// <param name="dealId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("deal/{dealId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<OrderViewModel>>> GetOrderByDealIdAsync(Guid dealId)
+        {
+            var order = await _orderQueries.GetOrderByDealIdAsync(dealId);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(order));
+        }
+
+        /// <summary>
         /// 获取待拍片订单列表
         /// </summary>
         /// <returns></returns>

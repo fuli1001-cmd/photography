@@ -1,7 +1,9 @@
-﻿using Arise.DDD.Domain.Exceptions;
+﻿using ApplicationMessages.Events;
+using Arise.DDD.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using NServiceBus;
 using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
 using System;
 using System.Collections.Generic;
@@ -17,11 +19,18 @@ namespace Photography.Services.User.API.Application.Commands.UpdateUser
         private readonly IUserRepository _userRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<UpdateUserCommandHandler> _logger;
+        private readonly IServiceProvider _serviceProvider;
 
-        public UpdateUserCommandHandler(IUserRepository userRepository, IHttpContextAccessor httpContextAccessor, ILogger<UpdateUserCommandHandler> logger)
+        private IMessageSession _messageSession;
+
+        public UpdateUserCommandHandler(IUserRepository userRepository,
+            IServiceProvider serviceProvider, 
+            IHttpContextAccessor httpContextAccessor, 
+            ILogger<UpdateUserCommandHandler> logger)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -43,7 +52,21 @@ namespace Photography.Services.User.API.Application.Commands.UpdateUser
 
             _userRepository.Update(user);
 
-            return await _userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
+            if (await _userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
+            {
+                await SendUserUpdatedEventAsync(request.UserId, request.Nickname, request.Avatar, request.UserType);
+                return true;
+            }
+            else
+                throw new DomainException("更新失败。");
+        }
+
+        private async Task SendUserUpdatedEventAsync(Guid userId, string nickName, string avatar, UserType? userType)
+        {
+            UserUpdatedEvent @event = new UserUpdatedEvent { UserId = userId, NickName = nickName, Avatar = avatar, UserType = (int?)userType };
+            _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
+            await _messageSession.Publish(@event);
+            _logger.LogInformation("----- Published UserUpdatedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
         }
     }
 }

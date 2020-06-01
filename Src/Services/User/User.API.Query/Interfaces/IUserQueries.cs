@@ -8,10 +8,37 @@ namespace Photography.Services.User.API.Query.Interfaces
 {
     public interface IUserQueries
     {
-        MeViewModel GetCurrentUserAsync();
+        /// <summary>
+        /// 获取当前用户详情
+        /// </summary>
+        /// <returns></returns>
+        Task<MeViewModel> GetCurrentUserAsync();
 
-        UserViewModel GetUserAsync(Guid? userId, int? oldUserId, string nickName);
+        /// <summary>
+        /// 根据用户id、老系统的用户id、昵称三者之一获取用户详情
+        /// </summary>
+        /// <param name="userId">用户id</param>
+        /// <param name="oldUserId">老系统用户id</param>
+        /// <param name="nickName">昵称</param>
+        /// <returns></returns>
+        Task<UserViewModel> GetUserAsync(Guid? userId, int? oldUserId, string nickName);
 
-        List<FriendViewModel> GetFriendsAsync();
+        /// <summary>
+        /// 获取当前用户的朋友
+        /// </summary>
+        /// <returns></returns>
+        Task<List<FriendViewModel>> GetFriendsAsync();
+
+        /// <summary>
+        /// 获取当前用户的关注者
+        /// </summary>
+        /// <returns></returns>
+        Task<List<FollowerViewModel>> GetFollowersAsync(Guid userId);
+
+        /// <summary>
+        /// 获取关注当前用户的人
+        /// </summary>
+        /// <returns></returns>
+        Task<List<FollowerViewModel>> GetFollowedUsersAsync(Guid userId);
     }
 }

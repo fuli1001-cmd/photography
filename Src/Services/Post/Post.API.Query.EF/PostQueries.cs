@@ -35,6 +35,11 @@ namespace Photography.Services.Post.API.Query.EF
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// 用户的帖子
+        /// </summary>
+        /// <param name="userId">用户id</param>
+        /// <returns></returns>
         public async Task<List<PostViewModel>> GetUserPostsAsync(Guid userId)
         {
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
@@ -48,6 +53,10 @@ namespace Photography.Services.Post.API.Query.EF
             return posts;
         }
 
+        /// <summary>
+        /// 赞过的帖子
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<PostViewModel>> GetLikedPostsAsync()
         {
             var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
@@ -190,28 +199,14 @@ namespace Photography.Services.Post.API.Query.EF
                 p.Liked = allLiked ? true : (likedPostIds.Contains(p.Id) ? true : false);
                 p.User.Followed = allFollowed ? true : (followedUserIds.Contains(p.User.Id) ? true : false);
                 p.SetAttachmentProperties(_logger);
-                //SetAttachmentProperties(p);
             });
         }
 
-
-        //private void SetAttachmentProperties(PostViewModel post)
-        //{
-        //    post.PostAttachments.ForEach(a =>
-        //        {
-        //            var sections = a.Name.Split('$');
-        //            try
-        //            {
-        //                a.Width = int.Parse(sections[1]);
-        //                a.Height = int.Parse(sections[2]);
-        //                if (a.AttachmentType == Domain.AggregatesModel.PostAggregate.AttachmentType.Video)
-        //                    a.Thumbnail = a.Name.Substring(0, a.Name.LastIndexOf('.')) + ".jpg";
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                _logger.LogError("SetAttachmentProperties: {SetAttachmentProperties}", ex.Message);
-        //            }
-        //        });
-        //}
+        public async Task<PostViewModel> GetPostAsync(Guid postId)
+        {
+            var posts = _postContext.Posts.Where(p => p.Id == postId);
+            var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(posts);
+            return _mapper.Map<PostViewModel>(await postsWithNavigationProperties.SingleOrDefaultAsync());
+        }
     }
 }

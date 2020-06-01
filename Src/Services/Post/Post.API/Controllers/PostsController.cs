@@ -116,6 +116,19 @@ namespace Photography.Services.Post.API.Controllers
         }
 
         /// <summary>
+        /// 获取帖子详情
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("post/{postId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<PostViewModel>> GetPostAsync(Guid postId)
+        {
+            var post = await _postQueries.GetPostAsync(postId);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(post));
+        }
+
+        /// <summary>
         /// 创建帖子
         /// </summary>
         /// <param name="publishPostCommand"></param>

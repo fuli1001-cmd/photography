@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Photography.Services.Post.API.Application.Commands.Comment.ReplyPost
 {
     [DataContract]
-    public class ReplyPostCommand : IRequest<bool>
+    public class ReplyPostCommand : IRequest<int>
     {
         /// <summary>
         /// 评论内容

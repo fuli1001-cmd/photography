@@ -63,6 +63,13 @@
             <param name="command"></param>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.User.API.Controllers.UsersController.UpdateBackgroundImageAsync(Photography.Services.User.API.Application.Commands.UpdateBackground.UpdateBackgroundCommand)">
+            <summary>
+            更新背景图
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
         <member name="M:Photography.Services.User.API.Controllers.UsersController.GetFriendsAsync">
             <summary>
             获取朋友列表
@@ -73,6 +80,20 @@
             <summary>
             关注或取消关注
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.UsersController.GetFollowersAsync(System.Guid)">
+            <summary>
+            获取当前用户的关注者
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.UsersController.GetFollowedUsersAsync(System.Guid)">
+            <summary>
+            获取当前用户关注的人
+            </summary>
+            <param name="userId"></param>
             <returns></returns>
         </member>
         <member name="P:Photography.Services.User.API.Settings.ServerSettings.ChatSocket">

@@ -48,6 +48,13 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
             Id = Guid.Parse(id);
             Nickname = nickName;
         }
+
+        public void Update(string nickName, string avatar, UserType? userType)
+        {
+            Nickname = nickName;
+            Avatar = avatar;
+            UserType = userType;
+        }
     }
 
     public enum UserType

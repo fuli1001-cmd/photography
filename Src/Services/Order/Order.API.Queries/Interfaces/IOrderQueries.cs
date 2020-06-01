@@ -12,5 +12,7 @@ namespace Photography.Services.Order.API.Query.Interfaces
         Task<List<OrderViewModel>> GetOrdersAsync(IEnumerable<OrderStatus> orderStatus);
 
         Task<OrderViewModel> GetOrderAsync(Guid orderId);
+
+        Task<OrderViewModel> GetOrderByDealIdAsync(Guid dealId);
     }
 }

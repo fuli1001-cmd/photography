@@ -53,5 +53,13 @@ namespace Photography.Services.Post.Infrastructure.Repositories
                 .Include(p => p.AppointmentedFromPosts)
                 .SingleOrDefaultAsync();
         }
+
+        public async Task<int> GetPostCommentCountAsync(Guid postId)
+        {
+            return await (from p in _context.Posts
+                          where p.Id == postId
+                          select p.CommentCount)
+                   .SingleOrDefaultAsync();
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Arise.DDD.Domain.SeedWork;
+using Photography.Services.User.Domain.Events;
 
 namespace Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate
 {
@@ -26,6 +27,28 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate
         {
             FollowerId = followerId;
             FollowedUserId = followedUserId;
+        }
+
+        public void Follow()
+        {
+            AddFollowedUserDomainEvent();
+        }
+
+        public void UnFollow()
+        {
+            AddUnFollowedUserDomainEvent();
+        }
+
+        private void AddFollowedUserDomainEvent()
+        {
+            var followedUserDomainEvent = new FollowedUserDomainEvent(FollowerId, FollowedUserId);
+            AddDomainEvent(followedUserDomainEvent);
+        }
+
+        private void AddUnFollowedUserDomainEvent()
+        {
+            var unFollowedUserDomainEvent = new UnFollowedUserDomainEvent(FollowerId, FollowedUserId);
+            AddDomainEvent(unFollowedUserDomainEvent);
         }
     }
 }

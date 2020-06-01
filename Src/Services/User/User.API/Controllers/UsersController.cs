@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Photography.Services.User.API.Application.Commands.Login;
 using Photography.Services.User.API.Application.Commands.ToggleFollow;
+using Photography.Services.User.API.Application.Commands.UpdateBackground;
 using Photography.Services.User.API.Application.Commands.UpdateUser;
 using Photography.Services.User.API.BackwardCompatibility.ViewModels;
 using Photography.Services.User.API.Query.BackwardCompatibility.ViewModels;
@@ -68,9 +69,9 @@ namespace Photography.Services.User.API.Controllers
         [HttpGet]
         [Route("info")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<MeViewModel> GetInfoAsync()
+        public async Task<ActionResult<MeViewModel>> GetInfoAsync()
         {
-            var user = _userQueries.GetCurrentUserAsync();
+            var user = await _userQueries.GetCurrentUserAsync();
             var info = new InfoViewModel { MeViewModel = user, ServerSettings = _serverSettings.Value };
             return Ok(ResponseWrapper.CreateOkResponseWrapper(info));
         }
@@ -82,9 +83,9 @@ namespace Photography.Services.User.API.Controllers
         [HttpGet]
         [Route("me")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<MeViewModel> GetCurrentUserAsync()
+        public async Task<ActionResult<MeViewModel>> GetCurrentUserAsync()
         {
-            var user = _userQueries.GetCurrentUserAsync();
+            var user = await _userQueries.GetCurrentUserAsync();
             return Ok(ResponseWrapper.CreateOkResponseWrapper(user));
         }
 
@@ -95,9 +96,10 @@ namespace Photography.Services.User.API.Controllers
         [HttpGet]
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<UserViewModel> GetUserAsync([FromQuery(Name = "userId")] Guid? userId, [FromQuery(Name = "oldUserId")] int? oldUserId, [FromQuery(Name = "nickName")] string nickName)
+        [AllowAnonymous]
+        public async Task<ActionResult<UserViewModel>> GetUserAsync([FromQuery(Name = "userId")] Guid? userId, [FromQuery(Name = "oldUserId")] int? oldUserId, [FromQuery(Name = "nickName")] string nickName)
         {
-            var user = _userQueries.GetUserAsync(userId, oldUserId, nickName);
+            var user = await _userQueries.GetUserAsync(userId, oldUserId, nickName);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(user));
         }
 
@@ -116,15 +118,29 @@ namespace Photography.Services.User.API.Controllers
         }
 
         /// <summary>
+        /// 更新背景图
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("backgroundimage")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<bool>> UpdateBackgroundImageAsync([FromBody] UpdateBackgroundCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
         /// 获取朋友列表
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [Route("friends")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<FriendViewModel> GetFriendsAsync()
+        public async Task<ActionResult<FriendViewModel>> GetFriendsAsync()
         {
-            var friends = _userQueries.GetFriendsAsync();
+            var friends = await _userQueries.GetFriendsAsync();
             return Ok(ResponseWrapper.CreateOkResponseWrapper(friends));
         }
 
@@ -139,6 +155,34 @@ namespace Photography.Services.User.API.Controllers
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 获取当前用户的关注者
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("followers/{userId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<FriendViewModel>> GetFollowersAsync(Guid userId)
+        {
+            var followers = await _userQueries.GetFollowersAsync(userId);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(followers));
+        }
+
+        /// <summary>
+        /// 获取当前用户关注的人
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("followedUsers/{userId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<FriendViewModel>> GetFollowedUsersAsync(Guid userId)
+        {
+            var followedUsers = await _userQueries.GetFollowedUsersAsync(userId);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(followedUsers));
         }
     }
 }

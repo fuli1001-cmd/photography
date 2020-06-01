@@ -18,6 +18,7 @@ namespace Photography.Services.Post.API.Query.ViewModels
 
         public double CreatedTime { get; set; }
 
+        // 该条评论的子评论总数量
         public int SubCommentsCount { get; set; }
 
         // 该条评论的子评论

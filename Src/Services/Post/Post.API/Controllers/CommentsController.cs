@@ -75,10 +75,10 @@ namespace Photography.Services.Post.API.Controllers
         [HttpPost]
         [Route("post")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<bool>> ReplyPostAsync([FromBody] ReplyPostCommand command)
+        public async Task<ActionResult<int>> ReplyPostAsync([FromBody] ReplyPostCommand command)
         {
-            var posts = await _mediator.Send(command);
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
+            var commentCount = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(commentCount));
         }
 
         /// <summary>
@@ -89,10 +89,10 @@ namespace Photography.Services.Post.API.Controllers
         [HttpPost]
         [Route("comment")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<bool>> ReplyCommentAsync([FromBody] ReplyCommentCommand command)
+        public async Task<ActionResult<int>> ReplyCommentAsync([FromBody] ReplyCommentCommand command)
         {
-            var posts = await _mediator.Send(command);
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
+            var commentCount = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(commentCount));
         }
 
         [HttpPut]

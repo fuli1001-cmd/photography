@@ -35,6 +35,9 @@ namespace Photography.Services.User.API.Application.Commands.FollowEachOther
                 var relation1 = new UserRelation(userId, anotherUserId.Value);
                 var relation2 = new UserRelation(anotherUserId.Value, userId);
 
+                relation1.Follow();
+                relation2.Follow();
+
                 _userRelationRepository.Add(relation1);
                 _userRelationRepository.Add(relation2);
 

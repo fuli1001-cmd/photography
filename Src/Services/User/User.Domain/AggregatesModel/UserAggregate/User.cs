@@ -13,16 +13,32 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         public string Nickname { get; private set; }
         public string Phonenumber { get; private set; }
         public string Avatar { get; private set; }
+        public string BackgroundImage { get; private set; }
         public Gender? Gender { get; private set; }
         public double? Birthday { get; private set; }
         public UserType? UserType { get; private set; }
         public string Province { get; private set; }
         public string City { get; private set; }
         public string Sign { get; private set; }
-        public int LikedCount { get; private set; }
+
+        // 关注的用户数量
         public int FollowingCount { get; private set; }
+
+        // 关注者数量
         public int FollowerCount { get; private set; }
+
+        // 发布的帖子数量
         public int PostCount { get; private set; }
+
+        // 发布的约拍数量
+        public int AppointmentCount { get; private set; }
+
+        // 被赞数量
+        public int LikedCount { get; private set; }
+
+        // 赞过的帖子数量
+        public int LikedPostCount { get; private set; }
+
         // 约拍值
         public int Score { get; private set; }
         public string Code { get; private set; }
@@ -60,6 +76,11 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
             Avatar = avatar;
         }
 
+        public void UpdateBackground(string background)
+        {
+            BackgroundImage = background;
+        }
+
         public void IncreasePostCount()
         {
             PostCount++;
@@ -68,6 +89,26 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         public void DecreasePostCount()
         {
             PostCount = Math.Max(0, PostCount - 1);
+        }
+
+        public void IncreaseFollowerCount()
+        {
+            FollowerCount++;
+        }
+
+        public void DecreaseFollowerCount()
+        {
+            FollowerCount = Math.Max(0, FollowerCount - 1);
+        }
+
+        public void IncreaseFollowingCount()
+        {
+            FollowingCount++;
+        }
+
+        public void DecreaseFollowingCount()
+        {
+            FollowingCount = Math.Max(0, FollowingCount - 1);
         }
     }
 

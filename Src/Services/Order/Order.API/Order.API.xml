@@ -56,6 +56,13 @@
             <param name="orderId"></param>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetOrderByDealIdAsync(System.Guid)">
+            <summary>
+            根据约拍交易id获取订单详情
+            </summary>
+            <param name="dealId"></param>
+            <returns></returns>
+        </member>
         <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetWaitingForShootingOrdersAsync">
             <summary>
             获取待拍片订单列表

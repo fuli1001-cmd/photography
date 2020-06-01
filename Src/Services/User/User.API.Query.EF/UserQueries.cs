@@ -30,14 +30,14 @@ namespace Photography.Services.User.API.Query.EF
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public MeViewModel GetCurrentUserAsync()
+        public async Task<MeViewModel> GetCurrentUserAsync()
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var user = _identityContext.Users.SingleOrDefault(u => u.Id.ToString() == userId);
+            var user = await _identityContext.Users.SingleOrDefaultAsync(u => u.Id.ToString() == userId);
             return _mapper.Map<MeViewModel>(user);
         }
 
-        public UserViewModel GetUserAsync(Guid? userId, int? oldUserId, string nickName)
+        public async Task<UserViewModel> GetUserAsync(Guid? userId, int? oldUserId, string nickName)
         {
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             IQueryable<Domain.AggregatesModel.UserAggregate.User> queryableUsers = null;
@@ -51,12 +51,13 @@ namespace Photography.Services.User.API.Query.EF
             else
                 return null;
 
-            var user = (from u in queryableUsers
+            var user = await (from u in queryableUsers
                         select new UserViewModel
                         {
                             Id = u.Id,
                             Nickname = u.Nickname,
                             Avatar = u.Avatar,
+                            BackgroundImage = u.BackgroundImage,
                             UserType = u.UserType,
                             UserName = u.UserName,
                             Gender = u.Gender,
@@ -74,17 +75,20 @@ namespace Photography.Services.User.API.Query.EF
                             Followed = (from ur in _identityContext.UserRelations
                                         where ur.FollowerId == myId && ur.FollowedUserId == userId
                                         select ur.Id).Count() > 0
-                        }).SingleOrDefault();
+                        }).SingleOrDefaultAsync();
+
+            user.Age = GetAge(user.Birthday);
 
             return user;
         }
 
-        public List<FriendViewModel> GetFriendsAsync()
+        public async Task<List<FriendViewModel>> GetFriendsAsync()
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var userRelations = GetFriends(userId);
-            var friends = _identityContext.Users
-                .Where(u => userRelations.Select(ur => ur.FollowedUserId).Contains(u.Id));
+            var friends = await _identityContext.Users
+                .Where(u => userRelations.Select(ur => ur.FollowedUserId).Contains(u.Id))
+                .ToListAsync();
             var friendViewModels = _mapper.Map<List<FriendViewModel>>(friends);
 
             friendViewModels.ForEach(f => f.Muted = userRelations.SingleOrDefault(ur => ur.FollowedUserId == f.Id)?.MutedFollowedUser ?? false);
@@ -92,17 +96,64 @@ namespace Photography.Services.User.API.Query.EF
             return friendViewModels;
         }
 
-        private IQueryable<UserRelation> GetFriends(string userId)
+        public async Task<List<FollowerViewModel>> GetFollowersAsync(Guid userId)
+        {
+            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            return await (from u in _identityContext.Users
+                    join r in _identityContext.UserRelations
+                    on new { FollowerId = u.Id, FollowedUserId = userId } equals new { FollowerId = r.FollowerId, FollowedUserId = r.FollowedUserId }
+                    select new FollowerViewModel
+                    {
+                        Id = u.Id,
+                        Nickname = u.Nickname,
+                        Avatar = u.Avatar
+                    }).ToListAsync();
+        }
+
+        public async Task<List<FollowerViewModel>> GetFollowedUsersAsync(Guid userId)
+        {
+            return await (from u in _identityContext.Users
+                         join r in _identityContext.UserRelations
+                         on new { FollowerId = userId, FollowedUserId = u.Id } equals new { FollowerId = r.FollowerId, FollowedUserId = r.FollowedUserId }
+                         select new FollowerViewModel
+                         {
+                             Id = u.Id,
+                             Nickname = u.Nickname,
+                             Avatar = u.Avatar
+                         }).ToListAsync();
+        }
+
+        private IQueryable<UserRelation> GetFriends(Guid userId)
         {
             var friendsQuery = from ur1 in _identityContext.UserRelations
                                join ur2 in _identityContext.UserRelations on
                                new { C1 = ur1.FollowerId, C2 = ur1.FollowedUserId }
                                equals
                                new { C1 = ur2.FollowedUserId, C2 = ur2.FollowerId }
-                               where ur1.FollowerId.ToString() == userId
+                               where ur1.FollowerId == userId
                                select ur1;
 
             return friendsQuery;
+        }
+
+        private int? GetAge(double? secondsOfBirthday)
+        {
+            if (secondsOfBirthday == null)
+                return null;
+
+            var birthday = DateTime.UnixEpoch.AddSeconds(secondsOfBirthday.Value);
+
+            // 如果当前月份小于生日月份，即当年还未过生，年龄为年份差值再减一岁
+            if (DateTime.Now.Month < birthday.Month)
+                return Math.Max(DateTime.Now.Year - birthday.Year - 1, 0);
+
+            // 如果当前月份等于生日月份，但是日期还未到生日那天，即当年也还未过生，年龄也为年份差值再减一岁
+            if (DateTime.Now.Month == birthday.Month && DateTime.Now.Day < birthday.Day)
+                return Math.Max(DateTime.Now.Year - birthday.Year - 1, 0);
+
+            // 其它情况为当年已过生，年龄为年份差值
+            return Math.Max(DateTime.Now.Year - birthday.Year, 0);
         }
     }
 }

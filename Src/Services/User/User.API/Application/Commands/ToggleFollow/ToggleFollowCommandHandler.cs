@@ -44,6 +44,7 @@ namespace Photography.Services.User.API.Application.Commands.ToggleFollow
             if (ur == null)
             {
                 ur = new UserRelation(userId, request.UserIdToFollow);
+                ur.Follow();
                 _userRelationRepository.Add(ur);
                 result = await _userRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
                 
@@ -52,6 +53,7 @@ namespace Photography.Services.User.API.Application.Commands.ToggleFollow
             }
             else
             {
+                ur.UnFollow();
                 _userRelationRepository.Remove(ur);
                 result = await _userRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
