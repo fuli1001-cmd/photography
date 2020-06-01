@@ -84,14 +84,14 @@
         </member>
         <member name="M:Photography.Services.User.API.Controllers.UsersController.GetFollowersAsync(System.Guid)">
             <summary>
-            获取当前用户的关注者
+            获取用户的关注者
             </summary>
             <param name="userId"></param>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.User.API.Controllers.UsersController.GetFollowedUsersAsync(System.Guid)">
             <summary>
-            获取当前用户关注的人
+            获取用户关注的人
             </summary>
             <param name="userId"></param>
             <returns></returns>

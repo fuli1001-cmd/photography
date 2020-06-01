@@ -42,8 +42,8 @@ namespace Photography.Services.User.API
                     var endpointConfiguration = new EndpointConfiguration("userapi");
                     //var transport = endpointConfiguration.UseTransport<LearningTransport>();
                     var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
-                    //transport.ConnectionString("host=rabbitmq");
-                    transport.ConnectionString("host=192.168.99.100");
+                    transport.ConnectionString("host=rabbitmq");
+                    //transport.ConnectionString("host=43.225.159.87");
                     transport.UseConventionalRoutingTopology();
                     endpointConfiguration.EnableInstallers();
 

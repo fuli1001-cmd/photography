@@ -158,7 +158,7 @@ namespace Photography.Services.User.API.Controllers
         }
 
         /// <summary>
-        /// 获取当前用户的关注者
+        /// 获取用户的关注者
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
@@ -172,7 +172,7 @@ namespace Photography.Services.User.API.Controllers
         }
 
         /// <summary>
-        /// 获取当前用户关注的人
+        /// 获取用户关注的人
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>

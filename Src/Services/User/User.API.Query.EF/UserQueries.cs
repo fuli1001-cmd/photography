@@ -96,32 +96,64 @@ namespace Photography.Services.User.API.Query.EF
             return friendViewModels;
         }
 
+        /// <summary>
+        /// 获取关注指定用户的人
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<List<FollowerViewModel>> GetFollowersAsync(Guid userId)
         {
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
             return await (from u in _identityContext.Users
-                    join r in _identityContext.UserRelations
-                    on new { FollowerId = u.Id, FollowedUserId = userId } equals new { FollowerId = r.FollowerId, FollowedUserId = r.FollowedUserId }
-                    select new FollowerViewModel
-                    {
-                        Id = u.Id,
-                        Nickname = u.Nickname,
-                        Avatar = u.Avatar
-                    }).ToListAsync();
+                          join r1 in _identityContext.UserRelations
+                          on new { FollowerId = u.Id, FollowedUserId = userId } equals new { FollowerId = r1.FollowerId, FollowedUserId = r1.FollowedUserId }
+                          join r2 in _identityContext.UserRelations
+                          on new { FollowerId = myId, FollowedUserId = u.Id } equals new { FollowerId = r2.FollowerId, FollowedUserId = r2.FollowedUserId }
+                          into myFollows
+                          select new FollowerViewModel
+                          {
+                              Id = u.Id,
+                              Nickname = u.Nickname,
+                              Avatar = u.Avatar,
+                              Followed = myFollows.Any() // 表示当前登录用户是否关注了这个人
+                          }).ToListAsync();
         }
 
+        /// <summary>
+        /// 获取用户关注的人
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<List<FollowerViewModel>> GetFollowedUsersAsync(Guid userId)
         {
-            return await (from u in _identityContext.Users
-                         join r in _identityContext.UserRelations
-                         on new { FollowerId = userId, FollowedUserId = u.Id } equals new { FollowerId = r.FollowerId, FollowedUserId = r.FollowedUserId }
-                         select new FollowerViewModel
-                         {
-                             Id = u.Id,
-                             Nickname = u.Nickname,
-                             Avatar = u.Avatar
-                         }).ToListAsync();
+            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            var query = from u in _identityContext.Users
+                        join r in _identityContext.UserRelations
+                        on new { FollowerId = userId, FollowedUserId = u.Id } equals new { FollowerId = r.FollowerId, FollowedUserId = r.FollowedUserId }
+                        select new FollowerViewModel
+                        {
+                            Id = u.Id,
+                            Nickname = u.Nickname,
+                            Avatar = u.Avatar,
+                            Followed = true
+                        };
+
+            if (myId != userId)
+                query = from q in query
+                        join r in _identityContext.UserRelations
+                        on new { FollowerId = myId, FollowedUserId = q.Id } equals new { FollowerId = r.FollowerId, FollowedUserId = r.FollowedUserId }
+                        into myFollows
+                        select new FollowerViewModel
+                        {
+                            Id = q.Id,
+                            Nickname = q.Nickname,
+                            Avatar = q.Avatar,
+                            Followed = myFollows.Any() // 表示当前登录用户是否关注了这个人
+                        };
+
+            return await query.ToListAsync();
         }
 
         private IQueryable<UserRelation> GetFriends(Guid userId)
