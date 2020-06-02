@@ -96,6 +96,13 @@
             <param name="userId"></param>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.User.API.Controllers.UsersController.GetUserAsync(System.String)">
+            <summary>
+            根据昵称搜索用户
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
         <member name="P:Photography.Services.User.API.Settings.ServerSettings.ChatSocket">
             <summary>
             聊天socket服务器地址
@@ -124,6 +131,16 @@
         <member name="P:Photography.Services.User.API.Settings.ServerSettings.FileServerPort">
             <summary>
             文件服务器端口
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Settings.ServerSettings.ChatFileServer">
+            <summary>
+            聊天文件服务器地址
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Settings.ServerSettings.ChatFileServerPort">
+            <summary>
+            聊天文件服务器端口
             </summary>
         </member>
         <member name="P:Photography.Services.User.API.Settings.ServerSettings.AgoraAppId">

@@ -308,6 +308,13 @@
             帖子控制器
             </summary>
         </member>
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.SearchPostsAsync(System.String)">
+            <summary>
+            帖子列表
+            </summary>
+            <param name="key">搜索的关键字，根据用户昵称和帖子文本内容搜索帖子</param>
+            <returns></returns>
+        </member>
         <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetHotPostsAsync">
             <summary>
             获取热门帖子列表
@@ -320,11 +327,12 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetSameCityPostsAsync(System.String)">
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetSameCityPostsAsync(System.String,System.String)">
             <summary>
             获取同城帖子列表
             </summary>
             <param name="cityCode">城市代码</param>
+            <param name="key">搜索的关键字，根据用户昵称和帖子文本内容搜索帖子</param>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetMyPostsAsync(System.Guid)">

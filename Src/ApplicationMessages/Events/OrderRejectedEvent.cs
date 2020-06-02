@@ -6,7 +6,13 @@ namespace ApplicationMessages.Events
 {
     public class OrderRejectedEvent : BaseEvent
     {
-        public Guid UserId { get; set; }
+        // 操作拒绝订单的用户id
+        public Guid ProcessingUserId { get; set; }
+
+        // 订单中的另外一个用户id
+        public Guid AnotherUserId { get; set; }
+
+        // 订单对应的约拍交易id
         public Guid DealId { get; set; }
     }
 }

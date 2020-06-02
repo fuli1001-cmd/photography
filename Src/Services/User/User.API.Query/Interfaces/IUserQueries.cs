@@ -40,5 +40,12 @@ namespace Photography.Services.User.API.Query.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<List<FollowerViewModel>> GetFollowedUsersAsync(Guid userId);
+
+        /// <summary>
+        /// 搜索用户
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        Task<List<UserSearchResult>> SearchUsersAsync(string key);
     }
 }

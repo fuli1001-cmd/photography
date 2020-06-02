@@ -39,7 +39,9 @@ namespace Photography.Services.User.API.Query.EF
 
         public async Task<UserViewModel> GetUserAsync(Guid? userId, int? oldUserId, string nickName)
         {
-            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
+
             IQueryable<Domain.AggregatesModel.UserAggregate.User> queryableUsers = null;
 
             if (userId != null)
@@ -65,9 +67,12 @@ namespace Photography.Services.User.API.Query.EF
                             Province = u.Province,
                             City = u.City,
                             Sign = u.Sign,
+                            OngoingOrderCount = u.OngoingOrderCount,
                             LikedCount = u.LikedCount,
                             FollowingCount = u.FollowingCount,
                             FollowerCount = u.FollowerCount,
+                            AppointmentCount = u.AppointmentCount,
+                            LikedPostCount = u.LikedPostCount,
                             Score = u.Score,
                             Phonenumber = u.Phonenumber,
                             PostCount = u.PostCount,
@@ -105,19 +110,36 @@ namespace Photography.Services.User.API.Query.EF
         {
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-            return await (from u in _identityContext.Users
-                          join r1 in _identityContext.UserRelations
-                          on new { FollowerId = u.Id, FollowedUserId = userId } equals new { FollowerId = r1.FollowerId, FollowedUserId = r1.FollowedUserId }
-                          join r2 in _identityContext.UserRelations
-                          on new { FollowerId = myId, FollowedUserId = u.Id } equals new { FollowerId = r2.FollowerId, FollowedUserId = r2.FollowedUserId }
-                          into myFollows
-                          select new FollowerViewModel
-                          {
-                              Id = u.Id,
-                              Nickname = u.Nickname,
-                              Avatar = u.Avatar,
-                              Followed = myFollows.Any() // 表示当前登录用户是否关注了这个人
-                          }).ToListAsync();
+            var followers = await (from u in _identityContext.Users
+                             join r1 in _identityContext.UserRelations
+                             on new { FollowerId = u.Id, FollowedUserId = userId } equals new { FollowerId = r1.FollowerId, FollowedUserId = r1.FollowedUserId }
+                             select new FollowerViewModel
+                             {
+                                 Id = u.Id,
+                                 Nickname = u.Nickname,
+                                 Avatar = u.Avatar
+                             }).ToListAsync();
+
+            var MyFollowedUserIds = await _identityContext.UserRelations.Where(r => r.FollowerId == myId).Select(r => r.FollowedUserId).ToListAsync();
+
+            followers.ForEach(f => f.Followed = MyFollowedUserIds.Contains(f.Id));
+
+            return followers;
+
+            // TODO: invistgate why below code does not work?
+            //return await (from u in _identityContext.Users
+            //              join r1 in _identityContext.UserRelations
+            //              on new { FollowerId = u.Id, FollowedUserId = userId } equals new { FollowerId = r1.FollowerId, FollowedUserId = r1.FollowedUserId }
+            //              join r2 in _identityContext.UserRelations
+            //              on new { FollowerId = myId, FollowedUserId = u.Id } equals new { FollowerId = r2.FollowerId, FollowedUserId = r2.FollowedUserId }
+            //              into myFollows
+            //              select new FollowerViewModel
+            //              {
+            //                  Id = u.Id,
+            //                  Nickname = u.Nickname,
+            //                  Avatar = u.Avatar,
+            //                  Followed = myFollows.Any() // 表示当前登录用户是否关注了这个人
+            //              }).ToListAsync();
         }
 
         /// <summary>
@@ -129,31 +151,66 @@ namespace Photography.Services.User.API.Query.EF
         {
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-            var query = from u in _identityContext.Users
-                        join r in _identityContext.UserRelations
-                        on new { FollowerId = userId, FollowedUserId = u.Id } equals new { FollowerId = r.FollowerId, FollowedUserId = r.FollowedUserId }
-                        select new FollowerViewModel
-                        {
-                            Id = u.Id,
-                            Nickname = u.Nickname,
-                            Avatar = u.Avatar,
-                            Followed = true
-                        };
+            var followedUsers = await (from u in _identityContext.Users
+                                       join r in _identityContext.UserRelations
+                                       on new { FollowerId = userId, FollowedUserId = u.Id } equals new { FollowerId = r.FollowerId, FollowedUserId = r.FollowedUserId }
+                                       select new FollowerViewModel
+                                       {
+                                           Id = u.Id,
+                                           Nickname = u.Nickname,
+                                           Avatar = u.Avatar,
+                                           Followed = true
+                                       }).ToListAsync();
 
             if (myId != userId)
-                query = from q in query
-                        join r in _identityContext.UserRelations
-                        on new { FollowerId = myId, FollowedUserId = q.Id } equals new { FollowerId = r.FollowerId, FollowedUserId = r.FollowedUserId }
-                        into myFollows
-                        select new FollowerViewModel
-                        {
-                            Id = q.Id,
-                            Nickname = q.Nickname,
-                            Avatar = q.Avatar,
-                            Followed = myFollows.Any() // 表示当前登录用户是否关注了这个人
-                        };
+            {
+                var MyFollowedUserIds = await _identityContext.UserRelations.Where(r => r.FollowerId == myId).Select(r => r.FollowedUserId).ToListAsync();
 
-            return await query.ToListAsync();
+                followedUsers.ForEach(f => f.Followed = MyFollowedUserIds.Contains(f.Id));
+            }
+
+            return followedUsers;
+
+            //if (myId != userId)
+            //    query = from q in query
+            //            join r in _identityContext.UserRelations
+            //            on new { FollowerId = myId, FollowedUserId = q.Id } equals new { FollowerId = r.FollowerId, FollowedUserId = r.FollowedUserId }
+            //            into myFollows
+            //            select new FollowerViewModel
+            //            {
+            //                Id = q.Id,
+            //                Nickname = q.Nickname,
+            //                Avatar = q.Avatar,
+            //                Followed = myFollows.Any() // 表示当前登录用户是否关注了这个人
+            //            };
+
+            //return await query.ToListAsync();
+        }
+
+        public async Task<List<UserSearchResult>> SearchUsersAsync(string key)
+        {
+            if (string.IsNullOrEmpty(key))
+                return new List<UserSearchResult>();
+
+            var users = await _identityContext.Users.Where(u => u.Nickname.ToLower().Contains(key.ToLower()))
+                .Select(u => new UserSearchResult
+                {
+                    Id = u.Id,
+                    Nickname = u.Nickname,
+                    Avatar = u.Avatar,
+                    PostCount = u.PostCount,
+                    FollowerCount = u.FollowerCount
+                }).ToListAsync();
+
+            if (users.Count > 0)
+            {
+                var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+                var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
+                var MyFollowedUserIds = await _identityContext.UserRelations.Where(r => r.FollowerId == myId).Select(r => r.FollowedUserId).ToListAsync();
+                users.ForEach(f => f.Followed = MyFollowedUserIds.Contains(f.Id));
+            }
+
+            return users;
         }
 
         private IQueryable<UserRelation> GetFriends(Guid userId)

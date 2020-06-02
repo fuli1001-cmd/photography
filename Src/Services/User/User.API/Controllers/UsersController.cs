@@ -184,5 +184,19 @@ namespace Photography.Services.User.API.Controllers
             var followedUsers = await _userQueries.GetFollowedUsersAsync(userId);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(followedUsers));
         }
+
+        /// <summary>
+        /// 根据昵称搜索用户
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("search")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<UserSearchResult>> GetUserAsync([FromQuery(Name = "key")] string key)
+        {
+            var users = await _userQueries.SearchUsersAsync(key);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(users));
+        }
     }
 }

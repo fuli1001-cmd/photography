@@ -104,27 +104,30 @@ namespace Photography.Services.Post.API.Query.EF
 
         public async Task<List<PostViewModel>> GetSameCityPostsAsync(string cityCode)
         {
-            var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            var userId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
 
             var availablePosts = GetAvailablePosts(userId);
             var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(availablePosts);
-            var sameCityPosts = (await postsWithNavigationProperties.ToListAsync()).Where(p => p.CityCode?.ToLower() == cityCode.ToLower());
-            var posts = _mapper.Map<List<PostViewModel>>(sameCityPosts);
+
+            if (!string.IsNullOrEmpty(cityCode))
+                postsWithNavigationProperties = postsWithNavigationProperties.Where(p => p.CityCode != null && p.CityCode.ToLower() == cityCode.ToLower());
+
+            var posts = _mapper.Map<List<PostViewModel>>(await postsWithNavigationProperties.ToListAsync());
 
             await SetPropertiesAsync(posts, userId, false, false);
 
             return posts;
-
-            //var sameCityPosts = availablePosts.Where(p => p.Province.ToLower() == province.ToLower() && p.City.ToLower() == city.ToLower());
-            //return await GetPostViewModelsAsync(sameCityPosts);
         }
 
         private IQueryable<Domain.AggregatesModel.PostAggregate.Post> GetAvailablePosts(Guid userId)
         {
             var posts = _postContext.Posts.Where(p => p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post);
 
-            // 公开和密码查看的帖子
-            var otherPosts = posts.Where(p => p.Visibility != Domain.AggregatesModel.PostAggregate.Visibility.Friends && p.Visibility != Domain.AggregatesModel.PostAggregate.Visibility.SelectedFriends);
+            // 公开、密码查看的帖子、以及自己发的帖子
+            var otherPosts = posts.Where(p => p.Visibility == Domain.AggregatesModel.PostAggregate.Visibility.Public 
+                || p.Visibility == Domain.AggregatesModel.PostAggregate.Visibility.Password
+                || (userId != Guid.Empty && p.UserId == userId));
 
             if (userId != Guid.Empty)
             {
@@ -207,6 +210,32 @@ namespace Photography.Services.Post.API.Query.EF
             var posts = _postContext.Posts.Where(p => p.Id == postId);
             var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(posts);
             return _mapper.Map<PostViewModel>(await postsWithNavigationProperties.SingleOrDefaultAsync());
+        }
+
+        public async Task<List<PostViewModel>> SearchPosts(string key, string cityCode)
+        {
+            var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            var userId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
+            
+            var query = GetAvailablePosts(userId);
+            query = GetPostsWithNavigationPropertiesAsync(query);
+
+            if (!string.IsNullOrEmpty(key))
+            {
+                key = key.ToLower();
+                query = from p in query
+                        where p.User.Nickname.ToLower().Contains(key) || p.Text.ToLower().Contains(key)
+                        select p;
+            }
+
+            if (!string.IsNullOrEmpty(cityCode))
+                query = query.Where(p => p.CityCode != null && p.CityCode.ToLower() == cityCode.ToLower());
+
+            var posts = _mapper.Map<List<PostViewModel>>(await query.OrderByDescending(p => p.CreatedTime).ToListAsync());
+
+            await SetPropertiesAsync(posts, userId, false, false);
+
+            return posts;
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿using Arise.DDD.Domain.Exceptions;
+﻿using ApplicationMessages.Events;
+using Arise.DDD.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using NServiceBus;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 using System;
 using System.Collections.Generic;
@@ -17,6 +19,9 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.DeleteA
         private readonly IPostRepository _postRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<DeleteAppointmentCommandHandler> _logger;
+        private readonly IServiceProvider _serviceProvider;
+
+        private IMessageSession _messageSession;
 
         public DeleteAppointmentCommandHandler(IPostRepository postRepository,
             IHttpContextAccessor httpContextAccessor,
@@ -24,6 +29,7 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.DeleteA
             ILogger<DeleteAppointmentCommandHandler> logger)
         {
             _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -46,9 +52,20 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.DeleteA
             _postRepository.Remove(post);
 
             if (await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
+            {
+                await SendAppointmentDeletedEventAsync(userId);
                 return true;
+            }
             else
                 throw new DomainException("删除失败。");
+        }
+
+        private async Task SendAppointmentDeletedEventAsync(Guid userId)
+        {
+            var @event = new AppointmentDeletedEvent { UserId = userId };
+            _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
+            await _messageSession.Publish(@event);
+            _logger.LogInformation("----- Published AppointmentDeletedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
         }
     }
 }

@@ -54,6 +54,12 @@ namespace Photography.Services.User.API.Query.ViewModels
         public bool Followed { get; set; }
     }
 
+    public class UserSearchResult : FollowerViewModel
+    {
+        public int PostCount { get; set; }
+        public int FollowerCount { get; set; }
+    }
+
     public class BaseUserViewModel
     {
         public Guid Id { get; set; }

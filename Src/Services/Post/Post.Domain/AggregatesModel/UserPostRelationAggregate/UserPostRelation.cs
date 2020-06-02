@@ -25,9 +25,9 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggre
 
         public UserPostRelation() { }
 
-        public UserPostRelation(string userId, Guid postId)
+        public UserPostRelation(Guid userId, Guid postId)
         {
-            UserId = Guid.Parse(userId);
+            UserId = userId;
             PostId = postId;
         }
 

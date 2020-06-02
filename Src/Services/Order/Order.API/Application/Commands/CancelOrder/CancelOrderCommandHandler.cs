@@ -43,20 +43,24 @@ namespace Photography.Services.Order.API.Application.Commands.CancelOrder
             if (order == null)
                 throw new DomainException("没有与当前约拍交易对应的订单。");
 
+            var processingUserId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            if (processingUserId != order.User1Id && processingUserId != order.User2Id)
+                throw new DomainException("操作失败。");
+
             order.Cancel();
 
             if (await _orderRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
             {
-                var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-                await SendOrderCanceledEventAsync(userId, request.DealId);
+                var anotherUserId = processingUserId == order.User1Id ? order.User2Id : order.User1Id;
+                await SendOrderCanceledEventAsync(processingUserId, anotherUserId, request.DealId);
             }
 
             return await _orderQueries.GetOrderAsync(order.Id);
         }
 
-        private async Task SendOrderCanceledEventAsync(Guid userId, Guid dealId)
+        private async Task SendOrderCanceledEventAsync(Guid processingUserId, Guid anotherUserId, Guid dealId)
         {
-            var @event = new OrderCanceledEvent { UserId = userId, DealId = dealId };
+            var @event = new OrderCanceledEvent { ProcessingUserId = processingUserId, AnotherUserId = anotherUserId, DealId = dealId };
             _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
             await _messageSession.Publish(@event);
             _logger.LogInformation("----- Published OrderCanceledEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);

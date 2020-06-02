@@ -39,6 +39,9 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         // 赞过的帖子数量
         public int LikedPostCount { get; private set; }
 
+        // 进行中的订单数量（除去已完成、已拒绝和已取消外的订单数量）
+        public int OngoingOrderCount { get; set; }
+
         // 约拍值
         public int Score { get; private set; }
         public string Code { get; private set; }
@@ -91,6 +94,16 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
             PostCount = Math.Max(0, PostCount - 1);
         }
 
+        public void IncreaseAppointmentCount()
+        {
+            AppointmentCount++;
+        }
+
+        public void DecreaseAppointmentCount()
+        {
+            AppointmentCount = Math.Max(0, AppointmentCount - 1);
+        }
+
         public void IncreaseFollowerCount()
         {
             FollowerCount++;
@@ -109,6 +122,36 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         public void DecreaseFollowingCount()
         {
             FollowingCount = Math.Max(0, FollowingCount - 1);
+        }
+
+        public void IncreaseLikedCount()
+        {
+            LikedCount++;
+        }
+
+        public void DecreaseLikedCount()
+        {
+            LikedCount = Math.Max(0, LikedCount - 1);
+        }
+
+        public void IncreaseLikedPostCount()
+        {
+            LikedPostCount++;
+        }
+
+        public void DecreaseLikedPostCount()
+        {
+            LikedPostCount = Math.Max(0, LikedPostCount - 1);
+        }
+
+        public void IncreaseOngoingOrderCount()
+        {
+            OngoingOrderCount++;
+        }
+
+        public void DecreaseOngoingOrderCount()
+        {
+            OngoingOrderCount = Math.Max(0, OngoingOrderCount - 1);
         }
     }
 

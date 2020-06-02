@@ -1,8 +1,11 @@
-﻿using Arise.DDD.Domain.Exceptions;
+﻿using ApplicationMessages.Events;
+using Arise.DDD.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using NServiceBus;
 using Photography.Services.Post.Domain.AggregatesModel.CommentAggregate;
+using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserCommentRelationAggregate;
 using System;
 using System.Collections.Generic;
@@ -16,21 +19,34 @@ namespace Photography.Services.Post.API.Application.Commands.Comment.ToggleLikeC
     public class ToggleLikeCommentCommandHandler : IRequestHandler<ToggleLikeCommentCommand, bool>
     {
         private readonly IUserCommentRelationRepository _userCommentRelationRepository;
+        private readonly IPostRepository _postRepository;
         private readonly ICommentRepository _commentRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<ToggleLikeCommentCommandHandler> _logger;
+        private readonly IServiceProvider _serviceProvider;
 
-        public ToggleLikeCommentCommandHandler(IUserCommentRelationRepository userCommentRelationRepository, ICommentRepository commentRepository,
-            IHttpContextAccessor httpContextAccessor, ILogger<ToggleLikeCommentCommandHandler> logger)
+        private IMessageSession _messageSession;
+
+        public ToggleLikeCommentCommandHandler(
+            IUserCommentRelationRepository userCommentRelationRepository,
+            IPostRepository postRepository,
+            ICommentRepository commentRepository,
+            IServiceProvider serviceProvider,
+            IHttpContextAccessor httpContextAccessor, 
+            ILogger<ToggleLikeCommentCommandHandler> logger)
         {
             _userCommentRelationRepository = userCommentRelationRepository ?? throw new ArgumentNullException(nameof(userCommentRelationRepository));
+            _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
             _commentRepository = commentRepository ?? throw new ArgumentNullException(nameof(commentRepository));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<bool> Handle(ToggleLikeCommentCommand request, CancellationToken cancellationToken)
         {
+            bool result = false;
+
             var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
             var comment = await _commentRepository.GetByIdAsync(request.CommentId);
@@ -44,14 +60,43 @@ namespace Photography.Services.Post.API.Application.Commands.Comment.ToggleLikeC
                 userCommentRelation = new UserCommentRelation(userId, request.CommentId);
                 userCommentRelation.Like(comment.PostId);
                 _userCommentRelationRepository.Add(userCommentRelation);
+
+                result = await _userCommentRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
+                if (result)
+                    await SendPostLikedEventAsync(comment.PostId);
             }
             else
             {
                 userCommentRelation.UnLike(comment.PostId);
                 _userCommentRelationRepository.Remove(userCommentRelation);
+
+                result = await _userCommentRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
+                if (result)
+                    await SendPostUnLikedEventAsync(comment.PostId);
             }
 
-            return await _userCommentRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
+            return result;
+        }
+
+        private async Task SendPostLikedEventAsync(Guid postId)
+        {
+            var post = await _postRepository.GetByIdAsync(postId);
+            var @event = new PostLikedEvent { PostUserId = post.UserId };
+            await SendEvent(@event);
+        }
+
+        private async Task SendPostUnLikedEventAsync(Guid postId)
+        {
+            var post = await _postRepository.GetByIdAsync(postId);
+            var @event = new PostUnLikedEvent { PostUserId = post.UserId };
+            await SendEvent(@event);
+        }
+
+        private async Task SendEvent(BaseEvent @event)
+        {
+            _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
+            await _messageSession.Publish(@event);
+            _logger.LogInformation("----- Published {IntegrationEventName}: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.GetType().Name, @event.Id, Program.AppName, @event);
         }
     }
 }

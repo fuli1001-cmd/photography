@@ -43,6 +43,20 @@ namespace Photography.Services.Post.API.Controllers
         }
 
         /// <summary>
+        /// 帖子列表
+        /// </summary>
+        /// <param name="key">搜索的关键字，根据用户昵称和帖子文本内容搜索帖子</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<PostViewModel>>> SearchPostsAsync([FromQuery(Name = "key")] string key)
+        {
+            var posts = await _postQueries.SearchPosts(key, null);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
+        }
+
+        /// <summary>
         /// 获取热门帖子列表
         /// </summary>
         /// <returns></returns>
@@ -52,10 +66,10 @@ namespace Photography.Services.Post.API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<PostViewModel>>> GetHotPostsAsync()
         {
-            _logger.LogInformation("-----UserId: {UserId}-----", User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            _logger.LogInformation("-----UserName: {UserName}-----", User.FindFirst(ClaimTypes.Name)?.Value);
-            _logger.LogInformation("-----Authed: {Authed}-----", User.Identity.IsAuthenticated);
-            _logger.LogInformation("-----AuthType: {AuthType}-----", User.Identity.AuthenticationType);
+            //_logger.LogInformation("-----UserId: {UserId}-----", User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            //_logger.LogInformation("-----UserName: {UserName}-----", User.FindFirst(ClaimTypes.Name)?.Value);
+            //_logger.LogInformation("-----Authed: {Authed}-----", User.Identity.IsAuthenticated);
+            //_logger.LogInformation("-----AuthType: {AuthType}-----", User.Identity.AuthenticationType);
             var posts = await _postQueries.GetHotPostsAsync();
             return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
         }
@@ -77,14 +91,21 @@ namespace Photography.Services.Post.API.Controllers
         /// 获取同城帖子列表
         /// </summary>
         /// <param name="cityCode">城市代码</param>
+        /// <param name="key">搜索的关键字，根据用户昵称和帖子文本内容搜索帖子</param>
         /// <returns></returns>
         [HttpGet]
         [Route("samecity/{cityCode}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<PostViewModel>>> GetSameCityPostsAsync(string cityCode)
+        public async Task<ActionResult<IEnumerable<PostViewModel>>> GetSameCityPostsAsync(string cityCode, [FromQuery(Name = "key")] string key)
         {
-            var posts = await _postQueries.GetSameCityPostsAsync(cityCode);
+            List<PostViewModel> posts = null;
+
+            if (string.IsNullOrEmpty(key))
+                posts = await _postQueries.GetSameCityPostsAsync(cityCode);
+            else
+                posts = await _postQueries.SearchPosts(key, cityCode);
+
             return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
         }
 
@@ -122,6 +143,7 @@ namespace Photography.Services.Post.API.Controllers
         [HttpGet]
         [Route("post/{postId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
         public async Task<ActionResult<PostViewModel>> GetPostAsync(Guid postId)
         {
             var post = await _postQueries.GetPostAsync(postId);

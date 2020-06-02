@@ -14,5 +14,7 @@ namespace Photography.Services.Post.API.Query.Interfaces
         Task<List<PostViewModel>> GetSameCityPostsAsync(string cityCode);
 
         Task<PostViewModel> GetPostAsync(Guid postId);
+
+        Task<List<PostViewModel>> SearchPosts(string key, string cityCode);
     }
 }

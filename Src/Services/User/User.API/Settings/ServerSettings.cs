@@ -38,6 +38,16 @@ namespace Photography.Services.User.API.Settings
         public int FileServerPort { get; set; }
 
         /// <summary>
+        /// 聊天文件服务器地址
+        /// </summary>
+        public string ChatFileServer { get; set; }
+
+        /// <summary>
+        /// 聊天文件服务器端口
+        /// </summary>
+        public int ChatFileServerPort { get; set; }
+
+        /// <summary>
         /// 声网appId
         /// </summary>
         public string AgoraAppId { get; set; }
