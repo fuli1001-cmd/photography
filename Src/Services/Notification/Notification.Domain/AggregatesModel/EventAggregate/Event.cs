@@ -11,7 +11,10 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
         public Guid FromUserId { get; private set; }
 
         // 事件发起人昵称
-        public string FromUserNickName { get; private set; }
+        public string FromUserNickname { get; private set; }
+
+        // 事件发起人头像
+        public string FromUseAvatar { get; private set; }
 
         // 事件接收人id
         public Guid ToUserId { get; private set; }

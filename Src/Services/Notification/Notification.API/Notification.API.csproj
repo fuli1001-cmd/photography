@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Application\" />
+    <Folder Include="Application\IntegrationEventHandlers\" />
     <Folder Include="Controllers\" />
     <Folder Include="Infrastructure\Migrations\" />
   </ItemGroup>
