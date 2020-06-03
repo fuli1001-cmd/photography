@@ -162,6 +162,19 @@
       ],
       "UpstreamPathTemplate": "/api/register/{everything}",
       "UpstreamHttpMethod": []
+    },
+
+    {
+      "DownstreamPathTemplate": "/api/events",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "notificationapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/events",
+      "UpstreamHttpMethod": []
     }
   ],
   "GlobalConfiguration": {

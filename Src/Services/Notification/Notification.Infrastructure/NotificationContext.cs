@@ -4,6 +4,9 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Photography.Services.Notification.Domain.AggregatesModel.EventAggregate;
+using Photography.Services.Notification.Domain.AggregatesModel.PostAggregate;
+using Photography.Services.Notification.Domain.AggregatesModel.UserAggregate;
+using Photography.Services.Notification.Domain.AggregatesModel.UserRelationAggregate;
 using Photography.Services.Notification.Infrastructure.EntityConfigurations;
 using System;
 using System.Collections.Generic;
@@ -17,6 +20,9 @@ namespace Photography.Services.Notification.Infrastructure
     public class NotificationContext : DbContext, IUnitOfWork
     {
         public DbSet<Event> Events { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Post> Posts { get; set; }
+        public DbSet<UserRelation> UserRelations { get; set; }
 
         private readonly IMediator _mediator;
         private IDbContextTransaction _currentTransaction;

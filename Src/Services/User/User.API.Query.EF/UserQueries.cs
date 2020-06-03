@@ -34,7 +34,9 @@ namespace Photography.Services.User.API.Query.EF
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var user = await _identityContext.Users.SingleOrDefaultAsync(u => u.Id.ToString() == userId);
-            return _mapper.Map<MeViewModel>(user);
+            var userViewModel = _mapper.Map<MeViewModel>(user);
+            userViewModel.Age = GetAge(userViewModel.Birthday);
+            return userViewModel;
         }
 
         public async Task<UserViewModel> GetUserAsync(Guid? userId, int? oldUserId, string nickName)

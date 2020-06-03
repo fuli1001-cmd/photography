@@ -51,9 +51,9 @@ namespace Photography.Services.Post.API.Application.Commands.Comment.ReplyPost
             
             if (await _commentRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
             {
-                var post = await _postRepository.GetPostWithAttachmentsById(request.PostId);
+                var post = await _postRepository.GetByIdAsync(request.PostId);
                 
-                await SendPostRepliedEventAsync(post, userId);
+                await SendPostRepliedEventAsync(post, userId, request.Text);
 
                 //返回帖子评论的总数量
                 return post.CommentCount;
@@ -62,22 +62,14 @@ namespace Photography.Services.Post.API.Application.Commands.Comment.ReplyPost
             throw new DomainException("评论失败。");
         }
 
-        private async Task SendPostRepliedEventAsync(Domain.AggregatesModel.PostAggregate.Post post, Guid userId)
+        private async Task SendPostRepliedEventAsync(Domain.AggregatesModel.PostAggregate.Post post, Guid userId, string text)
         {
-            var user = await _userRepository.GetByIdAsync(userId);
-
-            string postImage = null;
-            if (post.PostAttachments.Count > 0)
-                postImage = post.PostAttachments.ToList()[0].Name;
-
             var @event = new PostRepliedEvent
             {
-                ReplyUserId = user.Id,
-                ReplyUserNickname = user.Nickname,
-                ReplyUserAvatar = user.Avatar,
-                PostUserId = post.UserId,
+                FromUserId = userId,
+                ToUserId = post.UserId,
                 PostId = post.Id,
-                PostImage = postImage
+                Text = text
             };
 
             _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));

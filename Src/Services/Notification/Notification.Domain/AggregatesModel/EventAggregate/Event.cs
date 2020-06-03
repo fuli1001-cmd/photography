@@ -1,4 +1,6 @@
 ﻿using Arise.DDD.Domain.SeedWork;
+using Photography.Services.Notification.Domain.AggregatesModel.PostAggregate;
+using Photography.Services.Notification.Domain.AggregatesModel.UserAggregate;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,26 +9,45 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
 {
     public class Event : Entity, IAggregateRoot
     {
-        // 事件发起人id
+        // 事件发起人
         public Guid FromUserId { get; private set; }
+        public User FromUser { get; private set; }
 
-        // 事件发起人昵称
-        public string FromUserNickname { get; private set; }
-
-        // 事件发起人头像
-        public string FromUseAvatar { get; private set; }
-
-        // 事件接收人id
+        // 事件接收人
         public Guid ToUserId { get; private set; }
+        public User ToUser { get; private set; }
 
         // 事件类型
         public EventType EventType { get; private set; }
 
-        // 事件展示图片
-        public string Image { get; private set; }
-
         // 事件发生时间
         public double CreatedTime { get; private set; }
+
+        // 事件关联帖子
+        public Guid? PostId { get; private set; }
+        public Post Post { get; private set; }
+
+        // 事件关联评论id
+        public Guid? CommentId { get; private set; }
+
+        // 评论类容
+        public string CommentText { get; private set; }
+
+        public Event()
+        {
+            CreatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+        }
+
+        public Event(Guid fromUserId, Guid toUserId, EventType eventType, Guid? postId, Guid? commentId, string commentText)
+            : this()
+        {
+            FromUserId = fromUserId;
+            ToUserId = toUserId;
+            EventType = eventType;
+            PostId = postId;
+            CommentId = commentId;
+            CommentText = commentText;
+        }
     }
 
     public enum EventType
@@ -36,6 +57,7 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
         ForwardPost, // 转发帖子
         SharePost, // 分享帖子
         ReplyComment, // 回复评论
+        LikeComment, // 点赞评论
         Follow // 关注
     }
 }

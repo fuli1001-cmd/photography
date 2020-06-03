@@ -30,13 +30,8 @@ namespace Photography.Services.User.API.Application.IntegrationEventHandlers
                 var postUser = await _userRepository.GetByIdAsync(message.PostUserId);
                 postUser.IncreaseLikedCount();
 
-                // 点赞帖子和点赞评论时都会发送本事件，但是点赞评论不需要增加点赞人的点赞帖子数，
-                // 因此点赞评论时没有传点赞人的id过来，当点赞人（LikingUserId）id为空时，表示不需要增加点赞人的点赞帖子数量
-                if (message.LikingUserId != Guid.Empty)
-                {
-                    var likingUser = await _userRepository.GetByIdAsync(message.LikingUserId);
-                    likingUser.IncreaseLikedPostCount();
-                }
+                var likingUser = await _userRepository.GetByIdAsync(message.LikingUserId);
+                likingUser.IncreaseLikedPostCount();
 
                 await _userRepository.UnitOfWork.SaveEntitiesAsync();
             }

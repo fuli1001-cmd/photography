@@ -19,5 +19,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         Task<Post> GetAppointmentById(Guid postId);
 
         Task<int> GetPostCommentCountAsync(Guid postId);
+
+        Task<Dictionary<Guid, Guid>> GetPostsUserIdsAsync(List<Guid> postIds);
     }
 }

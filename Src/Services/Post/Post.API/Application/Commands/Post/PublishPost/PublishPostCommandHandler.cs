@@ -44,14 +44,24 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
                 request.Address, request.CityCode, request.FriendIds, attachments, userId);
             _postRepository.Add(post);
             if (await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
-                await SendPostPublishedEventAsync(userId);
+            {
+                // 取得附件中的第一张图片
+                string image = null;
+                var first = request.Attachments[0];
+                if (first.AttachmentType == AttachmentType.Image)
+                    image = first.Name;
+                else if (first.AttachmentType == AttachmentType.Video)
+                    image = first.Name.Substring(0, first.Name.LastIndexOf('.')) + ".jpg";
+
+                await SendPostPublishedEventAsync(userId, post.Id, image);
+            }
             _postRepository.LoadUser(post);
             return _mapper.Map<PostViewModel>(post);
         }
 
-        private async Task SendPostPublishedEventAsync(Guid userId)
+        private async Task SendPostPublishedEventAsync(Guid userId, Guid postId, string image)
         {
-            var @event = new PostPublishedEvent { UserId = userId };
+            var @event = new PostPublishedEvent { UserId = userId, PostId = postId, Image = image };
             _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
             await _messageSession.Publish(@event);
             _logger.LogInformation("----- Published PostPublishedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);

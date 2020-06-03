@@ -51,16 +51,25 @@ namespace Photography.Services.Post.API.Application.Commands.Post.ForwardPosts
             });
 
             if (await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
-                await SendPostPublishedEventAsync(userId);
+            {
+                var postUserIds = await _postRepository.GetPostsUserIdsAsync(request.ForwardPostIds);
+                posts.ForEach(async p => await SendPostForwardedEventAsync(userId, postUserIds[p.ForwardedPostId.Value], p.ForwardedPostId.Value, p.Id));
+            }
 
             posts.ForEach(p => _postRepository.LoadUser(p));
             
             return _mapper.Map<List<PostViewModel>>(posts);
         }
 
-        private async Task SendPostPublishedEventAsync(Guid userId)
+        private async Task SendPostForwardedEventAsync(Guid forwardUserId, Guid originalPostUserId, Guid originalPostId, Guid newPostId)
         {
-            var @event = new PostPublishedEvent { UserId = userId };
+            var @event = new PostForwardedEvent 
+            { 
+                ForwardUserId = forwardUserId, 
+                OriginalPostUserId = originalPostUserId,
+                OriginalPostId = originalPostId,
+                NewPostId = newPostId
+            };
             _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
             await _messageSession.Publish(@event);
             _logger.LogInformation("----- Published PostPublishedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);

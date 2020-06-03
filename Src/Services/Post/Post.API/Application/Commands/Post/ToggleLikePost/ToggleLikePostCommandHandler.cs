@@ -71,7 +71,8 @@ namespace Photography.Services.Post.API.Application.Commands.Post.ToggleLikePost
         private async Task SendPostLikedEventAsync(Guid postId, Guid likingUserId)
         {
             var post = await _postRepository.GetByIdAsync(postId);
-            var @event = new PostLikedEvent { PostUserId = post.UserId, LikingUserId = likingUserId };
+
+            var @event = new PostLikedEvent { PostUserId = post.UserId, LikingUserId = likingUserId, PostId = postId };
             await SendEvent(@event);
         }
 

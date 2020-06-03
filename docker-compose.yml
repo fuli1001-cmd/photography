@@ -26,3 +26,9 @@ services:
       context: .
       dockerfile: Src/Services/Order/Order.API/Dockerfile
 
+  notificationapi:
+    image: fuli1001/photography-notificationapi:latest
+    build:
+      context: .
+      dockerfile: Src/Services/Notification/Notification.API/Dockerfile
+

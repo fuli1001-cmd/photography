@@ -53,34 +53,25 @@ namespace Photography.Services.Post.API.Application.Commands.Comment.ReplyCommen
 
             if (await _commentRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
             {
-                var post = await _postRepository.GetPostWithAttachmentsById(parentComment.PostId);
-
-                await SendCommentRepliedEventAsync(post, userId, request.CommentId);
+                await SendCommentRepliedEventAsync(userId, parentComment.UserId, comment.Id, parentComment.PostId, request.Text);
 
                 //返回帖子评论的总数量
+                var post = await _postRepository.GetByIdAsync(parentComment.PostId);
                 return post.CommentCount;
             }
 
             throw new DomainException("评论失败。");
         }
 
-        private async Task SendCommentRepliedEventAsync(Domain.AggregatesModel.PostAggregate.Post post, Guid userId, Guid commentId)
+        private async Task SendCommentRepliedEventAsync(Guid fromUserId, Guid toUserId, Guid commentId, Guid postId, string text)
         {
-            var user = await _userRepository.GetByIdAsync(userId);
-
-            string postImage = null;
-            if (post.PostAttachments.Count > 0)
-                postImage = post.PostAttachments.ToList()[0].Name;
-
             var @event = new CommentRepliedEvent
             {
-                ReplyUserId = user.Id,
-                ReplyUserNickname = user.Nickname,
-                ReplyUserAvatar = user.Avatar,
-                PostUserId = post.UserId,
-                PostId = post.Id,
-                PostImage = postImage,
-                CommentId = commentId
+                FromUserId = fromUserId,
+                ToUserId = toUserId,
+                CommentId = commentId,
+                PostId = postId,
+                Text = text
             };
 
             _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));

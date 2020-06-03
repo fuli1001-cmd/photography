@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Arise.DDD.API.Filters;
 using Arise.DDD.Infrastructure.Extensions;
 using Autofac;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -16,6 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Photography.Services.Notification.API.Application.Commands.CreateEvent;
 using Photography.Services.Notification.API.Infrastructure.AutofacModules;
 using Photography.Services.Notification.Infrastructure;
 
@@ -43,6 +45,8 @@ namespace Photography.Services.Notification.API
 
             services.AddHttpContextAccessor();
 
+            services.AddMediatR(typeof(CreateEventCommandHandler));
+
             services.AddControllers(options =>
             {
                 options.Filters.Add(typeof(HttpGlobalExceptionFilter));
@@ -65,7 +69,7 @@ namespace Photography.Services.Notification.API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Photography.Notification API", Version = "v1" });
-                c.IncludeXmlComments(string.Format(@"{0}/Post.API.xml", System.AppDomain.CurrentDomain.BaseDirectory));
+                c.IncludeXmlComments(string.Format(@"{0}/Notification.API.xml", System.AppDomain.CurrentDomain.BaseDirectory));
                 c.DescribeAllEnumsAsStrings();
             });
         }

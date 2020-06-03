@@ -1,5 +1,6 @@
 ﻿using Arise.DDD.Domain.SeedWork;
 using Autofac;
+using Photography.Services.Notification.Infrastructure.Queries;
 using Photography.Services.Notification.Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;
@@ -19,10 +20,10 @@ namespace Photography.Services.Notification.API.Infrastructure.AutofacModules
                 .AsImplementedInterfaces()
                 .InstancePerLifetimeScope();
 
-            //// register queries
-            //builder.RegisterAssemblyTypes(typeof(PostQueries).GetTypeInfo().Assembly)
-            //    .AsImplementedInterfaces()
-            //    .InstancePerLifetimeScope();
+            // register queries
+            builder.RegisterAssemblyTypes(typeof(EventQueries).GetTypeInfo().Assembly)
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
         }
     }
 }

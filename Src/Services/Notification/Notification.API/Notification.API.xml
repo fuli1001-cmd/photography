@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Notification.API</name>
+    </assembly>
+    <members>
+        <member name="M:Photography.Services.Notification.API.Controllers.EventsController.GetOrderAsync">
+            <summary>
+            用户的事件
+            </summary>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

@@ -63,7 +63,7 @@ namespace Photography.Services.Post.API.Application.Commands.Comment.ToggleLikeC
 
                 result = await _userCommentRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
                 if (result)
-                    await SendPostLikedEventAsync(comment.PostId);
+                    await SendCommentLikedEventAsync(userId, comment);
             }
             else
             {
@@ -78,10 +78,18 @@ namespace Photography.Services.Post.API.Application.Commands.Comment.ToggleLikeC
             return result;
         }
 
-        private async Task SendPostLikedEventAsync(Guid postId)
+        private async Task SendCommentLikedEventAsync(Guid likingUserId, Domain.AggregatesModel.CommentAggregate.Comment comment)
         {
-            var post = await _postRepository.GetByIdAsync(postId);
-            var @event = new PostLikedEvent { PostUserId = post.UserId };
+            var post = await _postRepository.GetByIdAsync(comment.PostId);
+            var @event = new CommentLikedEvent 
+            {
+                LikingUserId = likingUserId,
+                PostUserId = post.UserId,
+                PostId = comment.PostId,
+                CommentUserId = comment.UserId,
+                CommentId = comment.Id,
+                CommentText = comment.Text
+            };
             await SendEvent(@event);
         }
 
