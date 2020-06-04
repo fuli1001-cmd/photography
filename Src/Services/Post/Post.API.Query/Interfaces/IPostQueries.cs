@@ -9,7 +9,7 @@ namespace Photography.Services.Post.API.Query.Interfaces
     public interface IPostQueries
     {
         Task<PagedList<PostViewModel>> GetUserPostsAsync(Guid userId, PagingParameters pagingParameters);
-        Task<List<PostViewModel>> GetLikedPostsAsync();
+        Task<PagedList<PostViewModel>> GetLikedPostsAsync(PagingParameters pagingParameters);
         Task<List<PostViewModel>> GetHotPostsAsync();
         Task<List<PostViewModel>> GetFollowedPostsAsync();
         Task<List<PostViewModel>> GetSameCityPostsAsync(string cityCode);

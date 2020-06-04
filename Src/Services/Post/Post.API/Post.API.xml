@@ -345,12 +345,14 @@
             用户的帖子
             </summary>
             <param name="userId">用户id</param>
+            <param name="pagingParameters"></param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetLikedPostsAsync">
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetLikedPostsAsync(Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             我赞过的帖子
             </summary>
+            <param name="pagingParameters"></param>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetPostAsync(System.Guid)">

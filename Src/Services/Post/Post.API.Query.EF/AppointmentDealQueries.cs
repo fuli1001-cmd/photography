@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Photography.Services.Post.API.Query.EF.Models;
 using Photography.Services.Post.API.Query.Extensions;
 using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
@@ -163,15 +164,13 @@ namespace Photography.Services.Post.API.Query.EF
             var pagedDto = await PagedList<AppointmentViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
 
             // 设置附件属性：宽、高、视频缩略图
-            pagedDto.ForEach(a => a.SetAttachmentProperties(_logger));
+            pagedDto.ForEach(dto =>
+            {
+                foreach (var attachment in dto.PostAttachments)
+                    attachment.SetProperties();
+            });
 
             return pagedDto;
-        }
-
-        class UserPost
-        {
-            public Domain.AggregatesModel.PostAggregate.Post Post { get; set; }
-            public User User { get; set; }
         }
     }
 }

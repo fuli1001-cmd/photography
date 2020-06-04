@@ -18,6 +18,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Photography.Services.Post.API.Query.Extensions;
 using Arise.DDD.API.Paging;
+using Photography.Services.Post.API.Query.EF.Models;
 
 namespace Photography.Services.Post.API.Query.EF
 {
@@ -45,120 +46,52 @@ namespace Photography.Services.Post.API.Query.EF
         {
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-            var queryableDto = from p in _postContext.Posts
+            var queryableUserPost = from p in _postContext.Posts
                                join u in _postContext.Users
                                on p.UserId equals u.Id
                                where p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post && p.UserId == userId
-                               select new PostViewModel
-                               {
-                                   Id = p.Id,
-                                   Text = p.Text,
-                                   LikeCount = p.LikeCount,
-                                   ShareCount = p.ShareCount,
-                                   CommentCount = p.CommentCount,
-                                   CreatedTime = p.CreatedTime,
-                                   UpdatedTime = p.UpdatedTime,
-                                   Commentable = p.Commentable ?? true,
-                                   ForwardType = p.ForwardType,
-                                   ShareType = p.ShareType,
-                                   ViewPassword = p.ViewPassword,
-                                   ShowOriginalText = p.ShowOriginalText,
-                                   Latitude = p.Latitude ?? 0,
-                                   Longitude = p.Longitude ?? 0,
-                                   LocationName = p.LocationName,
-                                   Address = p.Address,
-                                   Liked = (from upr in _postContext.UserPostRelations
-                                            where upr.UserId == myId && upr.PostId == p.Id && upr.UserPostRelationType == UserPostRelationType.Like
-                                            select upr.Id)
-                                           .Any(),
-                                   User = new PostUserViewModel
-                                   {
-                                       Id = u.Id,
-                                       Nickname = u.Nickname,
-                                       Avatar = u.Avatar,
-                                       UserType = u.UserType,
-                                       Followed = (from ur in _postContext.UserRelations
-                                                   where ur.FollowerId == myId && ur.FollowedUserId == u.Id
-                                                   select ur.Id)
-                                                  .Any()
-                                   },
-                                   PostAttachments = from a in p.PostAttachments
-                                                     select new PostAttachmentViewModel
-                                                     {
-                                                         Id = a.Id,
-                                                         Name = a.Name,
-                                                         Text = a.Text,
-                                                         AttachmentType = a.AttachmentType
-                                                     },
-                                   ForwardedPost = p.ForwardedPostId == null ? null : new ForwardedPostViewModel
-                                   {
-                                       Id = p.ForwardedPost.Id,
-                                       Text = p.ForwardedPost.Text,
-                                       PostAttachments = from fa in p.ForwardedPost.PostAttachments
-                                                         select new PostAttachmentViewModel
-                                                         {
-                                                             Id = fa.Id,
-                                                             Name = fa.Name,
-                                                             Text = fa.Text,
-                                                             AttachmentType = fa.AttachmentType
-                                                         }
-                                   }
-                               };
+                               select new UserPost { Post = p, User = u };
 
-            var pagedDto = await PagedList<PostViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
+            var queryableDto = GetQueryablePostViewModels(queryableUserPost, myId).OrderByDescending(dto => dto.CreatedTime);
 
-            pagedDto.ForEach(dto =>
-            {
-                 if (dto.ForwardedPost != null)
-                     dto.ForwardedPost.User = (from fu in _postContext.Users
-                                               join fp in _postContext.Posts
-                                               on fu.Id equals fp.UserId
-                                               where fp.Id == dto.ForwardedPost.Id
-                                               select new BaseUserViewModel
-                                               {
-                                                   Id = fu.Id,
-                                                   Nickname = fu.Nickname
-                                               })
-                                              .SingleOrDefault();
-             });
-
-            return pagedDto;
-
-            //var userPosts = _postContext.Posts.Where(p => p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post && p.UserId == userId);
-            //var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(userPosts);
-            //var posts = _mapper.Map<List<PostViewModel>>(await postsWithNavigationProperties.ToListAsync());
-
-            //await SetPropertiesAsync(posts, myId, false, myId == userId);
-
-            //return posts;
+            return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
         }
 
         /// <summary>
         /// 赞过的帖子
         /// </summary>
         /// <returns></returns>
-        public async Task<List<PostViewModel>> GetLikedPostsAsync()
+        public async Task<PagedList<PostViewModel>> GetLikedPostsAsync(PagingParameters pagingParameters)
         {
-            var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            var likedPostIds = GetLikedPostIds(userId);
-            var likedPosts = _postContext.Posts.Where(p => likedPostIds.Contains(p.Id) && p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post);
-            var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(likedPosts);
-            var posts = _mapper.Map<List<PostViewModel>>(await postsWithNavigationProperties.ToListAsync());
+            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-            await SetPropertiesAsync(posts, userId, true, false);
+            var queryableUserPost = from p in _postContext.Posts
+                               join u in _postContext.Users
+                               on p.UserId equals u.Id
+                               join upr in _postContext.UserPostRelations
+                               on new { PostId = p.Id, UserId = myId, Type = UserPostRelationType.Like } equals new { PostId = upr.PostId.Value, UserId = upr.UserId.Value, Type = upr.UserPostRelationType }
+                               where p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post
+                               select new UserPost { Post = p, User = u };
 
-            return posts;
+            var queryableDto = GetQueryablePostViewModels(queryableUserPost, myId).OrderByDescending(dto => dto.CreatedTime);
+
+            return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
         }
 
+        /// <summary>
+        /// 热门帖子
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<PostViewModel>> GetHotPostsAsync()
         {
             var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-            var userId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
-            var availablePosts = GetAvailablePosts(userId).OrderByDescending(p => p.LikeCount);
+            var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
+
+            var availablePosts = GetAvailablePosts(myId).OrderByDescending(p => p.LikeCount);
             var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(availablePosts);
             var posts = _mapper.Map<List<PostViewModel>>(await postsWithNavigationProperties.ToListAsync());
 
-            await SetPropertiesAsync(posts, userId, false, false);
+            await SetPropertiesAsync(posts, myId, false, false);
 
             return posts;
         }
@@ -316,6 +249,99 @@ namespace Photography.Services.Post.API.Query.EF
             await SetPropertiesAsync(posts, userId, false, false);
 
             return posts;
+        }
+
+        private IQueryable<PostViewModel> GetQueryablePostViewModels(IQueryable<UserPost> queryableUserPosts, Guid myId)
+        {
+            return from up in queryableUserPosts
+                   select new PostViewModel
+                   {
+                       Id = up.Post.Id,
+                       Text = up.Post.Text,
+                       LikeCount = up.Post.LikeCount,
+                       ShareCount = up.Post.ShareCount,
+                       CommentCount = up.Post.CommentCount,
+                       CreatedTime = up.Post.CreatedTime,
+                       UpdatedTime = up.Post.UpdatedTime,
+                       Commentable = up.Post.Commentable ?? true,
+                       ForwardType = up.Post.ForwardType,
+                       ShareType = up.Post.ShareType,
+                       ViewPassword = up.Post.ViewPassword,
+                       ShowOriginalText = up.Post.ShowOriginalText,
+                       Latitude = up.Post.Latitude ?? 0,
+                       Longitude = up.Post.Longitude ?? 0,
+                       LocationName = up.Post.LocationName,
+                       Address = up.Post.Address,
+                       Liked = (from upr in _postContext.UserPostRelations
+                                where upr.UserId == myId && upr.PostId == up.Post.Id && upr.UserPostRelationType == UserPostRelationType.Like
+                                select upr.Id)
+                                .Any(),
+                       User = new PostUserViewModel
+                       {
+                           Id = up.User.Id,
+                           Nickname = up.User.Nickname,
+                           Avatar = up.User.Avatar,
+                           UserType = up.User.UserType,
+                           Followed = (from ur in _postContext.UserRelations
+                                       where ur.FollowerId == myId && ur.FollowedUserId == up.User.Id
+                                       select ur.Id)
+                                       .Any()
+                       },
+                       PostAttachments = from a in up.Post.PostAttachments
+                                         select new PostAttachmentViewModel
+                                         {
+                                             Id = a.Id,
+                                             Name = a.Name,
+                                             Text = a.Text,
+                                             AttachmentType = a.AttachmentType
+                                         },
+                       ForwardedPost = up.Post.ForwardedPostId == null ? null : new ForwardedPostViewModel
+                       {
+                           Id = up.Post.ForwardedPost.Id,
+                           Text = up.Post.ForwardedPost.Text,
+                           PostAttachments = from fa in up.Post.ForwardedPost.PostAttachments
+                                             select new PostAttachmentViewModel
+                                             {
+                                                 Id = fa.Id,
+                                                 Name = fa.Name,
+                                                 Text = fa.Text,
+                                                 AttachmentType = fa.AttachmentType
+                                             }
+                       }
+                   };
+        }
+
+        private async Task<PagedList<PostViewModel>> GetPagedPostViewModelsAsync(IQueryable<PostViewModel> queryableDto, PagingParameters pagingParameters)
+        {
+            var pagedDto = await PagedList<PostViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
+
+            // 设置转发帖子所属的用户
+            // 注：理论上应该可以在queryableDto的查询中设置，但是我始终得到错误，因此这里先取得pagedDto再来设置
+            pagedDto.ForEach(dto =>
+            {
+                if (dto.ForwardedPost != null)
+                {
+                    dto.ForwardedPost.User = (from fu in _postContext.Users
+                                              join fp in _postContext.Posts
+                                              on fu.Id equals fp.UserId
+                                              where fp.Id == dto.ForwardedPost.Id
+                                              select new BaseUserViewModel
+                                              {
+                                                  Id = fu.Id,
+                                                  Nickname = fu.Nickname
+                                              })
+                                             .SingleOrDefault();
+
+                    foreach (var attachment in dto.ForwardedPost.PostAttachments)
+                        attachment.SetProperties();
+                }
+
+                // set attachment width and height
+                foreach (var attachment in dto.PostAttachments)
+                    attachment.SetProperties();
+            });
+
+            return pagedDto;
         }
     }
 }

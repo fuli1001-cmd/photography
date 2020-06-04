@@ -115,6 +115,7 @@ namespace Photography.Services.Post.API.Controllers
         /// 用户的帖子
         /// </summary>
         /// <param name="userId">用户id</param>
+        /// <param name="pagingParameters"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("user/{userId}")]
@@ -128,14 +129,15 @@ namespace Photography.Services.Post.API.Controllers
         /// <summary>
         /// 我赞过的帖子
         /// </summary>
+        /// <param name="pagingParameters"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("likes")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<PostViewModel>>> GetLikedPostsAsync()
+        public async Task<ActionResult<PagedResponseWrapper>> GetLikedPostsAsync([FromQuery] PagingParameters pagingParameters)
         {
-            var posts = await _postQueries.GetLikedPostsAsync();
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
+            var posts = await _postQueries.GetLikedPostsAsync(pagingParameters);
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
         }
 
         /// <summary>
