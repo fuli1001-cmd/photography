@@ -1,4 +1,6 @@
 ﻿using Arise.DDD.API;
+using Arise.DDD.API.Paging;
+using Arise.DDD.API.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -70,14 +72,15 @@ namespace Photography.Services.Post.API.Controllers
         /// </summary>
         /// <param name="payerType">付款方类型</param>
         /// <param name="appointmentSeconds">约拍日期时间戳（距unix epoch的秒数）</param>
+        /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
         [HttpGet]
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<AppointmentViewModel>>> GetAppointmentsAsync([FromQuery(Name = "payertype")] PayerType? payerType, [FromQuery(Name = "appointmentseconds")] double? appointmentSeconds)
+        public async Task<ActionResult<PagedResponseWrapper>> GetAppointmentsAsync([FromQuery(Name = "payertype")] PayerType? payerType, [FromQuery(Name = "appointmentseconds")] double? appointmentSeconds, [FromQuery] PagingParameters pagingParameters)
         {
-            var appointments = await _appointmentQueries.GetAppointmentsAsync(payerType, appointmentSeconds);
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(appointments));
+            var appointments = await _appointmentQueries.GetAppointmentsAsync(payerType, appointmentSeconds, pagingParameters);
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(appointments));
         }
 
         /// <summary>
@@ -87,10 +90,10 @@ namespace Photography.Services.Post.API.Controllers
         [HttpGet]
         [Route("mine")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<AppointmentViewModel>>> GetMyAppointmentsAsync()
+        public async Task<ActionResult<PagedResponseWrapper>> GetMyAppointmentsAsync([FromQuery] PagingParameters pagingParameters)
         {
-            var appointments = await _appointmentQueries.GetMyAppointmentsAsync();
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(appointments));
+            var appointments = await _appointmentQueries.GetMyAppointmentsAsync(pagingParameters);
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(appointments));
         }
     }
 }

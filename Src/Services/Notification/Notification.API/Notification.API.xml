@@ -4,10 +4,11 @@
         <name>Notification.API</name>
     </assembly>
     <members>
-        <member name="M:Photography.Services.Notification.API.Controllers.EventsController.GetOrderAsync">
+        <member name="M:Photography.Services.Notification.API.Controllers.EventsController.GetUserReceivedEventsAsync(Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             用户的事件
             </summary>
+            <param name="pagingParameters"></param>
             <returns></returns>
         </member>
     </members>

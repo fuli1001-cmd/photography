@@ -223,16 +223,18 @@
             <param name="appointCommand"></param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.AppointmentDealsController.GetSentAppointmentDealsAsync">
+        <member name="M:Photography.Services.Post.API.Controllers.AppointmentDealsController.GetSentAppointmentDealsAsync(Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             获取我发出的约拍交易
             </summary>
+            <param name="pagingParameters">分页参数</param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.AppointmentDealsController.GetReceivedAppointmentDealsAsync">
+        <member name="M:Photography.Services.Post.API.Controllers.AppointmentDealsController.GetReceivedAppointmentDealsAsync(Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             获取我收到的约拍交易
             </summary>
+            <param name="pagingParameters">分页参数</param>
             <returns></returns>
         </member>
         <member name="T:Photography.Services.Post.API.Controllers.AppointmentsController">
@@ -254,15 +256,16 @@
             <param name="command"></param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.AppointmentsController.GetAppointmentsAsync(System.Nullable{Photography.Services.Post.Domain.AggregatesModel.PostAggregate.PayerType},System.Nullable{System.Double})">
+        <member name="M:Photography.Services.Post.API.Controllers.AppointmentsController.GetAppointmentsAsync(System.Nullable{Photography.Services.Post.Domain.AggregatesModel.PostAggregate.PayerType},System.Nullable{System.Double},Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             获取约拍广场的约拍列表
             </summary>
             <param name="payerType">付款方类型</param>
             <param name="appointmentSeconds">约拍日期时间戳（距unix epoch的秒数）</param>
+            <param name="pagingParameters">分页参数</param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.AppointmentsController.GetMyAppointmentsAsync">
+        <member name="M:Photography.Services.Post.API.Controllers.AppointmentsController.GetMyAppointmentsAsync(Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             获取我发布的约拍
             </summary>
@@ -273,20 +276,22 @@
             帖子控制器
             </summary>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.CommentsController.GetPostCommentsAsync(System.Guid,System.Int32)">
+        <member name="M:Photography.Services.Post.API.Controllers.CommentsController.GetPostCommentsAsync(System.Guid,System.Int32,Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             获取某个帖子的评论
             </summary>
             <param name="postId">帖子id</param>
             <param name="maxSubCommentsCount">最多返回的子评论数量</param>
+            <param name="pagingParameters"></param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.CommentsController.GetCommentCommentsAsync(System.Guid,System.Int32)">
+        <member name="M:Photography.Services.Post.API.Controllers.CommentsController.GetCommentCommentsAsync(System.Guid,System.Int32,Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             获取某个评论的评论
             </summary>
             <param name="commentId">评论id</param>
             <param name="maxSubCommentsCount">最多返回的子评论数量</param>
+            <param name="pagingParameters"></param>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.Post.API.Controllers.CommentsController.ReplyPostAsync(Photography.Services.Post.API.Application.Commands.Comment.ReplyPost.ReplyPostCommand)">
@@ -335,7 +340,7 @@
             <param name="key">搜索的关键字，根据用户昵称和帖子文本内容搜索帖子</param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetMyPostsAsync(System.Guid)">
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetMyPostsAsync(System.Guid,Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             用户的帖子
             </summary>

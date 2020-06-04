@@ -12,7 +12,7 @@ namespace Photography.Services.Post.API.Query.ViewModels
     {
         public Guid Id { get; set; }
         public string Text { get; set; }
-        public List<PostAttachmentViewModel> PostAttachments { get; set; }
+        public IEnumerable<PostAttachmentViewModel> PostAttachments { get; set; }
     }
 
     public class PostViewModel : BasePostViewModel
@@ -30,8 +30,8 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public bool? ShowOriginalText { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
-        public string LocationName { get; private set; }
-        public string Address { get; private set; }
+        public string LocationName { get; set; }
+        public string Address { get; set; }
 
         public PostUserViewModel User { get; set; }
         public ForwardedPostViewModel ForwardedPost { get; set; }

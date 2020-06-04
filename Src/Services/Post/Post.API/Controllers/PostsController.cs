@@ -1,4 +1,6 @@
 ﻿using Arise.DDD.API;
+using Arise.DDD.API.Paging;
+using Arise.DDD.API.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -117,10 +119,10 @@ namespace Photography.Services.Post.API.Controllers
         [HttpGet]
         [Route("user/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<PostViewModel>>> GetMyPostsAsync(Guid userId)
+        public async Task<ActionResult<PagedResponseWrapper>> GetMyPostsAsync(Guid userId, [FromQuery] PagingParameters pagingParameters)
         {
-            var posts = await _postQueries.GetUserPostsAsync(userId);
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
+            var posts = await _postQueries.GetUserPostsAsync(userId, pagingParameters);
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
         }
 
         /// <summary>

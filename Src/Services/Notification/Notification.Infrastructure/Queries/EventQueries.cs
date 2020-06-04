@@ -10,6 +10,7 @@ using Photography.Services.Notification.Domain.AggregatesModel.UserAggregate;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using Arise.DDD.API.Paging;
 
 namespace Photography.Services.Notification.Infrastructure.Queries
 {
@@ -26,37 +27,39 @@ namespace Photography.Services.Notification.Infrastructure.Queries
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<IEnumerable<EventViewModel>> GetUserReceivedEventsAsync()
+        public async Task<PagedList<EventViewModel>> GetUserReceivedEventsAsync(PagingParameters pagingParameters)
         {
             var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
 
-            return await (from e in _dbContext.Events
-                          join u in _dbContext.Users
-                          on e.FromUserId equals u.Id
-                          where e.ToUserId == myId
-                          select new EventViewModel
-                          {
-                              FromUser = new UserViewModel
-                              {
-                                  Id = u.Id,
-                                  Nickname = u.Nickname,
-                                  Avatar = u.Avatar
-                              },
-                              EventType = e.EventType,
-                              Image = (from p in _dbContext.Posts
-                                      where p.Id == e.PostId
-                                      select p.Image)
-                                      .SingleOrDefault(),
-                              CreatedTime = e.CreatedTime,
-                              PostId = e.PostId,
-                              CommentId = e.CommentId,
-                              CommentText = e.CommentText,
-                              Followed = (from ur in _dbContext.UserRelations
-                                          where ur.FollowerId == myId && ur.FollowedUserId == u.Id
-                                          select ur.Id)
-                                          .Any()
-                          }).ToListAsync();
+            var queryableDto = from e in _dbContext.Events
+                                   join u in _dbContext.Users
+                                   on e.FromUserId equals u.Id
+                                   where e.ToUserId == myId
+                                   select new EventViewModel
+                                   {
+                                       FromUser = new UserViewModel
+                                       {
+                                           Id = u.Id,
+                                           Nickname = u.Nickname,
+                                           Avatar = u.Avatar
+                                       },
+                                       EventType = e.EventType,
+                                       Image = (from p in _dbContext.Posts
+                                                where p.Id == e.PostId
+                                                select p.Image)
+                                               .SingleOrDefault(),
+                                       CreatedTime = e.CreatedTime,
+                                       PostId = e.PostId,
+                                       CommentId = e.CommentId,
+                                       CommentText = e.CommentText,
+                                       Followed = (from ur in _dbContext.UserRelations
+                                                   where ur.FollowerId == myId && ur.FollowedUserId == u.Id
+                                                   select ur.Id)
+                                                   .Any()
+                                   };
+
+            return await PagedList<EventViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
         }
     }
 }

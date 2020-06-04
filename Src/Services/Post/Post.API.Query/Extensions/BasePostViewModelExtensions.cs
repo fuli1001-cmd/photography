@@ -10,7 +10,7 @@ namespace Photography.Services.Post.API.Query.Extensions
     {
         public static void SetAttachmentProperties(this BasePostViewModel basePost, ILogger logger)
         {
-            basePost.PostAttachments.ForEach(a =>
+            foreach(var a in basePost.PostAttachments)
             {
                 var sections = a.Name.Split('$');
                 try
@@ -24,7 +24,7 @@ namespace Photography.Services.Post.API.Query.Extensions
                 {
                     logger.LogError("SetAttachmentProperties: {@SetAttachmentPropertiesException}", ex);
                 }
-            });
+            };
         }
     }
 }

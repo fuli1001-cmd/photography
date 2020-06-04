@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Photography.Services.Notification.Infrastructure;
 
-namespace Photography.Services.Notification.API.Infrastructure.Infrastructure
+namespace Photography.Services.Notification.API.Infrastructure.Migrations
 {
     [DbContext(typeof(NotificationContext))]
-    partial class NotificationContextModelSnapshot : ModelSnapshot
+    [Migration("20200604021430_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,6 +30,9 @@ namespace Photography.Services.Notification.API.Infrastructure.Infrastructure
                     b.Property<Guid?>("CommentId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("CommentText")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double>("CreatedTime")
                         .HasColumnType("float");
 
@@ -36,9 +41,6 @@ namespace Photography.Services.Notification.API.Infrastructure.Infrastructure
 
                     b.Property<Guid>("FromUserId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Image")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("PostId")
                         .HasColumnType("uniqueidentifier");
@@ -50,9 +52,25 @@ namespace Photography.Services.Notification.API.Infrastructure.Infrastructure
 
                     b.HasIndex("FromUserId");
 
+                    b.HasIndex("PostId");
+
                     b.HasIndex("ToUserId");
 
                     b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("Photography.Services.Notification.Domain.AggregatesModel.PostAggregate.Post", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("Photography.Services.Notification.Domain.AggregatesModel.UserAggregate.User", b =>
@@ -72,6 +90,27 @@ namespace Photography.Services.Notification.API.Infrastructure.Infrastructure
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Photography.Services.Notification.Domain.AggregatesModel.UserRelationAggregate.UserRelation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FollowedUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FollowerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FollowedUserId");
+
+                    b.HasIndex("FollowerId");
+
+                    b.ToTable("UserRelations");
+                });
+
             modelBuilder.Entity("Photography.Services.Notification.Domain.AggregatesModel.EventAggregate.Event", b =>
                 {
                     b.HasOne("Photography.Services.Notification.Domain.AggregatesModel.UserAggregate.User", "FromUser")
@@ -80,9 +119,28 @@ namespace Photography.Services.Notification.API.Infrastructure.Infrastructure
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Photography.Services.Notification.Domain.AggregatesModel.PostAggregate.Post", "Post")
+                        .WithMany("Events")
+                        .HasForeignKey("PostId");
+
                     b.HasOne("Photography.Services.Notification.Domain.AggregatesModel.UserAggregate.User", "ToUser")
                         .WithMany("ReceivedEvents")
                         .HasForeignKey("ToUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Photography.Services.Notification.Domain.AggregatesModel.UserRelationAggregate.UserRelation", b =>
+                {
+                    b.HasOne("Photography.Services.Notification.Domain.AggregatesModel.UserAggregate.User", "FollowedUser")
+                        .WithMany("FollowedUsers")
+                        .HasForeignKey("FollowedUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Photography.Services.Notification.Domain.AggregatesModel.UserAggregate.User", "Follower")
+                        .WithMany("Followers")
+                        .HasForeignKey("FollowerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

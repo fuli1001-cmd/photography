@@ -1,4 +1,6 @@
 ﻿using Arise.DDD.API;
+using Arise.DDD.API.Paging;
+using Arise.DDD.API.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,14 +32,15 @@ namespace Photography.Services.Notification.API.Controllers
         /// <summary>
         /// 用户的事件
         /// </summary>
+        /// <param name="pagingParameters"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<EventViewModel>>> GetOrderAsync()
+        public async Task<ActionResult<PagedResponseWrapper>> GetUserReceivedEventsAsync([FromQuery] PagingParameters pagingParameters)
         {
-            var user = await _eventQueries.GetUserReceivedEventsAsync();
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(user));
+            var user = await _eventQueries.GetUserReceivedEventsAsync(pagingParameters);
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(user));
         }
     }
 }

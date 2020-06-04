@@ -18,7 +18,6 @@
     <None Remove="Application\Queries\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Arise.DDD.API" Version="1.0.2" />
     <PackageReference Include="Arise.DDD.Messages" Version="1.0.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />

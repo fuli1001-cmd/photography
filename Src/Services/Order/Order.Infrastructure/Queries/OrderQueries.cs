@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Arise.DDD.API.Paging;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -34,47 +35,49 @@ namespace Photography.Services.Order.Infrastructure.Queries
         {
             var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-            var orders = from o in _dbContext.Orders
+            var queryableOrders = from o in _dbContext.Orders
                          where o.Id == orderId && (o.User1Id == userId || o.User2Id == userId)
                          select o;
 
-            var orderViewModels = await GetOrderViewModelsAsync(orders, userId);
+            var queryableDto = GetOrderViewModels(queryableOrders, userId);
 
-            return GetFirstOrderViewModel(orderViewModels);
+            return GetFirstOrderViewModel(await queryableDto.ToListAsync());
         }
 
         public async Task<OrderViewModel> GetOrderByDealIdAsync(Guid dealId)
         {
             var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-            var orders = from o in _dbContext.Orders
+            var queryableOrders = from o in _dbContext.Orders
                          where o.DealId == dealId && (o.User1Id == userId || o.User2Id == userId)
                          select o;
 
-            var orderViewModels = await GetOrderViewModelsAsync(orders, userId);
+            var queryableDto = GetOrderViewModels(queryableOrders, userId);
 
-            return GetFirstOrderViewModel(orderViewModels);
+            return GetFirstOrderViewModel(await queryableDto.ToListAsync());
         }
 
-        public async Task<List<OrderViewModel>> GetOrdersAsync(IEnumerable<OrderStatus> orderStatus)
+        public async Task<PagedList<OrderViewModel>> GetOrdersAsync(IEnumerable<OrderStatus> orderStatus, PagingParameters pagingParameters)
         {
             var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-            var orders = from o in _dbContext.Orders
+            var queryableOrders = from o in _dbContext.Orders
                          where orderStatus.Contains(o.OrderStatus)
                          && (o.User1Id == userId || o.User2Id == userId)
                          select o;
 
-            var orderList = await GetOrderViewModelsAsync(orders, userId);
+            var queryableDto = GetOrderViewModels(queryableOrders, userId);
 
-            orderList.ForEach(o => o.SetAttachmentProperties(_logger));
+            var pagedDto = await PagedList<OrderViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
 
-            return orderList;
+            pagedDto.ForEach(o => o.SetAttachmentProperties(_logger));
+
+            return pagedDto;
         }
 
-        private async Task<List<OrderViewModel>> GetOrderViewModelsAsync(IQueryable<Domain.AggregatesModel.OrderAggregate.Order> orders, Guid userId)
+        private IQueryable<OrderViewModel> GetOrderViewModels(IQueryable<Domain.AggregatesModel.OrderAggregate.Order> orders, Guid userId)
         {
-            var orderViewModels = from o in orders
+            return from o in orders
                    select new OrderViewModel
                    {
                        Id = o.Id,
@@ -106,8 +109,6 @@ namespace Photography.Services.Order.Infrastructure.Queries
                                       UserType = u.UserType
                                   }).SingleOrDefault()
                    };
-
-            return await orderViewModels.ToListAsync();
         }
 
         private OrderViewModel GetFirstOrderViewModel(List<OrderViewModel> orderViewModels)

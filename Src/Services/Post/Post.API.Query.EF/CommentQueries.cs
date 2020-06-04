@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using Arise.DDD.API.Paging;
+using Arise.DDD.API.Response;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -31,62 +33,55 @@ namespace Photography.Services.Post.API.Query.EF
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<List<CommentViewModel>> GetPostCommentsAsync(Guid postId, int maxSubCommentsCount)
+        public async Task<PagedList<CommentViewModel>> GetPostCommentsAsync(Guid postId, int maxSubCommentsCount, PagingParameters pagingParameters)
         {
             var queryableComments = from c in _postContext.Comments
                                     where c.PostId == postId && c.ParentCommentId == null
                                     orderby c.CreatedTime descending
                                     select c;
 
-            return await GetSubCommentsViewModelAsync(queryableComments, maxSubCommentsCount);
+            var queryableDto = GetSubCommentsViewModelAsync(queryableComments, maxSubCommentsCount);
 
-            //var comments = await _postContext.Comments.Where(c => c.PostId != null && c.PostId == postId && c.ParentCommentId == null)
-            //    .Include(c => c.User)
-            //    .Include(c => c.SubComments)
-            //    .ThenInclude(sc => sc.User)
-            //    .OrderByDescending(c => c.CreatedTime)
-            //    .ToListAsync();
-
-            //return _mapper.Map<List<CommentViewModel>>(comments);
+            return await PagedList<CommentViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
         }
 
-        public async Task<List<CommentViewModel>> GetSubCommentsAsync(Guid commentId, int maxSubCommentsCount)
+        public async Task<PagedList<CommentViewModel>> GetSubCommentsAsync(Guid commentId, int maxSubCommentsCount, PagingParameters pagingParameters)
         {
             var queryableComments = from c in _postContext.Comments
                                     where c.ParentCommentId == commentId
                                     orderby c.CreatedTime
                                     select c;
 
-            return await GetSubCommentsViewModelAsync(queryableComments, maxSubCommentsCount);
+            var queryableDto = GetSubCommentsViewModelAsync(queryableComments, maxSubCommentsCount);
+
+            return await PagedList<CommentViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
         }
 
-        private async Task<List<CommentViewModel>> GetSubCommentsViewModelAsync(IQueryable<Comment> queryableComments, int maxSubCommentsCount)
+        private IQueryable<CommentViewModel> GetSubCommentsViewModelAsync(IQueryable<Comment> queryableComments, int maxSubCommentsCount)
         {
-            var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-            var commetnsViewModel = from c in queryableComments
-                                    select new CommentViewModel
-                                    {
-                                        Id = c.Id,
-                                        Text = c.Text,
-                                        Likes = c.Likes,
-                                        CreatedTime = c.CreatedTime,
-                                        SubCommentsCount = c.SubComments.Count,
-                                        SubComments = (from sc in c.SubComments
-                                                       orderby sc.CreatedTime
-                                                       select new CommentViewModel
-                                                       {
-                                                           Id = sc.Id,
-                                                           Text = sc.Text,
-                                                           User = new CommentUserViewModel { Id = sc.User.Id, Nickname = sc.User.Nickname }
-                                                       }).Take(maxSubCommentsCount),
-                                        Liked = (from ucr in _postContext.UserCommentRelations
-                                                 where ucr.UserId == userId && ucr.CommentId == c.Id
-                                                 select ucr.Id).Count() > 0,
-                                        User = new CommentUserViewModel { Id = c.User.Id, Nickname = c.User.Nickname, Avatar = c.User.Avatar }
-                                    };
-
-            return await commetnsViewModel.ToListAsync();
+            return from c in queryableComments
+                   select new CommentViewModel
+                   {
+                       Id = c.Id,
+                       Text = c.Text,
+                       Likes = c.Likes,
+                       CreatedTime = c.CreatedTime,
+                       SubCommentsCount = c.SubComments.Count,
+                       SubComments = (from sc in c.SubComments
+                                      orderby sc.CreatedTime
+                                      select new CommentViewModel
+                                      {
+                                          Id = sc.Id,
+                                          Text = sc.Text,
+                                          User = new CommentUserViewModel { Id = sc.User.Id, Nickname = sc.User.Nickname }
+                                      }).Take(maxSubCommentsCount),
+                       Liked = (from ucr in _postContext.UserCommentRelations
+                                where ucr.UserId == userId && ucr.CommentId == c.Id
+                                select ucr.Id).Count() > 0,
+                       User = new CommentUserViewModel { Id = c.User.Id, Nickname = c.User.Nickname, Avatar = c.User.Avatar }
+                   };
         }
     }
 }

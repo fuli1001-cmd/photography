@@ -1,4 +1,6 @@
 ﻿using Arise.DDD.API;
+using Arise.DDD.API.Paging;
+using Arise.DDD.API.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -70,27 +72,29 @@ namespace Photography.Services.Post.API.Controllers
         /// <summary>
         /// 获取我发出的约拍交易
         /// </summary>
+        /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
         [HttpGet]
         [Route("sent")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<AppointmentViewModel>>> GetSentAppointmentDealsAsync()
+        public async Task<ActionResult<PagedResponseWrapper>> GetSentAppointmentDealsAsync([FromQuery] PagingParameters pagingParameters)
         {
-            var deals = await _appointmentDealQueries.GetSentAppointmentDealsAsync();
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(deals));
+            var deals = await _appointmentDealQueries.GetSentAppointmentDealsAsync(pagingParameters);
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(deals));
         }
 
         /// <summary>
         /// 获取我收到的约拍交易
         /// </summary>
+        /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
         [HttpGet]
         [Route("received")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<AppointmentViewModel>>> GetReceivedAppointmentDealsAsync()
+        public async Task<ActionResult<PagedResponseWrapper>> GetReceivedAppointmentDealsAsync([FromQuery] PagingParameters pagingParameters)
         {
-            var deals = await _appointmentDealQueries.GetReceivedAppointmentDealsAsync();
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(deals));
+            var deals = await _appointmentDealQueries.GetReceivedAppointmentDealsAsync(pagingParameters);
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(deals));
         }
     }
 }

@@ -14,8 +14,8 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public string CityCode { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
-        public string LocationName { get; private set; }
-        public string Address { get; private set; }
+        public string LocationName { get; set; }
+        public string Address { get; set; }
         public AppointmentUserViewModel User { get; set; }
     }
 }

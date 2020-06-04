@@ -1,12 +1,16 @@
 ﻿using Arise.DDD.API;
+using Arise.DDD.API.Paging;
+using Arise.DDD.API.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Photography.Services.Post.API.Application.Commands.Comment.ReplyComment;
 using Photography.Services.Post.API.Application.Commands.Comment.ReplyPost;
 using Photography.Services.Post.API.Application.Commands.Comment.ToggleLikeComment;
+using Photography.Services.Post.API.Query;
 using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
 using System;
@@ -42,14 +46,15 @@ namespace Photography.Services.Post.API.Controllers
         /// </summary>
         /// <param name="postId">帖子id</param>
         /// <param name="maxSubCommentsCount">最多返回的子评论数量</param>
+        /// <param name="pagingParameters"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("post/{postId}/{maxSubCommentsCount}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<CommentViewModel>>> GetPostCommentsAsync(Guid postId, int maxSubCommentsCount)
+        public async Task<ActionResult<PagedResponseWrapper>> GetPostCommentsAsync(Guid postId, int maxSubCommentsCount, [FromQuery] PagingParameters pagingParameters)
         {
-            var comments = await _commentQueries.GetPostCommentsAsync(postId, maxSubCommentsCount);
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(comments));
+            var comments = await _commentQueries.GetPostCommentsAsync(postId, maxSubCommentsCount, pagingParameters);
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(comments));
         }
 
         /// <summary>
@@ -57,14 +62,15 @@ namespace Photography.Services.Post.API.Controllers
         /// </summary>
         /// <param name="commentId">评论id</param>
         /// <param name="maxSubCommentsCount">最多返回的子评论数量</param>
+        /// <param name="pagingParameters"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("comment/{commentId}/{maxSubCommentsCount}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<CommentViewModel>>> GetCommentCommentsAsync(Guid commentId, int maxSubCommentsCount)
+        public async Task<ActionResult<PagedResponseWrapper>> GetCommentCommentsAsync(Guid commentId, int maxSubCommentsCount, [FromQuery] PagingParameters pagingParameters)
         {
-            var comments = await _commentQueries.GetSubCommentsAsync(commentId, maxSubCommentsCount);
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(comments));
+            var comments = await _commentQueries.GetSubCommentsAsync(commentId, maxSubCommentsCount, pagingParameters);
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(comments));
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using Arise.DDD.API;
+using Arise.DDD.API.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

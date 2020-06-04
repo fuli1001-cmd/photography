@@ -1,4 +1,5 @@
 ﻿using Arise.DDD.API;
+using Arise.DDD.API.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

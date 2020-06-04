@@ -63,25 +63,25 @@
             <param name="dealId"></param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetWaitingForShootingOrdersAsync">
+        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetWaitingForShootingOrdersAsync(Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             获取待拍片订单列表
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetWaitingForUploadOriginalOrdersAsync">
+        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetWaitingForUploadOriginalOrdersAsync(Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             获取待上传原片和待选择原片订单列表
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetWaitingForUploadProcessedOrdersAsync">
+        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetWaitingForUploadProcessedOrdersAsync(Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             获取待出片和待验收订单列表
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetFinishedOrdersAsync">
+        <member name="M:Photography.Services.Order.API.Controllers.OrdersController.GetFinishedOrdersAsync(Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             获取已完成订单列表
             </summary>

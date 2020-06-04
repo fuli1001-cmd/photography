@@ -1,4 +1,5 @@
-﻿using Photography.Services.Post.API.Query.ViewModels;
+﻿using Arise.DDD.API.Paging;
+using Photography.Services.Post.API.Query.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,8 +9,8 @@ namespace Photography.Services.Post.API.Query.Interfaces
 {
     public interface ICommentQueries
     {
-        Task<List<CommentViewModel>> GetPostCommentsAsync(Guid postId, int subCommentsCount);
+        Task<PagedList<CommentViewModel>> GetPostCommentsAsync(Guid postId, int subCommentsCount, PagingParameters pagingParameters);
 
-        Task<List<CommentViewModel>> GetSubCommentsAsync(Guid commentId, int subCommentsCount);
+        Task<PagedList<CommentViewModel>> GetSubCommentsAsync(Guid commentId, int subCommentsCount, PagingParameters pagingParameters);
     }
 }

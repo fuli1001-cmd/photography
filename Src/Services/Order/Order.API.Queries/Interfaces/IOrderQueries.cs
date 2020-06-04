@@ -1,4 +1,5 @@
-﻿using Photography.Services.Order.API.Query.ViewModels;
+﻿using Arise.DDD.API.Paging;
+using Photography.Services.Order.API.Query.ViewModels;
 using Photography.Services.Order.Domain.AggregatesModel.OrderAggregate;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace Photography.Services.Order.API.Query.Interfaces
 {
     public interface IOrderQueries
     {
-        Task<List<OrderViewModel>> GetOrdersAsync(IEnumerable<OrderStatus> orderStatus);
+        Task<PagedList<OrderViewModel>> GetOrdersAsync(IEnumerable<OrderStatus> orderStatus, PagingParameters pagingParameters);
 
         Task<OrderViewModel> GetOrderAsync(Guid orderId);
 

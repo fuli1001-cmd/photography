@@ -1,4 +1,5 @@
-﻿using Arise.DDD.Domain.Exceptions;
+﻿using Arise.DDD.API.Paging;
+using Arise.DDD.Domain.Exceptions;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using Photography.Services.Post.API.Query.Extensions;
 using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
+using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
 using Photography.Services.Post.Infrastructure;
 using System;
 using System.Collections.Generic;
@@ -35,26 +37,22 @@ namespace Photography.Services.Post.API.Query.EF
         // 获取约拍广场的约拍列表
         // 返回与当前用户不同类型的用户发的约拍
         // 以及当前用户发的约拍
-        public async Task<List<AppointmentViewModel>> GetAppointmentsAsync(PayerType? payerType, double? appointmentSeconds)
+        public async Task<PagedList<AppointmentViewModel>> GetAppointmentsAsync(PayerType? payerType, double? appointmentSeconds, PagingParameters pagingParameters)
         {
-            var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-            var curUserType = _postContext.Users.SingleOrDefault(u => u.Id == userId)?.UserType ?? throw new DomainException("当前用户类型不确定。");
+            var curUserType = _postContext.Users.SingleOrDefault(u => u.Id == myId)?.UserType ?? throw new DomainException("当前用户类型不确定。");
 
-            // 与当前用户不同类型的用户所发的约拍
-            var posts = from p in _postContext.Posts
-                        join u in _postContext.Users on p.UserId equals u.Id
-                        where u.UserType != curUserType && p.PostType == PostType.Appointment
-                        select p;
-
-            // 当前用户发的约拍
-            var myPosts = _postContext.Posts.Where(p => p.UserId == userId && p.PostType == PostType.Appointment);
-
-            posts = posts.Union(myPosts);
+            // 与当前用户不同类型的用户所发的约拍及当前用户发的约拍
+            var queryableUserPosts = from p in _postContext.Posts
+                                 join u in _postContext.Users on p.UserId equals u.Id
+                                 where p.PostType == PostType.Appointment && (u.UserType != curUserType || p.UserId == myId)
+                                 orderby p.CreatedTime descending
+                                 select new UserPost { Post = p, User = u };
 
             // 筛选支付方类型
             if (payerType != null)
-                posts = posts.Where(p => p.PayerType == payerType);
+                queryableUserPosts = queryableUserPosts.Where(up => up.Post.PayerType == payerType);
 
             // 筛选指定日期当天的约拍
             if (appointmentSeconds != null)
@@ -63,32 +61,78 @@ namespace Photography.Services.Post.API.Query.EF
                 var date = DateTime.UnixEpoch.AddSeconds(appointmentSeconds.Value);
                 var startSeconds = (new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, 0) - epoch).TotalSeconds;
                 var endSeconds = (new DateTime(date.Year, date.Month, date.Day, 23, 59, 59, 999) - epoch).TotalSeconds;
-                posts = posts.Where(p => p.AppointedTime != null && p.AppointedTime.Value >= startSeconds && p.AppointedTime.Value <= endSeconds);
+                queryableUserPosts = queryableUserPosts.Where(up => up.Post.AppointedTime != null && up.Post.AppointedTime.Value >= startSeconds && up.Post.AppointedTime.Value <= endSeconds);
             }
 
-            posts = GetPostsWithNavigationPropertiesAsync(posts);
-            var appointments = _mapper.Map<List<AppointmentViewModel>>(await posts.OrderByDescending(p => p.CreatedTime).ToListAsync());
-            // 设置附件属性：宽、高、视频缩略图
-            appointments.ForEach(a => a.SetAttachmentProperties(_logger));
-            return appointments;
+            var queryableDto = GetQueryableAppointmentViewModels(queryableUserPosts);
+
+            return await GetPagedAppointmentViewModelsAsync(queryableDto, pagingParameters);
         }
 
-        public async Task<List<AppointmentViewModel>> GetMyAppointmentsAsync()
+        public async Task<PagedList<AppointmentViewModel>> GetMyAppointmentsAsync(PagingParameters pagingParameters)
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var posts = _postContext.Posts.Where(p => p.UserId.ToString() == userId && p.PostType == PostType.Appointment);
-            posts = GetPostsWithNavigationPropertiesAsync(posts);
-            var appointments = _mapper.Map<List<AppointmentViewModel>>(await posts.OrderByDescending(p => p.CreatedTime).ToListAsync());
-            // 设置附件属性：宽、高、视频缩略图
-            appointments.ForEach(a => a.SetAttachmentProperties(_logger));
-            return appointments;
+            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            var queryableUserPosts = from p in _postContext.Posts
+                                     join u in _postContext.Users on p.UserId equals u.Id
+                                     where p.PostType == PostType.Appointment && p.UserId == myId
+                                     orderby p.CreatedTime descending
+                                     select new UserPost { Post = p, User = u };
+
+            var queryableDto = GetQueryableAppointmentViewModels(queryableUserPosts);
+
+            return await GetPagedAppointmentViewModelsAsync(queryableDto, pagingParameters);
         }
 
-        private IQueryable<Domain.AggregatesModel.PostAggregate.Post> GetPostsWithNavigationPropertiesAsync(IQueryable<Domain.AggregatesModel.PostAggregate.Post> query)
+        private IQueryable<AppointmentViewModel> GetQueryableAppointmentViewModels(IQueryable<UserPost> queryableUserPosts)
         {
-            return query
-                .Include(p => p.User)
-                .Include(p => p.PostAttachments);
+            return from up in queryableUserPosts
+                   select new AppointmentViewModel
+                   {
+                       Id = up.Post.Id,
+                       Text = up.Post.Text,
+                       CreatedTime = up.Post.CreatedTime,
+                       AppointedTime = up.Post.AppointedTime.Value,
+                       Price = up.Post.Price ?? 0,
+                       PayerType = up.Post.PayerType.Value,
+                       CityCode = up.Post.CityCode,
+                       Latitude = up.Post.Latitude.Value,
+                       Longitude = up.Post.Longitude.Value,
+                       LocationName = up.Post.LocationName,
+                       Address = up.Post.Address,
+                       User = new AppointmentUserViewModel
+                       {
+                           Id = up.User.Id,
+                           Nickname = up.User.Nickname,
+                           Avatar = up.User.Avatar,
+                           UserType = up.User.UserType,
+                           Score = up.User.Score
+                       },
+                       PostAttachments = from a in up.Post.PostAttachments
+                                         select new PostAttachmentViewModel
+                                         {
+                                             Id = a.Id,
+                                             Name = a.Name,
+                                             Text = a.Text,
+                                             AttachmentType = a.AttachmentType
+                                         }
+                   };
+        }
+
+        private async Task<PagedList<AppointmentViewModel>> GetPagedAppointmentViewModelsAsync(IQueryable<AppointmentViewModel> queryableDto, PagingParameters pagingParameters)
+        {
+            var pagedDto = await PagedList<AppointmentViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
+
+            // 设置附件属性：宽、高、视频缩略图
+            pagedDto.ForEach(a => a.SetAttachmentProperties(_logger));
+
+            return pagedDto;
+        }
+
+        class UserPost
+        {
+            public Domain.AggregatesModel.PostAggregate.Post Post { get; set; }
+            public User User { get; set; }
         }
     }
 }

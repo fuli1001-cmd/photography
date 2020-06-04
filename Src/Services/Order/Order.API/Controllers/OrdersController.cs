@@ -1,4 +1,6 @@
 ﻿using Arise.DDD.API;
+using Arise.DDD.API.Paging;
+using Arise.DDD.API.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -73,28 +75,30 @@ namespace Photography.Services.Order.API.Controllers
         /// <summary>
         /// 获取待拍片订单列表
         /// </summary>
+        /// <param name="pagingParameters"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("waitingforshooting")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<OrderViewModel>>> GetWaitingForShootingOrdersAsync()
+        public async Task<ActionResult<PagedResponseWrapper>> GetWaitingForShootingOrdersAsync([FromQuery] PagingParameters pagingParameters)
         {
-            var orders = await _orderQueries.GetOrdersAsync(new List<OrderStatus> { OrderStatus.WaitingForShooting });
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(orders));
+            var orders = await _orderQueries.GetOrdersAsync(new List<OrderStatus> { OrderStatus.WaitingForShooting }, pagingParameters);
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(orders));
         }
 
         /// <summary>
         /// 获取待上传原片和待选择原片订单列表
         /// </summary>
+        /// <param name="pagingParameters"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("waitingforuploadandselectoriginal")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<OrderViewModel>>> GetWaitingForUploadOriginalOrdersAsync()
+        public async Task<ActionResult<PagedResponseWrapper>> GetWaitingForUploadOriginalOrdersAsync([FromQuery] PagingParameters pagingParameters)
         {
             var status = new List<OrderStatus> { OrderStatus.WaitingForUploadOriginal, OrderStatus.WaitingForSelection };
-            var orders = await _orderQueries.GetOrdersAsync(status);
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(orders));
+            var orders = await _orderQueries.GetOrdersAsync(status, pagingParameters);
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(orders));
         }
 
         ///// <summary>
@@ -126,15 +130,16 @@ namespace Photography.Services.Order.API.Controllers
         /// <summary>
         /// 获取待出片和待验收订单列表
         /// </summary>
+        /// <param name="pagingParameters"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("waitingforuploadandcheckprocessed")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<OrderViewModel>>> GetWaitingForUploadProcessedOrdersAsync()
+        public async Task<ActionResult<PagedResponseWrapper>> GetWaitingForUploadProcessedOrdersAsync([FromQuery] PagingParameters pagingParameters)
         {
             var status = new List<OrderStatus> { OrderStatus.WaitingForUploadProcessed, OrderStatus.WaitingForCheck };
-            var orders = await _orderQueries.GetOrdersAsync(status);
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(orders));
+            var orders = await _orderQueries.GetOrdersAsync(status, pagingParameters);
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(orders));
         }
 
         ///// <summary>
@@ -166,15 +171,16 @@ namespace Photography.Services.Order.API.Controllers
         /// <summary>
         /// 获取已完成订单列表
         /// </summary>
+        /// <param name="pagingParameters"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("finished")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<OrderViewModel>>> GetFinishedOrdersAsync()
+        public async Task<ActionResult<PagedResponseWrapper>> GetFinishedOrdersAsync([FromQuery] PagingParameters pagingParameters)
         {
             var status = new List<OrderStatus> { OrderStatus.Finished, OrderStatus.Canceled, OrderStatus.Rejected };
-            var orders = await _orderQueries.GetOrdersAsync(status);
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(orders));
+            var orders = await _orderQueries.GetOrdersAsync(status, pagingParameters);
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(orders));
         }
 
         /// <summary>

@@ -1,10 +1,13 @@
-﻿using AutoMapper;
+﻿using Arise.DDD.API.Paging;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Photography.Services.Post.API.Query.Extensions;
 using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
+using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
 using Photography.Services.Post.Infrastructure;
 using System;
 using System.Collections.Generic;
@@ -30,22 +33,24 @@ namespace Photography.Services.Post.API.Query.EF
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<List<AppointmentViewModel>> GetReceivedAppointmentDealsAsync()
+        public async Task<PagedList<AppointmentViewModel>> GetReceivedAppointmentDealsAsync(PagingParameters pagingParameters)
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-            var deals = await _postContext.Posts
-                .Where(p => p.AppointmentedUserId.ToString() == userId && p.PostType == PostType.AppointmentDeal && p.AppointmentDealStatus == AppointmentDealStatus.Created)
-                .OrderBy(p => p.AppointedTime)
-                .Include(p => p.PostAttachments)
-                .Include(p => p.User)
-                .ToListAsync();
+            var queryableUserPosts = from p in _postContext.Posts
+                                     join u in _postContext.Users 
+                                     on p.UserId equals u.Id
+                                     where p.AppointmentedUserId == myId && p.PostType == PostType.AppointmentDeal && p.AppointmentDealStatus == AppointmentDealStatus.Created
+                                     orderby p.AppointedTime
+                                     select new UserPost { Post = p, User = u };
 
-            var vms = _mapper.Map<List<AppointmentViewModel>>(deals);
+            var queryableDto = GetQueryableAppointmentViewModels(queryableUserPosts);
+
+            var pagedDto = await GetPagedAppointmentViewModelsAsync(queryableDto, pagingParameters);
 
             // 设置付款方，由于这里查询的是收到的约拍交易，支付视角相对于发出的约拍交易是反的,
             // 而约拍交易是由交易发出人创建的，所以支付方需要对调一下。
-            vms.ForEach(vm =>
+            pagedDto.ForEach(vm =>
             {
                 if (vm.PayerType == PayerType.Me)
                     vm.PayerType = PayerType.You;
@@ -53,35 +58,120 @@ namespace Photography.Services.Post.API.Query.EF
                     vm.PayerType = PayerType.Me;
             });
 
-            return vms;
+            return pagedDto;
+
+            //var deals = await _postContext.Posts
+            //    .Where(p => p.AppointmentedUserId == myId && p.PostType == PostType.AppointmentDeal && p.AppointmentDealStatus == AppointmentDealStatus.Created)
+            //    .OrderBy(p => p.AppointedTime)
+            //    .Include(p => p.PostAttachments)
+            //    .Include(p => p.User)
+            //    .ToListAsync();
+
+            //var vms = _mapper.Map<List<AppointmentViewModel>>(deals);
+
+            //// 设置付款方，由于这里查询的是收到的约拍交易，支付视角相对于发出的约拍交易是反的,
+            //// 而约拍交易是由交易发出人创建的，所以支付方需要对调一下。
+            //vms.ForEach(vm =>
+            //{
+            //    if (vm.PayerType == PayerType.Me)
+            //        vm.PayerType = PayerType.You;
+            //    else if (vm.PayerType == PayerType.You)
+            //        vm.PayerType = PayerType.Me;
+            //});
+
+            //return vms;
         }
 
-        public async Task<List<AppointmentViewModel>> GetSentAppointmentDealsAsync()
+        public async Task<PagedList<AppointmentViewModel>> GetSentAppointmentDealsAsync(PagingParameters pagingParameters)
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-            var deals = await _postContext.Posts
-                .Where(p => p.UserId.ToString() == userId && p.PostType == PostType.AppointmentDeal && p.AppointmentDealStatus == AppointmentDealStatus.Created)
-                .OrderBy(p => p.AppointedTime)
-                .Include(p => p.PostAttachments)
-                .Include(p => p.AppointmentedUser)
-                .ToListAsync();
+            var queryableUserPosts = from p in _postContext.Posts
+                                     join u in _postContext.Users
+                                     on p.AppointmentedUserId equals u.Id
+                                     where p.UserId == myId && p.PostType == PostType.AppointmentDeal && p.AppointmentDealStatus == AppointmentDealStatus.Created
+                                     orderby p.AppointedTime
+                                     select new UserPost { Post = p, User = u };
 
-            var dealsViewModel = _mapper.Map<List<AppointmentViewModel>>(deals);
-            dealsViewModel.ForEach(dvm =>
-            {
-                var deal = deals.FirstOrDefault(d => d.Id == dvm.Id);
-                dvm.User = new AppointmentUserViewModel
-                {
-                    Id = deal.AppointmentedUser.Id,
-                    Nickname = deal.AppointmentedUser.Nickname,
-                    Avatar = deal.AppointmentedUser.Avatar,
-                    UserType = deal.AppointmentedUser.UserType,
-                    Score = deal.AppointmentedUser.Score
-                };
-            });
+            var queryableDto = GetQueryableAppointmentViewModels(queryableUserPosts);
 
-            return dealsViewModel;
+            var pagedDto = await GetPagedAppointmentViewModelsAsync(queryableDto, pagingParameters);
+
+            return pagedDto;
+
+            //var deals = await _postContext.Posts
+            //    .Where(p => p.UserId == myId && p.PostType == PostType.AppointmentDeal && p.AppointmentDealStatus == AppointmentDealStatus.Created)
+            //    .OrderBy(p => p.AppointedTime)
+            //    .Include(p => p.PostAttachments)
+            //    .Include(p => p.AppointmentedUser)
+            //    .ToListAsync();
+
+            //var dealsViewModel = _mapper.Map<List<AppointmentViewModel>>(deals);
+            //dealsViewModel.ForEach(dvm =>
+            //{
+            //    var deal = deals.FirstOrDefault(d => d.Id == dvm.Id);
+            //    dvm.User = new AppointmentUserViewModel
+            //    {
+            //        Id = deal.AppointmentedUser.Id,
+            //        Nickname = deal.AppointmentedUser.Nickname,
+            //        Avatar = deal.AppointmentedUser.Avatar,
+            //        UserType = deal.AppointmentedUser.UserType,
+            //        Score = deal.AppointmentedUser.Score
+            //    };
+            //});
+
+            //return dealsViewModel;
+        }
+
+        private IQueryable<AppointmentViewModel> GetQueryableAppointmentViewModels(IQueryable<UserPost> queryableUserPosts)
+        {
+            return from up in queryableUserPosts
+                   select new AppointmentViewModel
+                   {
+                       Id = up.Post.Id,
+                       Text = up.Post.Text,
+                       CreatedTime = up.Post.CreatedTime,
+                       AppointedTime = up.Post.AppointedTime.Value,
+                       Price = up.Post.Price ?? 0,
+                       PayerType = up.Post.PayerType.Value,
+                       CityCode = up.Post.CityCode,
+                       Latitude = up.Post.Latitude.Value,
+                       Longitude = up.Post.Longitude.Value,
+                       LocationName = up.Post.LocationName,
+                       Address = up.Post.Address,
+                       User = new AppointmentUserViewModel
+                       {
+                           Id = up.User.Id,
+                           Nickname = up.User.Nickname,
+                           Avatar = up.User.Avatar,
+                           UserType = up.User.UserType,
+                           Score = up.User.Score
+                       },
+                       PostAttachments = from a in up.Post.PostAttachments
+                                         select new PostAttachmentViewModel
+                                         {
+                                             Id = a.Id,
+                                             Name = a.Name,
+                                             Text = a.Text,
+                                             AttachmentType = a.AttachmentType
+                                         }
+                   };
+        }
+
+        private async Task<PagedList<AppointmentViewModel>> GetPagedAppointmentViewModelsAsync(IQueryable<AppointmentViewModel> queryableDto, PagingParameters pagingParameters)
+        {
+            var pagedDto = await PagedList<AppointmentViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
+
+            // 设置附件属性：宽、高、视频缩略图
+            pagedDto.ForEach(a => a.SetAttachmentProperties(_logger));
+
+            return pagedDto;
+        }
+
+        class UserPost
+        {
+            public Domain.AggregatesModel.PostAggregate.Post Post { get; set; }
+            public User User { get; set; }
         }
     }
 }
