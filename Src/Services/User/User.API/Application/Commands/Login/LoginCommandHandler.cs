@@ -109,10 +109,11 @@ namespace Photography.Services.User.API.Application.Commands.Login
                     password = loginCommand.Password,
                     registrationId = loginCommand.RegistrationId
                 };
+                _logger.LogInformation("*************chatServerUser: {@chatServerUser}", chatServerUser);
                 string json = SerializeUtil.SerializeToJson(chatServerUser);
                 var bytes = SerializeUtil.SerializeStringToBytes(json, true);
                 json = JsonConvert.SerializeObject(bytes);
-                _logger.LogInformation("*************json 1: {json1}*************", json);
+                _logger.LogInformation("*************json 1: {json1}", json);
                 await _redisService.SetAsync(user.ChatServerUserId.ToString(), json);
             }
             catch (Exception ex)
@@ -135,9 +136,10 @@ namespace Photography.Services.User.API.Application.Commands.Login
                     clientType = loginCommand.ClientType,
                     loginTime = CommonUtil.GetTimestamp(DateTime.Now)
                 };
+                _logger.LogInformation("*************tokenUser: {@tokenUser}", token);
                 var bytes = SerializeUtil.SerializeToJsonBytes(token, true);
                 var json = JsonConvert.SerializeObject(bytes);
-                _logger.LogInformation("*************json 2: {json2}*************", json);
+                _logger.LogInformation("*************json 2: {json2}", json);
                 await _redisService.SetAsync(oldToken, json);
             }
             catch (Exception ex)

@@ -33,31 +33,31 @@ namespace Photography.Services.Notification.Infrastructure.Queries
             var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
 
             var queryableDto = from e in _dbContext.Events
-                                   join u in _dbContext.Users
-                                   on e.FromUserId equals u.Id
-                                   where e.ToUserId == myId
-                                   select new EventViewModel
+                               join u in _dbContext.Users
+                               on e.FromUserId equals u.Id
+                               where e.ToUserId == myId
+                               select new EventViewModel
+                               {
+                                   FromUser = new UserViewModel
                                    {
-                                       FromUser = new UserViewModel
-                                       {
-                                           Id = u.Id,
-                                           Nickname = u.Nickname,
-                                           Avatar = u.Avatar
-                                       },
-                                       EventType = e.EventType,
-                                       Image = (from p in _dbContext.Posts
-                                                where p.Id == e.PostId
-                                                select p.Image)
-                                               .SingleOrDefault(),
-                                       CreatedTime = e.CreatedTime,
-                                       PostId = e.PostId,
-                                       CommentId = e.CommentId,
-                                       CommentText = e.CommentText,
+                                       Id = u.Id,
+                                       Nickname = u.Nickname,
+                                       Avatar = u.Avatar,
                                        Followed = (from ur in _dbContext.UserRelations
                                                    where ur.FollowerId == myId && ur.FollowedUserId == u.Id
                                                    select ur.Id)
-                                                   .Any()
-                                   };
+                                                  .Any()
+                                   },
+                                   EventType = e.EventType,
+                                   Image = (from p in _dbContext.Posts
+                                            where p.Id == e.PostId
+                                            select p.Image)
+                                           .SingleOrDefault(),
+                                   CreatedTime = e.CreatedTime,
+                                   PostId = e.PostId,
+                                   CommentId = e.CommentId,
+                                   CommentText = e.CommentText
+                               };
 
             return await PagedList<EventViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
         }

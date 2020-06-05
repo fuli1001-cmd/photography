@@ -4,6 +4,13 @@
         <name>ApiGwBase</name>
     </assembly>
     <members>
+        <member name="M:Photography.ApiGateways.ApiGwBase.Controllers.LoginController.GetVerifyCode(Photography.ApiGateways.ApiGwBase.Dtos.SendVerifyCodeDto)">
+            <summary>
+            获取验证码
+            </summary>
+            <param name="sendVerifyCodeDto"></param>
+            <returns></returns>
+        </member>
         <member name="M:Photography.ApiGateways.ApiGwBase.Controllers.LoginController.LoginWithPhoneAsync(Photography.ApiGateways.ApiGwBase.Dtos.LoginPhoneDto)">
             <summary>
             电话登录
@@ -50,6 +57,16 @@
         <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.FileServerPort">
             <summary>
             文件服务器端口
+            </summary>
+        </member>
+        <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.ChatFileServer">
+            <summary>
+            聊天文件服务器地址
+            </summary>
+        </member>
+        <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.ChatFileServerPort">
+            <summary>
+            聊天文件服务器端口
             </summary>
         </member>
         <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.AgoraAppId">

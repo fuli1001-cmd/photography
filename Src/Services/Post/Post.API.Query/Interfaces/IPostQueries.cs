@@ -10,12 +10,12 @@ namespace Photography.Services.Post.API.Query.Interfaces
     {
         Task<PagedList<PostViewModel>> GetUserPostsAsync(Guid userId, PagingParameters pagingParameters);
         Task<PagedList<PostViewModel>> GetLikedPostsAsync(PagingParameters pagingParameters);
-        Task<List<PostViewModel>> GetHotPostsAsync();
-        Task<List<PostViewModel>> GetFollowedPostsAsync();
-        Task<List<PostViewModel>> GetSameCityPostsAsync(string cityCode);
+        Task<PagedList<PostViewModel>> GetHotPostsAsync(PagingParameters pagingParameters);
+        Task<PagedList<PostViewModel>> GetFollowedPostsAsync(PagingParameters pagingParameters);
+        Task<PagedList<PostViewModel>> GetSameCityPostsAsync(string cityCode, PagingParameters pagingParameters);
 
         Task<PostViewModel> GetPostAsync(Guid postId);
 
-        Task<List<PostViewModel>> SearchPosts(string key, string cityCode);
+        Task<PagedList<PostViewModel>> SearchPosts(string key, string cityCode, PagingParameters pagingParameters);
     }
 }

@@ -282,7 +282,7 @@
             </summary>
             <param name="postId">帖子id</param>
             <param name="maxSubCommentsCount">最多返回的子评论数量</param>
-            <param name="pagingParameters"></param>
+            <param name="pagingParameters">分页参数</param>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.Post.API.Controllers.CommentsController.GetCommentCommentsAsync(System.Guid,System.Int32,Arise.DDD.API.Paging.PagingParameters)">
@@ -291,7 +291,7 @@
             </summary>
             <param name="commentId">评论id</param>
             <param name="maxSubCommentsCount">最多返回的子评论数量</param>
-            <param name="pagingParameters"></param>
+            <param name="pagingParameters">分页参数</param>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.Post.API.Controllers.CommentsController.ReplyPostAsync(Photography.Services.Post.API.Application.Commands.Comment.ReplyPost.ReplyPostCommand)">
@@ -313,31 +313,35 @@
             帖子控制器
             </summary>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.SearchPostsAsync(System.String)">
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.SearchPostsAsync(System.String,Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             帖子列表
             </summary>
             <param name="key">搜索的关键字，根据用户昵称和帖子文本内容搜索帖子</param>
+            <param name="pagingParameters">分页参数</param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetHotPostsAsync">
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetHotPostsAsync(Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             获取热门帖子列表
             </summary>
+            <param name="pagingParameters">分页参数</param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetFollowedPostsAsync">
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetFollowedPostsAsync(Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             获取关注用户的帖子列表
             </summary>
+            <param name="pagingParameters">分页参数</param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetSameCityPostsAsync(System.String,System.String)">
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetSameCityPostsAsync(System.String,System.String,Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             获取同城帖子列表
             </summary>
             <param name="cityCode">城市代码</param>
             <param name="key">搜索的关键字，根据用户昵称和帖子文本内容搜索帖子</param>
+            <param name="pagingParameters">分页参数</param>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetMyPostsAsync(System.Guid,Arise.DDD.API.Paging.PagingParameters)">
@@ -345,14 +349,14 @@
             用户的帖子
             </summary>
             <param name="userId">用户id</param>
-            <param name="pagingParameters"></param>
+            <param name="pagingParameters">分页参数</param>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetLikedPostsAsync(Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             我赞过的帖子
             </summary>
-            <param name="pagingParameters"></param>
+            <param name="pagingParameters">分页参数</param>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetPostAsync(System.Guid)">

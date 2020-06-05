@@ -13,8 +13,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using Photography.ApiGateways.ApiGwBase.Redis;
 using Photography.ApiGateways.ApiGwBase.Services;
 using Photography.ApiGateways.ApiGwBase.Settings;
+using Photography.ApiGateways.ApiGwBase.Sms;
 
 namespace Photography.ApiGateways.ApiGwBase
 {
@@ -43,6 +45,11 @@ namespace Photography.ApiGateways.ApiGwBase
 
             services.Configure<ServerSettings>(Configuration.GetSection("ServerSettings"));
             services.Configure<ServiceSettings>(Configuration.GetSection("ServiceSettings"));
+            services.Configure<RedisSettings>(Configuration.GetSection("RedisSettings"));
+            services.Configure<SmsSettings>(Configuration.GetSection("SmsSettings"));
+
+            services.AddTransient(typeof(IRedisService), typeof(RedisService));
+            services.AddTransient(typeof(ISmsService), typeof(AliSmsService));
 
             services.AddControllers();
 

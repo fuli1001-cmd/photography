@@ -46,7 +46,7 @@ namespace Photography.Services.Post.API.Controllers
         /// </summary>
         /// <param name="postId">帖子id</param>
         /// <param name="maxSubCommentsCount">最多返回的子评论数量</param>
-        /// <param name="pagingParameters"></param>
+        /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
         [HttpGet]
         [Route("post/{postId}/{maxSubCommentsCount}")]
@@ -62,7 +62,7 @@ namespace Photography.Services.Post.API.Controllers
         /// </summary>
         /// <param name="commentId">评论id</param>
         /// <param name="maxSubCommentsCount">最多返回的子评论数量</param>
-        /// <param name="pagingParameters"></param>
+        /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
         [HttpGet]
         [Route("comment/{commentId}/{maxSubCommentsCount}")]

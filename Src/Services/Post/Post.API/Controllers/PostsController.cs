@@ -48,45 +48,48 @@ namespace Photography.Services.Post.API.Controllers
         /// 帖子列表
         /// </summary>
         /// <param name="key">搜索的关键字，根据用户昵称和帖子文本内容搜索帖子</param>
+        /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
         [HttpGet]
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<PostViewModel>>> SearchPostsAsync([FromQuery(Name = "key")] string key)
+        public async Task<ActionResult<PagedResponseWrapper>> SearchPostsAsync([FromQuery(Name = "key")] string key, [FromQuery] PagingParameters pagingParameters)
         {
-            var posts = await _postQueries.SearchPosts(key, null);
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
+            var posts = await _postQueries.SearchPosts(key, null, pagingParameters);
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
         }
 
         /// <summary>
         /// 获取热门帖子列表
         /// </summary>
+        /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
         [HttpGet]
         [Route("hot")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<PostViewModel>>> GetHotPostsAsync()
+        public async Task<ActionResult<PagedResponseWrapper>> GetHotPostsAsync([FromQuery] PagingParameters pagingParameters)
         {
             //_logger.LogInformation("-----UserId: {UserId}-----", User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             //_logger.LogInformation("-----UserName: {UserName}-----", User.FindFirst(ClaimTypes.Name)?.Value);
             //_logger.LogInformation("-----Authed: {Authed}-----", User.Identity.IsAuthenticated);
             //_logger.LogInformation("-----AuthType: {AuthType}-----", User.Identity.AuthenticationType);
-            var posts = await _postQueries.GetHotPostsAsync();
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
+            var posts = await _postQueries.GetHotPostsAsync(pagingParameters);
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
         }
 
         /// <summary>
         /// 获取关注用户的帖子列表
         /// </summary>
+        /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
         [HttpGet]
         [Route("followed")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<PostViewModel>>> GetFollowedPostsAsync()
+        public async Task<ActionResult<PagedResponseWrapper>> GetFollowedPostsAsync([FromQuery] PagingParameters pagingParameters)
         {
-            var posts = await _postQueries.GetFollowedPostsAsync();
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
+            var posts = await _postQueries.GetFollowedPostsAsync(pagingParameters);
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
         }
 
         /// <summary>
@@ -94,28 +97,32 @@ namespace Photography.Services.Post.API.Controllers
         /// </summary>
         /// <param name="cityCode">城市代码</param>
         /// <param name="key">搜索的关键字，根据用户昵称和帖子文本内容搜索帖子</param>
+        /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
         [HttpGet]
         [Route("samecity/{cityCode}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<PostViewModel>>> GetSameCityPostsAsync(string cityCode, [FromQuery(Name = "key")] string key)
+        public async Task<ActionResult<PagedResponseWrapper>> GetSameCityPostsAsync(string cityCode, [FromQuery(Name = "key")] string key, [FromQuery] PagingParameters pagingParameters)
         {
-            List<PostViewModel> posts = null;
+            _logger.LogInformation("***********key: {key}", key);
+            _logger.LogInformation("***********pagingParameters: {@pagingParameters}", pagingParameters);
 
-            if (string.IsNullOrEmpty(key))
-                posts = await _postQueries.GetSameCityPostsAsync(cityCode);
+            PagedList<PostViewModel> posts = null;
+
+            if (string.IsNullOrWhiteSpace(key))
+                posts = await _postQueries.GetSameCityPostsAsync(cityCode, pagingParameters);
             else
-                posts = await _postQueries.SearchPosts(key, cityCode);
+                posts = await _postQueries.SearchPosts(key, cityCode, pagingParameters);
 
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
         }
 
         /// <summary>
         /// 用户的帖子
         /// </summary>
         /// <param name="userId">用户id</param>
-        /// <param name="pagingParameters"></param>
+        /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
         [HttpGet]
         [Route("user/{userId}")]
@@ -129,7 +136,7 @@ namespace Photography.Services.Post.API.Controllers
         /// <summary>
         /// 我赞过的帖子
         /// </summary>
-        /// <param name="pagingParameters"></param>
+        /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
         [HttpGet]
         [Route("likes")]
