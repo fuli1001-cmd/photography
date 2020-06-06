@@ -41,8 +41,7 @@ namespace Photography.Services.Notification.API
                 {
                     var endpointConfiguration = new EndpointConfiguration("notificationapi");
                     var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
-                    transport.ConnectionString("host=rabbitmq");
-                    //transport.ConnectionString("host=192.168.99.100");
+                    transport.ConnectionString(hostBuilderContext.Configuration.GetConnectionString("RabbitMQ"));
                     transport.UseConventionalRoutingTopology();
                     endpointConfiguration.EnableInstallers();
 
