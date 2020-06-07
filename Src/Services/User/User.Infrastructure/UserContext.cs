@@ -3,6 +3,7 @@ using Arise.DDD.Infrastructure.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Photography.Services.User.Domain.AggregatesModel.GroupAggregate;
 using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
 using Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate;
 using Photography.Services.User.Infrastructure.EntityConfigurations;
@@ -19,6 +20,7 @@ namespace Photography.Services.User.Infrastructure
     {
         public DbSet<Domain.AggregatesModel.UserAggregate.User> Users { get; set; }
         public DbSet<UserRelation> UserRelations { get; set; }
+        public DbSet<Group> Groups { get; set; }
 
         private readonly IMediator _mediator;
         private IDbContextTransaction _currentTransaction;
@@ -38,6 +40,7 @@ namespace Photography.Services.User.Infrastructure
         {
             modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new UserRelationEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new GroupEntityTypeConfiguration());
         }
 
         public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default(CancellationToken))

@@ -1,4 +1,5 @@
 ﻿using Arise.DDD.Domain.SeedWork;
+using Photography.Services.User.Domain.AggregatesModel.GroupAggregate;
 using Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate;
 using System;
 using System.Collections.Generic;
@@ -51,6 +52,10 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
 
         public List<UserRelation> Followers { get; private set; }
         public List<UserRelation> FollowedUsers { get; private set; }
+
+        // 用户作为群主的群
+        private readonly List<Group> _groups = null;
+        public IReadOnlyCollection<Group> Groups => _groups;
 
         public User()
         {
