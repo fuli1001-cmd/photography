@@ -1,0 +1,45 @@
+version: '3.4'
+
+services:
+  apigwbase:
+    image: fuli1001/photography-apigwbase:win
+    build:
+      context: .
+      dockerfile: Src/ApiGateways/ApiGwBase/Dockerfile.win
+    networks:
+      - photonetwork
+
+  userapi:
+    image: fuli1001/photography-userapi:win
+    build:
+      context: .
+      dockerfile: Src/Services/User/User.API/Dockerfile.win
+    networks:
+      - photonetwork
+
+  postapi:
+    image: fuli1001/photography-postapi:win
+    build:
+      context: .
+      dockerfile: Src/Services/Post/Post.API/Dockerfile.win
+    networks:
+      - photonetwork
+
+  orderapi:
+    image: fuli1001/photography-orderapi:win
+    build:
+      context: .
+      dockerfile: Src/Services/Order/Order.API/Dockerfile.win
+    networks:
+      - photonetwork
+
+  notificationapi:
+    image: fuli1001/photography-notificationapi:win
+    build:
+      context: .
+      dockerfile: Src/Services/Notification/Notification.API/Dockerfile.win
+    networks:
+      - photonetwork
+      
+networks:
+  photonetwork:

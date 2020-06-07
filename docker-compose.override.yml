@@ -5,17 +5,30 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
-      - AuthSettings_Authority=http://43.225.159.87:5100
-      - AuthSettings_Audience=Photography.ApiGateway
+      - AuthSettings__Authority=http://authservice
+      - AuthSettings__Audience=Photography.ApiGateway
       - ServerSettings__ChatSocket=47.108.194.52
       - ServerSettings__ChatSocketPort=9022
       - ServerSettings__ChatAPI=47.108.194.52
       - ServerSettings__ChatAPIPort=7899
+      - ServerSettings__ChatFileServer=
+      - ServerSettings__ChatFileServerPort=0
       - ServerSettings__FileServer=47.108.194.52
-      - ServerSettings__FileServerPort=7899
-      - ServerSettings__AgoraAppId=CNKSAASDV
+      - ServerSettings__FileServerPort=20515
+      - ServerSettings__AgoraAppId=9a464e3f320d4fa9a3a26b7ff8620772
       - ServerSettings__TrtcAppId=CDASNMKLVDAS
       - ServerSettings__TrtcEnabled=true
+      - ServiceSettings__AuthService=http://authservice
+      - ServiceSettings__UserService=http://userapi
+      - RedisSettings__Host=47.108.194.52
+      - RedisSettings__Port=6379
+      - RedisSettings__Password=aRs90_7%46$$%j89
+      - SmsSettings__Key=LTAI4G5KkFsJqMeQ9thqBp4b
+      - SmsSettings__Secrect=B1vtK21TO6Fsl7wVWQQlBFB1ilOgpp
+      - SmsSettings__Domain=dysmsapi.aliyuncs.com
+      - SmsSettings__Version=2017-05-25
+      - SmsSettings__Action=SendSms
+      - SmsSettings__SignName=‘√ÕºœÌ
     ports:
       - "5101:80"
       
@@ -24,8 +37,9 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
       - ConnectionStrings__PostConnection=Server=47.108.194.52;Database=Photography.Post;User Id=fuli;Password=fl511304;
-      - AuthSettings_Authority=http://43.225.159.87:5100
-      - AuthSettings_Audience=Photography.Post.API
+      - ConnectionStrings__RabbitMQ=host=47.108.194.52;username=photography;password=Space0dyssey
+      - AuthSettings__Authority=http://authservice
+      - AuthSettings__Audience=Photography.Post.API
     ports:
       - "5102:80"
 
@@ -34,20 +48,26 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
       - ConnectionStrings__UserConnection=Server=47.108.194.52;Database=Photography.User;User Id=fuli;Password=fl511304;
-      - AuthSettings__Authority=http://43.225.159.87:5100
+      - ConnectionStrings__RabbitMQ=host=47.108.194.52;username=photography;password=Space0dyssey
+      - AuthSettings__Authority=http://authservice
       - AuthSettings__Audience=Photography.User.API
       - AuthSettings__ClientId=ro.client
       - AuthSettings__ClientSecret=511536EF-F270-4058-80CA-1C89C192F69A
-      - AuthSettings__Scope=openid profile Photography.Post.API Photography.User.API Photography.Order.API Photography.ApiGateway Arise.FileUploadService
+      - AuthSettings__Scope=openid profile Photography.Post.API Photography.User.API Photography.Order.API Photography.Notification.API Photography.ApiGateway Arise.FileUploadService
       - ServerSettings__ChatSocket=47.108.194.52
       - ServerSettings__ChatSocketPort=9022
       - ServerSettings__ChatAPI=47.108.194.52
       - ServerSettings__ChatAPIPort=7899
+      - ServerSettings__ChatFileServer=
+      - ServerSettings__ChatFileServerPort=0
       - ServerSettings__FileServer=47.108.194.52
-      - ServerSettings__FileServerPort=7899
-      - ServerSettings__AgoraAppId=CNKSAASDV
+      - ServerSettings__FileServerPort=20515
+      - ServerSettings__AgoraAppId=9a464e3f320d4fa9a3a26b7ff8620772
       - ServerSettings__TrtcAppId=CDASNMKLVDAS
       - ServerSettings__TrtcEnabled=true
+      - RedisSettings__Host=47.108.194.52
+      - RedisSettings__Port=6379
+      - RedisSettings__Password=aRs90_7%46$$%j89
     ports:
       - "5103:80"
 
@@ -55,8 +75,25 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
-      - ConnectionStrings__UserConnection=Server=47.108.194.52;Database=Photography.Order;User Id=fuli;Password=fl511304;
-      - AuthSettings__Authority=http://43.225.159.87:5100
+      - ConnectionStrings__OrderConnection=Server=47.108.194.52;Database=Photography.Order;User Id=fuli;Password=fl511304;
+      - ConnectionStrings__RabbitMQ=host=47.108.194.52;username=photography;password=Space0dyssey
+      - AuthSettings__Authority=http://authservice
       - AuthSettings__Audience=Photography.Order.API
     ports:
-      - "5104:80"
+      - "5105:80"
+
+  notificationapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__NotificationConnection=Server=47.108.194.52;Database=Photography.Notification;User Id=fuli;Password=fl511304;
+      - ConnectionStrings__RabbitMQ=host=47.108.194.52;username=photography;password=Space0dyssey
+      - AuthSettings__Authority=http://authservice
+      - AuthSettings__Audience=Photography.Notification.API
+    ports:
+      - "5106:80"
+  
+  #rabbitmq:
+  #  ports:
+  #    - "15672:15672"
+  #    - "5672:5672"
