@@ -39,6 +39,7 @@ namespace Photography.Services.User.API
             Host.CreateDefaultBuilder(args)
                 .UseNServiceBus(hostBuilderContext =>
                 {
+                    Console.WriteLine("********RabbitMQ: " + hostBuilderContext.Configuration.GetConnectionString("RabbitMQ"));
                     var endpointConfiguration = new EndpointConfiguration("userapi");
                     //var transport = endpointConfiguration.UseTransport<LearningTransport>();
                     var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
