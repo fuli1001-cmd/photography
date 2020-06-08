@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Photography.Services.User.API.Application.Commands.Login
+namespace Photography.Services.User.API.BackwardCompatibility.Models
 {
-    public class ChatServerUser
+    public class UserInfoLite
     {
         public int userId { get; set; }
         public string nickname { get; set; }

@@ -13,5 +13,7 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         Task<User> GetByNicknameAsync(string nickname);
 
         Task<Guid?> GetUserIdByCodeAsync(string code);
+
+        Task<int[]> GetChatServerUserIdsAsync(IEnumerable<Guid> userIds);
     }
 }

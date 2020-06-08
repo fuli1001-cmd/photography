@@ -105,9 +105,6 @@ namespace Photography.Services.Post.API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<PagedResponseWrapper>> GetSameCityPostsAsync(string cityCode, [FromQuery(Name = "key")] string key, [FromQuery] PagingParameters pagingParameters)
         {
-            _logger.LogInformation("***********key: {key}", key);
-            _logger.LogInformation("***********pagingParameters: {@pagingParameters}", pagingParameters);
-
             PagedList<PostViewModel> posts = null;
 
             if (string.IsNullOrWhiteSpace(key))

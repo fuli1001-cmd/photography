@@ -8,7 +8,12 @@ namespace Photography.Services.User.API.Infrastructure.Redis
 {
     public interface IRedisService
     {
-        Task SetAsync(string key, RedisValue value);
-        Task<string> GetAsync(string key);
+        Task StringSetAsync(RedisKey key, RedisValue value, TimeSpan? expireTimeSpan);
+
+        Task<string> StringGetAsync(RedisKey key);
+
+        Task HashSetAsync(RedisKey key, RedisValue hashField, RedisValue value);
+
+        Task PublishAsync(RedisChannel channel, RedisValue value);
     }
 }

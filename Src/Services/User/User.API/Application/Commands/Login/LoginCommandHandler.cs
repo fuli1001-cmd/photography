@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Photography.Services.User.API.BackwardCompatibility.Models;
 using Photography.Services.User.API.BackwardCompatibility.Utils;
 using Photography.Services.User.API.BackwardCompatibility.ViewModels;
 using Photography.Services.User.API.Infrastructure.Redis;
@@ -41,7 +42,7 @@ namespace Photography.Services.User.API.Application.Commands.Login
             var accessToken = await GetAccessTokenAsync(request);
             string oldToken = null;
 
-            #region Backward compatibility code
+            #region BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据
             var user = await _userRepository.GetByUserNameAsync(request.UserName);
             if (user != null)
             {
@@ -94,11 +95,12 @@ namespace Photography.Services.User.API.Application.Commands.Login
             return tokenResponse.AccessToken;
         }
 
+        #region BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据
         private async Task WriteChatServerUserToRedisAsync(LoginCommand loginCommand, Domain.AggregatesModel.UserAggregate.User user)
         {
             try
             {
-                var chatServerUser = new ChatServerUser
+                var chatServerUser = new UserInfoLite
                 {
                     userId = user.ChatServerUserId,
                     username = user.UserName,
@@ -109,18 +111,17 @@ namespace Photography.Services.User.API.Application.Commands.Login
                     password = loginCommand.Password,
                     registrationId = loginCommand.RegistrationId
                 };
-                _logger.LogInformation("*************chatServerUser: {@chatServerUser}", chatServerUser);
+                _logger.LogInformation("UserInfoLite: {@UserInfoLite}", chatServerUser);
                 string json = SerializeUtil.SerializeToJson(chatServerUser);
                 var bytes = SerializeUtil.SerializeStringToBytes(json, true);
                 json = JsonConvert.SerializeObject(bytes);
-                _logger.LogInformation("*************json 1: {json1}", json);
-                await _redisService.SetAsync(user.ChatServerUserId.ToString(), json);
+                await _redisService.StringSetAsync(user.ChatServerUserId.ToString(), json, null);
             }
             catch (Exception ex)
             {
-                _logger.LogError("WriteChatServerUserToRedisAsync: {ChatServerError}", ex.Message);
+                _logger.LogError("WriteChatServerUserToRedisAsync: {BackwardCompatibilityError}", ex.Message);
                 if (ex.InnerException != null)
-                    _logger.LogError("WriteChatServerUserToRedisAsync: {ChatServerInnerError}", ex.InnerException.Message);
+                    _logger.LogError("WriteChatServerUserToRedisAsync: {BackwardCompatibilityError}", ex.InnerException.Message);
             }
         }
 
@@ -136,18 +137,18 @@ namespace Photography.Services.User.API.Application.Commands.Login
                     clientType = loginCommand.ClientType,
                     loginTime = CommonUtil.GetTimestamp(DateTime.Now)
                 };
-                _logger.LogInformation("*************tokenUser: {@tokenUser}", token);
+                _logger.LogInformation("TokenUser: {@TokenUser}", token);
                 var bytes = SerializeUtil.SerializeToJsonBytes(token, true);
                 var json = JsonConvert.SerializeObject(bytes);
-                _logger.LogInformation("*************json 2: {json2}", json);
-                await _redisService.SetAsync(oldToken, json);
+                await _redisService.StringSetAsync(oldToken, json, null);
             }
             catch (Exception ex)
             {
-                _logger.LogError("WriteTokenToRedisAsync: {OldTokenError}", ex.Message);
+                _logger.LogError("WriteTokenToRedisAsync: {BackwardCompatibilityError}", ex.Message);
                 if (ex.InnerException != null)
-                    _logger.LogError("WriteTokenToRedisAsync: {OldTokenInnerError}", ex.InnerException.Message);
+                    _logger.LogError("WriteTokenToRedisAsync: {BackwardCompatibilityError}", ex.InnerException.Message);
             }
         }
+        #endregion
     }
 }

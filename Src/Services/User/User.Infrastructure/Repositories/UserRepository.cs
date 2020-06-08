@@ -52,5 +52,10 @@ namespace Photography.Services.User.Infrastructure.Repositories
             else
                 return null;
         }
+
+        public async Task<int[]> GetChatServerUserIdsAsync(IEnumerable<Guid> userIds)
+        {
+            return await _context.Users.Where(u => userIds.Contains(u.Id)).Select(u => u.ChatServerUserId).ToArrayAsync();
+        }
     }
 }

@@ -60,6 +60,11 @@ namespace Photography.Services.User.API.Query.ViewModels
         public int FollowerCount { get; set; }
     }
 
+    public class GroupUserViewModel : BaseUserViewModel
+    {
+        public string Avatar { get; set; }
+    }
+
     public class BaseUserViewModel
     {
         public Guid Id { get; set; }

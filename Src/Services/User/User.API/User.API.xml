@@ -4,6 +4,16 @@
         <name>User.API</name>
     </assembly>
     <members>
+        <member name="P:Photography.Services.User.API.Application.Commands.Group.ChangeGroupOwner.ChangeGroupOwnerCommand.NewOwnerId">
+            <summary>
+            新的群主id
+            </summary>
+        </member>
+        <member name="T:Photography.Services.User.API.Application.Commands.Group.EnableModifyMember.EnableModifyMemberCommand">
+            <summary>
+            允许群成员加人
+            </summary>
+        </member>
         <member name="P:Photography.Services.User.API.Application.Commands.ToggleFollow.ToggleFollowCommand.UserIdToFollow">
             <summary>
             要follow的用户id
@@ -31,6 +41,75 @@
             <param name="decryptString">待解密的字符串</param>  
             <param name="decryptKey">解密密钥,要求为8位,和加密密钥相同</param>  
             <returns>解密成功返回解密后的字符串，失败返源串</returns>  
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.GroupsController.CreateGroupAsync(Photography.Services.User.API.Application.Commands.Group.CreateGroup.CreateGroupCommand)">
+            <summary>
+            建群
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.GroupsController.UpdateGroupAsync(Photography.Services.User.API.Application.Commands.Group.UpdateGroup.UpdateGroupCommand)">
+            <summary>
+            编辑群
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.GroupsController.DeleteGroupAsync(Photography.Services.User.API.Application.Commands.Group.DeleteGroup.DeleteGroupCommand)">
+            <summary>
+            解散群
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.GroupsController.ChangeGroupOwnerAsync(Photography.Services.User.API.Application.Commands.Group.ChangeGroupOwner.ChangeGroupOwnerCommand)">
+            <summary>
+            更改群主
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.GroupsController.MuteGroupAsync(Photography.Services.User.API.Application.Commands.Group.MuteGroup.MuteGroupCommand)">
+            <summary>
+            设置群免打扰
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.GroupsController.MuteGroupAsync(Photography.Services.User.API.Application.Commands.Group.EnableModifyMember.EnableModifyMemberCommand)">
+            <summary>
+            设置允许群成员添加/删除群成员
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.GroupsController.ModifyGroupMembersAsync(Photography.Services.User.API.Application.Commands.Group.ModifyGroupMembers.ModifyGroupMembersCommand)">
+            <summary>
+            增加/删除群成员
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.GroupsController.QuitGroupAsync(Photography.Services.User.API.Application.Commands.Group.QuitGroup.QuitGroupCommand)">
+            <summary>
+            退出群
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.GroupsController.GetGroupAsync(System.Guid)">
+            <summary>
+            获取群信息
+            </summary>
+            <param name="groupId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.GroupsController.GetGroupsAsync(Arise.DDD.API.Paging.PagingParameters)">
+            <summary>
+            用户的群列表
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:Photography.Services.User.API.Controllers.UsersController.LoginAsync(Photography.Services.User.API.Application.Commands.Login.LoginCommand)">
             <summary>

@@ -102,6 +102,31 @@
     },
 
     {
+      "DownstreamPathTemplate": "/api/groups",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "userapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/groups",
+      "UpstreamHttpMethod": []
+    },
+    {
+      "DownstreamPathTemplate": "/api/groups/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "userapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/groups/{everything}",
+      "UpstreamHttpMethod": []
+    },
+
+    {
       "DownstreamPathTemplate": "/api/orders",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

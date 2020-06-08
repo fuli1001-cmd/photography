@@ -27,6 +27,14 @@ namespace Photography.Services.User.Infrastructure.EntityConfigurations
 
             builder.HasMany(u => u.FollowedUsers).WithOne(ur => ur.FollowedUser).HasForeignKey(ur => ur.FollowedUserId).OnDelete(DeleteBehavior.Restrict);
             builder.HasMany(u => u.Followers).WithOne(ur => ur.Follower).HasForeignKey(ur => ur.FollowerId).OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasMany(u => u.GroupUsers).WithOne(gu => gu.User).HasForeignKey(gu => gu.UserId).IsRequired(false).OnDelete(DeleteBehavior.Restrict);
+
+            var groupUsersNavigation = builder.Metadata.FindNavigation(nameof(Domain.AggregatesModel.UserAggregate.User.GroupUsers));
+            groupUsersNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            var groupsNavigation = builder.Metadata.FindNavigation(nameof(Domain.AggregatesModel.UserAggregate.User.Groups));
+            groupsNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
         }
     }
 }

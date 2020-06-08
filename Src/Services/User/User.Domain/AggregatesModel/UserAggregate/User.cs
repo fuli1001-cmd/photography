@@ -1,5 +1,6 @@
 ﻿using Arise.DDD.Domain.SeedWork;
 using Photography.Services.User.Domain.AggregatesModel.GroupAggregate;
+using Photography.Services.User.Domain.AggregatesModel.GroupUserAggregate;
 using Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate;
 using System;
 using System.Collections.Generic;
@@ -47,7 +48,8 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         public int Score { get; private set; }
         public string Code { get; private set; }
         public RealNameRegistrationStatus RealNameRegistrationStatus { get; private set; }
-        // ChatServer needed Property
+
+        // BackwardCompatibility: ChatServer needed Property
         public int ChatServerUserId { get; private set; }
 
         public List<UserRelation> Followers { get; private set; }
@@ -56,6 +58,10 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         // 用户作为群主的群
         private readonly List<Group> _groups = null;
         public IReadOnlyCollection<Group> Groups => _groups;
+
+        // 与group的多对多关系
+        private readonly List<GroupUser> _groupUsers = null;
+        public IReadOnlyCollection<GroupUser> GroupUsers => _groupUsers;
 
         public User()
         {

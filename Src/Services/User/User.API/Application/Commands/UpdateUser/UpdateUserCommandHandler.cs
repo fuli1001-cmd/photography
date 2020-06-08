@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
+using Photography.Services.User.API.Infrastructure.Redis;
 using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace Photography.Services.User.API.Application.Commands.UpdateUser
     {
         private readonly IUserRepository _userRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IRedisService _redisService;
         private readonly ILogger<UpdateUserCommandHandler> _logger;
         private readonly IServiceProvider _serviceProvider;
 
@@ -25,12 +27,14 @@ namespace Photography.Services.User.API.Application.Commands.UpdateUser
 
         public UpdateUserCommandHandler(IUserRepository userRepository,
             IServiceProvider serviceProvider, 
-            IHttpContextAccessor httpContextAccessor, 
+            IHttpContextAccessor httpContextAccessor,
+            IRedisService redisService,
             ILogger<UpdateUserCommandHandler> logger)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
