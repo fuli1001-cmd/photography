@@ -171,8 +171,8 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    PostId = table.Column<Guid>(nullable: false),
-                    UserId = table.Column<Guid>(nullable: false),
+                    PostId = table.Column<Guid>(nullable: true),
+                    UserId = table.Column<Guid>(nullable: true),
                     UserPostRelationType = table.Column<int>(nullable: false)
                 },
                 constraints: table =>

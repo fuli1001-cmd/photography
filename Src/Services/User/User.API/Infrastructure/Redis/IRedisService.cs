@@ -14,6 +14,8 @@ namespace Photography.Services.User.API.Infrastructure.Redis
 
         Task HashSetAsync(RedisKey key, RedisValue hashField, RedisValue value);
 
+        Task HashDeleteAsync(RedisKey key, RedisValue hashField);
+
         Task PublishAsync(RedisChannel channel, RedisValue value);
     }
 }

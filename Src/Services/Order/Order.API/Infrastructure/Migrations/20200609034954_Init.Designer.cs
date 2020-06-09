@@ -10,7 +10,7 @@ using Photography.Services.Order.Infrastructure;
 namespace Photography.Services.Order.API.Infrastructure.Migrations
 {
     [DbContext(typeof(OrderContext))]
-    [Migration("20200526014514_Init")]
+    [Migration("20200609034954_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -122,7 +122,7 @@ namespace Photography.Services.Order.API.Infrastructure.Migrations
                     b.Property<string>("Nickname")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserType")
+                    b.Property<int?>("UserType")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

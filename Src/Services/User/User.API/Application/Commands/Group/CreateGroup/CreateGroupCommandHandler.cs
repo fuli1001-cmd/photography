@@ -52,114 +52,104 @@ namespace Photography.Services.User.API.Application.Commands.Group.CreateGroup
             if (await _groupRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
             {
                 // BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据
-                await WriteGroupToRedisAsync(group);
+                await UpdateRedisAsync(group);
 
                 return await _groupQueries.GetGroupAsync(group.Id);
             }
 
-            _logger.LogError("CreateGroupCommandHandler: Create group {@CreateGroupCommand} failed.", request);
             throw new DomainException("操作失败。");
         }
 
         #region BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据
-        private async Task WriteGroupToRedisAsync(Domain.AggregatesModel.GroupAggregate.Group group)
+        private async Task UpdateRedisAsync(Domain.AggregatesModel.GroupAggregate.Group group)
         {
             try
             {
-                // write group to redis
                 var owner = await _userRepository.GetByIdAsync(group.OwnerId);
 
-                var chatServerGroup = new PSR_ARS_Group
-                {
-                    IMARSG_CreateTime = DateTime.Now,
-                    IMARSG_MembersNum = group.GroupUsers.Count,
-                    IMARSG_Name = group.Name,
-                    IMARSG_Notice = string.Empty,
-                    IMARSG_OwnerId = owner.ChatServerUserId,
-                    IMARSG_Status = 1,
-                    IMARSG_Type = 1,
-                    IMARSG_Avatar = group.Avatar,
-                    IMARSG_Guid = CommonUtil.GetGuid(),
-                    IMARSG_AllowAddMemberByAnyone = 0
-                };
-                _logger.LogInformation("PSR_ARS_Group: {@PSR_ARS_Group}", chatServerGroup);
-                var groupBytesData = SerializeUtil.SerializeToJsonBytes(chatServerGroup, true);
-                string json = JsonConvert.SerializeObject(groupBytesData);
-                await _redisService.HashSetAsync("grouptable", group.ChatServerGroupId.ToString(), json);
+                // 向redis写入群
+                await WriteGroupToRedisAsync(group, owner);
 
-                // write group members to redis
-                foreach(var groupUser in group.GroupUsers)
+                // 向redis写入群成员
+                foreach (var groupUser in group.GroupUsers)
                 {
                     await WriteGroupMemberToRedisAsync(groupUser.UserId.Value, group.ChatServerGroupId);
                 }
 
-                // write message to redis 
-                await WriteMessageToRedisAsync(owner, group);
+                // 发布系统消息
+                await WriteMessageToRedisAsync(group, owner);
             }
             catch (Exception ex)
             {
-                _logger.LogError("WriteGroupToRedisAsync: {BackwardCompatibilityError}", ex.Message);
-                if (ex.InnerException != null)
-                    _logger.LogError("WriteGroupToRedisAsync: {BackwardCompatibilityError}", ex.InnerException.Message);
+                _logger.LogError("CreateGroupCommandHandler UpdateRedisAsync: {@BackwardCompatibilityError}", ex);
             }
+        }
+
+        private async Task WriteGroupToRedisAsync(Domain.AggregatesModel.GroupAggregate.Group group, Domain.AggregatesModel.UserAggregate.User owner)
+        {
+            var chatServerGroup = new PSR_ARS_Group
+            {
+                IMARSG_CreateTime = DateTime.UnixEpoch.AddSeconds(group.CreatedTime),
+                IMARSG_MembersNum = group.GroupUsers.Count,
+                IMARSG_Name = group.Name,
+                IMARSG_Avatar = group.Avatar,
+                IMARSG_Notice = group.Notice,
+                IMARSG_OwnerId = owner.ChatServerUserId,
+                IMARSG_Status = 1,
+                IMARSG_Type = 1,
+                IMARSG_Guid = CommonUtil.GetGuid(),
+                IMARSG_AllowAddMemberByAnyone = 0
+            };
+
+            var groupBytesData = SerializeUtil.SerializeToJsonBytes(chatServerGroup, true);
+            string json = JsonConvert.SerializeObject(groupBytesData);
+            await _redisService.HashSetAsync("grouptable", group.ChatServerGroupId.ToString(), json);
+
+            _logger.LogInformation("Redis Group: {@RedisGroup}", chatServerGroup);
         }
 
         private async Task WriteGroupMemberToRedisAsync(Guid userId, int chatServerGroupId)
         {
-            try
-            {
-                var user = await _userRepository.GetByIdAsync(userId);
+            var user = await _userRepository.GetByIdAsync(userId);
 
-                var member = new PSR_ARS_GroupMembers
-                {
-                    IMARSGM_GroupId = chatServerGroupId,
-                    IMARSGM_AddMember = 1,
-                    IMARSGM_GroupStatus = 1,
-                    IMARSGM_MemberId = user.ChatServerUserId,
-                    IMARSGM_Nickname = user.Nickname,
-                    IMARSGM_Speaking = 1,
-                    IMARSGM_Time = DateTime.Now,
-                    IMARSGM_Mute = 0
-                };
-                _logger.LogInformation("PSR_ARS_GroupMembers: {@PSR_ARS_Group}", member);
-                var bytesData = SerializeUtil.SerializeToJsonBytes(member, true);
-                string json = JsonConvert.SerializeObject(bytesData);
-                await _redisService.HashSetAsync("group_" + member.IMARSGM_GroupId, user.ChatServerUserId.ToString(), json);
-            }
-            catch (Exception ex)
+            var member = new PSR_ARS_GroupMembers
             {
-                _logger.LogError("WriteGroupMemberToRedisAsync: {BackwardCompatibilityError}", ex.Message);
-                if (ex.InnerException != null)
-                    _logger.LogError("WriteGroupMemberToRedisAsync: {BackwardCompatibilityError}", ex.InnerException.Message);
-            }
+                IMARSGM_GroupId = chatServerGroupId,
+                IMARSGM_AddMember = 1,
+                IMARSGM_GroupStatus = 1,
+                IMARSGM_MemberId = user.ChatServerUserId,
+                IMARSGM_Nickname = user.Nickname,
+                IMARSGM_Speaking = 1,
+                IMARSGM_Time = DateTime.Now,
+                IMARSGM_Mute = 0
+            };
+            
+            var bytesData = SerializeUtil.SerializeToJsonBytes(member, true);
+            string json = JsonConvert.SerializeObject(bytesData);
+            await _redisService.HashSetAsync("group_" + member.IMARSGM_GroupId, user.ChatServerUserId.ToString(), json);
+
+            _logger.LogInformation("Redis GroupMember: {@RedisGroupMember}", member);
         }
 
-        private async Task WriteMessageToRedisAsync(Domain.AggregatesModel.UserAggregate.User owner, Domain.AggregatesModel.GroupAggregate.Group group)
+        private async Task WriteMessageToRedisAsync(Domain.AggregatesModel.GroupAggregate.Group group, Domain.AggregatesModel.UserAggregate.User owner)
         {
-            try
-            {
-                // write message to redis
-                var chatServerUserIds = await _userRepository.GetChatServerUserIdsAsync(group.GroupUsers.Select(gu => gu.UserId.Value));
+            // write message to redis
+            var receiverIds = (await _userRepository.GetUsersAsync(group.GroupUsers.Select(gu => gu.UserId.Value))).Select(u => u.ChatServerUserId).ToArray();
 
-                var sysMsgVo = new SysMsgGroupChangedVo
-                {
-                    type = (int)SysMsgType.GROUP_CREATED,
-                    receiverIds = chatServerUserIds,
-                    groupId = group.ChatServerGroupId,
-                    operatorName = owner.Nickname,
-                    operatorId = owner.ChatServerUserId
-                };
-                _logger.LogInformation("SysMsgGroupChangedVo: {@SysMsgGroupChangedVo}", sysMsgVo);
-                var bytesData = SerializeUtil.SerializeToJsonBytes(sysMsgVo, true);
-                string json = JsonConvert.SerializeObject(bytesData);
-                await _redisService.PublishAsync("SYS_MSG", json);
-            }
-            catch (Exception ex)
+            var msg = new SysMsgGroupChangedVo
             {
-                _logger.LogError("WriteMessageToRedisAsync: {BackwardCompatibilityError}", ex.Message);
-                if (ex.InnerException != null)
-                    _logger.LogError("WriteMessageToRedisAsync: {BackwardCompatibilityError}", ex.InnerException.Message);
-            }
+                type = (int)SysMsgType.GROUP_CREATED,
+                receiverIds = receiverIds,
+                groupId = group.ChatServerGroupId,
+                operatorName = owner.Nickname,
+                operatorId = owner.ChatServerUserId
+            };
+            
+            var bytesData = SerializeUtil.SerializeToJsonBytes(msg, true);
+            string json = JsonConvert.SerializeObject(bytesData);
+            await _redisService.PublishAsync("SYS_MSG", json);
+
+            _logger.LogInformation("Redis Message: {@RedisMessage}", msg);
         }
         #endregion
     }

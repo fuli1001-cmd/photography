@@ -120,7 +120,7 @@ namespace Photography.Services.Order.API.Infrastructure.Migrations
                     b.Property<string>("Nickname")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserType")
+                    b.Property<int?>("UserType")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

@@ -14,7 +14,7 @@ namespace Photography.Services.Order.API.Infrastructure.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     Nickname = table.Column<string>(nullable: true),
                     Avatar = table.Column<string>(nullable: true),
-                    UserType = table.Column<int>(nullable: false)
+                    UserType = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {

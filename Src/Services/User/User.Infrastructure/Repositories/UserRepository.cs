@@ -53,9 +53,9 @@ namespace Photography.Services.User.Infrastructure.Repositories
                 return null;
         }
 
-        public async Task<int[]> GetChatServerUserIdsAsync(IEnumerable<Guid> userIds)
+        public async Task<IEnumerable<Domain.AggregatesModel.UserAggregate.User>> GetUsersAsync(IEnumerable<Guid> userIds)
         {
-            return await _context.Users.Where(u => userIds.Contains(u.Id)).Select(u => u.ChatServerUserId).ToArrayAsync();
+            return await _context.Users.Where(u => userIds.Contains(u.Id)).ToListAsync();
         }
     }
 }

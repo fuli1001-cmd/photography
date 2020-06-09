@@ -10,7 +10,7 @@ using Photography.Services.User.Infrastructure;
 namespace Photography.Services.User.API.Infrastructure.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20200526014623_Init")]
+    [Migration("20200609035054_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,13 +21,81 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Photography.Services.User.Domain.AggregatesModel.UserAggregate.User", b =>
+            modelBuilder.Entity("Photography.Services.User.Domain.AggregatesModel.GroupAggregate.Group", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Avatar")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ChatServerGroupId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("CreatedTime")
+                        .HasColumnType("float");
+
+                    b.Property<bool>("ModifyMemberEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Muted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notice")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("Groups");
+                });
+
+            modelBuilder.Entity("Photography.Services.User.Domain.AggregatesModel.GroupUserAggregate.GroupUser", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("GroupId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("GroupUsers");
+                });
+
+            modelBuilder.Entity("Photography.Services.User.Domain.AggregatesModel.UserAggregate.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AppointmentCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Avatar")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BackgroundImage")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double?>("Birthday")
@@ -63,11 +131,26 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(0);
 
+                    b.Property<int>("LikedPostCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
                     b.Property<string>("Nickname")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("OngoingOrderCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
                     b.Property<string>("Phonenumber")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PostCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<string>("Province")
                         .HasColumnType("nvarchar(max)");
@@ -120,6 +203,28 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                     b.HasIndex("FollowerId");
 
                     b.ToTable("UserRelations");
+                });
+
+            modelBuilder.Entity("Photography.Services.User.Domain.AggregatesModel.GroupAggregate.Group", b =>
+                {
+                    b.HasOne("Photography.Services.User.Domain.AggregatesModel.UserAggregate.User", "Owner")
+                        .WithMany("Groups")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Photography.Services.User.Domain.AggregatesModel.GroupUserAggregate.GroupUser", b =>
+                {
+                    b.HasOne("Photography.Services.User.Domain.AggregatesModel.GroupAggregate.Group", "Group")
+                        .WithMany("GroupUsers")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Photography.Services.User.Domain.AggregatesModel.UserAggregate.User", "User")
+                        .WithMany("GroupUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate.UserRelation", b =>

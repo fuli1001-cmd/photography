@@ -16,6 +16,7 @@ namespace Photography.Services.User.Domain.AggregatesModel.GroupAggregate
         public string Avatar { get; private set; }
         public bool Muted { get; private set; }
         public bool ModifyMemberEnabled { get; private set; }
+        public double CreatedTime { get; private set; }
 
         // BackwardCompatibility: ChatServer needed Property
         public int ChatServerGroupId { get; private set; }
@@ -32,6 +33,7 @@ namespace Photography.Services.User.Domain.AggregatesModel.GroupAggregate
         {
             Muted = false;
             ModifyMemberEnabled = false;
+            CreatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
             _groupUsers = new List<GroupUser>();
         }
 

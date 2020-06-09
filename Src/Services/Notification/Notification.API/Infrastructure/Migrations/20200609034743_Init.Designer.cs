@@ -10,7 +10,7 @@ using Photography.Services.Notification.Infrastructure;
 namespace Photography.Services.Notification.API.Infrastructure.Migrations
 {
     [DbContext(typeof(NotificationContext))]
-    [Migration("20200604021430_Init")]
+    [Migration("20200609034743_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
