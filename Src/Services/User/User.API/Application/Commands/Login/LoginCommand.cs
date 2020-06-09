@@ -25,7 +25,6 @@ namespace Photography.Services.User.API.Application.Commands.Login
         public int ClientType { get; set; }
 
         [DataMember]
-        [Required]
         public string RegistrationId { get; set; }
     }
 }

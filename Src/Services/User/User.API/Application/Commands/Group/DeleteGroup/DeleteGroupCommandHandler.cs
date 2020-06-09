@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Photography.Services.User.API.BackwardCompatibility.ChatServerRedis;
 using Photography.Services.User.API.BackwardCompatibility.Models;
 using Photography.Services.User.API.Infrastructure.Redis;
 using Photography.Services.User.Domain.AggregatesModel.GroupAggregate;
@@ -20,20 +21,17 @@ namespace Photography.Services.User.API.Application.Commands.Group.DeleteGroup
     public class DeleteGroupCommandHandler : IRequestHandler<DeleteGroupCommand, bool>
     {
         private readonly IGroupRepository _groupRepository;
-        private readonly IUserRepository _userRepository;
-        private readonly IRedisService _redisService;
+        private readonly IChatServerRedis _chatServerRedisService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<DeleteGroupCommandHandler> _logger;
 
         public DeleteGroupCommandHandler(IGroupRepository groupRepository,
-            IUserRepository userRepository,
-            IRedisService redisService,
+            IChatServerRedis chatServerRedisService,
             IHttpContextAccessor httpContextAccessor,
             ILogger<DeleteGroupCommandHandler> logger)
         {
             _groupRepository = groupRepository ?? throw new ArgumentNullException(nameof(groupRepository));
-            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            _redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
+            _chatServerRedisService = chatServerRedisService ?? throw new ArgumentNullException(nameof(chatServerRedisService));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -54,14 +52,17 @@ namespace Photography.Services.User.API.Application.Commands.Group.DeleteGroup
                 throw new DomainException("操作失败。");
             }
 
+            //var memberIds = group.GroupUsers.Select(gu => gu.UserId.Value).ToList();
+
             group.Delete();
 
             _groupRepository.Remove(group);
 
             if (await _groupRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
             {
+                _logger.LogInformation("group after delete: {@group}", group);
                 // BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据
-                await WriteMessageToRedisAsync(group);
+                await UpdateRedisAsync(group);
 
                 return true;
             }
@@ -70,25 +71,25 @@ namespace Photography.Services.User.API.Application.Commands.Group.DeleteGroup
         }
 
         #region BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据
-        private async Task WriteMessageToRedisAsync(Domain.AggregatesModel.GroupAggregate.Group group)
+        private async Task UpdateRedisAsync(Domain.AggregatesModel.GroupAggregate.Group group)
         {
-            var owner = await _userRepository.GetByIdAsync(group.OwnerId);
-            var receiverIds = (await _userRepository.GetUsersAsync(group.GroupUsers.Select(gu => gu.UserId.Value))).Select(u => u.ChatServerUserId).ToArray();
-
-            var msg = new SysMsgGroupChangedVo
+            try
             {
-                type = (int)SysMsgType.GROUP_DISMISSED,
-                receiverIds = receiverIds,
-                groupId = group.ChatServerGroupId,
-                operatorName = owner.Nickname,
-                operatorId = owner.ChatServerUserId
-            };
+                // 从redis去除group
+                await _chatServerRedisService.RemoveGroupAsync(group.ChatServerGroupId);
 
-            var bytesData = SerializeUtil.SerializeToJsonBytes(msg, true);
-            string json = JsonConvert.SerializeObject(bytesData);
-            await _redisService.PublishAsync("SYS_MSG", json);
+                // 从redis去除group members
+                group.GroupUsers.Select(gu => gu.UserId.Value)
+                    .ToList()
+                    .ForEach(async userId => await _chatServerRedisService.RemoveGroupMemberAsync(userId, group.ChatServerGroupId));
 
-            _logger.LogInformation("Redis Message: {@RedisMessage}", msg);
+                // 发布系统消息
+                await _chatServerRedisService.WriteGroupMessageAsync(group, SysMsgType.GROUP_DISMISSED);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("ChangeGroupOwnerCommandHandler UpdateRedisAsync: {@BackwardCompatibilityError}", ex);
+            }
         }
         #endregion
     }

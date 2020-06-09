@@ -24,5 +24,14 @@ namespace Photography.Services.User.Infrastructure.Repositories
             else
                 return null;
         }
+
+        //public async Task<IEnumerable<UserRelation>> GetFriendsAsync(Guid myId)
+        //{
+        //    return await (from ur1 in _context.UserRelations
+        //           join ur2 in _context.UserRelations
+        //           on new { FollowerId = ur1.FollowerId, FollowedUserId = ur1.FollowedUserId } equals new { FollowerId = ur2.FollowedUserId, FollowedUserId = ur2.FollowerId }
+        //           where ur1.FollowerId == myId
+        //           select ur1).ToListAsync();
+        //}
     }
 }

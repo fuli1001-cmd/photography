@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Photography.Services.User.API.BackwardCompatibility.ChatServerRedis;
 using Photography.Services.User.API.BackwardCompatibility.Models;
 using Photography.Services.User.API.Infrastructure.Redis;
 using Photography.Services.User.Domain.AggregatesModel.GroupAggregate;
@@ -20,27 +21,24 @@ namespace Photography.Services.User.API.Application.Commands.Group.UpdateGroup
     public class UpdateGroupCommandHandler : IRequestHandler<UpdateGroupCommand, bool>
     {
         private readonly IGroupRepository _groupRepository;
-        private readonly IUserRepository _userRepository;
-        private readonly IRedisService _redisService;
+        private readonly IChatServerRedis _chatServerRedisService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<UpdateGroupCommandHandler> _logger;
 
         public UpdateGroupCommandHandler(IGroupRepository groupRepository,
-            IUserRepository userRepository,
-            IRedisService redisService,
+            IChatServerRedis chatServerRedisService,
             IHttpContextAccessor httpContextAccessor,
             ILogger<UpdateGroupCommandHandler> logger)
         {
             _groupRepository = groupRepository ?? throw new ArgumentNullException(nameof(groupRepository));
-            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            _redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
+            _chatServerRedisService = chatServerRedisService ?? throw new ArgumentNullException(nameof(chatServerRedisService));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<bool> Handle(UpdateGroupCommand request, CancellationToken cancellationToken)
         {
-            var group = await _groupRepository.GetByIdAsync(request.GroupId);
+            var group = await _groupRepository.GetGroupWithMembersAsync(request.GroupId);
             if (group == null)
             {
                 _logger.LogError("UpdateGroupCommandHandler: Group {GroupId} does not exist.", request.GroupId);
@@ -72,61 +70,16 @@ namespace Photography.Services.User.API.Application.Commands.Group.UpdateGroup
         {
             try
             {
-                var owner = await _userRepository.GetByIdAsync(group.OwnerId);
-
                 // 向redis写入群
-                await WriteGroupToRedisAsync(group, owner);
+                await _chatServerRedisService.WriteGroupAsync(group);
 
                 // 发布系统消息
-                await WriteMessageToRedisAsync(group, owner);
+                await _chatServerRedisService.WriteGroupMessageAsync(group, SysMsgType.GROUP_INFO_CHANGED);
             }
             catch (Exception ex)
             {
-                _logger.LogError("CreateGroupCommandHandler UpdateRedisAsync: {@BackwardCompatibilityError}", ex);
+                _logger.LogError("UpdateGroupCommandHandler UpdateRedisAsync: {@BackwardCompatibilityError}", ex);
             }
-        }
-
-        private async Task WriteGroupToRedisAsync(Domain.AggregatesModel.GroupAggregate.Group group, Domain.AggregatesModel.UserAggregate.User owner)
-        {
-            var chatServerGroup = new PSR_ARS_Group
-            {
-                IMARSG_CreateTime = DateTime.UnixEpoch.AddSeconds(group.CreatedTime),
-                IMARSG_MembersNum = group.GroupUsers.Count,
-                IMARSG_Name = group.Name,
-                IMARSG_Avatar = group.Avatar,
-                IMARSG_Notice = group.Notice,
-                IMARSG_OwnerId = owner.ChatServerUserId,
-                IMARSG_Status = 1,
-                IMARSG_Type = 1,
-                IMARSG_Guid = CommonUtil.GetGuid(),
-                IMARSG_AllowAddMemberByAnyone = 0
-            };
-
-            var groupBytesData = SerializeUtil.SerializeToJsonBytes(chatServerGroup, true);
-            string json = JsonConvert.SerializeObject(groupBytesData);
-            await _redisService.HashSetAsync("grouptable", group.ChatServerGroupId.ToString(), json);
-
-            _logger.LogInformation("Redis Group: {@RedisGroup}", chatServerGroup);
-        }
-
-        private async Task WriteMessageToRedisAsync(Domain.AggregatesModel.GroupAggregate.Group group, Domain.AggregatesModel.UserAggregate.User owner)
-        {
-            var receiverIds = (await _userRepository.GetUsersAsync(group.GroupUsers.Select(gu => gu.UserId.Value))).Select(u => u.ChatServerUserId).ToArray();
-
-            var msg = new SysMsgGroupChangedVo
-            {
-                type = (int)SysMsgType.GROUP_INFO_CHANGED,
-                receiverIds = receiverIds,
-                groupId = group.ChatServerGroupId,
-                operatorName = owner.Nickname,
-                operatorId = owner.ChatServerUserId
-            };
-
-            var bytesData = SerializeUtil.SerializeToJsonBytes(msg, true);
-            string json = JsonConvert.SerializeObject(bytesData);
-            await _redisService.PublishAsync("SYS_MSG", json);
-
-            _logger.LogInformation("Redis Message: {@RedisMessage}", msg);
         }
         #endregion
     }

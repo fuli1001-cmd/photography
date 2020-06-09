@@ -14,7 +14,6 @@ namespace Photography.Services.User.Domain.AggregatesModel.GroupAggregate
         public string Name { get; private set; }
         public string Notice { get; private set; }
         public string Avatar { get; private set; }
-        public bool Muted { get; private set; }
         public bool ModifyMemberEnabled { get; private set; }
         public double CreatedTime { get; private set; }
 
@@ -31,7 +30,6 @@ namespace Photography.Services.User.Domain.AggregatesModel.GroupAggregate
 
         public Group()
         {
-            Muted = false;
             ModifyMemberEnabled = false;
             CreatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
             _groupUsers = new List<GroupUser>();
@@ -80,22 +78,6 @@ namespace Photography.Services.User.Domain.AggregatesModel.GroupAggregate
             AddDeletedGroupDomainEvent();
         }
 
-        public void Mute(Guid ownerId)
-        {
-            if (OwnerId != ownerId)
-                throw new DomainException("操作失败。");
-
-            Muted = true;
-        }
-
-        public void UnMute(Guid ownerId)
-        {
-            if (OwnerId != ownerId)
-                throw new DomainException("操作失败。");
-
-            Muted = false;
-        }
-
         public void EnableAddMember(Guid ownerId)
         {
             if (OwnerId != ownerId)
@@ -115,11 +97,26 @@ namespace Photography.Services.User.Domain.AggregatesModel.GroupAggregate
         public void ChangeOwner(Guid oldOwnerId, Guid newOwnerId)
         {
             // 检查原来的群主是当前用户，并且现在的群主是群成员
-            if (OwnerId != oldOwnerId || GroupUsers.Any(gu => gu.UserId == newOwnerId))
+            if (OwnerId != oldOwnerId || !GroupUsers.Any(gu => gu.UserId == newOwnerId))
                 throw new DomainException("操作失败。");
 
             OwnerId = newOwnerId;
         }
+
+        //public Group Copy()
+        //{
+        //    var group = new Group();
+        //    group.Id = Id;
+        //    group.Name = Name;
+        //    group.Notice = Notice;
+        //    group.Avatar = Avatar;
+        //    group.Muted = Muted;
+        //    group.ModifyMemberEnabled = ModifyMemberEnabled;
+        //    group.CreatedTime = CreatedTime;
+        //    group.ChatServerGroupId = ChatServerGroupId;
+        //    group.OwnerId = OwnerId;
+        //    group.GroupUsers = GroupUsers;
+        //}
 
         private void AddDeletedGroupDomainEvent()
         {

@@ -28,7 +28,6 @@ services:
       - SmsSettings__Domain=dysmsapi.aliyuncs.com
       - SmsSettings__Version=2017-05-25
       - SmsSettings__Action=SendSms
-      - SmsSettings__SignName=‘√ÕºœÌ
     ports:
       - "5101:80"
       

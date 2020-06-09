@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Photography.Services.User.API.BackwardCompatibility.ChatServerRedis;
 using Photography.Services.User.API.BackwardCompatibility.Models;
 using Photography.Services.User.API.Infrastructure.Redis;
 using Photography.Services.User.Domain.AggregatesModel.GroupAggregate;
@@ -23,21 +24,21 @@ namespace Photography.Services.User.API.Application.Commands.Group.ModifyGroupMe
         private readonly IGroupRepository _groupRepository;
         private readonly IGroupUserRepository _groupUserRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IRedisService _redisService;
+        private readonly IChatServerRedis _chatServerRedisService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<ModifyGroupMembersCommandHandler> _logger;
 
         public ModifyGroupMembersCommandHandler(IGroupRepository groupRepository,
             IGroupUserRepository groupUserRepository,
             IUserRepository userRepository,
-            IRedisService redisService,
+            IChatServerRedis chatServerRedisService,
             IHttpContextAccessor httpContextAccessor,
             ILogger<ModifyGroupMembersCommandHandler> logger)
         {
             _groupRepository = groupRepository ?? throw new ArgumentNullException(nameof(groupRepository));
             _groupUserRepository = groupUserRepository ?? throw new ArgumentNullException(nameof(groupUserRepository));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            _redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
+            _chatServerRedisService = chatServerRedisService ?? throw new ArgumentNullException(nameof(chatServerRedisService));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -99,103 +100,26 @@ namespace Photography.Services.User.API.Application.Commands.Group.ModifyGroupMe
                 // 从redis去掉被删除的群成员
                 request.RemovedMemberIds.ForEach(async memberId =>
                 {
-                    await RemoveGroupMemberFromRedisAsync(memberId, group.ChatServerGroupId);
+                    await _chatServerRedisService.RemoveGroupMemberAsync(memberId, group.ChatServerGroupId);
                 });
 
                 // 向redis加入新增的群成员
                 request.NewMemberIds.ForEach(async memberId =>
                 {
-                    await WriteGroupMemberToRedisAsync(memberId, group.ChatServerGroupId);
+                    await _chatServerRedisService.WriteGroupMemberAsync(memberId, group.ChatServerGroupId, 0);
                 });
 
                 // 发布系统消息
-                await WriteMessageToRedisAsync(request, group);
+                var removedUsers = await _userRepository.GetUsersAsync(request.RemovedMemberIds);
+                await _chatServerRedisService.WriteGroupMemberMessageAsync(group, SysMsgType.REMOVED_FROM_GROUP, removedUsers);
+
+                var addedUsers = await _userRepository.GetUsersAsync(request.NewMemberIds);
+                await _chatServerRedisService.WriteGroupMemberMessageAsync(group, SysMsgType.NEW_MEMBER_ADDED, removedUsers);
             } 
             catch (Exception ex)
             {
                 _logger.LogError("ModifyGroupMembersCommandHandler UpdateRedisAsync: {@BackwardCompatibilityError}", ex);
             }
-        }
-
-        private async Task RemoveGroupMemberFromRedisAsync(Guid userId, int chatServerGroupId)
-        {
-            var user = await _userRepository.GetByIdAsync(userId);
-            await _redisService.HashDeleteAsync("group_" + chatServerGroupId, user.ChatServerUserId.ToString());
-        }
-
-        private async Task WriteGroupMemberToRedisAsync(Guid userId, int chatServerGroupId)
-        {
-            var user = await _userRepository.GetByIdAsync(userId);
-
-            var member = new PSR_ARS_GroupMembers
-            {
-                IMARSGM_GroupId = chatServerGroupId,
-                IMARSGM_AddMember = 1,
-                IMARSGM_GroupStatus = 1,
-                IMARSGM_MemberId = user.ChatServerUserId,
-                IMARSGM_Nickname = user.Nickname,
-                IMARSGM_Speaking = 1,
-                IMARSGM_Time = DateTime.Now,
-                IMARSGM_Mute = 0
-            };
-            
-            var bytesData = SerializeUtil.SerializeToJsonBytes(member, true);
-            string json = JsonConvert.SerializeObject(bytesData);
-            await _redisService.HashSetAsync("group_" + chatServerGroupId, user.ChatServerUserId.ToString(), json);
-
-            _logger.LogInformation("Redis GroupMember: {@RedisGroupMember}", member);
-        }
-
-        private async Task WriteMessageToRedisAsync(ModifyGroupMembersCommand request, Domain.AggregatesModel.GroupAggregate.Group group)
-        {
-            var owner = await _userRepository.GetByIdAsync(group.OwnerId);
-
-            var receiverIds = (await _userRepository.GetUsersAsync(group.GroupUsers.Select(gu => gu.UserId.Value))).Select(u => u.ChatServerUserId).ToArray();
-
-            // 写入删除群成员消息
-            var removedUsers = await _userRepository.GetUsersAsync(request.RemovedMemberIds);
-            var removedIds = removedUsers.Select(u => u.ChatServerUserId).ToArray();
-            var removedNicknames = removedUsers.Select(u => u.Nickname).ToArray();
-            
-            var removedMsg = new SysMsgGroupChangedVo
-            {
-                type = (int)SysMsgType.REMOVED_FROM_GROUP,
-                receiverIds = receiverIds,
-                changedMemberIds = removedIds,
-                changedMemberNames = removedNicknames,
-                groupId = group.ChatServerGroupId,
-                operatorName = owner.Nickname,
-                operatorId = owner.ChatServerUserId
-            };
-
-            await WriteMessageToRedisAsync(removedMsg);
-
-            // 写入新增群成员消息
-            var addedUsers = await _userRepository.GetUsersAsync(request.NewMemberIds);
-            var addedUserIds = addedUsers.Select(u => u.ChatServerUserId).ToArray();
-            var addedNicknames = addedUsers.Select(u => u.Nickname).ToArray();
-
-            var addedMsg = new SysMsgGroupChangedVo
-            {
-                type = (int)SysMsgType.NEW_MEMBER_ADDED,
-                receiverIds = receiverIds,
-                changedMemberIds = addedUserIds,
-                changedMemberNames = addedNicknames,
-                groupId = group.ChatServerGroupId,
-                operatorName = owner.Nickname,
-                operatorId = owner.ChatServerUserId
-            };
-
-            await WriteMessageToRedisAsync(addedMsg);
-        }
-
-        private async Task WriteMessageToRedisAsync(SysMsgGroupChangedVo msg)
-        {
-            var bytesData = SerializeUtil.SerializeToJsonBytes(msg, true);
-            string json = JsonConvert.SerializeObject(bytesData);
-            await _redisService.PublishAsync("SYS_MSG", json);
-
-            _logger.LogInformation("Redis Message: {@RedisMessage}", msg);
         }
         #endregion
     }

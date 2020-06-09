@@ -63,6 +63,7 @@ namespace Photography.Services.User.API.Query.ViewModels
     public class GroupUserViewModel : BaseUserViewModel
     {
         public string Avatar { get; set; }
+        public int ChatServerUserId { get; set; }
     }
 
     public class BaseUserViewModel

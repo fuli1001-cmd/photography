@@ -159,11 +159,11 @@ namespace Photography.Services.User.API.Controllers
         /// <param name="groupId"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("{groupId}")]
+        [Route("group")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<ResponseWrapper>> GetGroupAsync(Guid groupId)
+        public async Task<ActionResult<ResponseWrapper>> GetGroupAsync([FromQuery(Name = "groupId")] Guid? groupId, [FromQuery(Name = "oldGroupId")] int? oldGroupId)
         {
-            var result = await _groupQueries.GetGroupAsync(groupId);
+            var result = await _groupQueries.GetGroupAsync(groupId, oldGroupId);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
 

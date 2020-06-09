@@ -25,6 +25,7 @@ using Arise.DDD.API.Filters;
 using Photography.Services.User.API.Settings;
 using Photography.Services.User.API.Application.Commands.Login;
 using Photography.Services.User.API.Infrastructure.Redis;
+using Photography.Services.User.API.BackwardCompatibility.ChatServerRedis;
 
 namespace Photography.Services.User.API
 {
@@ -52,11 +53,12 @@ namespace Photography.Services.User.API
 
             services.AddMediatR(typeof(LoginCommand).GetTypeInfo().Assembly);
 
-            services.AddSingleton(typeof(IRedisService), typeof(RedisService));
-
             services.Configure<AuthSettings>(Configuration.GetSection("AuthSettings"));
             services.Configure<RedisSettings>(Configuration.GetSection("RedisSettings"));
             services.Configure<ServerSettings>(Configuration.GetSection("ServerSettings"));
+
+            services.AddSingleton(typeof(IRedisService), typeof(RedisService));
+            services.AddTransient(typeof(IChatServerRedis), typeof(ChatServerRedis));
 
             services.AddControllers(options =>
             {

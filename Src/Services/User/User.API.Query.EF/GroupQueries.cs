@@ -29,11 +29,25 @@ namespace Photography.Services.User.API.Query.EF
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<GroupViewModel> GetGroupAsync(Guid groupId)
+        public Task<GroupViewModel> GetGroupByChatServerGroupIdAsync(Guid groupId)
         {
-            var queryableGroups = from g in _dbContext.Groups
-                                  where g.Id == groupId
+            throw new NotImplementedException();
+        }
+
+        public async Task<GroupViewModel> GetGroupAsync(Guid? groupId, int? oldGroupId)
+        {
+            IQueryable<Domain.AggregatesModel.GroupAggregate.Group> queryableGroups = null;
+
+            if (groupId != null)
+                queryableGroups = from g in _dbContext.Groups
+                                  where g.Id == groupId.Value
                                   select g;
+            else if (oldGroupId != null)
+                queryableGroups = from g in _dbContext.Groups
+                                  where g.ChatServerGroupId == oldGroupId.Value
+                                  select g;
+            else
+                return null;
 
             return await GetQueryableGroupViewModels(queryableGroups).SingleOrDefaultAsync();
         }
@@ -55,6 +69,8 @@ namespace Photography.Services.User.API.Query.EF
 
         private IQueryable<GroupViewModel> GetQueryableGroupViewModels(IQueryable<Domain.AggregatesModel.GroupAggregate.Group> queryableGroups)
         {
+            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
             return from g in queryableGroups
                    select new GroupViewModel
                    {
@@ -62,8 +78,11 @@ namespace Photography.Services.User.API.Query.EF
                        Name = g.Name,
                        Notice = g.Notice,
                        Avatar = g.Avatar,
-                       Muted = g.Muted,
                        OwnerId = g.OwnerId,
+                       ChatServerGroupId = g.ChatServerGroupId,
+                       Muted = (from gu in g.GroupUsers
+                                where gu.UserId == myId
+                                select gu.Muted).SingleOrDefault(),
                        Members = from gu in g.GroupUsers
                                  join u in _dbContext.Users
                                  on gu.UserId equals u.Id
@@ -71,7 +90,8 @@ namespace Photography.Services.User.API.Query.EF
                                  {
                                      Id = u.Id,
                                      Nickname = u.Nickname,
-                                     Avatar = u.Avatar
+                                     Avatar = u.Avatar,
+                                     ChatServerUserId = u.ChatServerUserId
                                  }
                    };
         }

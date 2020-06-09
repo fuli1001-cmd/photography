@@ -9,12 +9,16 @@ namespace Photography.Services.User.API.BackwardCompatibility.ChatServerRedis
 {
     public interface IChatServerRedis
     {
-        //Task WriteGroupToRedisAsync(Group group);
+        Task WriteGroupAsync(Group group);
 
-        //Task WriteGroupMemberToRedisAsync(Guid userId, int chatServerGroupId);
+        Task WriteGroupMemberAsync(Guid userId, int chatServerGroupId, int muted);
 
-        //Task WriteGroupMessageToRedisAsync(Group group, SysMsgType msgType);
+        Task RemoveGroupAsync(int chatServerGroupId);
 
-        //Task WriteGroupMemberMessageToRedisAsync(Group group, SysMsgType msgType);
+        Task RemoveGroupMemberAsync(Guid userId, int chatServerGroupId);
+
+        Task WriteGroupMessageAsync(Group group, SysMsgType msgType);
+
+        Task WriteGroupMemberMessageAsync(Group group, SysMsgType msgType, IEnumerable<Domain.AggregatesModel.UserAggregate.User> changedUsers);
     }
 }

@@ -14,6 +14,17 @@
             允许群成员加人
             </summary>
         </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.Group.MuteGroup.MuteGroupCommand.GroupId">
+            <summary>
+            要免打扰的群id
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.Group.MuteGroup.MuteGroupCommand.Muted">
+            <summary>
+            true：不接收消息（免打扰）
+            false：接收消息
+            </summary>
+        </member>
         <member name="P:Photography.Services.User.API.Application.Commands.ToggleFollow.ToggleFollowCommand.UserIdToFollow">
             <summary>
             要follow的用户id
@@ -98,7 +109,7 @@
             <param name="command"></param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.User.API.Controllers.GroupsController.GetGroupAsync(System.Guid)">
+        <member name="M:Photography.Services.User.API.Controllers.GroupsController.GetGroupAsync(System.Nullable{System.Guid},System.Nullable{System.Int32})">
             <summary>
             获取群信息
             </summary>
