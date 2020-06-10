@@ -12,7 +12,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Photography.Services.User.API.Application.Commands.ToggleFollow
+namespace Photography.Services.User.API.Application.Commands.User.ToggleFollow
 {
     public class ToggleFollowCommandHandler : IRequestHandler<ToggleFollowCommand, bool>
     {

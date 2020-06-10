@@ -2,8 +2,8 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
-using Photography.Services.User.API.Application.Commands.CreateUser;
-using Photography.Services.User.API.Application.Commands.FollowEachOther;
+using Photography.Services.User.API.Application.Commands.User.CreateUser;
+using Photography.Services.User.API.Application.Commands.User.FollowEachOther;
 using Serilog.Context;
 using System;
 using System.Collections.Generic;

@@ -84,6 +84,18 @@ namespace Photography.Services.Post.API.Query.EF
             return await GetPagedAppointmentViewModelsAsync(queryableDto, pagingParameters);
         }
 
+        public async Task<AppointmentViewModel> GetAppointmentAsync(Guid appointmentId)
+        {
+            var queryableUserPosts = from p in _postContext.Posts
+                                     join u in _postContext.Users on p.UserId equals u.Id
+                                     where p.Id == appointmentId
+                                     select new UserPost { Post = p, User = u };
+
+            var queryableDto = GetQueryableAppointmentViewModels(queryableUserPosts);
+
+            return await queryableDto.SingleOrDefaultAsync();
+        }
+
         private IQueryable<AppointmentViewModel> GetQueryableAppointmentViewModels(IQueryable<UserPost> queryableUserPosts)
         {
             return from up in queryableUserPosts

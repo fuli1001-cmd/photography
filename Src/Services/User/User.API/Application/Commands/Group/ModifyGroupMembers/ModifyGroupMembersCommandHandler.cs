@@ -65,7 +65,7 @@ namespace Photography.Services.User.API.Application.Commands.Group.ModifyGroupMe
             }
             else if (!group.GroupUsers.Any(gu => gu.UserId == myId))
             {
-                // 允许群成员修改群成员开关已打开，允许群成员修改
+                // 允许群成员修改群成员开关已打开，允许群成员修改，检查是否是群成员
                 _logger.LogError("ModifyGroupMembersCommandHandler: User {UserId} is not in Group {GroupId}.", myId, request.GroupId);
                 throw new DomainException("操作失败。");
             }
@@ -78,10 +78,10 @@ namespace Photography.Services.User.API.Application.Commands.Group.ModifyGroupMe
                     _groupUserRepository.Remove(groupUser);
             });
 
-            // 增加需要增加的成员
-            group.AddMembers(request.NewMemberIds);
+            // 添加新成员
+            request.NewMemberIds.ForEach(memberId => _groupUserRepository.Add(new GroupUser(request.GroupId, memberId)));
 
-            if (await _groupRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
+            if (await _groupUserRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
             {
                 // BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据
                 await UpdateRedisAsync(request, group);
@@ -98,16 +98,16 @@ namespace Photography.Services.User.API.Application.Commands.Group.ModifyGroupMe
             try
             {
                 // 从redis去掉被删除的群成员
-                request.RemovedMemberIds.ForEach(async memberId =>
+                foreach (var memberId in request.RemovedMemberIds)
                 {
                     await _chatServerRedisService.RemoveGroupMemberAsync(memberId, group.ChatServerGroupId);
-                });
+                }
 
                 // 向redis加入新增的群成员
-                request.NewMemberIds.ForEach(async memberId =>
+                foreach (var memberId in request.NewMemberIds)
                 {
                     await _chatServerRedisService.WriteGroupMemberAsync(memberId, group.ChatServerGroupId, 0);
-                });
+                }
 
                 // 发布系统消息
                 var removedUsers = await _userRepository.GetUsersAsync(request.RemovedMemberIds);
@@ -118,7 +118,7 @@ namespace Photography.Services.User.API.Application.Commands.Group.ModifyGroupMe
             } 
             catch (Exception ex)
             {
-                _logger.LogError("ModifyGroupMembersCommandHandler UpdateRedisAsync: {@BackwardCompatibilityError}", ex);
+                _logger.LogError("Redis Error: {@RedisError}", ex);
             }
         }
         #endregion

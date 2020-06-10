@@ -1,9 +1,11 @@
 ﻿using ApplicationMessages.Events;
+using Arise.DDD.Domain.Exceptions;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
+using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 using System;
@@ -19,7 +21,7 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.Publish
     {
         private readonly IPostRepository _postRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IMapper _mapper;
+        private readonly IAppointmentQueries _appointmentQueries;
         private readonly ILogger<PublishAppointmentCommandHandler> _logger;
         private readonly IServiceProvider _serviceProvider;
 
@@ -28,12 +30,12 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.Publish
         public PublishAppointmentCommandHandler(IPostRepository postRepository,
             IServiceProvider serviceProvider, 
             IHttpContextAccessor httpContextAccessor,
-            IMapper mapper, ILogger<PublishAppointmentCommandHandler> logger)
+            IAppointmentQueries appointmentQueries, ILogger<PublishAppointmentCommandHandler> logger)
         {
             _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _appointmentQueries = appointmentQueries ?? throw new ArgumentNullException(nameof(appointmentQueries));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -46,10 +48,12 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.Publish
             _postRepository.Add(post);
 
             if (await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
+            {
                 await SendAppointmentPublishedEventAsync(userId);
+                return await _appointmentQueries.GetAppointmentAsync(post.Id);
+            }
 
-            _postRepository.LoadUser(post);
-            return _mapper.Map<AppointmentViewModel>(post);
+            throw new DomainException("操作失败。");
         }
 
         private async Task SendAppointmentPublishedEventAsync(Guid userId)
@@ -57,6 +61,7 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.Publish
             var @event = new AppointmentPublishedEvent { UserId = userId };
             _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
             await _messageSession.Publish(@event);
+
             _logger.LogInformation("----- Published AppointmentPublishedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
         }
     }

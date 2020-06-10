@@ -15,5 +15,8 @@ namespace Photography.Services.Post.API.Query.Interfaces
 
         // 获取我发布的约拍
         Task<PagedList<AppointmentViewModel>> GetMyAppointmentsAsync(PagingParameters pagingParameters);
+
+        // 获取约拍详情
+        Task<AppointmentViewModel> GetAppointmentAsync(Guid appointmentId);
     }
 }

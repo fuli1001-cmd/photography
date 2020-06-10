@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Photography.Services.User.API.Application.Commands.CreateUser
+namespace Photography.Services.User.API.Application.Commands.User.CreateUser
 {
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, bool>
     {

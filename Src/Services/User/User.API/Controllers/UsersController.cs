@@ -7,9 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Photography.Services.User.API.Application.Commands.Login;
-using Photography.Services.User.API.Application.Commands.ToggleFollow;
-using Photography.Services.User.API.Application.Commands.UpdateBackground;
-using Photography.Services.User.API.Application.Commands.UpdateUser;
+using Photography.Services.User.API.Application.Commands.User.MuteUser;
+using Photography.Services.User.API.Application.Commands.User.ToggleFollow;
+using Photography.Services.User.API.Application.Commands.User.UpdateBackground;
+using Photography.Services.User.API.Application.Commands.User.UpdateUser;
 using Photography.Services.User.API.BackwardCompatibility.ViewModels;
 using Photography.Services.User.API.Query.BackwardCompatibility.ViewModels;
 using Photography.Services.User.API.Query.Interfaces;
@@ -198,6 +199,15 @@ namespace Photography.Services.User.API.Controllers
         {
             var users = await _userQueries.SearchUsersAsync(key);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(users));
+        }
+
+        [HttpPut]
+        [Route("mute")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ResponseWrapper>> MuteUserAsync([FromBody] MuteUserCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
     }
 }

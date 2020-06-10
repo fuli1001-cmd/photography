@@ -1,5 +1,7 @@
-﻿using Photography.Services.User.API.BackwardCompatibility.Models;
+﻿using Photography.Services.User.API.Application.Commands.Login;
+using Photography.Services.User.API.BackwardCompatibility.Models;
 using Photography.Services.User.Domain.AggregatesModel.GroupAggregate;
+using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,5 +22,9 @@ namespace Photography.Services.User.API.BackwardCompatibility.ChatServerRedis
         Task WriteGroupMessageAsync(Group group, SysMsgType msgType);
 
         Task WriteGroupMemberMessageAsync(Group group, SysMsgType msgType, IEnumerable<Domain.AggregatesModel.UserAggregate.User> changedUsers);
+
+        Task WriteUserAsync(Domain.AggregatesModel.UserAggregate.User user);
+
+        Task WriteTokenUserAsync(Domain.AggregatesModel.UserAggregate.User user, string oldToken);
     }
 }

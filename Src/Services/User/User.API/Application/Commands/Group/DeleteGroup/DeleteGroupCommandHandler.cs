@@ -79,16 +79,18 @@ namespace Photography.Services.User.API.Application.Commands.Group.DeleteGroup
                 await _chatServerRedisService.RemoveGroupAsync(group.ChatServerGroupId);
 
                 // 从redis去除group members
-                group.GroupUsers.Select(gu => gu.UserId.Value)
-                    .ToList()
-                    .ForEach(async userId => await _chatServerRedisService.RemoveGroupMemberAsync(userId, group.ChatServerGroupId));
+                var userIds = group.GroupUsers.Select(gu => gu.UserId.Value);
+                foreach (var userId in userIds)
+                { 
+                    await _chatServerRedisService.RemoveGroupMemberAsync(userId, group.ChatServerGroupId);
+                }
 
                 // 发布系统消息
                 await _chatServerRedisService.WriteGroupMessageAsync(group, SysMsgType.GROUP_DISMISSED);
             }
             catch (Exception ex)
             {
-                _logger.LogError("ChangeGroupOwnerCommandHandler UpdateRedisAsync: {@BackwardCompatibilityError}", ex);
+                _logger.LogError("Redis Error: {@RedisError}", ex);
             }
         }
         #endregion

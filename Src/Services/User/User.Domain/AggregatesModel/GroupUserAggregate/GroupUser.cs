@@ -23,6 +23,11 @@ namespace Photography.Services.User.Domain.AggregatesModel.GroupUserAggregate
             UserId = userId;
         }
 
+        public GroupUser(Guid groupId, Guid userId) : this(userId)
+        {
+            GroupId = groupId;
+        }
+
         public void Mute()
         {
             Muted = true;

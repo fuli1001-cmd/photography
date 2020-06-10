@@ -75,7 +75,7 @@ namespace Photography.Services.User.API.Controllers
         /// <param name="command"></param>
         /// <returns></returns>
         [HttpDelete]
-        [Route("{groupId}")]
+        [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ResponseWrapper>> DeleteGroupAsync([FromBody] DeleteGroupCommand command)
         {

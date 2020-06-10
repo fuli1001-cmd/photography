@@ -38,9 +38,10 @@ namespace Photography.ApiGateways.ApiGwBase.Sms
 
             request.AddQueryParameters("PhoneNumbers", phonenumber);
             request.AddQueryParameters("SignName", _smsSettings.Value.SignName);
-            request.AddQueryParameters("TemplateCode", "SMS_192335605");
+            request.AddQueryParameters("TemplateCode", _smsSettings.Value.TemplateCode);
             request.AddQueryParameters("TemplateParam", "{\"code\":\"" + code + "\"}");
 
+            _logger.LogInformation("SmsSettings: {@SmsSettings}", _smsSettings.Value);
             _logger.LogInformation("SendSms request: {@request}", request);
 
             try

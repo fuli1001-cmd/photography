@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
-namespace Photography.Services.User.API.Application.Commands.ToggleFollow
+namespace Photography.Services.User.API.Application.Commands.User.ToggleFollow
 {
     [DataContract]
     public class ToggleFollowCommand : IRequest<bool>

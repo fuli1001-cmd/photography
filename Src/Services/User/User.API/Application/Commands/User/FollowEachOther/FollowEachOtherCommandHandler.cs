@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Photography.Services.User.API.Application.Commands.FollowEachOther
+namespace Photography.Services.User.API.Application.Commands.User.FollowEachOther
 {
     public class FollowEachOtherCommandHandler : IRequestHandler<FollowEachOtherCommand, bool>
     {

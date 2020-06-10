@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Photography.Services.User.API.BackwardCompatibility.ChatServerRedis;
 using Photography.Services.User.API.BackwardCompatibility.Models;
 using Photography.Services.User.API.BackwardCompatibility.Utils;
 using Photography.Services.User.API.BackwardCompatibility.ViewModels;
@@ -23,17 +24,18 @@ namespace Photography.Services.User.API.Application.Commands.Login
     {
         private readonly ILogger<LoginCommandHandler> _logger;
         private readonly IOptionsSnapshot<AuthSettings> _authSettings;
-        private readonly IRedisService _redisService;
+        private readonly IChatServerRedis _chatServerRedisService;
         private readonly IUserRepository _userRepository;
 
-        public LoginCommandHandler(IRedisService redisService,
+        public LoginCommandHandler(
+            IChatServerRedis chatServerRedisService,
             IUserRepository userRepository,
             IOptionsSnapshot<AuthSettings> authSettings,
             ILogger<LoginCommandHandler> logger)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _authSettings = authSettings ?? throw new ArgumentNullException(nameof(authSettings));
-            _redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
+            _chatServerRedisService = chatServerRedisService ?? throw new ArgumentNullException(nameof(chatServerRedisService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -46,12 +48,15 @@ namespace Photography.Services.User.API.Application.Commands.Login
             var user = await _userRepository.GetByUserNameAsync(request.UserName);
             if (user != null)
             {
+                // 更新本次登录的客户端类型和推送id
+                user.SetChatServerProperties(request.ClientType, request.RegistrationId);
+                await _userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
+
                 // 生成老式token，供聊天服务使用
                 oldToken = OldTokenUtil.GetTokenString(user.ChatServerUserId, request.Password);
-                // 向redis中写入用户信息，供聊天服务使用
-                await WriteChatServerUserToRedisAsync(request, user);
-                // 向redis中写入老token信息，供聊天服务使用
-                await WriteTokenToRedisAsync(request, user, oldToken);
+
+                // 向redis写入用户信息
+                await UpdateRedisAsync(user, oldToken);
             }
             #endregion
 
@@ -96,57 +101,19 @@ namespace Photography.Services.User.API.Application.Commands.Login
         }
 
         #region BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据
-        private async Task WriteChatServerUserToRedisAsync(LoginCommand loginCommand, Domain.AggregatesModel.UserAggregate.User user)
+        private async Task UpdateRedisAsync(Domain.AggregatesModel.UserAggregate.User user, string oldToken)
         {
             try
             {
-                var chatServerUser = new UserInfoLite
-                {
-                    userId = user.ChatServerUserId,
-                    username = user.UserName,
-                    nickname = user.Nickname,
-                    clientType = loginCommand.ClientType,
-                    avatar = user.Avatar,
-                    tel = user.Phonenumber,
-                    password = loginCommand.Password,
-                    registrationId = loginCommand.RegistrationId
-                };
-                _logger.LogInformation("UserInfoLite: {@UserInfoLite}", chatServerUser);
-                string json = SerializeUtil.SerializeToJson(chatServerUser);
-                var bytes = SerializeUtil.SerializeStringToBytes(json, true);
-                json = JsonConvert.SerializeObject(bytes);
-                await _redisService.StringSetAsync(user.ChatServerUserId.ToString(), json, null);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("WriteChatServerUserToRedisAsync: {BackwardCompatibilityError}", ex.Message);
-                if (ex.InnerException != null)
-                    _logger.LogError("WriteChatServerUserToRedisAsync: {BackwardCompatibilityError}", ex.InnerException.Message);
-            }
-        }
+                // 向redis中写入用户信息，供聊天服务使用
+                await _chatServerRedisService.WriteUserAsync(user);
 
-        private async Task WriteTokenToRedisAsync(LoginCommand loginCommand, Domain.AggregatesModel.UserAggregate.User user, string oldToken)
-        {
-            try
-            {
-                var token = new Token
-                {
-                    userId = user.ChatServerUserId,
-                    username = user.UserName,
-                    nickname = user.Nickname,
-                    clientType = loginCommand.ClientType,
-                    loginTime = CommonUtil.GetTimestamp(DateTime.Now)
-                };
-                _logger.LogInformation("TokenUser: {@TokenUser}", token);
-                var bytes = SerializeUtil.SerializeToJsonBytes(token, true);
-                var json = JsonConvert.SerializeObject(bytes);
-                await _redisService.StringSetAsync(oldToken, json, null);
+                // 向redis中写入老token信息，供聊天服务使用
+                await _chatServerRedisService.WriteTokenUserAsync(user, oldToken);
             }
             catch (Exception ex)
             {
-                _logger.LogError("WriteTokenToRedisAsync: {BackwardCompatibilityError}", ex.Message);
-                if (ex.InnerException != null)
-                    _logger.LogError("WriteTokenToRedisAsync: {BackwardCompatibilityError}", ex.InnerException.Message);
+                _logger.LogError("Redis Error: {@RedisError}", ex);
             }
         }
         #endregion

@@ -9,7 +9,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Photography.Services.User.API.Application.Commands.UpdateBackground
+namespace Photography.Services.User.API.Application.Commands.User.UpdateBackground
 {
     public class UpdateBackgroundCommandHandler : IRequestHandler<UpdateBackgroundCommand, bool>
     {

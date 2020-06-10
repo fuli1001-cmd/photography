@@ -3,6 +3,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 using System;
@@ -17,16 +18,16 @@ namespace Photography.Services.Post.API.Application.Commands.Post.UpdatePost
     public class UpdatePostCommandHandler : IRequestHandler<UpdatePostCommand, PostViewModel>
     {
         private readonly IPostRepository _postRepository;
+        private readonly IPostQueries _postQueries;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IMapper _mapper;
         private readonly ILogger<UpdatePostCommandHandler> _logger;
 
         public UpdatePostCommandHandler(IPostRepository postRepository, IHttpContextAccessor httpContextAccessor,
-            IMapper mapper, ILogger<UpdatePostCommandHandler> logger)
+            IPostQueries postQueries, ILogger<UpdatePostCommandHandler> logger)
         {
             _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _postQueries = postQueries ?? throw new ArgumentNullException(nameof(postQueries));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -49,13 +50,11 @@ namespace Photography.Services.Post.API.Application.Commands.Post.UpdatePost
                 request.CityCode, request.FriendIds, attachments);
 
             _postRepository.Update(post);
+
             if (await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
-            {
-                _postRepository.LoadUser(post);
-                return _mapper.Map<PostViewModel>(post);
-            }
-            else
-                throw new DomainException("更新失败。");
+                return await _postQueries.GetPostAsync(post.Id);
+
+            throw new DomainException("更新失败。");
         }
     }
 }

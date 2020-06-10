@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Photography.Services.User.API.Application.Commands.Login;
 using Photography.Services.User.API.BackwardCompatibility.Models;
+using Photography.Services.User.API.BackwardCompatibility.Utils;
 using Photography.Services.User.API.Infrastructure.Redis;
 using Photography.Services.User.Domain.AggregatesModel.GroupAggregate;
 using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
@@ -14,18 +16,15 @@ namespace Photography.Services.User.API.BackwardCompatibility.ChatServerRedis
 {
     public class ChatServerRedis : IChatServerRedis
     {
-        private readonly IGroupRepository _groupRepository;
         private readonly IUserRepository _userRepository;
         private readonly IRedisService _redisService;
         private readonly ILogger<ChatServerRedis> _logger;
 
         public ChatServerRedis(
-            IGroupRepository groupRepository,
             IUserRepository userRepository,
             IRedisService redisService,
             ILogger<ChatServerRedis> logger)
         {
-            _groupRepository = groupRepository ?? throw new ArgumentNullException(nameof(groupRepository));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -110,7 +109,9 @@ namespace Photography.Services.User.API.BackwardCompatibility.ChatServerRedis
         public async Task WriteGroupMemberMessageAsync(Group group, SysMsgType msgType, IEnumerable<Domain.AggregatesModel.UserAggregate.User> changedUsers)
         {
             var owner = await _userRepository.GetByIdAsync(group.OwnerId);
-            var receiverIds = (await _userRepository.GetUsersAsync(group.GroupUsers.Select(gu => gu.UserId.Value))).Select(u => u.ChatServerUserId).ToArray();
+
+            var receivers = await _userRepository.GetUsersAsync(group.GroupUsers.Select(gu => gu.UserId.Value));
+            var receiverIds = receivers.Select(u => u.ChatServerUserId).ToArray();
 
             var changedIds = changedUsers.Select(u => u.ChatServerUserId).ToArray();
             var changedNicknames = changedUsers.Select(u => u.Nickname).ToArray();
@@ -136,6 +137,47 @@ namespace Photography.Services.User.API.BackwardCompatibility.ChatServerRedis
             await _redisService.PublishAsync("SYS_MSG", json);
 
             _logger.LogInformation("Redis Message: {@RedisMessage}", msg);
+        }
+
+        public async Task WriteUserAsync(Domain.AggregatesModel.UserAggregate.User user)
+        {
+            var chatServerUser = new UserInfoLite
+            {
+                userId = user.ChatServerUserId,
+                username = user.UserName,
+                nickname = user.Nickname,
+                clientType = user.ClientType,
+                avatar = user.Avatar,
+                tel = user.Phonenumber,
+                registrationId = user.RegistrationId
+            };
+            
+            string json = SerializeUtil.SerializeToJson(chatServerUser);
+            var bytes = SerializeUtil.SerializeStringToBytes(json, true);
+            json = JsonConvert.SerializeObject(bytes);
+
+            await _redisService.StringSetAsync(user.ChatServerUserId.ToString(), json, null);
+
+            _logger.LogInformation("Redis User: {@RedisUser}", chatServerUser);
+        }
+
+        public async Task WriteTokenUserAsync(Domain.AggregatesModel.UserAggregate.User user, string oldToken)
+        {
+            var tokenUser = new Token
+            {
+                userId = user.ChatServerUserId,
+                username = user.UserName,
+                nickname = user.Nickname,
+                clientType = user.ClientType,
+                loginTime = CommonUtil.GetTimestamp(DateTime.Now)
+            };
+
+            var bytes = SerializeUtil.SerializeToJsonBytes(tokenUser, true);
+            var json = JsonConvert.SerializeObject(bytes);
+
+            await _redisService.StringSetAsync(oldToken, json, null);
+
+            _logger.LogInformation("Redis TokenUser: {@RedisTokenUser}", tokenUser);
         }
     }
 }

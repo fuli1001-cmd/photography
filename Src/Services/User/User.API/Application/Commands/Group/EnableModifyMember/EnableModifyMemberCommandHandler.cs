@@ -50,12 +50,27 @@ namespace Photography.Services.User.API.Application.Commands.Group.EnableModifyM
             if (await _groupRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
             {
                 // BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据
-                await _chatServerRedisService.WriteGroupAsync(group);
+                await UpdateRedisAsync(group);
 
                 return true;
             }
 
             throw new DomainException("操作失败。");
         }
+
+        #region BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据
+        private async Task UpdateRedisAsync(Domain.AggregatesModel.GroupAggregate.Group group)
+        {
+            try
+            {
+                // 向redis写入群
+                await _chatServerRedisService.WriteGroupAsync(group);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Redis Error: {@RedisError}", ex);
+            }
+        }
+        #endregion
     }
 }

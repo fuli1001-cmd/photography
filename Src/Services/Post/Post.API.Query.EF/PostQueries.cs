@@ -94,15 +94,13 @@ namespace Photography.Services.Post.API.Query.EF
             var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.LikeCount);
 
             return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
-
-            //var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(availablePosts);
-            //var posts = _mapper.Map<List<PostViewModel>>(await postsWithNavigationProperties.ToListAsync());
-
-            //await SetPropertiesAsync(posts, myId, false, false);
-
-            //return posts;
         }
 
+        /// <summary>
+        /// 关注的用户所发的帖子
+        /// </summary>
+        /// <param name="pagingParameters"></param>
+        /// <returns></returns>
         public async Task<PagedList<PostViewModel>> GetFollowedPostsAsync(PagingParameters pagingParameters)
         {
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -116,24 +114,20 @@ namespace Photography.Services.Post.API.Query.EF
             var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.CreatedTime);
 
             return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
-
-            //var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(followedUsersPosts);
-
-            //var posts = _mapper.Map<List<PostViewModel>>(await postsWithNavigationProperties.ToListAsync());
-
-            //await SetPropertiesAsync(posts, myId, false, true);
-
-            //return posts;
         }
 
+        /// <summary>
+        /// 同城用户所发的帖子
+        /// </summary>
+        /// <param name="cityCode"></param>
+        /// <param name="pagingParameters"></param>
+        /// <returns></returns>
         public async Task<PagedList<PostViewModel>> GetSameCityPostsAsync(string cityCode, PagingParameters pagingParameters)
         {
             var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
 
             var queryablePosts = GetAvailablePosts(myId);
-
-            //var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(availablePosts);
 
             if (!string.IsNullOrWhiteSpace(cityCode))
                 queryablePosts = queryablePosts.Where(p => p.CityCode != null && p.CityCode.ToLower() == cityCode.ToLower());
@@ -143,12 +137,57 @@ namespace Photography.Services.Post.API.Query.EF
             var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.CreatedTime);
 
             return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
+        }
 
-            //var posts = _mapper.Map<List<PostViewModel>>(await postsWithNavigationProperties.ToListAsync());
+        /// <summary>
+        /// 帖子详情
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <returns></returns>
+        public async Task<PostViewModel> GetPostAsync(Guid postId)
+        {
+            var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
 
-            //await SetPropertiesAsync(posts, userId, false, false);
+            var queryableUserPosts = from p in _postContext.Posts
+                                     join u in _postContext.Users
+                                     on p.UserId equals u.Id
+                                     where p.Id == postId
+                                     select new UserPost { Post = p, User = u };
 
-            //return posts;
+            return await GetQueryablePostViewModels(queryableUserPosts, myId).SingleOrDefaultAsync();
+        }
+
+        /// <summary>
+        /// 搜索发帖者昵称和帖子文案内容包含关键字的帖子
+        /// </summary>
+        /// <param name="key">搜索关键字</param>
+        /// <param name="cityCode">城市代码，若指定了城市代码，则只在属于该城市的帖子中搜索</param>
+        /// <param name="pagingParameters">分页参数</param>
+        /// <returns></returns>
+        public async Task<PagedList<PostViewModel>> SearchPosts(string key, string cityCode, PagingParameters pagingParameters)
+        {
+            var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
+
+            var queryablePosts = GetAvailablePosts(myId);
+
+            if (!string.IsNullOrEmpty(key))
+            {
+                key = key.ToLower();
+                queryablePosts = from p in queryablePosts
+                                 where p.User.Nickname.ToLower().Contains(key) || p.Text.ToLower().Contains(key)
+                                 select p;
+            }
+
+            if (!string.IsNullOrEmpty(cityCode))
+                queryablePosts = queryablePosts.Where(p => p.CityCode != null && p.CityCode.ToLower() == cityCode.ToLower());
+
+            var queryableUserPosts = GetAvailableUserPosts(queryablePosts);
+
+            var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.CreatedTime);
+
+            return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
         }
 
         private IQueryable<Domain.AggregatesModel.PostAggregate.Post> GetAvailablePosts(Guid myId)
@@ -188,28 +227,11 @@ namespace Photography.Services.Post.API.Query.EF
                    select new UserPost { Post = p, User = u };
         }
 
-        private IQueryable<Guid> GetLikedPostIds(Guid userId)
-        {
-            return _postContext.UserPostRelations
-                .Where(upr => upr.UserId == userId && upr.UserPostRelationType == UserPostRelationType.Like)
-                .Select(upr => upr.PostId.Value);
-        }
-
         private IQueryable<Guid> GetFollowedUserIds(Guid userId)
         {
             return _postContext.UserRelations
                 .Where(ur => ur.FollowerId == userId)
                 .Select(ur => ur.FollowedUserId);
-        }
-
-        private IQueryable<Domain.AggregatesModel.PostAggregate.Post> GetPostsWithNavigationPropertiesAsync(IQueryable<Domain.AggregatesModel.PostAggregate.Post> query)
-        {
-            return query
-                .Include(p => p.User)
-                .Include(p => p.PostAttachments)
-                .Include(p => p.ForwardedPost.User)
-                .Include(p => p.ForwardedPost.PostAttachments)
-                .Include(p => p.ForwardedPost.ForwardedPost);
         }
 
         private IQueryable<Guid> GetFriendsIds(Guid userId)
@@ -223,64 +245,6 @@ namespace Photography.Services.Post.API.Query.EF
                                select ur1.FollowedUserId;
 
             return friendsQuery;
-        }
-
-        private async Task SetPropertiesAsync(List<PostViewModel> posts, Guid userId, bool allLiked, bool allFollowed)
-        {
-            List<Guid> likedPostIds = null;
-            List<Guid> followedUserIds = null;
-
-            if (!allLiked)
-                likedPostIds = await GetLikedPostIds(userId).ToListAsync();
-
-            if (!allFollowed)
-                followedUserIds = await GetFollowedUserIds(userId).ToListAsync();
-
-            posts.ForEach(p =>
-            {
-                p.Liked = allLiked ? true : (likedPostIds.Contains(p.Id) ? true : false);
-                p.User.Followed = allFollowed ? true : (followedUserIds.Contains(p.User.Id) ? true : false);
-                p.SetAttachmentProperties(_logger);
-            });
-        }
-
-        public async Task<PostViewModel> GetPostAsync(Guid postId)
-        {
-            var posts = _postContext.Posts.Where(p => p.Id == postId);
-            var postsWithNavigationProperties = GetPostsWithNavigationPropertiesAsync(posts);
-            return _mapper.Map<PostViewModel>(await postsWithNavigationProperties.SingleOrDefaultAsync());
-        }
-
-        public async Task<PagedList<PostViewModel>> SearchPosts(string key, string cityCode, PagingParameters pagingParameters)
-        {
-            var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-            var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
-            
-            var queryablePosts = GetAvailablePosts(myId);
-            //query = GetPostsWithNavigationPropertiesAsync(query);
-
-            if (!string.IsNullOrEmpty(key))
-            {
-                key = key.ToLower();
-                queryablePosts = from p in queryablePosts
-                                 where p.User.Nickname.ToLower().Contains(key) || p.Text.ToLower().Contains(key)
-                                 select p;
-            }
-
-            if (!string.IsNullOrEmpty(cityCode))
-                queryablePosts = queryablePosts.Where(p => p.CityCode != null && p.CityCode.ToLower() == cityCode.ToLower());
-
-            var queryableUserPosts = GetAvailableUserPosts(queryablePosts);
-
-            var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.CreatedTime);
-
-            return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
-
-            //var posts = _mapper.Map<List<PostViewModel>>(await query.OrderByDescending(p => p.CreatedTime).ToListAsync());
-
-            //await SetPropertiesAsync(posts, myId, false, false);
-
-            //return posts;
         }
 
         private IQueryable<PostViewModel> GetQueryablePostViewModels(IQueryable<UserPost> queryableUserPosts, Guid myId)

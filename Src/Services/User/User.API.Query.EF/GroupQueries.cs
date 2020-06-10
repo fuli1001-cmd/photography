@@ -80,6 +80,7 @@ namespace Photography.Services.User.API.Query.EF
                        Avatar = g.Avatar,
                        OwnerId = g.OwnerId,
                        ChatServerGroupId = g.ChatServerGroupId,
+                       ModifyMemberEnabled = g.ModifyMemberEnabled,
                        Muted = (from gu in g.GroupUsers
                                 where gu.UserId == myId
                                 select gu.Muted).SingleOrDefault(),

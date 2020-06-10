@@ -12,5 +12,6 @@ namespace Photography.ApiGateways.ApiGwBase.Settings
         public string Version { get; set; }
         public string Action { get; set; }
         public string SignName { get; set; }
+        public string TemplateCode { get; set; }
     }
 }

@@ -78,7 +78,7 @@ namespace Photography.Services.User.API.Application.Commands.Group.UpdateGroup
             }
             catch (Exception ex)
             {
-                _logger.LogError("UpdateGroupCommandHandler UpdateRedisAsync: {@BackwardCompatibilityError}", ex);
+                _logger.LogError("Redis Error: {@RedisError}", ex);
             }
         }
         #endregion

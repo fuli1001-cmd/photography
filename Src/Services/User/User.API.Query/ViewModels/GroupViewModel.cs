@@ -11,6 +11,7 @@ namespace Photography.Services.User.API.Query.ViewModels
         public string Notice { get; set; }
         public string Avatar { get; set; }
         public bool Muted { get; set; }
+        public bool ModifyMemberEnabled { get; set; }
         public Guid OwnerId { get; set; }
         public int ChatServerGroupId { get; set; }
         public IEnumerable<GroupUserViewModel> Members { get; set; }

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
-namespace Photography.Services.User.API.Application.Commands.UpdateUser
+namespace Photography.Services.User.API.Application.Commands.User.UpdateUser
 {
     [DataContract]
     public class UpdateUserCommand : IRequest<bool>

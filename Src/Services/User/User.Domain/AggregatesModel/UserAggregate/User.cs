@@ -49,8 +49,11 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         public string Code { get; private set; }
         public RealNameRegistrationStatus RealNameRegistrationStatus { get; private set; }
 
-        // BackwardCompatibility: ChatServer needed Property
+        #region BackwardCompatibility: ChatServer needed Property
         public int ChatServerUserId { get; private set; }
+        public string RegistrationId { get; private set; }
+        public int ClientType { get; set; }
+        #endregion
 
         public List<UserRelation> Followers { get; private set; }
         public List<UserRelation> FollowedUsers { get; private set; }
@@ -163,6 +166,12 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         public void DecreaseOngoingOrderCount()
         {
             OngoingOrderCount = Math.Max(0, OngoingOrderCount - 1);
+        }
+
+        public void SetChatServerProperties(int clientType, string registrationId)
+        {
+            ClientType = clientType;
+            RegistrationId = registrationId;
         }
     }
 

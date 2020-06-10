@@ -56,12 +56,27 @@ namespace Photography.Services.User.API.Application.Commands.Group.MuteGroup
             {
                 // BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据
                 var group = await _groupRepository.GetByIdAsync(request.GroupId);
-                await _chatServerRedisService.WriteGroupMemberAsync(myId, group.ChatServerGroupId, groupUser.Muted ? 1 : 0);
+                await UpdateRedisAsync(group, groupUser);
 
                 return true;
             }
 
             throw new DomainException("操作失败。");
         }
+
+        #region BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据
+        private async Task UpdateRedisAsync(Domain.AggregatesModel.GroupAggregate.Group group, GroupUser groupUser)
+        {
+            try
+            {
+                // 向redis写入群成员
+                await _chatServerRedisService.WriteGroupMemberAsync(groupUser.UserId.Value, group.ChatServerGroupId, groupUser.Muted ? 1 : 0);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Redis Error: {@RedisError}", ex);
+            }
+        }
+        #endregion
     }
 }

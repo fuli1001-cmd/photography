@@ -29,6 +29,16 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate
             FollowedUserId = followedUserId;
         }
 
+        public void MuteFollowedUser()
+        {
+            MutedFollowedUser = true;
+        }
+
+        public void UnMuteFollowedUser()
+        {
+            MutedFollowedUser = false;
+        }
+
         public void Follow()
         {
             AddFollowedUserDomainEvent();

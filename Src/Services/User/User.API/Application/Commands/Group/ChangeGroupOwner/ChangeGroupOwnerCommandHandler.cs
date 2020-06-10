@@ -73,7 +73,7 @@ namespace Photography.Services.User.API.Application.Commands.Group.ChangeGroupOw
             }
             catch (Exception ex)
             {
-                _logger.LogError("ChangeGroupOwnerCommandHandler UpdateRedisAsync: {@BackwardCompatibilityError}", ex);
+                _logger.LogError("Redis Error: {@RedisError}", ex);
             }
         }
         #endregion
