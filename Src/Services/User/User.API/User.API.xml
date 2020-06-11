@@ -204,6 +204,13 @@
             <param name="key"></param>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.User.API.Controllers.UsersController.MuteUserAsync(Photography.Services.User.API.Application.Commands.User.MuteUser.MuteUserCommand)">
+            <summary>
+            设置用户免打扰
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
         <member name="P:Photography.Services.User.API.Settings.ServerSettings.ChatSocket">
             <summary>
             聊天socket服务器地址

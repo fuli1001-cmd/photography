@@ -201,6 +201,11 @@ namespace Photography.Services.User.API.Controllers
             return Ok(ResponseWrapper.CreateOkResponseWrapper(users));
         }
 
+        /// <summary>
+        /// 设置用户免打扰
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("mute")]
         [ProducesResponseType(StatusCodes.Status200OK)]

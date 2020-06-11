@@ -51,6 +51,7 @@ namespace Photography.Services.Post.API.Controllers
         [HttpGet]
         [Route("post/{postId}/{maxSubCommentsCount}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
         public async Task<ActionResult<PagedResponseWrapper>> GetPostCommentsAsync(Guid postId, int maxSubCommentsCount, [FromQuery] PagingParameters pagingParameters)
         {
             var comments = await _commentQueries.GetPostCommentsAsync(postId, maxSubCommentsCount, pagingParameters);
@@ -67,6 +68,7 @@ namespace Photography.Services.Post.API.Controllers
         [HttpGet]
         [Route("comment/{commentId}/{maxSubCommentsCount}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
         public async Task<ActionResult<PagedResponseWrapper>> GetCommentCommentsAsync(Guid commentId, int maxSubCommentsCount, [FromQuery] PagingParameters pagingParameters)
         {
             var comments = await _commentQueries.GetSubCommentsAsync(commentId, maxSubCommentsCount, pagingParameters);
@@ -101,6 +103,11 @@ namespace Photography.Services.Post.API.Controllers
             return Ok(ResponseWrapper.CreateOkResponseWrapper(commentCount));
         }
 
+        /// <summary>
+        /// 赞或取消赞一个评论
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("togglelike")]
         [ProducesResponseType(StatusCodes.Status200OK)]
