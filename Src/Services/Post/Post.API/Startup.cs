@@ -18,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using Photography.Services.Post.API.Application.Behaviors;
 using Photography.Services.Post.API.Application.Commands.Post.PublishPost;
@@ -34,6 +35,8 @@ namespace Photography.Services.Post.API
 {
     public class Startup
     {
+        private readonly string _corsPolicy = "CorsPolicy";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -44,14 +47,22 @@ namespace Photography.Services.Post.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var authority = Configuration.GetValue<string>("AuthSettings:Authority");
-            var audience = Configuration.GetValue<string>("AuthSettings:Audience");
+            services.AddCors(options =>
+            {
+                options.AddPolicy(_corsPolicy,
+                builder =>
+                {
+                    builder.WithOrigins("http://localhost:4200")
+                        .WithHeaders(HeaderNames.ContentType, HeaderNames.Authorization, "x-requested-with")
+                        .AllowCredentials();
+                });
+            });
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer("Bearer", options =>
                 {
-                    options.Authority = authority;
-                    options.Audience = audience;
+                    options.Authority = Configuration.GetValue<string>("AuthSettings:Authority");
+                    options.Audience = Configuration.GetValue<string>("AuthSettings:Audience");
                     options.RequireHttpsMetadata = false;
                 });
 
@@ -105,6 +116,8 @@ namespace Photography.Services.Post.API
             //app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(_corsPolicy);
 
             app.UseAuthentication();
             app.UseAuthorization();

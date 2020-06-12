@@ -1,0 +1,32 @@
+<div *ngIf="post">
+    <!-- 用户信息 -->
+    <div class="row">
+        <div class="col-auto">
+            <img src="{{post.user.avatar}}" class="rounded-circle avatar">
+        </div>
+        <div class="col col-vertical-center">
+            <div class="row no-gutters text-center">
+                <div class="col-auto name">{{post.user.nickname}}</div>
+                <div class="col-auto user-type-background">
+                    <span class="user-type-font">摄影师</span>
+                </div>
+            </div>
+            <div class="row no-gutters date">{{(post.updatedTime == null ? post.createdTime : post.updatedTime) | date: 'yyyy-MM-dd'}}</div>
+        </div>
+        <div class="col col-vertical-center">
+            <button type="button" class="btn btn-outline-primary float-right btn-follow">+ 关注</button>
+        </div>
+    </div>
+
+    <div class="row no-gutters separator">
+        <div class="col-12"></div>
+    </div>
+
+    <div class="row">{{post.text}}</div>
+
+    <div class="row">
+        <div class="col-4" *ngFor="let attachment of post.postAttachments">
+            <img src="{{attachment.name}}" class="attachment-image">
+        </div>
+    </div>
+</div>

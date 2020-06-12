@@ -59,7 +59,11 @@ namespace Photography.Services.Post.API.Query.EF
 
         private IQueryable<CommentViewModel> GetSubCommentsViewModelAsync(IQueryable<Comment> queryableComments, int maxSubCommentsCount)
         {
-            var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            Guid myId = Guid.Empty;
+
+            var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            if (claim != null)
+                myId = Guid.Parse(claim.Value);
 
             return from c in queryableComments
                    select new CommentViewModel
@@ -78,7 +82,7 @@ namespace Photography.Services.Post.API.Query.EF
                                           User = new CommentUserViewModel { Id = sc.User.Id, Nickname = sc.User.Nickname }
                                       }).Take(maxSubCommentsCount),
                        Liked = (from ucr in _postContext.UserCommentRelations
-                                where ucr.UserId == userId && ucr.CommentId == c.Id
+                                where ucr.UserId == myId && ucr.CommentId == c.Id
                                 select ucr.Id).Count() > 0,
                        User = new CommentUserViewModel { Id = c.User.Id, Nickname = c.User.Nickname, Avatar = c.User.Avatar }
                    };

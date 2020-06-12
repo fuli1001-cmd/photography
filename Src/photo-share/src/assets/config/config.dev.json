@@ -1,0 +1,4 @@
+{
+    "serviceBase": "http://localhost:5000/api/",
+    "fileServer": "http://43.225.159.87:8081/"
+}
