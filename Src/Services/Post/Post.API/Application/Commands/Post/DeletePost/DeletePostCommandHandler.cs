@@ -39,13 +39,13 @@ namespace Photography.Services.Post.API.Application.Commands.Post.DeletePost
             var post = await _postRepository.GetPostWithNavigationPropertiesById(request.PostId);
 
             if (post == null)
-                throw new DomainException("删除失败。");
+                throw new ClientException("操作失败。", new List<string> { $"Post {request.PostId} does not exists." });
 
             var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
             // 当前用户不是发布该帖的用户，不能删除
             if (post.UserId != userId)
-                throw new DomainException("删除失败。");
+                throw new ClientException("操作失败。", new List<string> { $"Post {post.Id} does not belong to user {userId}"});
 
             post.Delete();
             _postRepository.Update(post);
@@ -56,8 +56,8 @@ namespace Photography.Services.Post.API.Application.Commands.Post.DeletePost
                 await SendPostDeletedEventAsync(userId);
                 return true;
             }
-            else
-                throw new DomainException("删除失败。");
+            
+            throw new ApplicationException("操作失败。");
         }
 
         private async Task SendPostDeletedEventAsync(Guid userId)

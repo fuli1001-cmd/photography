@@ -61,7 +61,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
                 return await _postQueries.GetPostAsync(post.Id);
             }
 
-            throw new DomainException("操作失败。");
+            throw new ApplicationException("操作失败。");
         }
 
         private async Task SendPostPublishedEventAsync(Guid userId, Guid postId, string image)

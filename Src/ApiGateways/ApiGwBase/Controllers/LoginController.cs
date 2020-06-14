@@ -1,4 +1,5 @@
-﻿using Arise.DDD.API;
+﻿using Aliyun.Acs.Core.Exceptions;
+using Arise.DDD.API;
 using Arise.DDD.API.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -67,7 +68,7 @@ namespace Photography.ApiGateways.ApiGwBase.Controllers
             // verify code
             var storedCode = await _redisService.GetAsync(loginPhoneDto.PhoneNumber);
             if (string.IsNullOrEmpty(storedCode) || storedCode.ToLower() != loginPhoneDto.Code.ToLower())
-                return StatusCode((int)HttpStatusCode.BadRequest, ResponseWrapper.CreateErrorResponseWrapper((int)HttpStatusCode.BadRequest, "验证码错误。"));
+                return StatusCode((int)HttpStatusCode.BadRequest, ResponseWrapper.CreateErrorResponseWrapper((StatusCode)(int)HttpStatusCode.BadRequest, "验证码错误。"));
 
             var code = "Code" + loginPhoneDto.Code;
             
@@ -78,7 +79,8 @@ namespace Photography.ApiGateways.ApiGwBase.Controllers
                 return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
             }
 
-            return StatusCode((int)HttpStatusCode.BadRequest, ResponseWrapper.CreateErrorResponseWrapper((int)HttpStatusCode.BadRequest, "登录失败。"));
+            // internal server error occured
+            throw new ApplicationException("登录失败。");
         }
     }
 }

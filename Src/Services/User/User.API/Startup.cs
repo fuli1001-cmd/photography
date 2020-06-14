@@ -26,6 +26,9 @@ using Photography.Services.User.API.Settings;
 using Photography.Services.User.API.Application.Commands.Login;
 using Photography.Services.User.API.Infrastructure.Redis;
 using Photography.Services.User.API.BackwardCompatibility.ChatServerRedis;
+using Newtonsoft.Json;
+using Arise.DDD.API.Response;
+using Microsoft.AspNetCore.Http;
 
 namespace Photography.Services.User.API
 {
@@ -103,6 +106,19 @@ namespace Photography.Services.User.API
             //app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            // return a json error when unauthorized
+            app.UseStatusCodePages(async context =>
+            {
+                if (context.HttpContext.Request.Path.StartsWithSegments("/api") &&
+                   (context.HttpContext.Response.StatusCode == 401 ||
+                    context.HttpContext.Response.StatusCode == 403))
+                {
+                    context.HttpContext.Response.ContentType = "application/json";
+                    var json = JsonConvert.SerializeObject(ResponseWrapper.CreateErrorResponseWrapper(StatusCode.Unauthorized, "Unauthorized"));
+                    await context.HttpContext.Response.WriteAsync(json);
+                }
+            });
 
             app.UseAuthentication();
             app.UseAuthorization();

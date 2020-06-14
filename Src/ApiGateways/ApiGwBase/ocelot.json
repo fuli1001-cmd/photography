@@ -153,11 +153,11 @@
 
     {
       "DownstreamPathTemplate": "/api/streaming",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "fileuploadservice",
-          "Port": 80
+          "Host": "files.ars-sense.com",
+          "Port": 4431
         }
       ],
       "UpstreamPathTemplate": "/api/streaming",
@@ -169,8 +169,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "authservice",
-          "Port": 80
+          "Host": "47.108.105.98",
+          "Port": 5100
         }
       ],
       "UpstreamPathTemplate": "/api/register",
@@ -181,8 +181,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "authservice",
-          "Port": 80
+          "Host": "47.108.105.98",
+          "Port": 5100
         }
       ],
       "UpstreamPathTemplate": "/api/register/{everything}",

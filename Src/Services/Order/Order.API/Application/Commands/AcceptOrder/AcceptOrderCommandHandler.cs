@@ -41,7 +41,7 @@ namespace Photography.Services.Order.API.Application.Commands.AcceptOrder
         {
             var order = await _orderRepository.GetOrderbyDealIdAsync(request.DealId);
             if (order == null)
-                throw new DomainException("没有与当前约拍交易对应的订单。");
+                throw new ClientException("操作失败。", new List<string> { $"No order for deal id {request.DealId}." });
 
             order.Accept();
 

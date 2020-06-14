@@ -1,6 +1,7 @@
 ﻿using Arise.DDD.API;
 using Arise.DDD.API.Paging;
 using Arise.DDD.API.Response;
+using Arise.DDD.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

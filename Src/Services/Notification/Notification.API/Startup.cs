@@ -4,12 +4,14 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Arise.DDD.API.Filters;
+using Arise.DDD.API.Response;
 using Arise.DDD.Infrastructure.Extensions;
 using Autofac;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -17,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using Photography.Services.Notification.API.Application.Commands.CreateEvent;
 using Photography.Services.Notification.API.Infrastructure.AutofacModules;
 using Photography.Services.Notification.Infrastructure;
@@ -85,6 +88,19 @@ namespace Photography.Services.Notification.API
             //app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            // return a json error when unauthorized
+            app.UseStatusCodePages(async context =>
+            {
+                if (context.HttpContext.Request.Path.StartsWithSegments("/api") &&
+                   (context.HttpContext.Response.StatusCode == 401 ||
+                    context.HttpContext.Response.StatusCode == 403))
+                {
+                    context.HttpContext.Response.ContentType = "application/json";
+                    var json = JsonConvert.SerializeObject(ResponseWrapper.CreateErrorResponseWrapper(StatusCode.Unauthorized, "Unauthorized"));
+                    await context.HttpContext.Response.WriteAsync(json);
+                }
+            });
 
             app.UseAuthentication();
             app.UseAuthorization();

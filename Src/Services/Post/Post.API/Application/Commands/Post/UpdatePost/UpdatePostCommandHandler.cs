@@ -36,12 +36,12 @@ namespace Photography.Services.Post.API.Application.Commands.Post.UpdatePost
             var post = await _postRepository.GetPostWithAttachmentsById(request.PostId);
 
             if (post == null)
-                throw new DomainException("更新失败。");
+                throw new ClientException("操作失败。", new List<string> { $"Post {request.PostId} does not exists." });
 
             var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
             if (post.UserId != userId)
-                throw new DomainException("更新失败。");
+                throw new ClientException("操作失败。", new List<string> { $"Post {post.Id} does not belong to user {userId}" });
 
             var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType)).ToList();
 
@@ -54,7 +54,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.UpdatePost
             if (await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
                 return await _postQueries.GetPostAsync(post.Id);
 
-            throw new DomainException("更新失败。");
+            throw new ApplicationException("操作失败。");
         }
     }
 }

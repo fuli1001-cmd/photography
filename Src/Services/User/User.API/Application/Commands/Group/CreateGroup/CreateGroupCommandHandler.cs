@@ -55,7 +55,7 @@ namespace Photography.Services.User.API.Application.Commands.Group.CreateGroup
                 return await _groupQueries.GetGroupAsync(group.Id, null);
             }
 
-            throw new DomainException("操作失败。");
+            throw new ApplicationException("操作失败。");
         }
 
         #region BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据

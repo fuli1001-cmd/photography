@@ -51,7 +51,7 @@ namespace Photography.Services.Post.API.Application.Commands.Comment.ToggleLikeC
 
             var comment = await _commentRepository.GetByIdAsync(request.CommentId);
             if (comment == null)
-                throw new DomainException("评论不存在。");
+                throw new ClientException("操作失败。", new List<string> { $"Comment {request.CommentId} does not exists."});
 
             var userCommentRelation = await _userCommentRelationRepository.GetAsync(userId, request.CommentId);
 

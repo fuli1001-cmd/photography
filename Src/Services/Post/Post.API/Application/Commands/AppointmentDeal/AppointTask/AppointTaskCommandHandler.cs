@@ -66,14 +66,14 @@ namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.App
             var @event = new AppointmentDealCreatedEvent
             {
                 User1Id = deal.UserId,
-                User2Id = deal.AppointmentedUserId ?? throw new DomainException("约拍对象不能为空"),
+                User2Id = deal.AppointmentedUserId.Value,
                 DealId = deal.Id,
                 Price = deal.Price ?? 0,
-                AppointedTime = deal.AppointedTime ?? throw new DomainException("约拍时间不能为空"),
+                AppointedTime = deal.AppointedTime.Value,
                 PayerId = deal.PayerType == PayerType.Free ? null : (deal.PayerType == PayerType.Me ? deal.UserId : deal.AppointmentedUserId),
                 Text = deal.Text,
-                Latitude = deal.Latitude ?? throw new DomainException("约拍纬度不能为空"),
-                Longitude = deal.Longitude ?? throw new DomainException("约拍经度不能为空"),
+                Latitude = deal.Latitude.Value,
+                Longitude = deal.Longitude.Value,
                 LocationName = deal.LocationName,
                 Address = deal.Address
             };

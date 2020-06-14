@@ -53,7 +53,7 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.Publish
                 return await _appointmentQueries.GetAppointmentAsync(post.Id);
             }
 
-            throw new DomainException("操作失败。");
+            throw new ApplicationException("操作失败。");
         }
 
         private async Task SendAppointmentPublishedEventAsync(Guid userId)

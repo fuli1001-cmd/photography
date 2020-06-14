@@ -28,7 +28,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.SharePost
         {
             var post = await _postRepository.GetByIdAsync(request.PostId);
             if (post == null)
-                throw new DomainException("帖子不存在");
+                throw new ClientException("操作失败。", new List<string> { $"Post {request.PostId} does not exist."});
             post.Share();
             await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
             return post.ShareCount;

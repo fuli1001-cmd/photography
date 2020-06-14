@@ -45,7 +45,7 @@ namespace Photography.Services.Order.API.Application.Commands.CheckProcessed
                 await SendOrderFinishedEventAsync(order.User1Id, order.User2Id);
                 return await _orderQueries.GetOrderAsync(order.Id);
             }
-            throw new DomainException("操作失败。");
+            throw new ApplicationException("操作失败。");
         }
 
         private async Task SendOrderFinishedEventAsync(Guid user1Id, Guid user2Id)

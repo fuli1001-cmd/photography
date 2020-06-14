@@ -23,8 +23,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Post.Domain", "Src\Services
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Post.Infrastructure", "Src\Services\Post\Post.Infrastructure\Post.Infrastructure.csproj", "{FCC32D0B-FA49-4EB8-A3F6-D3501CA36B6D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity", "Identity", "{18450D65-2D28-43ED-A11D-AA06B428FDA3}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{B8E3BD6A-5937-44EC-9FED-8D324FE09F7C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Post.API.Query.EF", "Src\Services\Post\Post.API.Query.EF\Post.API.Query.EF.csproj", "{55340290-34EB-421E-AB57-DF66F9B47033}"
@@ -59,11 +57,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApplicationMessages", "Src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notification.API", "Src\Services\Notification\Notification.API\Notification.API.csproj", "{987F0029-4CD9-4B34-AC5F-ECFA361BE312}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notification.Domain", "Src\Services\Notification\Notification.Domain\Notification.Domain.csproj", "{9BBB467A-7D58-44D0-99F5-225BD814898F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notification.Domain", "Src\Services\Notification\Notification.Domain\Notification.Domain.csproj", "{9BBB467A-7D58-44D0-99F5-225BD814898F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notification.Infrastructure", "Src\Services\Notification\Notification.Infrastructure\Notification.Infrastructure.csproj", "{620508D5-80AF-4661-8E39-4B0022EC76A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notification.Infrastructure", "Src\Services\Notification\Notification.Infrastructure\Notification.Infrastructure.csproj", "{620508D5-80AF-4661-8E39-4B0022EC76A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notification.API.Query", "Src\Services\Notification\Notification.API.Query\Notification.API.Query.csproj", "{584F805A-BD42-4327-8321-D6F3BE8D2756}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notification.API.Query", "Src\Services\Notification\Notification.API.Query\Notification.API.Query.csproj", "{584F805A-BD42-4327-8321-D6F3BE8D2756}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -353,7 +351,6 @@ Global
 		{811E4A77-8AE8-4CC5-BD61-21FCD53EEAA8} = {4CFC08E0-D566-4FCF-82BB-7E54C445ED89}
 		{C00FFF59-8BF3-4A9E-9FF0-9A88809E0503} = {67AF1D6E-0C5B-476D-B676-D7D54C44F4EF}
 		{FCC32D0B-FA49-4EB8-A3F6-D3501CA36B6D} = {67AF1D6E-0C5B-476D-B676-D7D54C44F4EF}
-		{18450D65-2D28-43ED-A11D-AA06B428FDA3} = {2A82517D-3564-4F33-81D4-99B8583FBD64}
 		{55340290-34EB-421E-AB57-DF66F9B47033} = {67AF1D6E-0C5B-476D-B676-D7D54C44F4EF}
 		{40BD617B-9F85-4CBD-A58E-61F84C0B46C7} = {67AF1D6E-0C5B-476D-B676-D7D54C44F4EF}
 		{04287BF1-C405-4BC0-A654-8A0608966665} = {B8E3BD6A-5937-44EC-9FED-8D324FE09F7C}
