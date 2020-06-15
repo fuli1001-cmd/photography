@@ -48,10 +48,7 @@ namespace Photography.Services.User.API.Application.Commands.Group.QuitGroup
             var groupUser = await _groupUserRepository.GetGroupUserAsync(request.GroupId, myId);
 
             if (groupUser == null)
-            {
-                _logger.LogError("QuitGroupCommandHandler: User {UserId} is not in Group {GroupId}.", myId, request.GroupId);
-                throw new DomainException("操作失败。");
-            }
+                throw new ClientException("操作失败。", new List<string> { $"User {myId} is not in Group {request.GroupId}." });
 
             _groupUserRepository.Remove(groupUser);
 
@@ -64,7 +61,7 @@ namespace Photography.Services.User.API.Application.Commands.Group.QuitGroup
                 return true;
             }
 
-            throw new DomainException("操作失败。");
+            throw new ApplicationException("操作失败。");
         }
 
         #region BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据
