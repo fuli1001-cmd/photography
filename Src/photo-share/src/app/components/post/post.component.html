@@ -1,7 +1,7 @@
-<div *ngIf="post">
+<div *ngIf="post && !showBigPhoto" class="container">
     <!-- 用户信息 -->
-    <div class="row">
-        <div class="col-auto">
+    <div class="row no-gutters row-user-info">
+        <div class="col-auto col-avatar">
             <img src="{{post.user.avatar}}" class="rounded-circle avatar">
         </div>
         <div class="col col-vertical-center">
@@ -18,15 +18,64 @@
         </div>
     </div>
 
-    <div class="row no-gutters separator">
-        <div class="col-12"></div>
-    </div>
+    <div class="row no-gutters text">{{post.text}}</div>
 
-    <div class="row">{{post.text}}</div>
-
-    <div class="row">
-        <div class="col-4" *ngFor="let attachment of post.postAttachments">
-            <img src="{{attachment.name}}" class="attachment-image">
+    <div [ngClass]="{'blur': !showPhotos}">
+        <div class="row no-gutters">
+            <div class="col-4 card card-photo" *ngFor="let attachment of post.postAttachments; let i = index" (click)="onClickPhoto(i)">
+                <div class="embed-responsive embed-responsive-1by1">
+                    <img class="card-img embed-responsive-item" 
+                    [ngClass]="{'card-img-left': i % 3 == 0, 'card-img-right': i % 3 == 2, 'card-img-center': i % 3 == 1}"
+                    src="{{attachment.name}}" />
+                </div>
+            </div>
         </div>
     </div>
+
+    <div *ngIf="!showPhotos" class="div-password">
+        <div class="row no-gutters">
+            <input type="text" class="form-control" [(ngModel)]="password">
+        </div>
+        <div class="row no-gutters justify-content-center">
+            <button type="button" class="btn btn-outline-primary float-right btn-password" (click)="onClickViewByPassword()">查看</button>
+        </div>
+    </div>
+
+</div>
+
+<div class="row no-gutters fixed-bottom div-product" *ngIf="!showBigPhoto" routerLink="/download">
+    <div class="col-auto col-vertical-center">
+        <img src="../../../assets/images/logo_mini.png" class="image-product">
+    </div>
+    <div class="col-auto col-vertical-center">
+        <div class="row no-gutters text1-product">旅拍、婚纱照、汉服照、亲子照</div>
+        <div class="row no-gutters text2-product">即刻下载Sense想怎么拍都行~</div>
+    </div>
+</div>
+
+<div class="big-photo-container">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    <div id="carouselExampleCaptions" class="carousel slide big-photo-carousel" data-ride="carousel" *ngIf="showBigPhoto">
+        <ol class="carousel-indicators">
+          <li data-target="#carouselExampleCaptions" data-slide-to="i" [ngClass]="{'active': i == selectedPhotoIndex}" *ngFor="let attachment of post.postAttachments; let i = index"></li>
+        </ol>
+        <div class="carousel-inner">
+          <div class="carousel-item" [ngClass]="{'active': i == selectedPhotoIndex}" *ngFor="let attachment of post.postAttachments; let i = index" >
+            <img src="{{attachment.name}}" class="d-block w-100">
+            <div class="carousel-caption d-none d-md-block">
+              <p class="big-photo-text">{{attachment.text}}</p>
+            </div>
+          </div>
+        </div>
+        <!-- <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a> -->
+      </div> 
 </div>

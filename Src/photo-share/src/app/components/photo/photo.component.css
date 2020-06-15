@@ -1,0 +1,20 @@
+.big-photo-container {
+	background-color: #333333;
+	height: 100%;
+	width: 100%;
+}
+
+.big-photo-carousel {
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.text {
+    font-size: 32px;
+	font-weight: normal;
+	font-stretch: normal;
+	line-height: 43px;
+	letter-spacing: -1px;
+    color: #ffffff;
+}

@@ -1,4 +1,5 @@
-﻿using IdentityModel.Client;
+﻿using Arise.DDD.Domain.Exceptions;
+using IdentityModel.Client;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -76,10 +77,7 @@ namespace Photography.Services.User.API.Application.Commands.Login
                 }
             });
             if (disco.IsError)
-            {
-                _logger.LogError("{LoginError}", disco.Error);
-                return null;
-            }
+                throw new ApplicationException("登录失败。");
 
             var tokenResponse = await httpClient.RequestPasswordTokenAsync(new PasswordTokenRequest
             {
@@ -92,10 +90,7 @@ namespace Photography.Services.User.API.Application.Commands.Login
             });
 
             if (tokenResponse.IsError)
-            {
-                _logger.LogError("{LoginError}", tokenResponse.ErrorDescription);
-                return null;
-            }
+                throw new ClientException("登录失败。", new List<string> { tokenResponse.Error, tokenResponse.ErrorDescription });
 
             return tokenResponse.AccessToken;
         }

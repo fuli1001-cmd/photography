@@ -1,0 +1,38 @@
+.container {
+    padding-left: 15%;
+    padding-right: 15%;
+    padding-top: 19%;
+    padding-bottom: 19%;
+}
+
+.logo {
+    margin-top: 80px;
+}
+
+.title {
+    margin-top: 40px;
+    font-size: 32px;
+	font-weight: normal;
+	font-stretch: normal;
+	line-height: 43px;
+	letter-spacing: 0px;
+	color: #333333;
+}
+
+.desc {
+    font-size: 28px;
+	font-weight: normal;
+	font-stretch: normal;
+	line-height: 44px;
+	letter-spacing: -1px;
+    color: #666666;
+    margin-top: 123px;
+}
+
+.btn-download {
+    width: 100%;
+	background-color: #60acff;
+    border-radius: 8px;
+    color: white;
+    margin-top: 20%;
+}

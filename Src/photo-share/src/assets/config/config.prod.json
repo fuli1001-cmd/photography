@@ -1,4 +1,4 @@
 {
-    "serviceBase": "http://senseapi.ars-sense.com:5101/api",
+    "serviceBase": "https://senseapi.ars-sense.com:5101/api",
     "fileServer": "https://files.ars-sense.com:4431"
 }
