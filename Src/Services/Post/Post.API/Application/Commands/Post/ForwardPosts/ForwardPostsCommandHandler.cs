@@ -60,7 +60,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.ForwardPosts
                 }
             }
 
-            return await _postQueries.GetPostsAsync(request.ForwardPostIds);
+            return await _postQueries.GetPostsAsync(posts.Select(p => p.Id).ToList());
         }
 
         private async Task SendPostForwardedEventAsync(Guid forwardUserId, Guid originalPostUserId, Guid originalPostId, Guid newPostId)

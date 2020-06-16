@@ -57,7 +57,7 @@ namespace Photography.Services.Post.API
                 options.AddPolicy(_corsPolicy,
                 builder =>
                 {
-                    builder.WithOrigins("http://localhost:4200")
+                    builder.WithOrigins(Configuration.GetValue<string[]>("CorsOrigins"))
                         .WithHeaders(HeaderNames.ContentType, HeaderNames.Authorization, "x-requested-with")
                         .AllowCredentials();
                 });

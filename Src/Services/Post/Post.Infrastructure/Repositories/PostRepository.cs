@@ -75,7 +75,8 @@ namespace Photography.Services.Post.Infrastructure.Repositories
             return await (from p in _context.Posts
                           where postIds.Contains(p.Id)
                           select p)
-                   .ToListAsync();
+                          .Include(p => p.UserPostRelations)
+                          .ToListAsync();
         }
     }
 }
