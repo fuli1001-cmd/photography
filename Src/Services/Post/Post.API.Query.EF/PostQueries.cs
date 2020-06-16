@@ -349,6 +349,11 @@ namespace Photography.Services.Post.API.Query.EF
                        {
                            Id = up.Post.ForwardedPost.Id,
                            Text = up.Post.ForwardedPost.Text,
+                           User = new BaseUserViewModel
+                           {
+                               Id = up.Post.ForwardedPost.User.Id,
+                               Nickname = up.Post.ForwardedPost.User.Nickname
+                           },
                            PostAttachments = from fa in up.Post.ForwardedPost.PostAttachments
                                              select new PostAttachmentViewModel
                                              {

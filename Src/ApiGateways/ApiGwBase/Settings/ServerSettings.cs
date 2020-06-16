@@ -75,6 +75,12 @@ namespace Photography.ApiGateways.ApiGwBase.Settings
     {
         public string Version { get; set; }
 
-        public string Url { get; set; }
+        public string UpgradeUrl { get; set; }
+
+        public int VersionCode { get; set; }
+
+        public int MinVersionCode { get; set; }
+
+        public string UpgradeDesc { get; set; }
     }
 }
