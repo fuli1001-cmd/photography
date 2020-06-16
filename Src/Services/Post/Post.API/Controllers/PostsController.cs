@@ -125,6 +125,7 @@ namespace Photography.Services.Post.API.Controllers
         [HttpGet]
         [Route("user/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
         public async Task<ActionResult<PagedResponseWrapper>> GetMyPostsAsync(Guid userId, [FromQuery] PagingParameters pagingParameters)
         {
             var posts = await _postQueries.GetUserPostsAsync(userId, pagingParameters);

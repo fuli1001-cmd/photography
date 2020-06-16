@@ -44,7 +44,8 @@ namespace Photography.Services.Post.API.Query.EF
         /// <returns></returns>
         public async Task<PagedList<PostViewModel>> GetUserPostsAsync(Guid userId, PagingParameters pagingParameters)
         {
-            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
 
             var queryableUserPosts = from p in _postContext.Posts
                                     join u in _postContext.Users
