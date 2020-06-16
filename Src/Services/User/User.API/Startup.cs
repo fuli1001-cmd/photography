@@ -29,6 +29,7 @@ using Photography.Services.User.API.BackwardCompatibility.ChatServerRedis;
 using Newtonsoft.Json;
 using Arise.DDD.API.Response;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json.Serialization;
 
 namespace Photography.Services.User.API
 {
@@ -115,7 +116,10 @@ namespace Photography.Services.User.API
                     context.HttpContext.Response.StatusCode == 403))
                 {
                     context.HttpContext.Response.ContentType = "application/json";
-                    var json = JsonConvert.SerializeObject(ResponseWrapper.CreateErrorResponseWrapper(StatusCode.Unauthorized, "Unauthorized"));
+                    var json = JsonConvert.SerializeObject(ResponseWrapper.CreateErrorResponseWrapper(StatusCode.Unauthorized, "Unauthorized"), new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    });
                     await context.HttpContext.Response.WriteAsync(json);
                 }
             });

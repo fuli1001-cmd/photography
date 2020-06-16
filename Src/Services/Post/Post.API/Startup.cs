@@ -24,6 +24,7 @@ using Microsoft.IdentityModel.Logging;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Photography.Services.Post.API.Application.Behaviors;
 using Photography.Services.Post.API.Application.Commands.Post.PublishPost;
 using Photography.Services.Post.API.Application.Commands.User.CreateUser;
@@ -132,7 +133,10 @@ namespace Photography.Services.Post.API
                     context.HttpContext.Response.StatusCode == 403)
                 {
                     context.HttpContext.Response.ContentType = "application/json";
-                    var json = JsonConvert.SerializeObject(ResponseWrapper.CreateErrorResponseWrapper(StatusCode.Unauthorized, "Unauthorized."));
+                    var json = JsonConvert.SerializeObject(ResponseWrapper.CreateErrorResponseWrapper(StatusCode.Unauthorized, "Unauthorized"), new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    });
                     await context.HttpContext.Response.WriteAsync(json);
                 }
             });
