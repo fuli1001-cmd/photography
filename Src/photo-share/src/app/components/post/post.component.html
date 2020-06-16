@@ -7,8 +7,8 @@
         <div class="col col-vertical-center">
             <div class="row no-gutters text-center">
                 <div class="col-auto name">{{post.user.nickname}}</div>
-                <div class="col-auto user-type-background">
-                    <span class="user-type-font">摄影师</span>
+                <div class="col-auto">
+                    <span class="align-middle pl-2 pr-2 pt-1 pb-1 user-type">摄影师</span>
                 </div>
             </div>
             <div class="row no-gutters date">{{(post.updatedTime == null ? post.createdTime : post.updatedTime) | date: 'yyyy-MM-dd'}}</div>
@@ -24,8 +24,8 @@
         <div class="row no-gutters">
             <div class="col-4 card card-photo" *ngFor="let attachment of post.postAttachments; let i = index" (click)="onClickPhoto(i)">
                 <div class="embed-responsive embed-responsive-1by1">
-                    <img class="card-img embed-responsive-item" 
-                    [ngClass]="{'card-img-left': i % 3 == 0, 'card-img-right': i % 3 == 2, 'card-img-center': i % 3 == 1}"
+                    <img class="card-img embed-responsive-item pt-2 pb-2" 
+                    [ngClass]="{'pr-2': i % 3 == 0 || i % 3 == 1, 'pl-2': i % 3 == 2 || i % 3 == 1}"
                     src="{{attachment.name}}" />
                 </div>
             </div>

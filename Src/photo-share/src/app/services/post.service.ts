@@ -10,10 +10,9 @@ export class PostService {
 
   constructor(private http: HttpClient) { }
 
-  async getPostAsync(postId: string): Promise<Post> {
+  async getPostAsync(postId: string, userId: string): Promise<Post> {
     try {
       let apiUrl = ConfigService.config.serviceBase + 'posts/post/' + postId;
-      console.log("************" + apiUrl);
       let response = await this.http.get<any>(apiUrl).toPromise();
       return response.data;
     } catch (err) {

@@ -29,26 +29,34 @@ export class PostComponent implements OnInit {
     this.showBigPhoto = false;
 
     this.activatedRoute.queryParams.subscribe(async params => {
-      let postId = this.activatedRoute.snapshot.queryParamMap.get('id');
-      if (postId) 
-        this.post = await this.getPostAsync(postId);
+      let postId = this.activatedRoute.snapshot.queryParamMap.get('postid');
+      let userId = this.activatedRoute.snapshot.queryParamMap.get('userid');
+      if (postId && userId) 
+        this.post = await this.getPostAsync(postId, userId);
 
         // 设置照片的可见性，visibility为2表示需要密码查看
         this.showPhotos = this.post && !this.post.viewPassword;
     });
   }
 
-  async getPostAsync(postId: string): Promise<Post> {
-    let post = await this.postService.getPostAsync(postId);
+  async getPostAsync(postId: string, userId: string): Promise<Post> {
+    let post = await this.postService.getPostAsync(postId, userId);
 
     if (!post)
       return post;
       
     if (post.updatedTime) 
       post.updatedTime = new Date(post.updatedTime * 1000);
+    
     post.createdTime = new Date(post.createdTime * 1000);
     post.user.avatar = ConfigService.config.fileServer + post.user.avatar;
     post.postAttachments.forEach(a => a.name = ConfigService.config.fileServer + a.name);
+    
+    if (post.forwardedPost) {
+      post.forwardedPost.postAttachments.forEach(a => a.name = ConfigService.config.fileServer + a.name);
+      if (post.showOriginalText)
+        post.text += "@" + post.forwardedPost.user.nickname + post.forwardedPost.text
+    }
 
     return post;
   }
