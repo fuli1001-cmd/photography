@@ -59,6 +59,15 @@ namespace Photography.Services.User.API.Infrastructure.Redis
             }
         }
 
+        public async Task<bool> KeyDeleteAsync(RedisKey key)
+        {
+            using (var redis = await ConnectAsync())
+            {
+                var db = redis.GetDatabase();
+                return await db.KeyDeleteAsync(key);
+            }
+        }
+
         public async Task PublishAsync(RedisChannel channel, RedisValue value)
         {
             using (var redis = await ConnectAsync())

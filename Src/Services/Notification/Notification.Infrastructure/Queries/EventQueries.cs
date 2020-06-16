@@ -36,6 +36,7 @@ namespace Photography.Services.Notification.Infrastructure.Queries
                                join u in _dbContext.Users
                                on e.FromUserId equals u.Id
                                where e.ToUserId == myId
+                               orderby e.CreatedTime descending
                                select new EventViewModel
                                {
                                    FromUser = new UserViewModel

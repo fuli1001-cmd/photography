@@ -69,5 +69,13 @@ namespace Photography.Services.Post.Infrastructure.Repositories
             posts.ForEach(p => dic.Add(p.Id, p.UserId));
             return dic;
         }
+
+        public async Task<List<Domain.AggregatesModel.PostAggregate.Post>> GetPostsAsync(List<Guid> postIds)
+        {
+            return await (from p in _context.Posts
+                          where postIds.Contains(p.Id)
+                          select p)
+                   .ToListAsync();
+        }
     }
 }

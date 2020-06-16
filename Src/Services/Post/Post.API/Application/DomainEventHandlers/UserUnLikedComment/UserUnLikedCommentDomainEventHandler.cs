@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
+using Photography.Services.Post.Domain.AggregatesModel.CommentAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 using Photography.Services.Post.Domain.Events;
 using System;
@@ -13,13 +14,16 @@ namespace Photography.Services.Post.API.Application.DomainEventHandlers.UserUnLi
     public class UserUnLikedCommentDomainEventHandler : INotificationHandler<UserUnLikedCommentDomainEvent>
     {
         private readonly IPostRepository _postRepository;
+        private readonly ICommentRepository _commentRepository;
         private readonly ILogger<UserUnLikedCommentDomainEventHandler> _logger;
 
         public UserUnLikedCommentDomainEventHandler(
             IPostRepository postRepository,
+            ICommentRepository commentRepository,
             ILogger<UserUnLikedCommentDomainEventHandler> logger)
         {
             _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
+            _commentRepository = commentRepository ?? throw new ArgumentNullException(nameof(commentRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -29,6 +33,9 @@ namespace Photography.Services.Post.API.Application.DomainEventHandlers.UserUnLi
 
             var post = await _postRepository.GetByIdAsync(notification.PostId);
             post.UnLike();
+
+            var comment = await _commentRepository.GetByIdAsync(notification.CommentId);
+            comment.UnLike();
         }
     }
 }

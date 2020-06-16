@@ -61,5 +61,20 @@ namespace Photography.ApiGateways.ApiGwBase.Settings
         /// 腾讯语音是否启用
         /// </summary>
         public bool TrtcEnabled { get; set; }
+
+        public Version Version { get; set; }
+    }
+
+    public class Version
+    {
+        public UpgradeInfo IOS { get; set; }
+        public UpgradeInfo Android { get; set; }
+    }
+
+    public class UpgradeInfo
+    {
+        public string Version { get; set; }
+
+        public string Url { get; set; }
     }
 }

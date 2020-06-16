@@ -14,7 +14,11 @@ namespace Photography.Services.Post.API.Query.Interfaces
         Task<PagedList<PostViewModel>> GetFollowedPostsAsync(PagingParameters pagingParameters);
         Task<PagedList<PostViewModel>> GetSameCityPostsAsync(string cityCode, PagingParameters pagingParameters);
 
+        Task<List<PostViewModel>> GetPostsAsync(List<Guid> postIds);
+
         Task<PostViewModel> GetPostAsync(Guid postId);
+
+        Task<PostViewModel> GetSharedPostAsync(Guid postId, Guid sharedUserId);
 
         Task<PagedList<PostViewModel>> SearchPosts(string key, string cityCode, PagingParameters pagingParameters);
     }

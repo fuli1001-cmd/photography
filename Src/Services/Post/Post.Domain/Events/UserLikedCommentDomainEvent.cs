@@ -9,9 +9,12 @@ namespace Photography.Services.Post.Domain.Events
     {
         public Guid PostId { get; }
 
-        public UserLikedCommentDomainEvent(Guid postId)
+        public Guid CommentId { get; }
+
+        public UserLikedCommentDomainEvent(Guid postId, Guid commentId)
         {
             PostId = postId;
+            CommentId = commentId;
         }
     }
 }

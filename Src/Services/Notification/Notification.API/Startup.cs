@@ -21,6 +21,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Photography.Services.Notification.API.Application.Behaviors;
 using Photography.Services.Notification.API.Application.Commands.CreateEvent;
 using Photography.Services.Notification.API.Infrastructure.AutofacModules;
 using Photography.Services.Notification.Infrastructure;
@@ -67,6 +68,8 @@ namespace Photography.Services.Notification.API
                 // default query paramter for version is api-version
                 //options.ApiVersionReader = new QueryStringApiVersionReader("v");
             });
+
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 
             services.AddSqlDataAccessServices<NotificationContext>(Configuration.GetConnectionString("NotificationConnection"), typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
 

@@ -40,13 +40,13 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserCommentRelationAg
 
         private void AddUserLikedCommentDomainEvent(Guid postId)
         {
-            var userLikedCommentDomainEvent = new UserLikedCommentDomainEvent(postId);
+            var userLikedCommentDomainEvent = new UserLikedCommentDomainEvent(postId, CommentId);
             AddDomainEvent(userLikedCommentDomainEvent);
         }
 
         private void AddUserUnLikedCommentDomainEvent(Guid postId)
         {
-            var userUnLikedCommentDomainEvent = new UserUnLikedCommentDomainEvent(postId);
+            var userUnLikedCommentDomainEvent = new UserUnLikedCommentDomainEvent(postId, CommentId);
             AddDomainEvent(userUnLikedCommentDomainEvent);
         }
     }

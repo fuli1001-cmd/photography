@@ -236,10 +236,24 @@ namespace Photography.Services.Post.API.Controllers
         [HttpPut]
         [Route("share")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<int>> ShareAsync([FromBody] SharePostCommand sharePostCommand)
+        public async Task<ActionResult<bool>> ShareAsync([FromBody] SharePostCommand sharePostCommand)
         {
             var result = await _mediator.Send(sharePostCommand);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 获取分享的帖子的详情
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("post/{postId}/{sharedUserId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
+        public async Task<ActionResult<PostViewModel>> GetSharedPostAsync(Guid postId, Guid sharedUserId)
+        {
+            var post = await _postQueries.GetSharedPostAsync(postId, sharedUserId);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(post));
         }
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Photography.Services.User.API.Application.Commands.Login;
+using Photography.Services.User.API.Application.Commands.Logout;
 using Photography.Services.User.API.Application.Commands.User.MuteUser;
 using Photography.Services.User.API.Application.Commands.User.ToggleFollow;
 using Photography.Services.User.API.Application.Commands.User.UpdateBackground;
@@ -59,6 +60,20 @@ namespace Photography.Services.User.API.Controllers
                 return StatusCode((int)HttpStatusCode.BadRequest, ResponseWrapper.CreateErrorResponseWrapper(Arise.DDD.API.Response.StatusCode.ClientError, "登录失败"));
             else
                 return Ok(ResponseWrapper.CreateOkResponseWrapper(tokensViewModel));
+        }
+
+        /// <summary>
+        /// 退出登录
+        /// </summary>
+        /// <returns>true：退出成功，false：退出失败</returns>
+        [HttpPost]
+        [Route("logout")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<bool>> LogoutAsync()
+        {
+            var command = new LogoutCommand();
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
 
         /// <summary>
@@ -137,7 +152,7 @@ namespace Photography.Services.User.API.Controllers
         [HttpGet]
         [Route("friends")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<FriendViewModel>> GetFriendsAsync()
+        public async Task<ActionResult<ResponseWrapper>> GetFriendsAsync()
         {
             var friends = await _userQueries.GetFriendsAsync();
             return Ok(ResponseWrapper.CreateOkResponseWrapper(friends));
@@ -164,7 +179,7 @@ namespace Photography.Services.User.API.Controllers
         [HttpGet]
         [Route("followers/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<FriendViewModel>> GetFollowersAsync(Guid userId)
+        public async Task<ActionResult<ResponseWrapper>> GetFollowersAsync(Guid userId)
         {
             var followers = await _userQueries.GetFollowersAsync(userId);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(followers));
@@ -178,7 +193,7 @@ namespace Photography.Services.User.API.Controllers
         [HttpGet]
         [Route("followedUsers/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<FriendViewModel>> GetFollowedUsersAsync(Guid userId)
+        public async Task<ActionResult<ResponseWrapper>> GetFollowedUsersAsync(Guid userId)
         {
             var followedUsers = await _userQueries.GetFollowedUsersAsync(userId);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(followedUsers));
@@ -192,7 +207,7 @@ namespace Photography.Services.User.API.Controllers
         [HttpGet]
         [Route("search")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<UserSearchResult>> GetUserAsync([FromQuery(Name = "key")] string key)
+        public async Task<ActionResult<ResponseWrapper>> GetUserAsync([FromQuery(Name = "key")] string key)
         {
             var users = await _userQueries.SearchUsersAsync(key);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(users));
@@ -206,7 +221,7 @@ namespace Photography.Services.User.API.Controllers
         [HttpPut]
         [Route("mute")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<ResponseWrapper>> MuteUserAsync([FromBody] MuteUserCommand command)
+        public async Task<ActionResult<bool>> MuteUserAsync([FromBody] MuteUserCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));

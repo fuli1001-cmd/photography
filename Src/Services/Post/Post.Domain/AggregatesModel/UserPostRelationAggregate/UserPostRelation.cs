@@ -21,17 +21,23 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggre
         public Guid? UserId { get; private set; }
         public User User { get; private set; }
 
+        // 用于查看分享帖子时的时间限制
+        public double CreatedTime { get; private set; }
+
         public UserPostRelationType UserPostRelationType { get; set; }
 
-        public UserPostRelation() { }
+        public UserPostRelation() 
+        {
+            CreatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+        }
 
-        public UserPostRelation(Guid userId, Guid postId)
+        public UserPostRelation(Guid userId, Guid postId) : this()
         {
             UserId = userId;
             PostId = postId;
         }
 
-        public UserPostRelation(Guid userId, UserPostRelationType userPostRelationType)
+        public UserPostRelation(Guid userId, UserPostRelationType userPostRelationType) : this()
         {
             UserId = userId;
             UserPostRelationType = userPostRelationType;
@@ -64,6 +70,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggre
     public enum UserPostRelationType
     {
         View,
-        Like
+        Like,
+        Share
     }
 }

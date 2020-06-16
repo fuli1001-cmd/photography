@@ -21,5 +21,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         Task<int> GetPostCommentCountAsync(Guid postId);
 
         Task<Dictionary<Guid, Guid>> GetPostsUserIdsAsync(List<Guid> postIds);
+
+        Task<List<Post>> GetPostsAsync(List<Guid> postIds);
     }
 }

@@ -64,6 +64,11 @@ namespace Photography.Services.Post.Domain.AggregatesModel.CommentAggregate
             Likes++;
         }
 
+        public void UnLike()
+        {
+            Likes = Math.Max(Likes - 1, 0);
+        }
+
         private void AddRepliedPostDomainEvent()
         {
             var repliedPostDomainEvent = new RepliedPostDomainEvent(PostId);

@@ -19,6 +19,7 @@ using Microsoft.EntityFrameworkCore;
 using Photography.Services.Post.API.Query.Extensions;
 using Arise.DDD.API.Paging;
 using Photography.Services.Post.API.Query.EF.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace Photography.Services.Post.API.Query.EF
 {
@@ -26,14 +27,15 @@ namespace Photography.Services.Post.API.Query.EF
     {
         private readonly PostContext _postContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
         private readonly ILogger<PostQueries> _logger;
 
-        public PostQueries(PostContext postContext, IHttpContextAccessor httpContextAccessor, IMapper mapper, ILogger<PostQueries> logger)
+        public PostQueries(PostContext postContext, IHttpContextAccessor httpContextAccessor,
+            IConfiguration configuration, ILogger<PostQueries> logger)
         {
             _postContext = postContext ?? throw new ArgumentNullException(nameof(postContext));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -140,6 +142,24 @@ namespace Photography.Services.Post.API.Query.EF
             return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
         }
 
+        public async Task<List<PostViewModel>> GetPostsAsync(List<Guid> postIds)
+        {
+            var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
+
+            var queryableUserPosts = from p in _postContext.Posts
+                                     join u in _postContext.Users
+                                     on p.UserId equals u.Id
+                                     where postIds.Contains(p.Id)
+                                     select new UserPost { Post = p, User = u };
+
+            var postViewModels = await GetQueryablePostViewModels(queryableUserPosts, myId).ToListAsync();
+
+            postViewModels.ForEach(p => SetAttachment(p));
+
+            return postViewModels;
+        }
+
         /// <summary>
         /// 帖子详情
         /// </summary>
@@ -156,7 +176,40 @@ namespace Photography.Services.Post.API.Query.EF
                                      where p.Id == postId
                                      select new UserPost { Post = p, User = u };
 
-            return await GetQueryablePostViewModels(queryableUserPosts, myId).SingleOrDefaultAsync();
+            var postViewModel = await GetQueryablePostViewModels(queryableUserPosts, myId).SingleOrDefaultAsync();
+
+            SetAttachment(postViewModel);
+
+            return postViewModel;
+        }
+
+        /// <summary>
+        /// 分享的帖子的详情
+        /// 与帖子详情的区别在于需要检查事件限制，超过时间限制不予返回
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <returns></returns>
+        public async Task<PostViewModel> GetSharedPostAsync(Guid postId, Guid sharedUserId)
+        {
+            var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
+
+            var validSeconds = _configuration.GetValue<int>("ShareValidTime") * 3600;
+            var curSeconds = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+
+            var queryableUserPosts = from p in _postContext.Posts
+                                     join u in _postContext.Users
+                                     on p.UserId equals u.Id
+                                     join upr in _postContext.UserPostRelations
+                                     on p.Id equals upr.PostId
+                                     where p.Id == postId && upr.UserId == sharedUserId && (upr.CreatedTime + validSeconds) >= curSeconds
+                                     select new UserPost { Post = p, User = u };
+
+            var postViewModel = await GetQueryablePostViewModels(queryableUserPosts, myId).SingleOrDefaultAsync();
+
+            SetAttachment(postViewModel);
+
+            return postViewModel;
         }
 
         /// <summary>
@@ -340,19 +393,31 @@ namespace Photography.Services.Post.API.Query.EF
                                                   Nickname = up.User.Nickname
                                               })
                                              .SingleOrDefault();
-
-                    // set ForwardedPost attachment width and height
-                    foreach (var attachment in dto.ForwardedPost.PostAttachments)
-                        attachment.SetProperties();
                 }
 
-                // set attachment width and height
-                foreach (var attachment in dto.PostAttachments)
-                    attachment.SetProperties();
+                SetAttachment(dto);
             });
             #endregion
 
             return pagedDto;
+        }
+
+        /// <summary>
+        /// 设置附件的宽高和缩略图
+        /// </summary>
+        /// <param name="postViewModel"></param>
+        private void SetAttachment(PostViewModel postViewModel)
+        {
+            // set ForwardedPost attachment width and height
+            if (postViewModel.ForwardedPost != null)
+            {
+                foreach (var attachment in postViewModel.ForwardedPost.PostAttachments)
+                    attachment.SetProperties();
+            }
+
+            // set attachment width and height
+            foreach (var attachment in postViewModel.PostAttachments)
+                attachment.SetProperties();
         }
     }
 }

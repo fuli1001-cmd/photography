@@ -39,7 +39,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
 
         public async Task<PostViewModel> Handle(PublishPostCommand request, CancellationToken cancellationToken)
         {
-            var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType)).ToList();
             var post = Domain.AggregatesModel.PostAggregate.Post.CreatePost(request.Text, request.Commentable, request.ForwardType, request.ShareType,
                 request.Visibility, request.ViewPassword, request.Latitude, request.Longitude, request.LocationName,

@@ -48,7 +48,7 @@ namespace Photography.Services.User.API.Query.EF
 
             if (userId != null)
                 queryableUsers = from u in _identityContext.Users where u.Id == userId select u;
-            else if (nickName != null)
+            else if (!string.IsNullOrWhiteSpace(nickName))
                 queryableUsers = from u in _identityContext.Users where u.Nickname.ToLower() == nickName.ToLower() select u;
             else if (oldUserId != null)
                 queryableUsers = from u in _identityContext.Users where u.ChatServerUserId == oldUserId select u;
@@ -80,7 +80,7 @@ namespace Photography.Services.User.API.Query.EF
                             PostCount = u.PostCount,
                             ChatServerUserId = u.ChatServerUserId,
                             Followed = (from ur in _identityContext.UserRelations
-                                        where ur.FollowerId == myId && ur.FollowedUserId == userId
+                                        where ur.FollowerId == myId && ur.FollowedUserId == u.Id
                                         select ur.Id).Count() > 0
                         }).SingleOrDefaultAsync();
 

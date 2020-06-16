@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Photography.Services.Post.API.Application.Commands.Post.SharePost
 {
-    public class SharePostCommand : IRequest<int>
+    public class SharePostCommand : IRequest<bool>
     {
         /// <summary>
         /// 点分享的帖子id
         /// </summary>
         [Required]
-        public Guid PostId { get; set; }
+        public List<Guid> PostIds { get; set; }
     }
 }

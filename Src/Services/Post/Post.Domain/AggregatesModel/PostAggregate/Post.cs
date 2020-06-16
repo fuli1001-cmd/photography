@@ -257,9 +257,11 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             LikeCount = Math.Max(LikeCount - 1, 0);
         }
 
-        public void Share()
+        public void Share(Guid shareUserId)
         {
             ShareCount++;
+            var upr = new UserPostRelation(shareUserId, UserPostRelationType.Share);
+            _userPostRelations.Add(upr);
         }
 
         public void Comment()

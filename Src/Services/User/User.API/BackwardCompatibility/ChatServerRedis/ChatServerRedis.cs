@@ -161,6 +161,11 @@ namespace Photography.Services.User.API.BackwardCompatibility.ChatServerRedis
             _logger.LogInformation("Redis User: {@RedisUser}", chatServerUser);
         }
 
+        public async Task<bool> RemoveUserAsync(int chatServerUserId)
+        {
+            return await _redisService.KeyDeleteAsync(chatServerUserId.ToString());
+        }
+
         public async Task WriteTokenUserAsync(Domain.AggregatesModel.UserAggregate.User user, string oldToken)
         {
             var tokenUser = new Token
