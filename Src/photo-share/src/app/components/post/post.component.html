@@ -1,12 +1,12 @@
-<div *ngIf="post && !showBigPhoto" class="container">
+<div *ngIf="post && !showBigPhoto" class="view-container">
     <!-- 用户信息 -->
     <div class="row no-gutters row-user-info">
         <div class="col-auto col-avatar">
-            <img src="{{post.user.avatar}}" class="rounded-circle avatar">
+            <img src="{{post.user.avatar}}" class="rounded-circle avatar" (click)="goDownload()">
         </div>
         <div class="col col-vertical-center">
             <div class="row no-gutters text-center">
-                <div class="col-auto name">{{post.user.nickname}}</div>
+                <div class="col-auto name" (click)="goDownload()">{{post.user.nickname}}</div>
                 <div class="col-auto">
                     <span class="align-middle pl-2 pr-2 pt-1 pb-1 user-type">摄影师</span>
                 </div>
@@ -14,24 +14,39 @@
             <div class="row no-gutters date">{{(post.updatedTime == null ? post.createdTime : post.updatedTime) | date: 'yyyy-MM-dd'}}</div>
         </div>
         <div class="col col-vertical-center">
-            <button type="button" class="btn btn-outline-primary float-right btn-follow">+ 关注</button>
+            <button type="button" class="btn btn-outline-primary float-right btn-follow" (click)="goDownload()">+ 关注</button>
         </div>
     </div>
 
+    <!-- 帖子文字类容 -->
     <div class="row no-gutters text">{{post.text}}</div>
 
+    <!-- 帖子照片 -->
     <div [ngClass]="{'blur': !showPhotos}">
-        <div class="row no-gutters">
+        <!-- 多张照片使用九宫格显示 -->
+        <div class="row no-gutters" *ngIf="post.postAttachments.length > 1">
             <div class="col-4 card card-photo" *ngFor="let attachment of post.postAttachments; let i = index" (click)="onClickPhoto(i)">
                 <div class="embed-responsive embed-responsive-1by1">
                     <img class="card-img embed-responsive-item pt-2 pb-2" 
                     [ngClass]="{'pr-2': i % 3 == 0 || i % 3 == 1, 'pl-2': i % 3 == 2 || i % 3 == 1}"
                     src="{{attachment.name}}" />
+                    <img src="../../../assets/images/play.png" class="btn-play" *ngIf="attachment.attachmentType == 1">
+                </div>
+            </div>
+        </div>
+        <!-- 单张照片和单张视频全宽度显示 -->
+        <div class="row no-gutters" *ngIf="post.postAttachments.length == 1">
+            <div class="col-12 card card-photo" (click)="onClickPhoto(0)">
+                <div class="embed-responsive embed-responsive-1by1">
+                    <img class="card-img embed-responsive-item pt-2 pb-2 pl-2 pr-2" 
+                    src="{{post.postAttachments[0].name}}" />
+                    <img src="../../../assets/images/play.png" class="btn-play" *ngIf="post.postAttachments[0].attachmentType == 1">
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- 密码查看 -->
     <div *ngIf="!showPhotos" class="div-password">
         <div class="row no-gutters">
             <input type="text" class="form-control" [(ngModel)]="password">
@@ -40,7 +55,6 @@
             <button type="button" class="btn btn-outline-primary float-right btn-password" (click)="onClickViewByPassword()">查看</button>
         </div>
     </div>
-
 </div>
 
 <div class="row no-gutters fixed-bottom div-product" *ngIf="!showBigPhoto" routerLink="/download">
@@ -52,30 +66,3 @@
         <div class="row no-gutters text2-product">即刻下载Sense想怎么拍都行~</div>
     </div>
 </div>
-
-<!-- <div class="big-photo-container">
-    <button type="button" class="close" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    <div id="carouselExampleCaptions" class="carousel slide big-photo-carousel" data-ride="carousel" *ngIf="showBigPhoto">
-        <ol class="carousel-indicators">
-          <li data-target="#carouselExampleCaptions" data-slide-to="i" [ngClass]="{'active': i == selectedPhotoIndex}" *ngFor="let attachment of post.postAttachments; let i = index"></li>
-        </ol>
-        <div class="carousel-inner">
-          <div class="carousel-item" [ngClass]="{'active': i == selectedPhotoIndex}" *ngFor="let attachment of post.postAttachments; let i = index" >
-            <img src="{{attachment.name}}" class="d-block w-100">
-            <div class="carousel-caption d-none d-md-block">
-              <p class="big-photo-text">{{attachment.text}}</p>
-            </div>
-          </div>
-        </div>
-        <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="sr-only">Next</span>
-        </a>
-      </div> 
-</div> -->

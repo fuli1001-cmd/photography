@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PostService } from 'src/app/services/post.service';
 import { Post } from 'src/app/models/post';
@@ -11,6 +11,8 @@ import { StateService } from 'src/app/services/state.service';
   styleUrls: ['./post.component.css']
 })
 export class PostComponent implements OnInit {
+
+  @ViewChild('videoPlayer') videoplayer: ElementRef;
 
   post: Post;
   password: string;
@@ -44,19 +46,40 @@ export class PostComponent implements OnInit {
 
     if (!post)
       return post;
-      
+
     if (post.updatedTime) 
       post.updatedTime = new Date(post.updatedTime * 1000);
     
     post.createdTime = new Date(post.createdTime * 1000);
     post.user.avatar = ConfigService.config.fileServer + post.user.avatar;
-    post.postAttachments.forEach(a => a.name = ConfigService.config.fileServer + a.name);
+    post.postAttachments.forEach(a => {
+      if (a.attachmentType == 1) {
+        let tempName = a.name;
+        a.name = ConfigService.config.fileServer + a.thumbnail;
+        a.thumbnail = ConfigService.config.fileServer + tempName;
+      }
+      else
+        a.name = ConfigService.config.fileServer + a.name;
+    });
     
     if (post.forwardedPost) {
-      post.forwardedPost.postAttachments.forEach(a => a.name = ConfigService.config.fileServer + a.name);
+      post.forwardedPost.postAttachments.forEach(a => {
+        // 视频显示缩略图，为了方便显示，这里把name和thumbnail切换
+        if (a.attachmentType == 1) {
+          let tempName = a.name;
+          a.name = ConfigService.config.fileServer + a.thumbnail;
+          a.thumbnail = ConfigService.config.fileServer + tempName;
+        }
+        else
+          a.name = ConfigService.config.fileServer + a.name;
+      });
+      post.postAttachments = post.forwardedPost.postAttachments;
+
       if (post.showOriginalText)
-        post.text += "@" + post.forwardedPost.user.nickname + post.forwardedPost.text
+        post.text += "@" + post.forwardedPost.user.nickname + post.forwardedPost.text;
     }
+
+    console.log(post);
 
     return post;
   }
@@ -71,6 +94,15 @@ export class PostComponent implements OnInit {
     this.stateService.attachments = this.post.postAttachments;
     this.stateService.photoIndex = this.selectedPhotoIndex;
     this.router.navigate(['/photo']);
+  }
+
+  onClickVideo(): void {
+    console.log("onClickVideo");
+    // this.videoplayer.nativeElement.play();
+  }
+
+  goDownload(): void {
+    this.router.navigate(['/download']);
   }
 
 }

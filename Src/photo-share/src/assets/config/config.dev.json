@@ -1,4 +1,4 @@
 {
-    "serviceBase": "http://192.168.1.133:5000/api/",
-    "fileServer": "http://47.108.194.52:20515/"
+    "serviceBase": "https://senseapi.ars-sense.com:5101/api/",
+    "fileServer": "https://down.ars-sense.com:4432/"
 }

@@ -1,4 +1,4 @@
-.container {
+.view-container {
 	margin-left: 30px;
 	margin-right: 30px;
 	position: relative;
@@ -172,4 +172,12 @@
 	line-height: 43px;
 	letter-spacing: -1px;
     color: #ffffff;
+}
+
+.btn-play {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 20%;
 }

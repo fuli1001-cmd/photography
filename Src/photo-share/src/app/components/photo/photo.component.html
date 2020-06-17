@@ -5,7 +5,13 @@
         </ol>
         <div class="carousel-inner">
           <div class="carousel-item" [ngClass]="{'active': i == stateService.photoIndex}" *ngFor="let attachment of stateService.attachments; let i = index" >
-            <img src="{{attachment.name}}" class="d-block w-100">
+            <img src="{{attachment.name}}" class="d-block w-100" *ngIf="attachment.attachmentType == 0">
+
+            <video controls #videoPlayer *ngIf="attachment.attachmentType == 1" class="video">
+                <source src="{{attachment.thumbnail}}" type="video/mp4" />
+                浏览器不支持
+            </video>
+
             <div class="carousel-caption d-none d-md-block">
               <p class="text">{{attachment.text}}</p>
             </div>
@@ -19,5 +25,5 @@
           <span class="carousel-control-next-icon" aria-hidden="true"></span>
           <span class="sr-only">Next</span>
         </a>
-      </div> 
+      </div>
 </div>
