@@ -3,6 +3,8 @@ using Arise.DDD.Infrastructure.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Photography.Services.User.Domain.AggregatesModel.AlbumAggregate;
+using Photography.Services.User.Domain.AggregatesModel.AlbumPhotoAggregate;
 using Photography.Services.User.Domain.AggregatesModel.GroupAggregate;
 using Photography.Services.User.Domain.AggregatesModel.GroupUserAggregate;
 using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
@@ -23,6 +25,8 @@ namespace Photography.Services.User.Infrastructure
         public DbSet<UserRelation> UserRelations { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<GroupUser> GroupUsers { get; set; }
+        public DbSet<Album> Albums { get; set; }
+        public DbSet<AlbumPhoto> AlbumPhotos { get; set; }
 
         private readonly IMediator _mediator;
         private IDbContextTransaction _currentTransaction;
@@ -44,6 +48,8 @@ namespace Photography.Services.User.Infrastructure
             modelBuilder.ApplyConfiguration(new UserRelationEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new GroupEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new GroupUserEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new AlbumEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new AlbumPhotoEntityTypeConfiguration());
         }
 
         public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default(CancellationToken))

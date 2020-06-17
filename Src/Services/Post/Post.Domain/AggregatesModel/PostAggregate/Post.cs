@@ -215,10 +215,10 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         {
             //  当前操作用户必须为发出该交易的用户
             if (UserId != userId)
-                throw new ClientException("操作失败。", new List<string> { "Appointment deal is not created by current user." });
+                throw new ClientException("操作失败", new List<string> { "Appointment deal is not created by current user." });
 
             if (AppointmentDealStatus != PostAggregate.AppointmentDealStatus.Created)
-                throw new ClientException("操作失败。", new List<string> { "Current appointment deal status is not 'Created'." });
+                throw new ClientException("操作失败", new List<string> { "Current appointment deal status is not 'Created'." });
 
             AppointmentDealStatus = PostAggregate.AppointmentDealStatus.Canceled;
         }
@@ -227,10 +227,10 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         {
             //  当前操作用户必须为收到该交易的用户
             if (AppointmentedUserId != userId)
-                throw new ClientException("操作失败。", new List<string> { "Appointmented user is not current user." });
+                throw new ClientException("操作失败", new List<string> { "Appointmented user is not current user." });
 
             if (AppointmentDealStatus != PostAggregate.AppointmentDealStatus.Created)
-                throw new ClientException("操作失败。", new List<string> { "Current appointment deal status is not 'Created'." });
+                throw new ClientException("操作失败", new List<string> { "Current appointment deal status is not 'Created'." });
 
             AppointmentDealStatus = PostAggregate.AppointmentDealStatus.Accepted;
         }
@@ -239,10 +239,10 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         {
             // 当前操作用户必须为收到该交易的用户
             if (AppointmentedUserId != userId)
-                throw new ClientException("操作失败。", new List<string> { "Appointmented user is not current user." });
+                throw new ClientException("操作失败", new List<string> { "Appointmented user is not current user." });
 
             if (AppointmentDealStatus != PostAggregate.AppointmentDealStatus.Created)
-                throw new ClientException("操作失败。", new List<string> { "Current appointment deal status is not 'Created'." });
+                throw new ClientException("操作失败", new List<string> { "Current appointment deal status is not 'Created'." });
 
             AppointmentDealStatus = PostAggregate.AppointmentDealStatus.Rejected;
         }

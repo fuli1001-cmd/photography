@@ -29,11 +29,6 @@ namespace Photography.Services.User.API.Query.EF
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public Task<GroupViewModel> GetGroupByChatServerGroupIdAsync(Guid groupId)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<GroupViewModel> GetGroupAsync(Guid? groupId, int? oldGroupId)
         {
             IQueryable<Domain.AggregatesModel.GroupAggregate.Group> queryableGroups = null;

@@ -73,7 +73,7 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
         public void Accept()
         {
             if (OrderStatus != OrderStatus.Created) 
-                throw new ClientException("操作失败。", new List<string> { "Current order status is not 'Created'." });
+                throw new ClientException("操作失败", new List<string> { "Current order status is not 'Created'." });
 
             OrderStatus = OrderStatus.WaitingForShooting;
         }
@@ -81,7 +81,7 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
         public void Cancel()
         {
             if (OrderStatus != OrderStatus.Created)
-                throw new ClientException("操作失败。", new List<string> { "Current order status is not 'Created'." });
+                throw new ClientException("操作失败", new List<string> { "Current order status is not 'Created'." });
 
             OrderStatus = OrderStatus.Canceled;
         }
@@ -89,7 +89,7 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
         public void Reject()
         {
             if (OrderStatus != OrderStatus.Created)
-                throw new ClientException("操作失败。", new List<string> { "Current order status is not 'Created'." });
+                throw new ClientException("操作失败", new List<string> { "Current order status is not 'Created'." });
 
             OrderStatus = OrderStatus.Rejected;
         }
@@ -97,7 +97,7 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
         public void ConfirmShot()
         {
             if (OrderStatus != OrderStatus.WaitingForShooting)
-                throw new ClientException("操作失败。", new List<string> { "Current order status is not 'WaitingForShooting'." });
+                throw new ClientException("操作失败", new List<string> { "Current order status is not 'WaitingForShooting'." });
 
             OrderStatus = OrderStatus.WaitingForUploadOriginal;
         }
@@ -106,7 +106,7 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
         public void UploadOriginalFiles(IEnumerable<string> attachmentNames)
         {
             if (!CheckOriginalAttachments(attachmentNames))
-                throw new ClientException("不能删除已被对方选择的原片。");
+                throw new ClientException("不能删除已被对方选择的原片");
 
             UpdateOriginalAttachments(attachmentNames);
 
@@ -122,7 +122,7 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
             {
                 var attachment = _attachments.FirstOrDefault(a => a.Name == name && (a.AttachmentStatus == AttachmentStatus.Original || a.AttachmentStatus == AttachmentStatus.SelectedOriginal));
                 if (attachment == null)
-                    throw new ClientException("操作失败。", new List<string> { "Can't find " + name });
+                    throw new ClientException("操作失败", new List<string> { "Can't find " + name });
                 attachment.SetAttachmentStatus(AttachmentStatus.SelectedOriginal);
             }
 

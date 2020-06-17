@@ -81,7 +81,7 @@ namespace Photography.Services.User.Domain.AggregatesModel.GroupAggregate
         public void EnableAddMember(Guid ownerId)
         {
             if (OwnerId != ownerId)
-                throw new ClientException("操作失败。", new List<string> { $"Group {Id} does not belong to user {ownerId}" });
+                throw new ClientException("操作失败", new List<string> { $"Group {Id} does not belong to user {ownerId}" });
 
             ModifyMemberEnabled = true;
         }
@@ -89,7 +89,7 @@ namespace Photography.Services.User.Domain.AggregatesModel.GroupAggregate
         public void DisableAddMember(Guid ownerId)
         {
             if (OwnerId != ownerId)
-                throw new ClientException("操作失败。", new List<string> { $"Group {Id} does not belong to user {ownerId}" });
+                throw new ClientException("操作失败", new List<string> { $"Group {Id} does not belong to user {ownerId}" });
 
             ModifyMemberEnabled = false;
         }
@@ -98,10 +98,10 @@ namespace Photography.Services.User.Domain.AggregatesModel.GroupAggregate
         {
             // 检查原来的群主是当前用户，并且现在的群主是群成员
             if (OwnerId != oldOwnerId)
-                throw new ClientException("操作失败。", new List<string> { $"Group {Id} does not belong to user {oldOwnerId}" });
+                throw new ClientException("操作失败", new List<string> { $"Group {Id} does not belong to user {oldOwnerId}" });
 
             if (!GroupUsers.Any(gu => gu.UserId == newOwnerId))
-                throw new ClientException("操作失败。", new List<string> { $"New owner {newOwnerId} does not belong to group {Id}" });
+                throw new ClientException("操作失败", new List<string> { $"New owner {newOwnerId} does not belong to group {Id}" });
 
             OwnerId = newOwnerId;
         }

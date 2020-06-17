@@ -77,7 +77,7 @@ namespace Photography.Services.User.API.Application.Commands.Login
                 }
             });
             if (disco.IsError)
-                throw new ApplicationException("登录失败。");
+                throw new ApplicationException("登录失败");
 
             var tokenResponse = await httpClient.RequestPasswordTokenAsync(new PasswordTokenRequest
             {
@@ -90,7 +90,7 @@ namespace Photography.Services.User.API.Application.Commands.Login
             });
 
             if (tokenResponse.IsError)
-                throw new ClientException("登录失败。", new List<string> { tokenResponse.Error, tokenResponse.ErrorDescription });
+                throw new ClientException("用户名或密码错误", new List<string> { tokenResponse.Error, tokenResponse.ErrorDescription });
 
             return tokenResponse.AccessToken;
         }

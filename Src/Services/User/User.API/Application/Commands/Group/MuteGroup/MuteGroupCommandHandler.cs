@@ -42,7 +42,7 @@ namespace Photography.Services.User.API.Application.Commands.Group.MuteGroup
 
             var groupUser = await _groupUserRepository.GetGroupUserAsync(request.GroupId, myId);
             if (groupUser == null)
-                throw new ClientException("操作失败。", new List<string> { $"User {myId} is not in Group {request.GroupId}." });
+                throw new ClientException("操作失败", new List<string> { $"User {myId} is not in Group {request.GroupId}." });
 
             if (request.Muted)
                 groupUser.Mute();
@@ -58,7 +58,7 @@ namespace Photography.Services.User.API.Application.Commands.Group.MuteGroup
                 return true;
             }
 
-            throw new ApplicationException("操作失败。");
+            throw new ApplicationException("操作失败");
         }
 
         #region BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据

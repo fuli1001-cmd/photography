@@ -41,11 +41,11 @@ namespace Photography.Services.Order.API.Application.Commands.RejectOrder
         {
             var order = await _orderRepository.GetOrderbyDealIdAsync(request.DealId);
             if (order == null)
-                throw new ClientException("操作失败。", new List<string> { $"No order for deal id {request.DealId}." });
+                throw new ClientException("操作失败", new List<string> { $"No order for deal id {request.DealId}." });
 
             var processingUserId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             if (processingUserId != order.User1Id && processingUserId != order.User2Id)
-                throw new ClientException("操作失败。", new List<string> { $"Order does not belong to user {order.User1Id} and user {order.User2Id}." });
+                throw new ClientException("操作失败", new List<string> { $"Order does not belong to user {order.User1Id} and user {order.User2Id}." });
 
             order.Reject();
 

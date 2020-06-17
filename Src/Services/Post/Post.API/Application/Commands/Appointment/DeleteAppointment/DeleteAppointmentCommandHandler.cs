@@ -39,13 +39,13 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.DeleteA
             var post = await _postRepository.GetAppointmentById(request.AppointmentId);
 
             if (post == null)
-                throw new ClientException("操作失败。", new List<string> { $"Appointment {request.AppointmentId} does not exists." });
+                throw new ClientException("操作失败", new List<string> { $"Appointment {request.AppointmentId} does not exists." });
 
             var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
             // 当前用户不是发布该帖的用户，不能删除
             if (post.UserId != userId)
-                throw new ClientException("操作失败。", new List<string> { $"Appointment does not beong to user {userId}" });
+                throw new ClientException("操作失败", new List<string> { $"Appointment does not beong to user {userId}" });
 
             post.Delete();
             _postRepository.Update(post);
@@ -57,7 +57,7 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.DeleteA
                 return true;
             }
             
-            throw new ApplicationException("操作失败。");
+            throw new ApplicationException("操作失败");
         }
 
         private async Task SendAppointmentDeletedEventAsync(Guid userId)

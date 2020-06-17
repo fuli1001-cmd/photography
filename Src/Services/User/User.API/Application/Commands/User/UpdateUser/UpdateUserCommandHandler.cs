@@ -44,12 +44,12 @@ namespace Photography.Services.User.API.Application.Commands.User.UpdateUser
             // 检查是否是自己
             var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             if (userId != request.UserId)
-                throw new ClientException("更新失败。", new List<string> { $"Current user is not {request.UserId}." });
+                throw new ClientException("操作失败", new List<string> { $"Current user is not {request.UserId}." });
             
             // 检查昵称是否已被别人占用
             var nicknameUser = await _userRepository.GetByNicknameAsync(request.Nickname);
             if (nicknameUser != null && nicknameUser.Id != userId)
-                throw new ClientException("昵称已存在。");
+                throw new ClientException("昵称已存在");
 
             var user = await _userRepository.GetByIdAsync(request.UserId);
             user.Update(request.Nickname, request.Gender, request.Birthday, request.UserType, 
@@ -64,7 +64,7 @@ namespace Photography.Services.User.API.Application.Commands.User.UpdateUser
                 return true;
             }
             
-            throw new ApplicationException("更新失败。");
+            throw new ApplicationException("操作失败");
         }
 
         private async Task SendUserUpdatedEventAsync(Guid userId, string nickName, string avatar, UserType? userType)

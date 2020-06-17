@@ -62,7 +62,15 @@ namespace Photography.ApiGateways.ApiGwBase.Settings
         /// </summary>
         public bool TrtcEnabled { get; set; }
 
+        /// <summary>
+        /// 版本信息
+        /// </summary>
         public Version Version { get; set; }
+
+        /// <summary>
+        /// 分享贴子的地址
+        /// </summary>
+        public string PostShareServer { get; set; }
     }
 
     public class Version

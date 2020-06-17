@@ -59,7 +59,7 @@ namespace Photography.Services.Post.API.Application.Commands.Comment.ReplyPost
                 return post.CommentCount;
             }
 
-            throw new ApplicationException("操作失败。");
+            throw new ApplicationException("操作失败");
         }
 
         private async Task SendPostRepliedEventAsync(Domain.AggregatesModel.PostAggregate.Post post, Guid userId, string text)

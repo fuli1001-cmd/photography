@@ -40,11 +40,11 @@ namespace Photography.Services.User.API.Application.Commands.Group.UpdateGroup
         {
             var group = await _groupRepository.GetGroupWithMembersAsync(request.GroupId);
             if (group == null)
-                throw new ClientException("操作失败。", new List<string> { $"Group {request.GroupId} does not exist." });
+                throw new ClientException("操作失败", new List<string> { $"Group {request.GroupId} does not exist." });
 
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             if (myId != group.OwnerId)
-                throw new ClientException("操作失败。", new List<string> { $"Group {request.GroupId} does not belong to user {myId}." });
+                throw new ClientException("操作失败", new List<string> { $"Group {request.GroupId} does not belong to user {myId}." });
 
             group.Update(request.Name, request.Notice, request.Avatar);
 
@@ -56,7 +56,7 @@ namespace Photography.Services.User.API.Application.Commands.Group.UpdateGroup
                 return true;
             }
 
-            throw new ApplicationException("操作失败。");
+            throw new ApplicationException("操作失败");
         }
 
         #region BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据

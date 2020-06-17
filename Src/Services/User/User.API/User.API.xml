@@ -64,6 +64,52 @@
             <param name="decryptKey">解密密钥,要求为8位,和加密密钥相同</param>  
             <returns>解密成功返回解密后的字符串，失败返源串</returns>  
         </member>
+        <member name="M:Photography.Services.User.API.Controllers.AlbumsController.GetAlbumsAsync">
+            <summary>
+            获取用户的所有相册
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.AlbumsController.GetPagedAlbumsAsync(System.String,System.Boolean,Arise.DDD.API.Paging.PagingParameters)">
+            <summary>
+            分页获取用户的相册
+            </summary>
+            <param name="orderBy">排序字段：CreatedTime或UpdatedTime</param>
+            <param name="asc">true：顺序，false：倒序</param>
+            <param name="pagingParameters">分页参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.AlbumsController.GetPagedAlbumPhotosAsync(System.Guid,System.String,System.Boolean,Arise.DDD.API.Paging.PagingParameters)">
+            <summary>
+            分页获取相册内的照片
+            </summary>
+            <param name="albumId">相册id</param>
+            <param name="orderBy">排序字段：CreatedTime或UpdatedTime</param>
+            <param name="asc">true：顺序，false：倒序</param>
+            <param name="pagingParameters">分页参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.AlbumsController.CreateAlbumAsync(Photography.Services.User.API.Application.Commands.Album.CreateAlbum.CreateAlbumCommand)">
+            <summary>
+            创建相册
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.AlbumsController.UpdateAlbumAsync(Photography.Services.User.API.Application.Commands.Album.UpdateAlbum.UpdateAlbumCommand)">
+            <summary>
+            编辑相册
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.AlbumsController.DeleteAlbumAsync(Photography.Services.User.API.Application.Commands.Album.DeleteAlbum.DeleteAlbumCommand)">
+            <summary>
+            删除相册
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
         <member name="M:Photography.Services.User.API.Controllers.GroupsController.CreateGroupAsync(Photography.Services.User.API.Application.Commands.Group.CreateGroup.CreateGroupCommand)">
             <summary>
             建群

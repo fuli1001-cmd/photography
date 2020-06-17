@@ -56,10 +56,7 @@ namespace Photography.Services.User.API.Controllers
         public async Task<ActionResult<TokensViewModel>> LoginAsync([FromBody] LoginCommand loginCommand)
         {
             var tokensViewModel = await _mediator.Send(loginCommand);
-            if (string.IsNullOrEmpty(tokensViewModel.AccessToken))
-                return StatusCode((int)HttpStatusCode.BadRequest, ResponseWrapper.CreateErrorResponseWrapper(Arise.DDD.API.Response.StatusCode.ClientError, "登录失败"));
-            else
-                return Ok(ResponseWrapper.CreateOkResponseWrapper(tokensViewModel));
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(tokensViewModel));
         }
 
         /// <summary>

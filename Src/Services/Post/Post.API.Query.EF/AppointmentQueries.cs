@@ -41,7 +41,7 @@ namespace Photography.Services.Post.API.Query.EF
         {
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-            var curUserType = _postContext.Users.SingleOrDefault(u => u.Id == myId)?.UserType ?? throw new ClientException("操作失败", new List<string> { $"The type of user {myId} is not set。" });
+            var curUserType = _postContext.Users.SingleOrDefault(u => u.Id == myId)?.UserType ?? throw new ClientException("操作失败", new List<string> { $"The type of user {myId} is not set." });
 
             // 与当前用户不同类型的用户所发的约拍及当前用户发的约拍
             var queryableUserPosts = from p in _postContext.Posts
