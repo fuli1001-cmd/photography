@@ -76,7 +76,7 @@ export class PostComponent implements OnInit {
       post.postAttachments = post.forwardedPost.postAttachments;
 
       if (post.showOriginalText)
-        post.text += "@" + post.forwardedPost.user.nickname + post.forwardedPost.text;
+        post.text += " " + post.forwardedPost.user.nickname + post.forwardedPost.text;
     }
 
     console.log(post);

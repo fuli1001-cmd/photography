@@ -35,3 +35,7 @@
     color: white;
     margin-top: 20%;
 }
+
+.embed-responsive-1by1::before {
+    padding-top: 0;
+}
