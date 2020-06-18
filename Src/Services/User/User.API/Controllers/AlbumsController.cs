@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Photography.Services.User.API.Application.Commands.Album.CreateAlbum;
 using Photography.Services.User.API.Application.Commands.Album.DeleteAlbum;
+using Photography.Services.User.API.Application.Commands.Album.DeleteAlbumPhoto;
 using Photography.Services.User.API.Application.Commands.Album.UpdateAlbum;
 using Photography.Services.User.API.Query.Interfaces;
 using Photography.Services.User.API.Query.ViewModels;
@@ -117,6 +118,20 @@ namespace Photography.Services.User.API.Controllers
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ResponseWrapper>> DeleteAlbumAsync([FromBody] DeleteAlbumCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 删除相册照片
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("photos")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ResponseWrapper>> DeleteAlbumPhotosAsync([FromBody] DeleteAlbumPhotoCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
