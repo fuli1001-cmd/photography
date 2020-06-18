@@ -270,6 +270,13 @@
             <param name="command"></param>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.User.API.Controllers.UsersController.GetExaminingUsersAsync(Arise.DDD.API.Paging.PagingParameters)">
+            <summary>
+            获取用于审核的用户列表
+            </summary>
+            <param name="pagingParameters"></param>
+            <returns></returns>
+        </member>
         <member name="P:Photography.Services.User.API.Settings.ServerSettings.ChatSocket">
             <summary>
             聊天socket服务器地址

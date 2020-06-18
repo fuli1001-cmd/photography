@@ -1,4 +1,5 @@
-﻿using Photography.Services.User.API.Query.ViewModels;
+﻿using Arise.DDD.API.Paging;
+using Photography.Services.User.API.Query.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -47,5 +48,7 @@ namespace Photography.Services.User.API.Query.Interfaces
         /// <param name="key"></param>
         /// <returns></returns>
         Task<List<UserSearchResult>> SearchUsersAsync(string key);
+
+        Task<PagedList<ExaminingUserViewModel>> GetExaminingUsersAsync(PagingParameters pagingParameters);
     }
 }

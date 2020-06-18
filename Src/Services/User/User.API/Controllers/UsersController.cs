@@ -1,4 +1,5 @@
 ﻿using Arise.DDD.API;
+using Arise.DDD.API.Paging;
 using Arise.DDD.API.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -222,6 +223,21 @@ namespace Photography.Services.User.API.Controllers
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 获取用于审核的用户列表
+        /// </summary>
+        /// <param name="pagingParameters"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("examining")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
+        public async Task<ActionResult<PagedResponseWrapper>> GetExaminingUsersAsync([FromQuery] PagingParameters pagingParameters)
+        {
+            var users = await _userQueries.GetExaminingUsersAsync(pagingParameters);
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(users));
         }
     }
 }

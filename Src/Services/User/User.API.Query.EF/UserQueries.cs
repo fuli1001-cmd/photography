@@ -12,6 +12,7 @@ using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
 using Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using Arise.DDD.API.Paging;
 
 namespace Photography.Services.User.API.Query.EF
 {
@@ -172,21 +173,6 @@ namespace Photography.Services.User.API.Query.EF
             }
 
             return followedUsers;
-
-            //if (myId != userId)
-            //    query = from q in query
-            //            join r in _identityContext.UserRelations
-            //            on new { FollowerId = myId, FollowedUserId = q.Id } equals new { FollowerId = r.FollowerId, FollowedUserId = r.FollowedUserId }
-            //            into myFollows
-            //            select new FollowerViewModel
-            //            {
-            //                Id = q.Id,
-            //                Nickname = q.Nickname,
-            //                Avatar = q.Avatar,
-            //                Followed = myFollows.Any() // 表示当前登录用户是否关注了这个人
-            //            };
-
-            //return await query.ToListAsync();
         }
 
         public async Task<List<UserSearchResult>> SearchUsersAsync(string key)
@@ -213,6 +199,32 @@ namespace Photography.Services.User.API.Query.EF
             }
 
             return users;
+        }
+
+        /// <summary>
+        /// 获取管理平台使用的用户数据
+        /// </summary>
+        /// <param name="pagingParameters"></param>
+        /// <returns></returns>
+        public async Task<PagedList<ExaminingUserViewModel>> GetExaminingUsersAsync(PagingParameters pagingParameters)
+        {
+            var queryableDto = from u in _identityContext.Users
+                                 orderby u.Nickname
+                                 select new ExaminingUserViewModel
+                                 {
+                                     Id = u.Id,
+                                     Nickname = u.Nickname,
+                                     Avatar = u.Avatar,
+                                     Sign = u.Sign,
+                                     BackgroundImage = u.BackgroundImage,
+                                     Gender = u.Gender,
+                                     Birthday = u.Birthday,
+                                     UserType = u.UserType,
+                                     Province = u.Province,
+                                     City = u.City
+                                 };
+
+            return await PagedList<ExaminingUserViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
         }
 
         private IQueryable<UserRelation> GetFriends(Guid userId)

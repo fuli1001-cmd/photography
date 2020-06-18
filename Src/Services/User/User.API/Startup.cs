@@ -30,11 +30,14 @@ using Newtonsoft.Json;
 using Arise.DDD.API.Response;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Serialization;
+using Microsoft.Net.Http.Headers;
 
 namespace Photography.Services.User.API
 {
     public class Startup
     {
+        private readonly string _corsPolicy = "CorsPolicy";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -45,6 +48,17 @@ namespace Photography.Services.User.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(_corsPolicy,
+                builder =>
+                {
+                    builder.WithOrigins(Configuration.GetValue<string>("CorsOrigins").Split(" "))
+                        .WithHeaders(HeaderNames.ContentType, HeaderNames.Authorization, "x-requested-with")
+                        .AllowCredentials();
+                });
+            });
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer("Bearer", options =>
                 {
@@ -107,6 +121,8 @@ namespace Photography.Services.User.API
             //app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(_corsPolicy);
 
             // return a json error when unauthorized
             app.UseStatusCodePages(async context =>

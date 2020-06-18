@@ -1,0 +1,71 @@
+﻿@page "/user/{userId}"
+
+@using Photography.WebApps.Management.Data
+@inject UserService UserService
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+
+<h3>用户管理</h3>
+
+@if (user != null)
+{
+    <div style="margin-bottom:10px;"><input @bind="user.Nickname" /></div>
+    <div style="margin-bottom:10px;"><input @bind="user.Sign" /></div>
+    @if (!string.IsNullOrWhiteSpace(user.Avatar))
+    {
+        <div style="margin-bottom:10px;">
+            <img src="@user.Avatar" style="width:200px;" />
+            <button @onclick="DeleteAvatar">删除头像</button>
+        </div>
+    }
+    @if (!string.IsNullOrWhiteSpace(user.BackgroundImage))
+    {
+        <div style="margin-bottom:10px;">
+            <img src="@user.BackgroundImage" style="width:200px;" />
+            <button @onclick="DeleteBackgroundImage">删除背景图</button>
+        </div>
+    }
+    <button @onclick="SaveUser">保存</button>
+    <button @onclick="Back">返回</button>
+
+    @if (saveFailed)
+    {
+        <span style="color:red">保存失败</span>
+    }
+}
+
+@code {
+    private Photography.WebApps.Management.ViewModels.User user;
+    private bool saveFailed;
+
+    [Parameter]
+    public string UserId { get; set; }
+
+    protected override void OnInitialized()
+    {
+        saveFailed = false;
+        user = UserService.Users.SingleOrDefault(u => u.Id == Guid.Parse(UserId));
+    }
+
+    private void DeleteAvatar()
+    {
+        user.Avatar = null;
+    }
+
+    private void DeleteBackgroundImage()
+    {
+        user.BackgroundImage = null;
+    }
+
+    private async void SaveUser()
+    {
+        if (await UserService.UpdateUserAsync(user))
+            Back();
+        else
+            saveFailed = true;
+    }
+
+    private void Back()
+    {
+        navigationManager.NavigateTo("users");
+    }
+}

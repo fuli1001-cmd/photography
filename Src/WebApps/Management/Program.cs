@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Autofac.Extensions.DependencyInjection;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using NServiceBus;
 using Serilog;
 
-namespace Photography.Services.User.API
+namespace Photography.WebApps.Management
 {
     public class Program
     {
@@ -37,24 +36,6 @@ namespace Photography.Services.User.API
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .UseNServiceBus(hostBuilderContext =>
-                {
-                    var endpointConfiguration = new EndpointConfiguration("userapi");
-                    //var transport = endpointConfiguration.UseTransport<LearningTransport>();
-                    var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
-                    transport.ConnectionString(hostBuilderContext.Configuration.GetConnectionString("RabbitMQ"));
-                    transport.UseConventionalRoutingTopology();
-                    endpointConfiguration.EnableInstallers();
-
-                    //endpointConfiguration.SendFailedMessagesTo("error");
-                    //endpointConfiguration.AuditProcessedMessagesTo("audit");
-                    //endpointConfiguration.SendHeartbeatTo("Particular.ServiceControl");
-                    //var metrics = endpointConfiguration.EnableMetrics();
-                    //metrics.SendMetricDataToServiceControl("Particular.Monitoring", TimeSpan.FromMilliseconds(500));
-
-                    return endpointConfiguration;
-                })
-                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureLogging((hostBuilderContext, loggingBuilder) =>
                 {
                     Log.Logger = new LoggerConfiguration()

@@ -66,6 +66,25 @@ namespace Photography.Services.User.API.Query.ViewModels
         public int ChatServerUserId { get; set; }
     }
 
+    public class ExaminingUserViewModel : BaseUserViewModel
+    {
+        public string Avatar { get; set; }
+
+        public string Sign { get; set; }
+
+        public string BackgroundImage { get; set; }
+
+        public Gender? Gender { get; set; }
+
+        public double? Birthday { get; set; }
+
+        public UserType? UserType { get; set; }
+
+        public string Province { get; set; }
+
+        public string City { get; set; }
+    }
+
     public class BaseUserViewModel
     {
         public Guid Id { get; set; }
