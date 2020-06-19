@@ -55,7 +55,7 @@ namespace Photography.Services.Post.API.Query.EF
                                     where p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post && p.UserId == userId
                                     select new UserPost { Post = p, User = u };
 
-            var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.CreatedTime);
+            var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.UpdatedTime);
 
             return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
         }
@@ -76,7 +76,7 @@ namespace Photography.Services.Post.API.Query.EF
                                     where p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post
                                     select new UserPost { Post = p, User = u };
 
-            var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.CreatedTime);
+            var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.UpdatedTime);
 
             return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
         }
@@ -114,7 +114,7 @@ namespace Photography.Services.Post.API.Query.EF
 
             var queryableUserPosts = GetAvailableUserPosts(queryablePosts);
 
-            var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.CreatedTime);
+            var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.UpdatedTime);
 
             return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
         }
@@ -137,11 +137,16 @@ namespace Photography.Services.Post.API.Query.EF
 
             var queryableUserPosts = GetAvailableUserPosts(queryablePosts);
 
-            var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.CreatedTime);
+            var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.UpdatedTime);
 
             return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
         }
 
+        /// <summary>
+        /// 获取指定id列表的帖子
+        /// </summary>
+        /// <param name="postIds"></param>
+        /// <returns></returns>
         public async Task<List<PostViewModel>> GetPostsAsync(List<Guid> postIds)
         {
             var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
@@ -239,7 +244,7 @@ namespace Photography.Services.Post.API.Query.EF
 
             var queryableUserPosts = GetAvailableUserPosts(queryablePosts);
 
-            var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.CreatedTime);
+            var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.UpdatedTime);
 
             return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
         }

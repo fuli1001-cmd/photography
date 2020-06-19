@@ -39,6 +39,10 @@ namespace Photography.Services.User.API.Query.ViewModels
         public string Phonenumber { get; set; }
         public bool Followed { get; set; }
 
+        public bool ViewFollowersAllowed { get; set; }
+
+        public bool ViewFollowedUsersAllowed { get; set; }
+
         public int ChatServerUserId { get; set; }
     }
 

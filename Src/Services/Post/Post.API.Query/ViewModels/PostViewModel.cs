@@ -21,7 +21,7 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public int ShareCount { get; set; }
         public int CommentCount { get; set; }
         public double CreatedTime { get; set; }
-        public double? UpdatedTime { get; set; }
+        public double UpdatedTime { get; set; }
         public bool Commentable { get; set; }
         public ForwardType ForwardType { get; set; }
         public ShareType ShareType { get; set; }

@@ -32,6 +32,7 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Serialization;
 using Microsoft.Net.Http.Headers;
 using System.Security.Claims;
+using Microsoft.IdentityModel.Logging;
 
 namespace Photography.Services.User.API
 {
@@ -123,6 +124,8 @@ namespace Photography.Services.User.API
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            IdentityModelEventSource.ShowPII = true;
 
             //app.UseHttpsRedirection();
 

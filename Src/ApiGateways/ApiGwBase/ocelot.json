@@ -102,6 +102,31 @@
     },
 
     {
+      "DownstreamPathTemplate": "/api/albums",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "userapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/albums",
+      "UpstreamHttpMethod": []
+    },
+    {
+      "DownstreamPathTemplate": "/api/albums/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "userapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/albums/{everything}",
+      "UpstreamHttpMethod": []
+    },
+
+    {
       "DownstreamPathTemplate": "/api/groups",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -156,8 +181,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "files.ars-sense.com",
-          "Port": 4431
+          "Host": "fileuploadservice",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/api/streaming",
@@ -169,8 +194,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "47.108.105.98",
-          "Port": 5100
+          "Host": "authservice",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/api/register",
@@ -181,8 +206,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "47.108.105.98",
-          "Port": 5100
+          "Host": "authservice",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/api/register/{everything}",
@@ -199,6 +224,18 @@
         }
       ],
       "UpstreamPathTemplate": "/api/events",
+      "UpstreamHttpMethod": []
+    },
+    {
+      "DownstreamPathTemplate": "/api/users/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "notificationapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/notification/users/{everything}",
       "UpstreamHttpMethod": []
     }
   ],

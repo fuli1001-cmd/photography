@@ -12,15 +12,25 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
     public class User : Entity, IAggregateRoot
     {
         public string UserName { get; private set; }
+
         public string Nickname { get; private set; }
+
         public string Phonenumber { get; private set; }
+
         public string Avatar { get; private set; }
+
         public string BackgroundImage { get; private set; }
+
         public Gender? Gender { get; private set; }
+
         public double? Birthday { get; private set; }
+
         public UserType? UserType { get; private set; }
+
         public string Province { get; private set; }
+
         public string City { get; private set; }
+
         public string Sign { get; private set; }
 
         // 关注的用户数量
@@ -46,8 +56,20 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
 
         // 约拍值
         public int Score { get; private set; }
+
+        // 邀请码
         public string Code { get; private set; }
+
+        // 实名认证状态
         public RealNameRegistrationStatus RealNameRegistrationStatus { get; private set; }
+
+        public bool ViewFollowersAllowed { get; private set; }
+
+        public bool ViewFollowedUsersAllowed { get; private set; }
+
+        public double CreatedTime { get; private set; }
+
+        public double UpdatedTime { get; private set; }
 
         #region BackwardCompatibility: ChatServer needed Property
         public int ChatServerUserId { get; private set; }
@@ -68,10 +90,13 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
 
         public User()
         {
-            
+            CreatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+            UpdatedTime = CreatedTime;
+            ViewFollowedUsersAllowed = true;
+            ViewFollowersAllowed = true;
         }
 
-        public User(string id, string userName, string phonenumber, string code, string nickName)
+        public User(string id, string userName, string phonenumber, string code, string nickName) : this()
         {
             Id = Guid.Parse(id);
             UserName = userName;
@@ -172,6 +197,16 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         {
             ClientType = clientType;
             RegistrationId = registrationId;
+        }
+
+        public void AllowViewFollowers(bool value)
+        {
+            ViewFollowersAllowed = value;
+        }
+
+        public void AllowViewFollowedUsers(bool value)
+        {
+            ViewFollowedUsersAllowed = value;
         }
     }
 

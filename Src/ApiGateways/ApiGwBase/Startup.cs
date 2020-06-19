@@ -55,6 +55,7 @@ namespace Photography.ApiGateways.ApiGwBase
 
             services.AddHttpClient<AuthService>();
             services.AddHttpClient<UserService>();
+            services.AddHttpClient<NotificationService>();
 
             services.AddApiVersioning(options =>
             {

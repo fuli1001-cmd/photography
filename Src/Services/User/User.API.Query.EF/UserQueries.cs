@@ -80,6 +80,8 @@ namespace Photography.Services.User.API.Query.EF
                             Phonenumber = u.Phonenumber,
                             PostCount = u.PostCount,
                             ChatServerUserId = u.ChatServerUserId,
+                            ViewFollowedUsersAllowed = u.ViewFollowedUsersAllowed,
+                            ViewFollowersAllowed = u.ViewFollowersAllowed,
                             Followed = (from ur in _identityContext.UserRelations
                                         where ur.FollowerId == myId && ur.FollowedUserId == u.Id
                                         select ur.Id).Count() > 0

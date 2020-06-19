@@ -9,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Photography.Services.User.API.Application.Commands.Login;
 using Photography.Services.User.API.Application.Commands.Logout;
+using Photography.Services.User.API.Application.Commands.User.AllowViewFollowedUsers;
+using Photography.Services.User.API.Application.Commands.User.AllowViewFollowers;
 using Photography.Services.User.API.Application.Commands.User.MuteUser;
 using Photography.Services.User.API.Application.Commands.User.ToggleFollow;
 using Photography.Services.User.API.Application.Commands.User.UpdateBackground;
@@ -72,20 +74,6 @@ namespace Photography.Services.User.API.Controllers
             var command = new LogoutCommand();
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
-        }
-
-        /// <summary>
-        /// 获取当前用户及配置信息
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("info")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<MeViewModel>> GetInfoAsync()
-        {
-            var user = await _userQueries.GetCurrentUserAsync();
-            var info = new InfoViewModel { MeViewModel = user, ServerSettings = _serverSettings.Value };
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(info));
         }
 
         /// <summary>
@@ -220,6 +208,34 @@ namespace Photography.Services.User.API.Controllers
         [Route("mute")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<bool>> MuteUserAsync([FromBody] MuteUserCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 设置是否允许查看我关注的人
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("allowviewfollowedusers")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<bool>> AllowViewFollowedUsersAsync([FromBody] AllowViewFollowedUsersCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 设置是否允许查看关注我的人
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("allowviewfollowers")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<bool>> AllowViewFollowersAsync([FromBody] AllowViewFollowersCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));

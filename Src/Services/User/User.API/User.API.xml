@@ -270,6 +270,20 @@
             <param name="command"></param>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.User.API.Controllers.UsersController.AllowViewFollowedUsersAsync(Photography.Services.User.API.Application.Commands.User.AllowViewFollowedUsers.AllowViewFollowedUsersCommand)">
+            <summary>
+            设置是否允许查看我关注的人
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.UsersController.AllowViewFollowersAsync(Photography.Services.User.API.Application.Commands.User.AllowViewFollowers.AllowViewFollowersCommand)">
+            <summary>
+            设置是否允许查看关注我的人
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
         <member name="M:Photography.Services.User.API.Controllers.UsersController.GetExaminingUsersAsync(Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             获取用于审核的用户列表

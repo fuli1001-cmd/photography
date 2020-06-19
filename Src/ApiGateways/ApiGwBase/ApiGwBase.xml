@@ -84,5 +84,15 @@
             腾讯语音是否启用
             </summary>
         </member>
+        <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.Version">
+            <summary>
+            版本信息
+            </summary>
+        </member>
+        <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.PostShareServer">
+            <summary>
+            分享贴子的地址
+            </summary>
+        </member>
     </members>
 </doc>

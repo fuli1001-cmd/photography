@@ -2,10 +2,12 @@
 using Newtonsoft.Json;
 using Photography.ApiGateways.ApiGwBase.Dtos;
 using Photography.ApiGateways.ApiGwBase.Settings;
+using Photography.ApiGateways.ApiGwBase.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -33,6 +35,17 @@ namespace Photography.ApiGateways.ApiGwBase.Services
             response.EnsureSuccessStatusCode();
 
             return JsonConvert.DeserializeObject<ResponseWrapper<TokensViewModel>>(await response.Content.ReadAsStringAsync()).Data;
+        }
+
+        public async Task<UserDto> GetUserInfoAsync(string token)
+        {
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _client.GetAsync("/api/users/me");
+
+            response.EnsureSuccessStatusCode();
+
+            return JsonConvert.DeserializeObject<ResponseWrapper<UserDto>>(await response.Content.ReadAsStringAsync()).Data;
         }
     }
 }

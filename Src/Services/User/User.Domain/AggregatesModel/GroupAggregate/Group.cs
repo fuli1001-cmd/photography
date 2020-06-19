@@ -56,16 +56,6 @@ namespace Photography.Services.User.Domain.AggregatesModel.GroupAggregate
             memberIds.ForEach(memberId => _groupUsers.Add(new GroupUser(memberId)));
         }
 
-        //public void RemoveMembers(List<Guid> memberIds)
-        //{
-        //    memberIds.ForEach(memberId =>
-        //    {
-        //        var groupUser = GroupUsers.SingleOrDefault(gu => gu.UserId == memberId);
-        //        if (groupUser != null)
-        //            _groupUsers.Remove(groupUser);
-        //    });
-        //}
-
         public void Update(string name, string notice, string avatar)
         {
             Name = name;
@@ -105,21 +95,6 @@ namespace Photography.Services.User.Domain.AggregatesModel.GroupAggregate
 
             OwnerId = newOwnerId;
         }
-
-        //public Group Copy()
-        //{
-        //    var group = new Group();
-        //    group.Id = Id;
-        //    group.Name = Name;
-        //    group.Notice = Notice;
-        //    group.Avatar = Avatar;
-        //    group.Muted = Muted;
-        //    group.ModifyMemberEnabled = ModifyMemberEnabled;
-        //    group.CreatedTime = CreatedTime;
-        //    group.ChatServerGroupId = ChatServerGroupId;
-        //    group.OwnerId = OwnerId;
-        //    group.GroupUsers = GroupUsers;
-        //}
 
         private void AddDeletedGroupDomainEvent()
         {

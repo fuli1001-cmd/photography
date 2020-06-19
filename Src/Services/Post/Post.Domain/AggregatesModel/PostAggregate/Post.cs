@@ -15,7 +15,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
     {
         public string Text { get; private set; }
         public double CreatedTime { get; private set; }
-        public double? UpdatedTime { get; private set; }
+        public double UpdatedTime { get; private set; }
         public PostType PostType { get; private set; }
 
 
@@ -77,12 +77,14 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
 
         public Post()
         {
-
+            CreatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+            UpdatedTime = CreatedTime;
         }
 
         // constructor to set common properties
         private Post(string text, double? latitude, double? longitude, string? locationName, string address, 
             string cityCode, List<PostAttachment> postAttachments, Guid userId)
+            : this()
         {
             Text = text;
             Latitude = latitude;
@@ -92,7 +94,6 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             CityCode = cityCode;
             _postAttachments = postAttachments;
             UserId = userId;
-            CreatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
 
         // 构造帖子对象
@@ -122,7 +123,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             PostType = PostType.Appointment;
         }
 
-        // 构造关联约拍对象
+        // 构造约拍交易对象
         private Post(string text, double? appointedTime, decimal? price, PayerType? payerType, double? latitude, double? longitude,
             string locationName, string address, string cityCode, List<PostAttachment> postAttachments, Guid userId, 
             Guid appointmentedUserId, Guid? appointmentedToPostId)
