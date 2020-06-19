@@ -227,7 +227,7 @@
       "UpstreamHttpMethod": []
     },
     {
-      "DownstreamPathTemplate": "/api/users/{everything}",
+      "DownstreamPathTemplate": "/api/notificationusers/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {

@@ -18,13 +18,13 @@ namespace Photography.Services.Notification.API.Controllers
     [Route("api/[controller]")]
     [ApiVersion("1.0")]
     [Authorize]
-    public class UsersController : ControllerBase
+    public class NotificationUsersController : ControllerBase
     {
-        private readonly ILogger<UsersController> _logger;
+        private readonly ILogger<NotificationUsersController> _logger;
         private readonly IUserQueries _userQueries;
         private readonly IMediator _mediator;
 
-        public UsersController(IMediator mediator, IUserQueries userQueries, ILogger<UsersController> logger)
+        public NotificationUsersController(IMediator mediator, IUserQueries userQueries, ILogger<NotificationUsersController> logger)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _userQueries = userQueries ?? throw new ArgumentNullException(nameof(userQueries));

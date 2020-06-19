@@ -11,14 +11,14 @@
             <param name="pagingParameters"></param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Notification.API.Controllers.UsersController.ConfigurePushAsync(Photography.Services.Notification.API.Application.Commands.ConfigurePush.ConfigurePushCommand)">
+        <member name="M:Photography.Services.Notification.API.Controllers.NotificationUsersController.ConfigurePushAsync(Photography.Services.Notification.API.Application.Commands.ConfigurePush.ConfigurePushCommand)">
             <summary>
             设置是否允许查看关注我的人
             </summary>
             <param name="command"></param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Notification.API.Controllers.UsersController.GetCurrentUserAsync">
+        <member name="M:Photography.Services.Notification.API.Controllers.NotificationUsersController.GetCurrentUserAsync">
             <summary>
             获取推送设置信息
             </summary>
