@@ -31,6 +31,7 @@ using Arise.DDD.API.Response;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Serialization;
 using Microsoft.Net.Http.Headers;
+using System.Security.Claims;
 
 namespace Photography.Services.User.API
 {
@@ -66,6 +67,11 @@ namespace Photography.Services.User.API
                     options.Audience = Configuration["AuthSettings:Audience"];
                     options.RequireHttpsMetadata = false;
                 });
+
+            //services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("AdminOnly", policy => policy.RequireClaim(ClaimTypes.Role, "admin"));
+            //});
 
             services.AddHttpContextAccessor();
 

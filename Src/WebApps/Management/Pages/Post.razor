@@ -1,5 +1,8 @@
-﻿<h3>Post</h3>
+﻿@page "/posts/{postId}"
+
+<h3>Post</h3>
 
 @code {
-
+    [Parameter]
+    public string PostId { get; set; }
 }

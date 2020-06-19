@@ -1,4 +1,4 @@
-﻿@page "/posts/{userId}"
+﻿@page "/posts"
 
 @using Photography.WebApps.Management.Data
 @inject PostService PostService
@@ -27,11 +27,8 @@
 @code {
     private List<Photography.WebApps.Management.ViewModels.Post> posts;
 
-    [Parameter]
-    public string UserId { get; set; }
-
     protected override async Task OnInitializedAsync()
     {
-        posts = await PostService.GetUserPostsAsync(UserId, 1, 50);
+        
     }
 }
