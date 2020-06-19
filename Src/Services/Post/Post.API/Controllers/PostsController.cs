@@ -54,6 +54,7 @@ namespace Photography.Services.Post.API.Controllers
         [HttpGet]
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
         public async Task<ActionResult<PagedResponseWrapper>> SearchPostsAsync([FromQuery(Name = "key")] string key, [FromQuery] PagingParameters pagingParameters)
         {
             var posts = await _postQueries.SearchPosts(key, null, pagingParameters);
