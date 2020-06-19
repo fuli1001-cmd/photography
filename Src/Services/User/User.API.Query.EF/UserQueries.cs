@@ -33,11 +33,45 @@ namespace Photography.Services.User.API.Query.EF
 
         public async Task<MeViewModel> GetCurrentUserAsync()
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var user = await _identityContext.Users.SingleOrDefaultAsync(u => u.Id.ToString() == userId);
-            var userViewModel = _mapper.Map<MeViewModel>(user);
-            userViewModel.Age = GetAge(userViewModel.Birthday);
-            return userViewModel;
+            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            var user = await (from u in _identityContext.Users
+                              where u.Id == myId
+                              select new MeViewModel
+                              {
+                                  Id = u.Id,
+                                  Code = u.Code,
+                                  RealNameRegistrationStatus = u.RealNameRegistrationStatus,
+                                  Nickname = u.Nickname,
+                                  Avatar = u.Avatar,
+                                  BackgroundImage = u.BackgroundImage,
+                                  UserType = u.UserType,
+                                  UserName = u.UserName,
+                                  Gender = u.Gender,
+                                  Birthday = u.Birthday,
+                                  Province = u.Province,
+                                  City = u.City,
+                                  Sign = u.Sign,
+                                  OngoingOrderCount = u.OngoingOrderCount,
+                                  LikedCount = u.LikedCount,
+                                  FollowingCount = u.FollowingCount,
+                                  FollowerCount = u.FollowerCount,
+                                  AppointmentCount = u.AppointmentCount,
+                                  LikedPostCount = u.LikedPostCount,
+                                  Score = u.Score,
+                                  Phonenumber = u.Phonenumber,
+                                  PostCount = u.PostCount,
+                                  ChatServerUserId = u.ChatServerUserId,
+                                  ViewFollowedUsersAllowed = u.ViewFollowedUsersAllowed,
+                                  ViewFollowersAllowed = u.ViewFollowersAllowed,
+                                  Followed = (from ur in _identityContext.UserRelations
+                                              where ur.FollowerId == myId && ur.FollowedUserId == u.Id
+                                              select ur.Id).Count() > 0
+                              }).SingleOrDefaultAsync();
+
+            user.Age = GetAge(user.Birthday);
+
+            return user;
         }
 
         public async Task<UserViewModel> GetUserAsync(Guid? userId, int? oldUserId, string nickName)
