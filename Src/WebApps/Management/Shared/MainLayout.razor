@@ -1,12 +1,14 @@
 ﻿@inherits LayoutComponentBase
 
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+
 <div class="sidebar">
     <NavMenu />
 </div>
 
 <div class="main">
     <div class="top-row px-4">
-        <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+        <a href="/Logout">注销</a>
     </div>
 
     <div class="content px-4">

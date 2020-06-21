@@ -249,7 +249,6 @@ namespace Photography.Services.User.API.Controllers
         [HttpGet]
         [Route("examining")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [AllowAnonymous]
         public async Task<ActionResult<PagedResponseWrapper>> GetExaminingUsersAsync([FromQuery] PagingParameters pagingParameters)
         {
             var users = await _userQueries.GetExaminingUsersAsync(pagingParameters);

@@ -1,11 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,8 +37,58 @@ namespace Photography.WebApps.Management
         {
             services.Configure<ServiceSettings>(Configuration.GetSection("ServiceSettings"));
 
+            services.AddHttpContextAccessor();
+
             services.AddHttpClient<PostHttpService>();
             services.AddHttpClient<UserHttpService>();
+
+            services.AddHttpClient<UserHttpService>(async (serviceProvider, client) =>
+            {
+                var httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();
+
+                var accessToken = await httpContextAccessor.HttpContext.GetTokenAsync("access_token");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            });
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            })
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+            {
+                options.Authority = "http://localhost:10000";
+                options.RequireHttpsMetadata = false;
+
+                options.ClientId = "webclient";
+                options.ClientSecret = "49C1A7E1-0C79-4A89-A3D6-A37998FB86B0";
+                options.ResponseType = "code";
+                
+                options.SaveTokens = true;
+
+                //options.GetClaimsFromUserInfoEndpoint = true;
+
+                options.Scope.Add("openid");
+                options.Scope.Add("profile");
+                options.Scope.Add("Photography.Post.API");
+                options.Scope.Add("Photography.User.API");
+                options.Scope.Add("Photography.Order.API");
+                options.Scope.Add("Photography.Notification.API");
+                options.Scope.Add("Photography.ApiGateway");
+                options.Scope.Add("Arise.FileUploadService");
+                options.Scope.Add("offline_access");
+
+                //options.ClaimActions.MapJsonKey("website", "website");
+            });
+
+            services.AddMvcCore(options =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
+            });
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
@@ -57,6 +114,8 @@ namespace Photography.WebApps.Management
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
