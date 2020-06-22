@@ -15,7 +15,7 @@ namespace Photography.WebApps.Management.Data
         private readonly UserHttpService _userHttpService;
         private readonly ILogger<UserService> _logger;
 
-        public List<ViewModels.User> Users { get; private set; }
+        public PagedResponseWrapper<List<ViewModels.User>> PagedData { get; private set; }
 
         public UserService(UserHttpService userHttpService, ILogger<UserService> logger)
         {
@@ -23,10 +23,18 @@ namespace Photography.WebApps.Management.Data
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<List<Photography.WebApps.Management.ViewModels.User>> GetUsersAsync(int pageNumber, int pageSize)
+        public async Task<PagedResponseWrapper<List<ViewModels.User>>> GetUsersAsync(int pageNumber, int pageSize)
         {
-            Users = await _userHttpService.GetUsersAsync(pageNumber, pageSize);
-            return Users;
+            try
+            {
+                PagedData = await _userHttpService.GetUsersAsync(pageNumber, pageSize);
+                return PagedData;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("GetUsersAsync failed, {@Exception}", ex);
+                return new PagedResponseWrapper<List<ViewModels.User>>();
+            }
         }
 
         public async Task<bool> UpdateUserAsync(Photography.WebApps.Management.ViewModels.User user)

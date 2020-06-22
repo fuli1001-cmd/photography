@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Photography.WebApps.Management.Services;
+using Photography.WebApps.Management.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace Photography.WebApps.Management.Data
         private readonly PostHttpService _postHttpService;
         private readonly ILogger<PostService> _logger;
 
-        public List<ViewModels.Post> Posts { get; private set; }
+        public PagedResponseWrapper<List<Post>> PagedData { get; private set; }
 
         public PostService(PostHttpService postHttpService, ILogger<PostService> logger)
         {
@@ -20,10 +21,31 @@ namespace Photography.WebApps.Management.Data
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<List<ViewModels.Post>> GetUserPostsAsync(string userId, int pageNumber, int pageSize)
+        public async Task<PagedResponseWrapper<List<Post>>> GetPostsAsync(int pageNumber, int pageSize)
         {
-            Posts = await _postHttpService.GetUserPostsAsync(userId, pageNumber, pageSize);
-            return Posts;
+            try
+            {
+                PagedData = await _postHttpService.GetPostsAsync(pageNumber, pageSize);
+                return PagedData;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("GetPostsAsync failed, {@Exception}", ex);
+                return new PagedResponseWrapper<List<Post>>(); 
+            }
+        }
+
+        public async Task<bool> DeletePostAsync(Post post)
+        {
+            try
+            {
+                return await _postHttpService.DeletePostAsync(post);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("DeletePostAsync failed, {@Exception}", ex);
+                return false;
+            }
         }
     }
 }

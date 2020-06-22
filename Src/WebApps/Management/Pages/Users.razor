@@ -1,11 +1,12 @@
 ﻿@page "/users"
 
+@using Photography.WebApps.Management.ViewModels
 @using Photography.WebApps.Management.Data
 @inject UserService UserService
 
 <h3>用户管理</h3>
 
-@if (users != null)
+@if (pagedData != null)
 {
     <table class="table">
         <thead>
@@ -14,27 +15,70 @@
                 <th>简介</th>
                 <th>头像</th>
                 <th>背景图</th>
+                <th>操作</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var user in users)
+            @foreach (var user in pagedData.Data)
             {
                 <tr>
-                    <td><a href="./user/@user.Id">@user.Nickname</a></td>
+                    <td><a href="./user/@user.Id" class="text-justify">@user.Nickname</a></td>
                     <td>@user.Sign</td>
                     <td><img src="@user.Avatar" style="width:50px;" /></td>
                     <td><img src="@user.BackgroundImage" style="width:50px;" /></td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm" @onclick="@(async () => await DeleteAvatarAsync(user))">删除头像</button>
+                        <button type="button" class="btn btn-danger btn-sm" @onclick="@(async () => await DeleteBackgroundImageAsync(user))">删除背景图</button>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
+
+    <Pager PageIndex=@pagedData.PagingInfo.CurrentPage TotalPages=@pagedData.PagingInfo.TotalPages OnClick="PageIndexChanged"
+           HasNextPage=@hasNextPage HasPreviousPage=@hasPreviousPage>
+    </Pager>
 }
 
 @code {
-    private List<Photography.WebApps.Management.ViewModels.User> users;
+    private PagedResponseWrapper<List<Photography.WebApps.Management.ViewModels.User>> pagedData;
+    private bool hasNextPage;
+    private bool hasPreviousPage;
 
     protected override async Task OnInitializedAsync()
     {
-        users = await UserService.GetUsersAsync(1, 50);
+        pagedData = await UserService.GetUsersAsync(1, 10);
+        SetProperties();
+    }
+
+    public async void PageIndexChanged(int pageNumber)
+    {
+        if (pageNumber < 1 || pageNumber > pagedData.PagingInfo.TotalPages)
+            return;
+
+        pagedData = await UserService.GetUsersAsync(pageNumber, 10);
+        SetProperties();
+
+        StateHasChanged();
+    }
+
+    private void SetProperties()
+    {
+        hasNextPage = pagedData.PagingInfo.CurrentPage < pagedData.PagingInfo.PageSize;
+        hasPreviousPage = pagedData.PagingInfo.CurrentPage > 1;
+    }
+
+    private async Task DeleteAvatarAsync(ViewModels.User user)
+    {
+        user.Avatar = null;
+        if (await UserService.UpdateUserAsync(user))
+            StateHasChanged();
+    }
+
+    private async Task DeleteBackgroundImageAsync(ViewModels.User user)
+    {
+        user.BackgroundImage = null;
+        if (await UserService.UpdateUserAsync(user))
+            StateHasChanged();
     }
 }

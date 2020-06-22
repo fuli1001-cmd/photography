@@ -41,10 +41,11 @@ namespace Photography.Services.Post.API.Application.Commands.Post.DeletePost
             if (post == null)
                 throw new ClientException("操作失败", new List<string> { $"Post {request.PostId} does not exists." });
 
-            var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value ?? string.Empty;
+            var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
             // 当前用户不是发布该帖的用户，不能删除
-            if (post.UserId != userId)
+            if (role.ToLower() != "admin" && post.UserId != userId)
                 throw new ClientException("操作失败", new List<string> { $"Post {post.Id} does not belong to user {userId}"});
 
             post.Delete();

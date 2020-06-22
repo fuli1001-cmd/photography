@@ -1,34 +1,95 @@
 ﻿@page "/posts"
 
+@using Photography.WebApps.Management.ViewModels
 @using Photography.WebApps.Management.Data
 @inject PostService PostService
 
 <h3>用户管理</h3>
 
-@if (posts != null)
+@if (pagedData != null)
 {
     <table class="table">
         <thead>
             <tr>
-                <th>文字</th>
+                <th style="width:8%;">文字</th>
+                <th style="width:8%;">作者</th>
+                <th style="width:80%;">图片</th>
+                <th style="width:4%;">操作</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var post in posts)
+            @foreach (var post in pagedData.Data)
             {
                 <tr>
-                    <td><a href="./user/@post.Id">@post.Text</a></td>
+                    <td style="width:10%;"><a href="./post/@post.Id" class="text-justify">@post.Text</a></td>
+                    <td style="width:10%;"><a href="./user/@post.User.Id" class="text-justify">@post.User.Nickname</a></td>
+                    <td style="width:80%;">
+                        <div class="row">
+                            @foreach (var attachment in post.PostAttachments)
+                            {
+                                <div class="col">
+                                    <div class="row">
+                                        @if (attachment.AttachmentType == ViewModels.AttachmentType.Image)
+                                        {
+                                            <img src="@attachment.Name" style="width:50px;" />
+                                        }
+                                        else if (attachment.AttachmentType == ViewModels.AttachmentType.Video)
+                                        {
+                                            <video controls #videoPlayer style="width:100%;">
+                                                <source src="{{attachment.thumbnail}}" type="video/mp4" />
+                                                浏览器不支持
+                                            </video>
+                                        }
+                                    </div>
+                                    <div class="row text-justify" style="max-width:10%; word-break:break-word;">@attachment.Text</div>
+                                </div>
+                            }
+                        </div>
+                    </td>
+                    <td style="width:4%;">
+                        <button type="button" class="btn btn-danger btn-sm" @onclick="@(async () => await DeletePostAsync(post))">删除</button>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
+
+    <Pager PageIndex=@pagedData.PagingInfo.CurrentPage TotalPages=@pagedData.PagingInfo.TotalPages OnClick="PageIndexChanged"
+           HasNextPage=@hasNextPage HasPreviousPage=@hasPreviousPage>
+    </Pager>
 }
 
 @code {
-    private List<Photography.WebApps.Management.ViewModels.Post> posts;
+    private PagedResponseWrapper<List<Photography.WebApps.Management.ViewModels.Post>> pagedData;
+    private bool hasNextPage;
+    private bool hasPreviousPage;
 
     protected override async Task OnInitializedAsync()
     {
-        
+        pagedData = await PostService.GetPostsAsync(1, 10);
+        SetProperties();
+    }
+
+    public async void PageIndexChanged(int pageNumber)
+    {
+        if (pageNumber < 1 || pageNumber > pagedData.PagingInfo.TotalPages)
+            return;
+
+        pagedData = await PostService.GetPostsAsync(pageNumber, 10);
+        SetProperties();
+
+        StateHasChanged();
+    }
+
+    private void SetProperties()
+    {
+        hasNextPage = pagedData.PagingInfo.CurrentPage < pagedData.PagingInfo.PageSize;
+        hasPreviousPage = pagedData.PagingInfo.CurrentPage > 1;
+    }
+
+    private async Task DeletePostAsync(ViewModels.Post post)
+    {
+        if (await PostService.DeletePostAsync(post))
+            StateHasChanged();
     }
 }

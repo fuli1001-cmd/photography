@@ -94,6 +94,7 @@ namespace Photography.WebApps.Management
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<UserService>();
+            services.AddSingleton<PostService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

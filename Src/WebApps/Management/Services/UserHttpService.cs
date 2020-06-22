@@ -28,21 +28,21 @@ namespace Photography.WebApps.Management.Services
             _client.BaseAddress = new Uri(_serviceSettings.UserService);
         }
 
-        public async Task<List<User>> GetUsersAsync(int pageNumber, int pageSize)
+        public async Task<PagedResponseWrapper<List<User>>> GetUsersAsync(int pageNumber, int pageSize)
         {
             var response = await _client.GetAsync($"/api/users/examining?PageNumber={pageNumber}&PageSize={pageSize}");
 
             response.EnsureSuccessStatusCode();
 
-            var users = JsonConvert.DeserializeObject<PagedResponseWrapper<List<User>>>(await response.Content.ReadAsStringAsync()).Data;
+            var result = JsonConvert.DeserializeObject<PagedResponseWrapper<List<User>>>(await response.Content.ReadAsStringAsync());
 
-            users.ForEach(u =>
+            result.Data.ForEach(u =>
             {
                 u.Avatar = _serviceSettings.FileServer + "/" + u.Avatar;
                 u.BackgroundImage = _serviceSettings.FileServer + "/" + u.BackgroundImage;
             });
 
-            return users;
+            return result;
         }
 
         public async Task<bool> UpdateUserAsync(User user)
@@ -69,14 +69,19 @@ namespace Photography.WebApps.Management.Services
             if (JsonConvert.DeserializeObject<PagedResponseWrapper<bool>>(await response.Content.ReadAsStringAsync()).Data)
             {
                 // 更新用户背景图
-                var updateBackgroundCommand = new { BackgroundImage = user.BackgroundImage };
-                httpContent = new StringContent(JsonConvert.SerializeObject(updateUserCommand), Encoding.UTF8, "application/json");
-                response = await _client.PutAsync("/api/users/backgroundimage", httpContent);
-                response.EnsureSuccessStatusCode();
-                result = JsonConvert.DeserializeObject<PagedResponseWrapper<bool>>(await response.Content.ReadAsStringAsync()).Data;
+                result = await UpdateUserBackgroundAsync(user);
             }
 
             return result;
+        }
+
+        public async Task<bool> UpdateUserBackgroundAsync(User user)
+        {
+            var command = new { BackgroundImage = user.BackgroundImage };
+            var httpContent = new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json");
+            var response = await _client.PutAsync("/api/users/backgroundimage", httpContent);
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<PagedResponseWrapper<bool>>(await response.Content.ReadAsStringAsync()).Data;
         }
     }
 }
