@@ -47,5 +47,32 @@ namespace Photography.WebApps.Management.Data
                 return false;
             }
         }
+
+        public async Task<PagedResponseWrapper<List<Post>>> GetAppointmentsAsync(int pageNumber, int pageSize)
+        {
+            try
+            {
+                PagedData = await _postHttpService.GetAppointsAsync(pageNumber, pageSize);
+                return PagedData;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("GetAppointmentsAsync failed, {@Exception}", ex);
+                return new PagedResponseWrapper<List<Post>>();
+            }
+        }
+
+        public async Task<bool> DeleteAppointmentAsync(Post post)
+        {
+            try
+            {
+                return await _postHttpService.DeleteAppointmentAsync(post);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("DeleteAppointmentAsync failed, {@Exception}", ex);
+                return false;
+            }
+        }
     }
 }

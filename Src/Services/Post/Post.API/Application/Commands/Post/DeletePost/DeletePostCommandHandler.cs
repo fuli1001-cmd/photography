@@ -36,16 +36,30 @@ namespace Photography.Services.Post.API.Application.Commands.Post.DeletePost
 
         public async Task<bool> Handle(DeletePostCommand request, CancellationToken cancellationToken)
         {
-            var post = await _postRepository.GetPostWithNavigationPropertiesById(request.PostId);
+            Guid userId = Guid.Empty;
 
+            var post = await _postRepository.GetPostWithNavigationPropertiesById(request.PostId);
             if (post == null)
                 throw new ClientException("操作失败", new List<string> { $"Post {request.PostId} does not exists." });
 
+            // 历史原因：
+            // 没有管理平台之前只有手机用户操作自己的数据，因此DeletePostCommand中没有要求传入UserId
+            // 管理平台加入之后也是用这个API，但是管理平台必须传UserId，才能知道是操作的哪个用户的数据
             var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value ?? string.Empty;
-            var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            if (role == "admin")
+            {
+                if (request.UserId == null)
+                    throw new ClientException("操作失败", new List<string> { $"UserId is need." });
+
+                userId = request.UserId.Value;
+            }
+            else
+            {
+                userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            }
 
             // 当前用户不是发布该帖的用户，不能删除
-            if (role.ToLower() != "admin" && post.UserId != userId)
+            if (post.UserId != userId)
                 throw new ClientException("操作失败", new List<string> { $"Post {post.Id} does not belong to user {userId}"});
 
             post.Delete();

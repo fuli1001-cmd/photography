@@ -11,8 +11,6 @@ namespace Photography.WebApps.Management.ViewModels
 
         public string Text { get; set; }
 
-        public double UpdatedTime { get; set; }
-
         public List<PostAttachment> PostAttachments { get; set; }
 
         public User User { get; set; }

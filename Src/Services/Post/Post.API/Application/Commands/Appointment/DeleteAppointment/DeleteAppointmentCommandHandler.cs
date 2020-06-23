@@ -36,12 +36,27 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.DeleteA
 
         public async Task<bool> Handle(DeleteAppointmentCommand request, CancellationToken cancellationToken)
         {
-            var post = await _postRepository.GetAppointmentById(request.AppointmentId);
+            Guid userId = Guid.Empty;
 
+            var post = await _postRepository.GetAppointmentById(request.AppointmentId);
             if (post == null)
                 throw new ClientException("操作失败", new List<string> { $"Appointment {request.AppointmentId} does not exists." });
 
-            var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            // 历史原因：
+            // 没有管理平台之前只有手机用户操作自己的数据，因此DeleteAppointmentCommand中没有要求传入UserId
+            // 管理平台加入之后也是用这个API，但是管理平台必须传UserId，才能知道是操作的哪个用户的数据
+            var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value ?? string.Empty;
+            if (role == "admin")
+            {
+                if (request.UserId == null)
+                    throw new ClientException("操作失败", new List<string> { $"UserId is need." });
+
+                userId = request.UserId.Value;
+            }
+            else
+            {
+                userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            }
 
             // 当前用户不是发布该帖的用户，不能删除
             if (post.UserId != userId)

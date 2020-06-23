@@ -28,7 +28,6 @@ namespace Photography.WebApps.Management.Data
             try
             {
                 PagedData = await _userHttpService.GetUsersAsync(pageNumber, pageSize);
-                PagedData.Data.ForEach(u => _logger.LogInformation("{Nickname}, {Avatar}", u.Nickname, u.Avatar));
                 return PagedData;
             }
             catch (Exception ex)

@@ -7,11 +7,11 @@
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
-        <li class="nav-item px-3">
+        @*<li class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <span class="oi oi-home" aria-hidden="true"></span> Home
             </NavLink>
-        </li>
+        </li>*@
         @*<li class="nav-item px-3">
             <NavLink class="nav-link" href="counter">
                 <span class="oi oi-plus" aria-hidden="true"></span> Counter
@@ -28,8 +28,13 @@
             </NavLink>
         </li>
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="posts">
+            <NavLink class="nav-link" href="posts/p">
                 <span class="oi oi-list-rich" aria-hidden="true"></span> 帖子审核
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="posts/a">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> 约拍审核
             </NavLink>
         </li>
     </ul>

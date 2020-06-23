@@ -16,10 +16,14 @@ namespace Photography.WebApps.Management.Pages
     {
         public async void OnGetAsync()
         {
-            // Remove cookie
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            // Signout oidc
-            await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+            try
+            {
+                // Remove cookie
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                // Signout oidc
+                await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+            }
+            catch { }
         }
     }
 }

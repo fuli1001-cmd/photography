@@ -8,6 +8,7 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.DeleteA
 {
     public class DeleteAppointmentCommand : IRequest<bool>
     {
+        public Guid? UserId { get; set; }
         public Guid AppointmentId { get; set; }
     }
 }

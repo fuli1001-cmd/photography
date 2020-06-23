@@ -11,6 +11,8 @@ namespace Photography.Services.Post.API.Application.Commands.Post.DeletePost
     [DataContract]
     public class DeletePostCommand : IRequest<bool>
     {
+        public Guid? UserId { get; set; }
+
         [DataMember]
         [Required]
         public Guid PostId { get; set; }

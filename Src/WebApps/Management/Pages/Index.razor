@@ -1,5 +1,6 @@
 ﻿@page "/"
 
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
 
@@ -8,3 +9,10 @@
 Welcome to your new app.
 
 @*<SurveyPrompt Title="How is Blazor working for you?" />*@
+
+@code {
+    protected override void OnInitialized()
+    {
+        navigationManager.NavigateTo("users");
+    }
+}

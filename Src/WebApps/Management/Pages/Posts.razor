@@ -1,10 +1,20 @@
-﻿@page "/posts"
+﻿@page "/posts/{type}"
 
 @using Photography.WebApps.Management.ViewModels
 @using Photography.WebApps.Management.Data
 @inject PostService PostService
 
-<h3>用户管理</h3>
+@if (!string.IsNullOrWhiteSpace(_type))
+{
+    @if (_type == "p")
+    {
+        <h3>帖子审核</h3>
+    }
+    else if (_type == "a")
+    {
+        <h3>约拍审核</h3>
+    }
+}
 
 @if (pagedData != null)
 {
@@ -21,8 +31,8 @@
             @foreach (var post in pagedData.Data)
             {
                 <tr>
-                    <td style="width:8%;"><a href="./post/@post.Id" class="text-justify">@post.Text</a></td>
-                    <td style="width:8%;"><a href="./user/@post.User.Id" class="text-justify">@post.User.Nickname</a></td>
+                    <td style="width:8%;" class="text-justify">@post.Text</td>
+                    <td style="width:8%;"><a href="./users/@post.User.Id" class="text-justify">@post.User.Nickname</a></td>
                     <td style="width:80%;">
                         <div class="row">
                             @foreach (var attachment in post.PostAttachments)
@@ -63,11 +73,28 @@
     private PagedResponseWrapper<List<Photography.WebApps.Management.ViewModels.Post>> pagedData;
     private bool hasNextPage;
     private bool hasPreviousPage;
+    private string _type;
 
-    protected override async Task OnInitializedAsync()
+    [Parameter]
+    public string Type
     {
-        pagedData = await PostService.GetPostsAsync(1, 10);
-        SetProperties();
+        get { return _type; }
+        set
+        {
+            _type = value?.ToLower() ?? string.Empty;
+            TypeChanged();
+        }
+    }
+
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    await GetDataAsync(1, 10);
+    //}
+
+    private async Task TypeChanged()
+    {
+        await GetDataAsync(1, 10);
+        StateHasChanged();
     }
 
     public async void PageIndexChanged(int pageNumber)
@@ -75,24 +102,45 @@
         if (pageNumber < 1 || pageNumber > pagedData.PagingInfo.TotalPages)
             return;
 
-        pagedData = await PostService.GetPostsAsync(pageNumber, 10);
-        SetProperties();
+        await GetDataAsync(pageNumber, 10);
 
         StateHasChanged();
     }
 
-    private void SetProperties()
-    {
-        hasNextPage = pagedData.PagingInfo.CurrentPage < pagedData.PagingInfo.PageSize;
-        hasPreviousPage = pagedData.PagingInfo.CurrentPage > 1;
-    }
-
     private async Task DeletePostAsync(ViewModels.Post post)
     {
-        if (await PostService.DeletePostAsync(post))
+        var result = false;
+        if (_type == "p")
+            result = await PostService.DeletePostAsync(post);
+        else if (_type == "a")
+            result = await PostService.DeleteAppointmentAsync(post);
+
+        if (result)
         {
-            pagedData = await PostService.GetPostsAsync(pagedData.PagingInfo.CurrentPage, 10);
+            await GetDataAsync(pagedData.PagingInfo.CurrentPage, 10);
             StateHasChanged();
+        }
+    }
+
+    private async Task GetDataAsync(int pageNumber, int pageSize)
+    {
+        if (!string.IsNullOrWhiteSpace(_type))
+        {
+            if (_type == "p")
+                pagedData = await PostService.GetPostsAsync(pageNumber, pageSize);
+            else if (_type == "a")
+                pagedData = await PostService.GetAppointmentsAsync(pageNumber, pageSize);
+
+            SetProperties();
+        }
+    }
+
+    private void SetProperties()
+    {
+        if (pagedData != null && pagedData.PagingInfo != null)
+        {
+            hasNextPage = pagedData.PagingInfo.CurrentPage < pagedData.PagingInfo.TotalPages;
+            hasPreviousPage = pagedData.PagingInfo.CurrentPage > 1;
         }
     }
 }

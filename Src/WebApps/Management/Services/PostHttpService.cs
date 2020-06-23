@@ -29,7 +29,27 @@ namespace Photography.WebApps.Management.Services
 
         public async Task<PagedResponseWrapper<List<Post>>> GetPostsAsync(int pageNumber, int pageSize)
         {
-            var response = await _client.GetAsync($"/api/posts?PageNumber={pageNumber}&PageSize={pageSize}");
+            return await DoGetPostsAsync("posts", pageNumber, pageSize);
+        }
+
+        public async Task<PagedResponseWrapper<List<Post>>> GetAppointsAsync(int pageNumber, int pageSize)
+        {
+            return await DoGetPostsAsync("appointments", pageNumber, pageSize);
+        }
+
+        public async Task<bool> DeletePostAsync(Post post)
+        {
+            return await DoDeletePostAsync("posts",post);
+        }
+
+        public async Task<bool> DeleteAppointmentAsync(Post post)
+        {
+            return await DoDeletePostAsync("appointments", post);
+        }
+
+        private async Task<PagedResponseWrapper<List<Post>>> DoGetPostsAsync(string type, int pageNumber, int pageSize)
+        {
+            var response = await _client.GetAsync($"/api/{type}?PageNumber={pageNumber}&PageSize={pageSize}");
 
             response.EnsureSuccessStatusCode();
 
@@ -46,14 +66,14 @@ namespace Photography.WebApps.Management.Services
             return result;
         }
 
-        public async Task<bool> DeletePostAsync(Post post)
+        private async Task<bool> DoDeletePostAsync(string type, Post post)
         {
-            var command = new { PostId = post.Id };
+            var command = new { PostId = post.Id, AppointmentId = post.Id, UserId = post.User.Id };
             HttpRequestMessage request = new HttpRequestMessage
             {
                 Content = new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"),
                 Method = HttpMethod.Delete,
-                RequestUri = new Uri(_client.BaseAddress, "/api/posts")
+                RequestUri = new Uri(_client.BaseAddress, $"/api/{type}")
             };
 
             var response = await _client.SendAsync(request);
