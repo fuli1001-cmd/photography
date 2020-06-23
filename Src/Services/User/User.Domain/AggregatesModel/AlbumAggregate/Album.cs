@@ -42,5 +42,22 @@ namespace Photography.Services.User.Domain.AggregatesModel.AlbumAggregate
         {
             _albumPhotos.Clear();
         }
+
+        public void RemovePhoto(Guid photoId)
+        {
+            for (var i = 0; i < _albumPhotos.Count; i++)
+            {
+                if (_albumPhotos[i].Id == photoId)
+                {
+                    _albumPhotos.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+
+        public void AddPhoto(AlbumPhoto photo)
+        {
+            _albumPhotos.Add(photo);
+        }
     }
 }

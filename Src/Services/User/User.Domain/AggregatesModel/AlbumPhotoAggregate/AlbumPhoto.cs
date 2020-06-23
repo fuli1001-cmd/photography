@@ -18,5 +18,35 @@ namespace Photography.Services.User.Domain.AggregatesModel.AlbumPhotoAggregate
 
         public Guid AlbumId { get; private set; }
         public Album Album { get; private set; }
+
+        public AlbumPhoto()
+        {
+            CreatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+            UpdatedTime = CreatedTime;
+        }
+
+        public AlbumPhoto(string name) : this()
+        {
+            Name = name;
+            DisplayName = name;
+        }
+
+        public AlbumPhoto MoveToAlbum(Guid albumId)
+        {
+            var albumPhoto = new AlbumPhoto();
+
+            albumPhoto.Name = Name;
+            albumPhoto.DisplayName = DisplayName;
+            albumPhoto.AlbumId = albumId;
+            albumPhoto.CreatedTime = CreatedTime;
+            albumPhoto.UpdatedTime = UpdatedTime;
+
+            return albumPhoto;
+        }
+
+        public void UpdateDisplayName(string displayName)
+        {
+            DisplayName = displayName;
+        }
     }
 }

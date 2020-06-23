@@ -327,6 +327,11 @@ namespace Photography.Services.Post.API.Query.EF
                        Longitude = up.Post.Longitude ?? 0,
                        LocationName = up.Post.LocationName,
                        Address = up.Post.Address,
+                       CityCode = up.Post.CityCode,
+                       Visibility = up.Post.Visibility,
+                       FriendIds = up.Post.Visibility == Domain.AggregatesModel.PostAggregate.Visibility.SelectedFriends ? (from upr in _postContext.UserPostRelations
+                                                                                                                            where upr.PostId == up.Post.Id && upr.UserPostRelationType == UserPostRelationType.View
+                                                                                                                            select upr.UserId.Value) : null,
                        Liked = (from upr in _postContext.UserPostRelations
                                 where upr.UserId == myId && upr.PostId == up.Post.Id && upr.UserPostRelationType == UserPostRelationType.Like
                                 select upr.Id)

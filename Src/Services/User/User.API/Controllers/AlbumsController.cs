@@ -5,10 +5,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Photography.Services.User.API.Application.Commands.Album.AddPhoto;
 using Photography.Services.User.API.Application.Commands.Album.CreateAlbum;
 using Photography.Services.User.API.Application.Commands.Album.DeleteAlbum;
 using Photography.Services.User.API.Application.Commands.Album.DeleteAlbumPhoto;
+using Photography.Services.User.API.Application.Commands.Album.MovePhoto;
 using Photography.Services.User.API.Application.Commands.Album.UpdateAlbum;
+using Photography.Services.User.API.Application.Commands.Album.UpdatePhoto;
 using Photography.Services.User.API.Query.Interfaces;
 using Photography.Services.User.API.Query.ViewModels;
 using System;
@@ -132,6 +135,48 @@ namespace Photography.Services.User.API.Controllers
         [Route("photos")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ResponseWrapper>> DeleteAlbumPhotosAsync([FromBody] DeleteAlbumPhotoCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 移动照片到其它相册
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("photos/move")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ResponseWrapper>> MovePhotosAsync([FromBody] MovePhotoCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 向相册添加照片
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("photos")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ResponseWrapper>> AddPhotosAsync([FromBody] AddPhotoCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 批量编辑照片
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("photos")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ResponseWrapper>> UpdatePhotoAsync([FromBody] UpdatePhotoCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));

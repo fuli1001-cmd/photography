@@ -32,6 +32,9 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public double Longitude { get; set; }
         public string LocationName { get; set; }
         public string Address { get; set; }
+        public Visibility Visibility { get; set; }
+        public string CityCode { get; set; }
+        public IEnumerable<Guid> FriendIds { get; set; }
 
         public PostUserViewModel User { get; set; }
         public ForwardedPostViewModel ForwardedPost { get; set; }

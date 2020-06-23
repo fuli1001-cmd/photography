@@ -11,28 +11,25 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Photography.Services.User.API.Application.Commands.Album.DeleteAlbumPhoto
+namespace Photography.Services.User.API.Application.Commands.Album.AddPhoto
 {
-    public class DeleteAlbumPhotoCommandHandler : IRequestHandler<DeleteAlbumPhotoCommand, bool>
+    public class AddPhotoCommandHandler : IRequestHandler<AddPhotoCommand, bool>
     {
         private readonly IAlbumRepository _albumRepository;
-        private readonly IAlbumPhotoRepository _albumPhotoRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ILogger<DeleteAlbumPhotoCommandHandler> _logger;
+        private readonly ILogger<AddPhotoCommandHandler> _logger;
 
-        public DeleteAlbumPhotoCommandHandler(
+        public AddPhotoCommandHandler(
             IAlbumRepository albumRepository,
-            IAlbumPhotoRepository albumPhotoRepository,
             IHttpContextAccessor httpContextAccessor,
-            ILogger<DeleteAlbumPhotoCommandHandler> logger)
+            ILogger<AddPhotoCommandHandler> logger)
         {
             _albumRepository = albumRepository ?? throw new ArgumentNullException(nameof(albumRepository));
-            _albumPhotoRepository = albumPhotoRepository ?? throw new ArgumentNullException(nameof(albumPhotoRepository));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<bool> Handle(DeleteAlbumPhotoCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(AddPhotoCommand request, CancellationToken cancellationToken)
         {
             var album = await _albumRepository.GetAlbumWithPhotosAsync(request.AlbumId);
 
@@ -43,13 +40,11 @@ namespace Photography.Services.User.API.Application.Commands.Album.DeleteAlbumPh
             if (album.UserId != myId)
                 throw new ClientException("操作失败", new List<string> { $"Album {request.AlbumId} does not belong to user {myId}." });
 
-            foreach (var id in request.PhotoIds)
+            request.Names.ForEach(name =>
             {
-                album.RemovePhoto(id);
-                //var photo = await _albumPhotoRepository.GetByIdAsync(id);
-                //if (photo.AlbumId == request.AlbumId)
-                //    _albumPhotoRepository.Remove(photo);
-            }
+                var photo = new AlbumPhoto(name);
+                album.AddPhoto(photo);
+            });
 
             return await _albumRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
         }
