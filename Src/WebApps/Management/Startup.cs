@@ -50,6 +50,14 @@ namespace Photography.WebApps.Management
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             });
 
+            services.AddHttpClient<PostHttpService>(async (serviceProvider, client) =>
+            {
+                var httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();
+
+                var accessToken = await httpContextAccessor.HttpContext.GetTokenAsync("access_token");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            });
+
             services.AddAuthentication(options =>
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -58,7 +66,7 @@ namespace Photography.WebApps.Management
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
             {
-                options.Authority = "http://localhost:10000";
+                options.Authority = Configuration["AuthSettings:Authority"];
                 options.RequireHttpsMetadata = false;
 
                 options.ClientId = "webclient";
@@ -92,7 +100,6 @@ namespace Photography.WebApps.Management
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<UserService>();
             services.AddSingleton<PostService>();
         }

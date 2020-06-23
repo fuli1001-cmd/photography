@@ -43,7 +43,9 @@
     protected override void OnInitialized()
     {
         saveFailed = false;
-        user = UserService.PagedData.Data.SingleOrDefault(u => u.Id == Guid.Parse(UserId));
+
+        if (UserService.PagedData != null)
+            user = UserService.PagedData.Data.FirstOrDefault(u => u.Id == Guid.Parse(UserId));
     }
 
     private void DeleteAvatar()
@@ -58,7 +60,11 @@
 
     private async Task SaveUserAsync()
     {
-        if (await UserService.UpdateUserAsync(user))
+        var updateUserTask = UserService.UpdateUserAsync(user);
+        var updateBackgroundTask = UserService.UpdateUserBackgroundAsync(user);
+        await Task.WhenAll(new Task[] { updateUserTask, updateBackgroundTask });
+
+        if (updateUserTask.Result && updateBackgroundTask.Result)
             Back();
         else
             saveFailed = true;

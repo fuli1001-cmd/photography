@@ -28,16 +28,18 @@ namespace Photography.WebApps.Management.Data
             try
             {
                 PagedData = await _userHttpService.GetUsersAsync(pageNumber, pageSize);
+                PagedData.Data.ForEach(u => _logger.LogInformation("{Nickname}, {Avatar}", u.Nickname, u.Avatar));
                 return PagedData;
             }
             catch (Exception ex)
             {
                 _logger.LogError("GetUsersAsync failed, {@Exception}", ex);
-                return new PagedResponseWrapper<List<ViewModels.User>>();
+                PagedData = new PagedResponseWrapper<List<ViewModels.User>> { Data = new List<ViewModels.User>(), PagingInfo = new PagingInfo() };
+                return PagedData;
             }
         }
 
-        public async Task<bool> UpdateUserAsync(Photography.WebApps.Management.ViewModels.User user)
+        public async Task<bool> UpdateUserAsync(ViewModels.User user)
         {
             try
             {
@@ -46,6 +48,19 @@ namespace Photography.WebApps.Management.Data
             catch(Exception ex)
             {
                 _logger.LogError("UpdateUserAsync failed, {@Exception}", ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateUserBackgroundAsync(ViewModels.User user)
+        {
+            try
+            {
+                return await _userHttpService.UpdateUserBackgroundAsync(user);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("UpdateUserBackgroundAsync failed, {@Exception}", ex);
                 return false;
             }
         }

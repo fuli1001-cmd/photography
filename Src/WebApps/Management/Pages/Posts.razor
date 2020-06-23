@@ -14,15 +14,15 @@
                 <th style="width:8%;">文字</th>
                 <th style="width:8%;">作者</th>
                 <th style="width:80%;">图片</th>
-                <th style="width:4%;">操作</th>
+                <th>操作</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var post in pagedData.Data)
             {
                 <tr>
-                    <td style="width:10%;"><a href="./post/@post.Id" class="text-justify">@post.Text</a></td>
-                    <td style="width:10%;"><a href="./user/@post.User.Id" class="text-justify">@post.User.Nickname</a></td>
+                    <td style="width:8%;"><a href="./post/@post.Id" class="text-justify">@post.Text</a></td>
+                    <td style="width:8%;"><a href="./user/@post.User.Id" class="text-justify">@post.User.Nickname</a></td>
                     <td style="width:80%;">
                         <div class="row">
                             @foreach (var attachment in post.PostAttachments)
@@ -35,19 +35,19 @@
                                         }
                                         else if (attachment.AttachmentType == ViewModels.AttachmentType.Video)
                                         {
-                                            <video controls #videoPlayer style="width:100%;">
-                                                <source src="{{attachment.thumbnail}}" type="video/mp4" />
+                                            <video controls style="width:100%;">
+                                                <source src="@attachment.Name" type="video/mp4" />
                                                 浏览器不支持
                                             </video>
                                         }
                                     </div>
-                                    <div class="row text-justify" style="max-width:10%; word-break:break-word;">@attachment.Text</div>
+                                    <div class="row" style="word-break:break-word;">@attachment.Text</div>
                                 </div>
                             }
                         </div>
                     </td>
-                    <td style="width:4%;">
-                        <button type="button" class="btn btn-danger btn-sm" @onclick="@(async () => await DeletePostAsync(post))">删除</button>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm" style="width: 50px" @onclick="@(async () => await DeletePostAsync(post))">删除</button>
                     </td>
                 </tr>
             }
@@ -90,6 +90,9 @@
     private async Task DeletePostAsync(ViewModels.Post post)
     {
         if (await PostService.DeletePostAsync(post))
+        {
+            pagedData = await PostService.GetPostsAsync(pagedData.PagingInfo.CurrentPage, 10);
             StateHasChanged();
+        }
     }
 }

@@ -41,6 +41,12 @@ services:
     networks:
       - photonetwork
 
+  manager:
+    image: fuli1001/photography-manager:linux
+    build:
+      context: .
+      dockerfile: Src/WebApps/Management/Dockerfile
+
   #rabbitmq:
   #  image: rabbitmq:3-management-alpine
       

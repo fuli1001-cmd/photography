@@ -38,8 +38,11 @@ namespace Photography.WebApps.Management.Services
 
             result.Data.ForEach(u =>
             {
-                u.Avatar = _serviceSettings.FileServer + "/" + u.Avatar;
-                u.BackgroundImage = _serviceSettings.FileServer + "/" + u.BackgroundImage;
+                if (!string.IsNullOrWhiteSpace(u.Avatar))
+                    u.Avatar = _serviceSettings.FileServer + "/" + u.Avatar;
+
+                if (!string.IsNullOrWhiteSpace(u.BackgroundImage))
+                    u.BackgroundImage = _serviceSettings.FileServer + "/" + u.BackgroundImage;
             });
 
             return result;
@@ -66,18 +69,12 @@ namespace Photography.WebApps.Management.Services
             var response = await _client.PutAsync("/api/users", httpContent);
             response.EnsureSuccessStatusCode();
 
-            if (JsonConvert.DeserializeObject<PagedResponseWrapper<bool>>(await response.Content.ReadAsStringAsync()).Data)
-            {
-                // 更新用户背景图
-                result = await UpdateUserBackgroundAsync(user);
-            }
-
-            return result;
+            return JsonConvert.DeserializeObject<PagedResponseWrapper<bool>>(await response.Content.ReadAsStringAsync()).Data;
         }
 
         public async Task<bool> UpdateUserBackgroundAsync(User user)
         {
-            var command = new { BackgroundImage = user.BackgroundImage };
+            var command = new { BackgroundImage = user.BackgroundImage, UserId = user.Id };
             var httpContent = new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json");
             var response = await _client.PutAsync("/api/users/backgroundimage", httpContent);
             response.EnsureSuccessStatusCode();

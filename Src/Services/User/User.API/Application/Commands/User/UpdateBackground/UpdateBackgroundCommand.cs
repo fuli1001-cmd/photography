@@ -8,6 +8,7 @@ namespace Photography.Services.User.API.Application.Commands.User.UpdateBackgrou
 {
     public class UpdateBackgroundCommand : IRequest<bool>
     {
+        public Guid? UserId { get; set; }
         public string BackgroundImage { get; set; }
     }
 }

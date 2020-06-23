@@ -22,10 +22,20 @@
             @foreach (var user in pagedData.Data)
             {
                 <tr>
-                    <td><a href="./user/@user.Id" class="text-justify">@user.Nickname</a></td>
+                    <td><a href="./users/@user.Id" class="text-justify">@user.Nickname</a></td>
                     <td>@user.Sign</td>
-                    <td><img src="@user.Avatar" style="width:50px;" /></td>
-                    <td><img src="@user.BackgroundImage" style="width:50px;" /></td>
+                    <td>
+                        @if (!string.IsNullOrWhiteSpace(user.Avatar))
+                        {
+                            <img src="@user.Avatar" style="width:50px;" />
+                        }
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrWhiteSpace(user.BackgroundImage))
+                        {
+                            <img src="@user.BackgroundImage" style="width:50px;" />
+                        }
+                    </td>
                     <td>
                         <button type="button" class="btn btn-danger btn-sm" @onclick="@(async () => await DeleteAvatarAsync(user))">删除头像</button>
                         <button type="button" class="btn btn-danger btn-sm" @onclick="@(async () => await DeleteBackgroundImageAsync(user))">删除背景图</button>
@@ -70,15 +80,23 @@
 
     private async Task DeleteAvatarAsync(ViewModels.User user)
     {
-        user.Avatar = null;
-        if (await UserService.UpdateUserAsync(user))
-            StateHasChanged();
+        if (!string.IsNullOrWhiteSpace(user.Avatar))
+        {
+            var avatar = user.Avatar;
+            user.Avatar = null;
+            if (!await UserService.UpdateUserAsync(user))
+                user.Avatar = avatar;
+        }
     }
 
     private async Task DeleteBackgroundImageAsync(ViewModels.User user)
     {
-        user.BackgroundImage = null;
-        if (await UserService.UpdateUserAsync(user))
-            StateHasChanged();
+        if (!string.IsNullOrWhiteSpace(user.BackgroundImage))
+        {
+            var backgroundImage = user.BackgroundImage;
+            user.BackgroundImage = null;
+            if (!await UserService.UpdateUserBackgroundAsync(user))
+                user.BackgroundImage = backgroundImage;
+        }
     }
 }
