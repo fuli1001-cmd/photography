@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
 using Photography.Services.Notification.API.Application.Commands.CreateEvent;
-using Photography.Services.Notification.API.Application.Commands.User.Follow;
+using Photography.Services.Notification.API.Application.Commands.Follow;
 using Photography.Services.Notification.Domain.AggregatesModel.EventAggregate;
 using Serilog.Context;
 using System;

@@ -2,7 +2,7 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
-using Photography.Services.Notification.API.Application.Commands.User.UnFollow;
+using Photography.Services.Notification.API.Application.Commands.UnFollow;
 using Serilog.Context;
 using System;
 using System.Collections.Generic;

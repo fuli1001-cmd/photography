@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Photography.Services.Notification.API.Application.Commands.User.Follow
+namespace Photography.Services.Notification.API.Application.Commands.Follow
 {
     public class FollowCommandHandler : IRequestHandler<FollowCommand, bool>
     {

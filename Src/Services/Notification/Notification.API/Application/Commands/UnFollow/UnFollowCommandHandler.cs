@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Photography.Services.Notification.API.Application.Commands.User.UnFollow
+namespace Photography.Services.Notification.API.Application.Commands.UnFollow
 {
     public class UnFollowCommandHandler : IRequestHandler<UnFollowCommand, bool>
     {
