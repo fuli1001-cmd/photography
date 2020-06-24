@@ -49,23 +49,23 @@ namespace Photography.Services.Post.API.Query.EF
             var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
 
-            IQueryable<UserPost> queryableUserPosts;
-
+            IQueryable<Domain.AggregatesModel.PostAggregate.Post> queryablePosts;
             if (myId != Guid.Empty && myId == userId)
             {
                 // 查看自己的帖子时，返回所有的自己的帖子
-                queryableUserPosts = from p in _postContext.Posts
-                                     join u in _postContext.Users
-                                     on p.UserId equals u.Id
-                                     where p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post && p.UserId == userId
-                                     select new UserPost { Post = p, User = u };
+                queryablePosts = _postContext.Posts;
             }
             else
             {
                 // 查看别人的帖子时，只返回公开的帖子、指定的朋友（或密码查看，密码查看默认是所有朋友查看）包含我可看的帖子
-                var queryablePosts = GetAvailablePosts(myId);
-                queryableUserPosts = GetAvailableUserPosts(queryablePosts);
+                queryablePosts = GetAvailablePosts(myId);
             }
+
+            var queryableUserPosts = from p in queryablePosts
+                                 join u in _postContext.Users
+                                 on p.UserId equals u.Id
+                                 where p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post && p.UserId == userId
+                                 select new UserPost { Post = p, User = u };
 
             var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.UpdatedTime);
 
