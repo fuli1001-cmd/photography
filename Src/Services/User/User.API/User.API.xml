@@ -4,6 +4,26 @@
         <name>User.API</name>
     </assembly>
     <members>
+        <member name="P:Photography.Services.User.API.Application.Commands.Album.AddPhoto.AddPhotoCommand.AlbumId">
+            <summary>
+            要加入到的相册id
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.Album.AddPhoto.AddPhotoCommand.Names">
+            <summary>
+            要加入的照片名称
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.Album.MovePhoto.MovePhotoCommand.NewAlbumId">
+            <summary>
+            要移动到的相册id
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.Album.MovePhoto.MovePhotoCommand.PhotoIds">
+            <summary>
+            要移动的照片
+            </summary>
+        </member>
         <member name="P:Photography.Services.User.API.Application.Commands.Group.ChangeGroupOwner.ChangeGroupOwnerCommand.NewOwnerId">
             <summary>
             新的群主id
@@ -113,6 +133,27 @@
         <member name="M:Photography.Services.User.API.Controllers.AlbumsController.DeleteAlbumPhotosAsync(Photography.Services.User.API.Application.Commands.Album.DeleteAlbumPhoto.DeleteAlbumPhotoCommand)">
             <summary>
             删除相册照片
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.AlbumsController.MovePhotosAsync(Photography.Services.User.API.Application.Commands.Album.MovePhoto.MovePhotoCommand)">
+            <summary>
+            移动照片到其它相册
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.AlbumsController.AddPhotosAsync(Photography.Services.User.API.Application.Commands.Album.AddPhoto.AddPhotoCommand)">
+            <summary>
+            向相册添加照片
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.AlbumsController.UpdatePhotoAsync(Photography.Services.User.API.Application.Commands.Album.UpdatePhoto.UpdatePhotoCommand)">
+            <summary>
+            批量编辑照片
             </summary>
             <param name="command"></param>
             <returns></returns>

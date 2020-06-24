@@ -95,7 +95,7 @@ namespace Photography.Services.User.API.Query.EF
             else
                 queryablePhotos = asc ? queryablePhotos.OrderBy(ap => ap.UpdatedTime) : queryablePhotos.OrderByDescending(ap => ap.UpdatedTime);
 
-            var queryablePhotoViewModels = queryablePhotos.Select(ap => new AlbumPhotoViewModel { Name = ap.Name, DisplayName = ap.DisplayName });
+            var queryablePhotoViewModels = queryablePhotos.Select(ap => new AlbumPhotoViewModel { Id = ap.Id, Name = ap.Name, DisplayName = ap.DisplayName });
 
             return await PagedList<AlbumPhotoViewModel>.ToPagedListAsync(queryablePhotoViewModels, pagingParameters);
         }
