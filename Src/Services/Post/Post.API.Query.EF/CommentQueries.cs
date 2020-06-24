@@ -79,6 +79,7 @@ namespace Photography.Services.Post.API.Query.EF
                                       {
                                           Id = sc.Id,
                                           Text = sc.Text,
+                                          CreatedTime = sc.CreatedTime,
                                           User = new CommentUserViewModel { Id = sc.User.Id, Nickname = sc.User.Nickname, Avatar = sc.User.Avatar }
                                       }).Take(maxSubCommentsCount),
                        Liked = (from ucr in _postContext.UserCommentRelations

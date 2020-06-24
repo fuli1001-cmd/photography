@@ -14,5 +14,8 @@ namespace Photography.Services.Post.API.Application.Commands.Post.UpdatePost
         [DataMember]
         [Required]
         public Guid PostId { get; set; }
+
+        // 编辑转发的帖子时，需传此字段，编辑非转发帖子时，不需传
+        public bool? ShowOriginalText { get; set; }
     }
 }

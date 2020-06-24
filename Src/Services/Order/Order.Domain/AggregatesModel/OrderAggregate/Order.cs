@@ -84,6 +84,7 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
                 throw new ClientException("操作失败", new List<string> { "Current order status is not 'Created'." });
 
             OrderStatus = OrderStatus.Canceled;
+            ClosedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
 
         public void Reject()
@@ -92,6 +93,7 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
                 throw new ClientException("操作失败", new List<string> { "Current order status is not 'Created'." });
 
             OrderStatus = OrderStatus.Rejected;
+            ClosedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
 
         public void ConfirmShot()

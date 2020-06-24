@@ -33,6 +33,8 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                 var followCommand = new FollowCommand { FollowerId = message.FollowerId, FollowedUserId = message.FollowedUserId };
                 await _mediator.Send(followCommand);
 
+                _logger.LogInformation("****************** UserFollowedEvent 1");
+
                 var eventCommand = new CreateEventCommand
                 {
                     FromUserId = message.FollowerId,
@@ -40,6 +42,8 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                     EventType = EventType.Follow
                 };
                 await _mediator.Send(eventCommand);
+
+                _logger.LogInformation("****************** UserFollowedEvent 2");
             }
         }
     }

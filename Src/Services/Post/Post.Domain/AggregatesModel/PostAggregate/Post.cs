@@ -161,7 +161,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         // 更新帖子对象
         public void Update(string text, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
             double latitude, double longitude, string locationName, string address, string cityCode,
-            List<Guid> friendIds, List<PostAttachment> postAttachments)
+            List<Guid> friendIds, List<PostAttachment> postAttachments, bool? showOriginalText = null)
         {
             Text = text;
             Commentable = commentable;
@@ -174,6 +174,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             LocationName = locationName;
             Address = address;
             CityCode = cityCode;
+            ShowOriginalText = showOriginalText;
             UpdatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
 
             var relations = friendIds?.Select(id => new UserPostRelation(id, UserPostRelationType.View)).ToList() ?? new List<UserPostRelation>();

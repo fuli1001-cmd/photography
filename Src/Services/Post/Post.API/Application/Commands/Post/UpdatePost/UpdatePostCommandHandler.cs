@@ -47,7 +47,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.UpdatePost
 
             post.Update(request.Text, request.Commentable, request.ForwardType, request.ShareType, request.Visibility,
                 request.ViewPassword, request.Latitude, request.Longitude, request.LocationName, request.Address,
-                request.CityCode, request.FriendIds, attachments);
+                request.CityCode, request.FriendIds, attachments, request.ShowOriginalText);
 
             _postRepository.Update(post);
 

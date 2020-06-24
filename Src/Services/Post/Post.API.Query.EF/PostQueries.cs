@@ -49,11 +49,23 @@ namespace Photography.Services.Post.API.Query.EF
             var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
 
-            var queryableUserPosts = from p in _postContext.Posts
-                                    join u in _postContext.Users
-                                    on p.UserId equals u.Id
-                                    where p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post && p.UserId == userId
-                                    select new UserPost { Post = p, User = u };
+            IQueryable<UserPost> queryableUserPosts;
+
+            if (myId != Guid.Empty && myId == userId)
+            {
+                // 查看自己的帖子时，返回所有的自己的帖子
+                queryableUserPosts = from p in _postContext.Posts
+                                     join u in _postContext.Users
+                                     on p.UserId equals u.Id
+                                     where p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post && p.UserId == userId
+                                     select new UserPost { Post = p, User = u };
+            }
+            else
+            {
+                // 查看别人的帖子时，只返回公开的帖子、指定的朋友（或密码查看，密码查看默认是所有朋友查看）包含我可看的帖子
+                var queryablePosts = GetAvailablePosts(myId);
+                queryableUserPosts = GetAvailableUserPosts(queryablePosts);
+            }
 
             var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.UpdatedTime);
 
@@ -68,13 +80,17 @@ namespace Photography.Services.Post.API.Query.EF
         {
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-            var queryableUserPosts = from p in _postContext.Posts
-                                    join u in _postContext.Users
-                                    on p.UserId equals u.Id
-                                    join upr in _postContext.UserPostRelations
-                                    on new { PostId = p.Id, UserId = myId, Type = UserPostRelationType.Like } equals new { PostId = upr.PostId.Value, UserId = upr.UserId.Value, Type = upr.UserPostRelationType }
-                                    where p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post
-                                    select new UserPost { Post = p, User = u };
+            // 先获得可以查看的帖子
+            var queryablePosts = GetAvailablePosts(myId);
+
+            // 再筛选出其中赞过的帖子
+            var queryableUserPosts = from p in queryablePosts
+                                     join u in _postContext.Users
+                                     on p.UserId equals u.Id
+                                     join upr in _postContext.UserPostRelations
+                                     on new { PostId = p.Id, UserId = myId, Type = UserPostRelationType.Like } equals new { PostId = upr.PostId.Value, UserId = upr.UserId.Value, Type = upr.UserPostRelationType }
+                                     where p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post
+                                     select new UserPost { Post = p, User = u };
 
             var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.UpdatedTime);
 
@@ -253,16 +269,16 @@ namespace Photography.Services.Post.API.Query.EF
         {
             var posts = _postContext.Posts.Where(p => p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post);
 
-            // 公开、密码查看的帖子、以及自己发的帖子
+            // 公开、以及自己发的帖子
             var otherPosts = posts.Where(p => p.Visibility == Domain.AggregatesModel.PostAggregate.Visibility.Public 
-                || p.Visibility == Domain.AggregatesModel.PostAggregate.Visibility.Password
                 || (myId != Guid.Empty && p.UserId == myId));
 
             if (myId != Guid.Empty)
             {
                 // 朋友可见的帖子
-                var friendsViewPosts = posts.Where(p => p.Visibility == Domain.AggregatesModel.PostAggregate.Visibility.Friends);
-                friendsViewPosts = friendsViewPosts.Where(p => GetFriendsIds(myId).Contains(p.UserId));
+                // 密码可见的帖子默认只能朋友看
+                var friendsOrPasswordViewPosts = posts.Where(p => p.Visibility == Domain.AggregatesModel.PostAggregate.Visibility.Friends || p.Visibility == Domain.AggregatesModel.PostAggregate.Visibility.Password);
+                friendsOrPasswordViewPosts = friendsOrPasswordViewPosts.Where(p => GetFriendsIds(myId).Contains(p.UserId));
 
                 // 指定朋友可见的帖子
                 var selectedFriendsViewPosts = posts.Where(p => p.Visibility == Domain.AggregatesModel.PostAggregate.Visibility.SelectedFriends);
@@ -272,7 +288,7 @@ namespace Photography.Services.Post.API.Query.EF
                                            where upr.UserId == myId && upr.UserPostRelationType == UserPostRelationType.View
                                            select p;
 
-                return friendsViewPosts.Union(selectedFriendsViewPosts).Union(otherPosts);
+                return friendsOrPasswordViewPosts.Union(selectedFriendsViewPosts).Union(otherPosts);
             }
             else
                 return otherPosts;
