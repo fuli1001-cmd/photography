@@ -345,6 +345,7 @@ namespace Photography.Services.Post.API.Query.EF
                        Address = up.Post.Address,
                        CityCode = up.Post.CityCode,
                        Visibility = up.Post.Visibility,
+                       Tags = up.Post.Tags,
                        FriendIds = from upr in _postContext.UserPostRelations
                                    where upr.PostId == up.Post.Id && upr.UserPostRelationType == UserPostRelationType.View
                                    select upr.UserId.Value,

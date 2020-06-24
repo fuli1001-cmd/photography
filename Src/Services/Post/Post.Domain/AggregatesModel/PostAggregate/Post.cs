@@ -287,8 +287,10 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             var oldTags = Tags ?? string.Empty;
             var newTagList = newTags.Split(",");
             var oldTagList = oldTags.Split(",");
-            var appliedTags = newTagList.Where(t => !oldTags.Contains(t));
-            var removedTags = oldTagList.Where(t => !newTags.Contains(t));
+            var appliedTags = newTagList.Where(t => !oldTags.Contains(t)).ToList();
+            var removedTags = oldTagList.Where(t => !newTags.Contains(t)).ToList();
+
+            var tagChangedDomainEvent = new TagChangedDomainEvent(appliedTags, removedTags);
         }
     }
 
