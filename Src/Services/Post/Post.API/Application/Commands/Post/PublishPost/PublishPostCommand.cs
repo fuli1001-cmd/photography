@@ -100,6 +100,11 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
         public List<Guid> FriendIds { get; set; }
 
         /// <summary>
+        /// 标签
+        /// </summary>
+        public string Tags { get; set; }
+
+        /// <summary>
         /// 城市代码
         /// </summary>
         [DataMember]

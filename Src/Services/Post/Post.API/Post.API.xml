@@ -169,6 +169,11 @@
             可查看帖子的好友id数组
             </summary>
         </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Post.PublishPost.BasePostCommand.Tags">
+            <summary>
+            标签
+            </summary>
+        </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.Post.PublishPost.BasePostCommand.CityCode">
             <summary>
             城市代码

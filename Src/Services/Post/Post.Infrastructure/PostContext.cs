@@ -18,6 +18,7 @@ using MediatR;
 using Photography.Services.Post.Domain.AggregatesModel.CommentAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserCommentRelationAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserRelationAggregate;
+using Photography.Services.Post.Domain.AggregatesModel.TagAggregate;
 
 namespace Photography.Services.Post.Infrastructure
 {
@@ -29,8 +30,8 @@ namespace Photography.Services.Post.Infrastructure
         public DbSet<User> Users { get; set; }
         public DbSet<UserRelation> UserRelations { get; set; }
         public DbSet<UserPostRelation> UserPostRelations { get; set; }
-
         public DbSet<UserCommentRelation> UserCommentRelations { get; set; }
+        public DbSet<Tag> Tags { get; set; }
 
 
         private readonly IMediator _mediator;
@@ -55,6 +56,7 @@ namespace Photography.Services.Post.Infrastructure
             modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new UserRelationEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new UserPostRelationEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new TagEntityTypeConfiguration());
 
             //foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
             //{

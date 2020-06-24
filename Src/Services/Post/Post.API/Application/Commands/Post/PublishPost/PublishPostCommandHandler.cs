@@ -42,7 +42,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
             var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType)).ToList();
             var post = Domain.AggregatesModel.PostAggregate.Post.CreatePost(request.Text, request.Commentable, request.ForwardType, request.ShareType,
-                request.Visibility, request.ViewPassword, request.Latitude, request.Longitude, request.LocationName,
+                request.Visibility, request.ViewPassword, request.Tags, request.Latitude, request.Longitude, request.LocationName,
                 request.Address, request.CityCode, request.FriendIds, attachments, userId);
             _postRepository.Add(post);
 
