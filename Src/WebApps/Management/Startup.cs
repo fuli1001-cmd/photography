@@ -78,15 +78,10 @@ namespace Photography.WebApps.Management
 
                 //options.GetClaimsFromUserInfoEndpoint = true;
 
-                options.Scope.Add("openid");
-                options.Scope.Add("profile");
-                options.Scope.Add("Photography.Post.API");
-                options.Scope.Add("Photography.User.API");
-                options.Scope.Add("Photography.Order.API");
-                options.Scope.Add("Photography.Notification.API");
-                options.Scope.Add("Photography.ApiGateway");
-                options.Scope.Add("Arise.FileUploadService");
-                options.Scope.Add("offline_access");
+                Configuration.GetValue<string>("AuthSettings:Scope")
+                .Split(" ")
+                .ToList()
+                .ForEach(scope => options.Scope.Add(scope));
 
                 //options.ClaimActions.MapJsonKey("website", "website");
             });
