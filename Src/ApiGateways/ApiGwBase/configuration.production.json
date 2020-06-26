@@ -169,7 +169,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "47.108.105.98",
+          "Host": "47.115.50.87",
           "Port": 5100
         }
       ],
@@ -181,7 +181,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "47.108.105.98",
+          "Host": "47.115.50.87",
           "Port": 5100
         }
       ],
@@ -199,6 +199,18 @@
         }
       ],
       "UpstreamPathTemplate": "/api/events",
+      "UpstreamHttpMethod": []
+    },
+    {
+      "DownstreamPathTemplate": "/api/notificationusers/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "notificationapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/notification/users/{everything}",
       "UpstreamHttpMethod": []
     }
   ],

@@ -80,7 +80,6 @@ namespace Photography.Services.User.API
 
             services.Configure<AuthSettings>(Configuration.GetSection("AuthSettings"));
             services.Configure<RedisSettings>(Configuration.GetSection("RedisSettings"));
-            services.Configure<ServerSettings>(Configuration.GetSection("ServerSettings"));
 
             services.AddSingleton(typeof(IRedisService), typeof(RedisService));
             services.AddTransient(typeof(IChatServerRedis), typeof(ChatServerRedis));

@@ -31,7 +31,8 @@ namespace Photography.WebApps.Management.Data
             catch(Exception ex)
             {
                 _logger.LogError("GetPostsAsync failed, {@Exception}", ex);
-                return new PagedResponseWrapper<List<Post>>(); 
+                PagedData = new PagedResponseWrapper<List<Post>> { Data = new List<Post>(), PagingInfo = new PagingInfo() };
+                return PagedData;
             }
         }
 
@@ -58,7 +59,8 @@ namespace Photography.WebApps.Management.Data
             catch (Exception ex)
             {
                 _logger.LogError("GetAppointmentsAsync failed, {@Exception}", ex);
-                return new PagedResponseWrapper<List<Post>>();
+                PagedData = new PagedResponseWrapper<List<Post>> { Data = new List<Post>(), PagingInfo = new PagingInfo() };
+                return PagedData;
             }
         }
 

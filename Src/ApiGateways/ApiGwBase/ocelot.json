@@ -178,11 +178,11 @@
 
     {
       "DownstreamPathTemplate": "/api/streaming",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "fileuploadservice",
-          "Port": 80
+          "Host": "121.196.28.120",
+          "Port": 5104
         }
       ],
       "UpstreamPathTemplate": "/api/streaming",
@@ -194,8 +194,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "authservice",
-          "Port": 80
+          "Host": "121.196.28.120",
+          "Port": 5100
         }
       ],
       "UpstreamPathTemplate": "/api/register",
@@ -206,8 +206,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "authservice",
-          "Port": 80
+          "Host": "121.196.28.120",
+          "Port": 5100
         }
       ],
       "UpstreamPathTemplate": "/api/register/{everything}",

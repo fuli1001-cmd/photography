@@ -16,7 +16,6 @@ using Photography.Services.User.API.Application.Commands.User.ToggleFollow;
 using Photography.Services.User.API.Application.Commands.User.UpdateBackground;
 using Photography.Services.User.API.Application.Commands.User.UpdateUser;
 using Photography.Services.User.API.BackwardCompatibility.ViewModels;
-using Photography.Services.User.API.Query.BackwardCompatibility.ViewModels;
 using Photography.Services.User.API.Query.Interfaces;
 using Photography.Services.User.API.Query.ViewModels;
 using Photography.Services.User.API.Settings;
@@ -37,14 +36,11 @@ namespace Photography.Services.User.API.Controllers
         private readonly IUserQueries _userQueries;
         private readonly ILogger<UsersController> _logger;
         private readonly IMediator _mediator;
-        private readonly IOptionsSnapshot<ServerSettings> _serverSettings;
 
-        public UsersController(IMediator mediator, IUserQueries userQueries,
-            IOptionsSnapshot<ServerSettings> serverSettings, ILogger<UsersController> logger)
+        public UsersController(IMediator mediator, IUserQueries userQueries, ILogger<UsersController> logger)
         {
             _userQueries = userQueries ?? throw new ArgumentNullException(nameof(userQueries));
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            _serverSettings = serverSettings ?? throw new ArgumentNullException(nameof(serverSettings));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
