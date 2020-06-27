@@ -42,7 +42,7 @@ namespace Photography.ApiGateways.ApiGwBase
             //    });
 
             //services.AddOcelot().AddConsul().AddConfigStoredInConsul();
-            services.AddOcelot();
+            services.AddOcelot(Configuration);
 
             services.Configure<ServerSettings>(Configuration.GetSection("ServerSettings"));
             services.Configure<ServiceSettings>(Configuration.GetSection("ServiceSettings"));
