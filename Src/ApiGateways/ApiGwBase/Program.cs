@@ -37,8 +37,7 @@ namespace Photography.ApiGateways.ApiGwBase
             Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((context, config) =>
                 {
-                    config.AddJsonFile("ocelot.json", false, true)
-                    .AddJsonFile($"configuration.{context.HostingEnvironment.EnvironmentName}.json", true, true);
+                    config.AddJsonFile($"configuration.{context.HostingEnvironment.EnvironmentName}.json", true, true);
                 })
                 .ConfigureLogging((hostBuilderContext, loggingBuilder) =>
                 {
