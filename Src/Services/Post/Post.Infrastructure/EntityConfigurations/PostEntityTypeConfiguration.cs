@@ -22,6 +22,7 @@ namespace Photography.Services.Post.Infrastructure.EntityConfigurations
             builder.Property(p => p.Visibility).HasDefaultValue(Visibility.Public);
             builder.Property(p => p.Commentable).HasDefaultValue(true);
             builder.Property(p => p.ShowOriginalText).HasDefaultValue(true);
+            builder.HasIndex(p => p.UpdatedTime);
 
             //attachments navigation properties
             var attachmentsNavigation = builder.Metadata.FindNavigation(nameof(Domain.AggregatesModel.PostAggregate.Post.PostAttachments));

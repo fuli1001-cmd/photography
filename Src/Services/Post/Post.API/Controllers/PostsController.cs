@@ -127,9 +127,9 @@ namespace Photography.Services.Post.API.Controllers
         [Route("user/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [AllowAnonymous]
-        public async Task<ActionResult<PagedResponseWrapper>> GetMyPostsAsync(Guid userId, [FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<PagedResponseWrapper>> GetMyPostsAsync(Guid userId, [FromQuery(Name = "privateTag")] string privateTag, [FromQuery] PagingParameters pagingParameters)
         {
-            var posts = await _postQueries.GetUserPostsAsync(userId, pagingParameters);
+            var posts = await _postQueries.GetUserPostsAsync(userId, privateTag, pagingParameters);
             return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
         }
 
@@ -144,6 +144,22 @@ namespace Photography.Services.Post.API.Controllers
         public async Task<ActionResult<PagedResponseWrapper>> GetLikedPostsAsync([FromQuery] PagingParameters pagingParameters)
         {
             var posts = await _postQueries.GetLikedPostsAsync(pagingParameters);
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
+        }
+
+        /// <summary>
+        /// 具有某个标签的帖子
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <param name="pagingParameters"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("tags/public/{tag}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
+        public async Task<ActionResult<PagedResponseWrapper>> GetPostsByPublicTagAsync(string tag, [FromQuery] PagingParameters pagingParameters)
+        {
+            var posts = await _postQueries.GetPostsByPublicTagAsync(tag, pagingParameters);
             return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
         }
 

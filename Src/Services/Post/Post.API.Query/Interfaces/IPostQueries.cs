@@ -9,7 +9,7 @@ namespace Photography.Services.Post.API.Query.Interfaces
     public interface IPostQueries
     {
         // 用户的帖子
-        Task<PagedList<PostViewModel>> GetUserPostsAsync(Guid userId, PagingParameters pagingParameters);
+        Task<PagedList<PostViewModel>> GetUserPostsAsync(Guid userId, string privateTag, PagingParameters pagingParameters);
 
         // 赞过的帖子
         Task<PagedList<PostViewModel>> GetLikedPostsAsync(PagingParameters pagingParameters);
@@ -34,5 +34,8 @@ namespace Photography.Services.Post.API.Query.Interfaces
 
         // 搜索帖子
         Task<PagedList<PostViewModel>> SearchPosts(string key, string cityCode, PagingParameters pagingParameters);
+
+        // 按公有标签获取帖子
+        Task<PagedList<PostViewModel>> GetPostsByPublicTagAsync(string tag, PagingParameters pagingParameters);
     }
 }

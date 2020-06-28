@@ -29,7 +29,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     Text = table.Column<string>(nullable: true),
                     CreatedTime = table.Column<double>(nullable: false),
-                    UpdatedTime = table.Column<double>(nullable: true),
+                    UpdatedTime = table.Column<double>(nullable: false),
                     PostType = table.Column<int>(nullable: false),
                     UserId = table.Column<Guid>(nullable: false),
                     Latitude = table.Column<double>(nullable: true),
@@ -47,6 +47,8 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     Visibility = table.Column<int>(nullable: false, defaultValue: 0),
                     ViewPassword = table.Column<string>(nullable: true),
                     ShowOriginalText = table.Column<bool>(nullable: true, defaultValue: true),
+                    PublicTags = table.Column<string>(nullable: true),
+                    PrivateTag = table.Column<string>(nullable: true),
                     ForwardedPostId = table.Column<Guid>(nullable: true),
                     AppointedTime = table.Column<double>(nullable: true),
                     Price = table.Column<decimal>(nullable: true),
@@ -82,6 +84,26 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tags",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    Count = table.Column<int>(nullable: false),
+                    UserId = table.Column<Guid>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tags", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Tags_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -173,6 +195,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     PostId = table.Column<Guid>(nullable: true),
                     UserId = table.Column<Guid>(nullable: true),
+                    CreatedTime = table.Column<double>(nullable: false),
                     UserPostRelationType = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -253,8 +276,28 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 column: "ForwardedPostId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Posts_UpdatedTime",
+                table: "Posts",
+                column: "UpdatedTime");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Posts_UserId",
                 table: "Posts",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tags_Count",
+                table: "Tags",
+                column: "Count");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tags_Name",
+                table: "Tags",
+                column: "Name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tags_UserId",
+                table: "Tags",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -292,6 +335,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
         {
             migrationBuilder.DropTable(
                 name: "PostAttachments");
+
+            migrationBuilder.DropTable(
+                name: "Tags");
 
             migrationBuilder.DropTable(
                 name: "UserCommentRelations");

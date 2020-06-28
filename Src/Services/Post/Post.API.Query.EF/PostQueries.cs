@@ -44,7 +44,7 @@ namespace Photography.Services.Post.API.Query.EF
         /// </summary>
         /// <param name="userId">用户id</param>
         /// <returns></returns>
-        public async Task<PagedList<PostViewModel>> GetUserPostsAsync(Guid userId, PagingParameters pagingParameters)
+        public async Task<PagedList<PostViewModel>> GetUserPostsAsync(Guid userId, string privateTag, PagingParameters pagingParameters)
         {
             var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
@@ -62,10 +62,14 @@ namespace Photography.Services.Post.API.Query.EF
             }
 
             var queryableUserPosts = from p in queryablePosts
-                                 join u in _postContext.Users
-                                 on p.UserId equals u.Id
-                                 where p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post && p.UserId == userId
-                                 select new UserPost { Post = p, User = u };
+                                     join u in _postContext.Users
+                                     on p.UserId equals u.Id
+                                     where p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post && p.UserId == userId
+                                     select new UserPost { Post = p, User = u };
+
+            // 如果帖子种类不为空， 按帖子种类筛选一下
+            if (!string.IsNullOrWhiteSpace(privateTag))
+                queryableUserPosts = queryableUserPosts.Where(up => up.Post.PrivateTag.ToLower() == privateTag.ToLower());
 
             var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.UpdatedTime);
 
@@ -265,6 +269,24 @@ namespace Photography.Services.Post.API.Query.EF
             return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
         }
 
+        public async Task<PagedList<PostViewModel>> GetPostsByPublicTagAsync(string tag, PagingParameters pagingParameters)
+        {
+            var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
+
+            // 可见的帖子
+            var queryablePosts = GetAvailablePosts(myId);
+
+            // 具有该标签的帖子
+            queryablePosts = queryablePosts.Where(p => p.PublicTags.ToLower().Contains(tag.ToLower()));
+
+            var queryableUserPosts = GetAvailableUserPosts(queryablePosts);
+
+            var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.UpdatedTime);
+
+            return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
+        }
+
         private IQueryable<Domain.AggregatesModel.PostAggregate.Post> GetAvailablePosts(Guid myId)
         {
             var posts = _postContext.Posts.Where(p => p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post);
@@ -345,6 +367,8 @@ namespace Photography.Services.Post.API.Query.EF
                        Address = up.Post.Address,
                        CityCode = up.Post.CityCode,
                        Visibility = up.Post.Visibility,
+                       PublicTags = up.Post.PublicTags,
+                       PrivateTag = up.Post.PrivateTag,
                        FriendIds = from upr in _postContext.UserPostRelations
                                    where upr.PostId == up.Post.Id && upr.UserPostRelationType == UserPostRelationType.View
                                    select upr.UserId.Value,

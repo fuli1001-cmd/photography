@@ -169,6 +169,16 @@
             可查看帖子的好友id数组
             </summary>
         </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Post.PublishPost.BasePostCommand.PublicTags">
+            <summary>
+            标签
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Post.PublishPost.BasePostCommand.PrivateTag">
+            <summary>
+            帖子类别
+            </summary>
+        </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.Post.PublishPost.BasePostCommand.CityCode">
             <summary>
             城市代码
@@ -351,7 +361,7 @@
             <param name="pagingParameters">分页参数</param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetMyPostsAsync(System.Guid,Arise.DDD.API.Paging.PagingParameters)">
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetMyPostsAsync(System.Guid,System.String,Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             用户的帖子
             </summary>
@@ -364,6 +374,14 @@
             我赞过的帖子
             </summary>
             <param name="pagingParameters">分页参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetPostsByPublicTagAsync(System.String,Arise.DDD.API.Paging.PagingParameters)">
+            <summary>
+            具有某个标签的帖子
+            </summary>
+            <param name="tag"></param>
+            <param name="pagingParameters"></param>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetPostAsync(System.Guid)">
@@ -416,6 +434,31 @@
             <summary>
             获取分享的帖子的详情
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.TagsController.GetPopularPublicTagsAsync">
+            <summary>
+            推荐标签
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.TagsController.GetUserPrivateTagsAsync(System.Guid)">
+            <summary>
+            用户的帖子类别
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.TagsController.CreatePrivateTagAsync(Photography.Services.Post.API.Application.Commands.Tag.CreatePrivateTag.CreatePrivateTagCommand)">
+            <summary>
+            创建帖子类别
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.TagsController.DeletePrivateTagAsync(Photography.Services.Post.API.Application.Commands.Tag.DeletePrivateTag.DeletePrivateTagCommand)">
+            <summary>
+            删除帖子类别
+            </summary>
+            <param name="command"></param>
             <returns></returns>
         </member>
     </members>

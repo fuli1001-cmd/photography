@@ -78,5 +78,10 @@ namespace Photography.Services.Post.Infrastructure.Repositories
                           .Include(p => p.UserPostRelations)
                           .ToListAsync();
         }
+
+        public async Task<List<Domain.AggregatesModel.PostAggregate.Post>> GetUserPostsByPrivateTag(Guid userId, string privateTag)
+        {
+            return await _context.Posts.Where(p => p.UserId == userId && p.PrivateTag.ToLower() == privateTag.ToLower() && p.PostType == PostType.Post).ToListAsync();
+        }
     }
 }

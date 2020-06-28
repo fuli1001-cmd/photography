@@ -8,6 +8,7 @@ using NServiceBus;
 using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
+using Photography.Services.Post.Domain.AggregatesModel.TagAggregate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
     public class PublishPostCommandHandler : IRequestHandler<PublishPostCommand, PostViewModel>
     {
         private readonly IPostRepository _postRepository;
+        private readonly ITagRepository _tagRepository;
         private readonly IPostQueries _postQueries;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<PublishPostCommandHandler> _logger;
@@ -27,10 +29,11 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
 
         private IMessageSession _messageSession;
 
-        public PublishPostCommandHandler(IPostRepository postRepository, IHttpContextAccessor httpContextAccessor,
+        public PublishPostCommandHandler(IPostRepository postRepository, ITagRepository tagRepository, IHttpContextAccessor httpContextAccessor,
             IPostQueries postQueries, IServiceProvider serviceProvider, ILogger<PublishPostCommandHandler> logger)
         {
             _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
+            _tagRepository = tagRepository ?? throw new ArgumentNullException(nameof(tagRepository));
             _postQueries = postQueries ?? throw new ArgumentNullException(nameof(postQueries));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
@@ -40,9 +43,18 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
         public async Task<PostViewModel> Handle(PublishPostCommand request, CancellationToken cancellationToken)
         {
             var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            // check if the private tag name exist
+            if (!string.IsNullOrWhiteSpace(request.PrivateTag))
+            {
+                var tag = await _tagRepository.GetUserPrivateTagByName(userId, request.PrivateTag);
+                if (tag == null)
+                    throw new ClientException("操作失败", new List<string> { $"Tag {request.PrivateTag} does not exist."});
+            }
+
             var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType)).ToList();
             var post = Domain.AggregatesModel.PostAggregate.Post.CreatePost(request.Text, request.Commentable, request.ForwardType, request.ShareType,
-                request.Visibility, request.ViewPassword, request.Latitude, request.Longitude, request.LocationName,
+                request.Visibility, request.ViewPassword, request.PublicTags, request.PrivateTag, request.Latitude, request.Longitude, request.LocationName,
                 request.Address, request.CityCode, request.FriendIds, attachments, userId);
             _postRepository.Add(post);
 
