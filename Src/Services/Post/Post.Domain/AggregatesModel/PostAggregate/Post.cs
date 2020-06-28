@@ -1,6 +1,7 @@
 ﻿using Arise.DDD.Domain.Exceptions;
 using Arise.DDD.Domain.SeedWork;
 using Photography.Services.Post.Domain.AggregatesModel.CommentAggregate;
+using Photography.Services.Post.Domain.AggregatesModel.TagAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggregate;
 using Photography.Services.Post.Domain.Events;
@@ -45,7 +46,12 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         public Visibility Visibility { get; private set; }
         public string ViewPassword { get; private set; }
         public bool? ShowOriginalText { get; private set; }
-        public string Tags { get; private set; }
+
+        // 帖子标签
+        public string PublicTags { get; private set; }
+
+        // 帖子类别
+        public string PrivateTag { get; private set; }
 
         public Post ForwardedPost { get; private set; }
         public Guid? ForwardedPostId { get; private set; }
@@ -99,16 +105,20 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
 
         // 构造帖子对象
         private Post(string text, bool? showOriginalText, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
-            string tags, double latitude, double longitude, string locationName, string address, string cityCode, 
+            string publicTags, string privateTag, double latitude, double longitude, string locationName, string address, string cityCode, 
             List<Guid> friendIds, List<PostAttachment> postAttachments, Guid userId)
             : this(text, latitude, longitude, locationName, address, cityCode, postAttachments, userId)
         {
+            // 发送标签更新事件
+            AddTagChangedDomainEvent(publicTags);
+
             Commentable = commentable;
             ForwardType = forwardType;
             ShareType = shareType;
             Visibility = visibility;
             ViewPassword = viewPassword;
-            Tags = tags;
+            PublicTags = publicTags;
+            PrivateTag = privateTag;
             _userPostRelations = friendIds?.Select(id => new UserPostRelation(id, UserPostRelationType.View)).ToList();
             PostType = PostType.Post;
             ShowOriginalText = showOriginalText;
@@ -139,10 +149,10 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
 
         // 创建帖子对象
         public static Post CreatePost(string text, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
-            string tags, double latitude, double longitude, string locationName, string address, string cityCode,
+            string publicTags, string privateTag, double latitude, double longitude, string locationName, string address, string cityCode,
             List<Guid> friendIds, List<PostAttachment> postAttachments, Guid userId, bool? showOriginalText = null)
         {
-            return new Post(text, showOriginalText, commentable, forwardType, shareType, visibility, viewPassword, tags, latitude, longitude,
+            return new Post(text, showOriginalText, commentable, forwardType, shareType, visibility, viewPassword, publicTags, privateTag, latitude, longitude,
                 locationName, address, cityCode, friendIds, postAttachments, userId);
         }
 
@@ -162,16 +172,20 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
 
         // 更新帖子对象
         public void Update(string text, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
-            string tags, double latitude, double longitude, string locationName, string address, string cityCode,
+            string publicTags, string privateTag, double latitude, double longitude, string locationName, string address, string cityCode,
             List<Guid> friendIds, List<PostAttachment> postAttachments, bool? showOriginalText = null)
         {
+            // 发送标签更新事件
+            AddTagChangedDomainEvent(publicTags);
+
             Text = text;
             Commentable = commentable;
             ForwardType = forwardType;
             ShareType = shareType;
             Visibility = visibility;
             ViewPassword = viewPassword;
-            Tags = tags;
+            PublicTags = publicTags;
+            PrivateTag = privateTag;
             Latitude = latitude;
             Longitude = longitude;
             LocationName = locationName;
@@ -200,6 +214,8 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             if (PostType == PostType.Post)
             {
                 AddDeletedPostDomainEvent();
+                AddTagChangedDomainEvent(string.Empty);
+
                 _comments.Clear();
                 _forwardingPosts.Clear();
             }
@@ -275,6 +291,11 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
                 CommentCount++;
         }
 
+        public void RemovePrivateTag()
+        {
+            PrivateTag = null;
+        }
+
         private void AddDeletedPostDomainEvent()
         {
             var commentIds = _comments.Select(c => c.Id).ToList();
@@ -282,15 +303,19 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             AddDomainEvent(deletedPostDomainEvent);
         }
 
-        private void AddTagChangedDomainEvent(string newTags)
+        private void AddTagChangedDomainEvent(string newPublicTags)
         {
-            var oldTags = Tags ?? string.Empty;
-            var newTagList = newTags.Split(",");
-            var oldTagList = oldTags.Split(",");
-            var appliedTags = newTagList.Where(t => !oldTags.Contains(t)).ToList();
-            var removedTags = oldTagList.Where(t => !newTags.Contains(t)).ToList();
+            var oldPublicTags = PublicTags ?? string.Empty;
+            var newTagList = newPublicTags.Split(",");
+            var oldTagList = oldPublicTags.Split(",");
 
-            var tagChangedDomainEvent = new TagChangedDomainEvent(appliedTags, removedTags);
+            // 本次新增的标签
+            var appliedTags = newTagList.Where(t => !oldPublicTags.Contains(t)).ToList();
+            // 本次去掉的标签
+            var removedTags = oldTagList.Where(t => !newPublicTags.Contains(t)).ToList();
+
+            var tagChangedDomainEvent = new PublicTagChangedDomainEvent(appliedTags, removedTags);
+            AddDomainEvent(tagChangedDomainEvent);
         }
     }
 

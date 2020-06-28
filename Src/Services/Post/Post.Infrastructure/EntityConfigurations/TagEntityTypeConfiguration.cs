@@ -13,7 +13,8 @@ namespace Photography.Services.Post.Infrastructure.EntityConfigurations
         {
             builder.Ignore(e => e.DomainEvents);
             builder.Property(t => t.Name).IsRequired();
-            builder.HasIndex(t => t.Name).IsUnique();
+            builder.HasIndex(t => t.Name);
+            builder.HasIndex(t => t.Count);
         }
     }
 }

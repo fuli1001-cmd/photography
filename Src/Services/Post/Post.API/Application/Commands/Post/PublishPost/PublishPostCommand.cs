@@ -102,7 +102,12 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
         /// <summary>
         /// 标签
         /// </summary>
-        public string Tags { get; set; }
+        public string PublicTags { get; set; }
+
+        /// <summary>
+        /// 帖子类别
+        /// </summary>
+        public string PrivateTag { get; set; }
 
         /// <summary>
         /// 城市代码

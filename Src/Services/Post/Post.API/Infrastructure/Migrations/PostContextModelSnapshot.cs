@@ -123,6 +123,12 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<decimal?>("Price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("PrivateTag")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PublicTags")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Score")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
@@ -146,7 +152,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("UpdatedTime")
+                    b.Property<double>("UpdatedTime")
                         .HasColumnType("float");
 
                     b.Property<Guid>("UserId")
@@ -167,6 +173,8 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.HasIndex("AppointmentedUserId");
 
                     b.HasIndex("ForwardedPostId");
+
+                    b.HasIndex("UpdatedTime");
 
                     b.HasIndex("UserId");
 
@@ -200,6 +208,33 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.HasIndex("PostId");
 
                     b.ToTable("PostAttachments");
+                });
+
+            modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.TagAggregate.Tag", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Count");
+
+                    b.HasIndex("Name");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", b =>
@@ -253,6 +288,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("CreatedTime")
+                        .HasColumnType("float");
 
                     b.Property<Guid?>("PostId")
                         .HasColumnType("uniqueidentifier");
@@ -344,6 +382,13 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.TagAggregate.Tag", b =>
+                {
+                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.UserCommentRelationAggregate.UserCommentRelation", b =>

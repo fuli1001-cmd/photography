@@ -46,7 +46,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.UpdatePost
             var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType)).ToList();
 
             post.Update(request.Text, request.Commentable, request.ForwardType, request.ShareType, request.Visibility,
-                request.ViewPassword, request.Tags, request.Latitude, request.Longitude, request.LocationName, request.Address,
+                request.ViewPassword, request.PublicTags, request.PrivateTag, request.Latitude, request.Longitude, request.LocationName, request.Address,
                 request.CityCode, request.FriendIds, attachments, request.ShowOriginalText);
 
             _postRepository.Update(post);

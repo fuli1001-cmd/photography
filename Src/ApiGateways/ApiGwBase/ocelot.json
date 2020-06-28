@@ -26,6 +26,19 @@
     },
 
     {
+      "DownstreamPathTemplate": "/api/tags/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "postapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/tags/{everything}",
+      "UpstreamHttpMethod": []
+    },
+
+    {
       "DownstreamPathTemplate": "/api/appointments",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
