@@ -32,6 +32,9 @@ namespace Photography.Services.Post.Infrastructure.EntityConfigurations
             //UserCommentRelations navigation properties
             builder.HasMany(u => u.UserCommentRelations).WithOne(pu => pu.User).HasForeignKey(pu => pu.UserId).OnDelete(DeleteBehavior.Restrict);
 
+            //UserCircleRelations navigation properties
+            builder.HasMany(u => u.UserCircleRelations).WithOne(pu => pu.User).HasForeignKey(pu => pu.UserId).OnDelete(DeleteBehavior.Restrict);
+
             ////followers navigation properties
             //var followersNavigation = builder.Metadata.FindNavigation(nameof(User.Followers));
             //followersNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);

@@ -1,5 +1,6 @@
 ﻿using Arise.DDD.Domain.Exceptions;
 using Arise.DDD.Domain.SeedWork;
+using Photography.Services.Post.Domain.AggregatesModel.CircleAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.CommentAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.TagAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
@@ -52,6 +53,10 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
 
         // 帖子类别
         public string PrivateTag { get; private set; }
+
+        // 帖子的圈子
+        public Guid? CircleId { get; private set; }
+        public Circle Circle { get; private set; }
 
         public Post ForwardedPost { get; private set; }
         public Guid? ForwardedPostId { get; private set; }

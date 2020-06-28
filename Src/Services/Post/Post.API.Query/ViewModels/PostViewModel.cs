@@ -48,6 +48,7 @@ namespace Photography.Services.Post.API.Query.ViewModels
     {
         public BaseUserViewModel User { get; set; }
         public ForwardedPostViewModel ForwardedPost { get; set; }
+        public string PublicTags { get; set; }
     }
 
     public class PostAttachmentViewModel

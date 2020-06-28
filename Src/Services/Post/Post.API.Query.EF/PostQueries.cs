@@ -238,7 +238,7 @@ namespace Photography.Services.Post.API.Query.EF
         }
 
         /// <summary>
-        /// 搜索发帖者昵称和帖子文案内容包含关键字的帖子
+        /// 搜索发帖者昵称、帖子文案、帖子标签包含关键字的帖子
         /// </summary>
         /// <param name="key">搜索关键字</param>
         /// <param name="cityCode">城市代码，若指定了城市代码，则只在属于该城市的帖子中搜索</param>
@@ -255,7 +255,7 @@ namespace Photography.Services.Post.API.Query.EF
             {
                 key = key.ToLower();
                 queryablePosts = from p in queryablePosts
-                                 where p.User.Nickname.ToLower().Contains(key) || p.Text.ToLower().Contains(key)
+                                 where p.User.Nickname.ToLower().Contains(key) || p.Text.ToLower().Contains(key) || p.PublicTags.ToLower().Contains(key)
                                  select p;
             }
 
@@ -399,6 +399,7 @@ namespace Photography.Services.Post.API.Query.EF
                        {
                            Id = up.Post.ForwardedPost.Id,
                            Text = up.Post.ForwardedPost.Text,
+                           PublicTags = up.Post.PublicTags,
                            User = new BaseUserViewModel
                            {
                                Id = up.Post.ForwardedPost.User.Id,

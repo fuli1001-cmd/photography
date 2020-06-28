@@ -1,5 +1,6 @@
 ﻿using Arise.DDD.Domain.SeedWork;
 using Photography.Services.Post.Domain.AggregatesModel.CommentAggregate;
+using Photography.Services.Post.Domain.AggregatesModel.UserCircleRelationAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserCommentRelationAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserRelationAggregate;
@@ -30,6 +31,10 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
 
         private readonly List<UserCommentRelation> _userCommentRelations = null;
         public IReadOnlyCollection<UserCommentRelation> UserCommentRelations => _userCommentRelations;
+
+        // 用户圈子多对多关系
+        private readonly List<UserCircleRelation> _userCircleRelations = null;
+        public IReadOnlyCollection<UserCircleRelation> UserCircleRelations => _userCircleRelations;
 
         // Note: self reference many to many relations can't use field, so use property directly here.
         //private readonly List<UserRelation> _followers;
