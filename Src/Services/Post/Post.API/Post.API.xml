@@ -74,6 +74,66 @@
             地址
             </summary>
         </member>
+        <member name="T:Photography.Services.Post.API.Application.Commands.Circle.CreateCircle.CreateCircleCommand">
+            <summary>
+            创建圈子的命令
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Circle.CreateCircle.CreateCircleCommand.Name">
+            <summary>
+            圈子名
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Circle.CreateCircle.CreateCircleCommand.Description">
+            <summary>
+            圈子描述
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Circle.CreateCircle.CreateCircleCommand.VerifyJoin">
+            <summary>
+            入圈审核
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Circle.CreateCircle.CreateCircleCommand.BackgroundImage">
+            <summary>
+            圈子封面图
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Circle.DeleteCircle.DeleteCircleCommand.Id">
+            <summary>
+            圈子ID
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Circle.ToppingCircle.ToppingCircleCommand.CircleId">
+            <summary>
+            圈子ID
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Circle.UpdateCircle.UpdateCircleCommand.Id">
+            <summary>
+            圈子ID
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Circle.UpdateCircle.UpdateCircleCommand.Name">
+            <summary>
+            圈子名
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Circle.UpdateCircle.UpdateCircleCommand.Description">
+            <summary>
+            圈子描述
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Circle.UpdateCircle.UpdateCircleCommand.VerifyJoin">
+            <summary>
+            入圈审核
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Circle.UpdateCircle.UpdateCircleCommand.BackgroundImage">
+            <summary>
+            圈子封面图
+            </summary>
+        </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.Comment.ReplyComment.ReplyCommentCommand.Text">
             <summary>
             评论内容
@@ -281,6 +341,42 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.Post.API.Controllers.CirclesController.CreateCircleAsync(Photography.Services.Post.API.Application.Commands.Circle.CreateCircle.CreateCircleCommand)">
+            <summary>
+            创建圈子
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.CirclesController.UpdateCircleAsync(Photography.Services.Post.API.Application.Commands.Circle.UpdateCircle.UpdateCircleCommand)">
+            <summary>
+            编辑圈子
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.CirclesController.DeleteCircleAsync(Photography.Services.Post.API.Application.Commands.Circle.DeleteCircle.DeleteCircleCommand)">
+            <summary>
+            删除圈子
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.CirclesController.GetCirclesAsync(Arise.DDD.API.Paging.PagingParameters)">
+            <summary>
+            分页获取圈子列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.CirclesController.GetMyCirclesAsync(Arise.DDD.API.Paging.PagingParameters)">
+            <summary>
+            分页获取我的圈子列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.CirclesController.ToppingCircleAsync(Photography.Services.Post.API.Application.Commands.Circle.ToppingCircle.ToppingCircleCommand)">
+            <summary>
+            置顶圈子
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Photography.Services.Post.API.Controllers.CommentsController">
             <summary>
             帖子控制器
@@ -357,15 +453,17 @@
             获取同城帖子列表
             </summary>
             <param name="cityCode">城市代码</param>
-            <param name="key">搜索的关键字，根据用户昵称和帖子文本内容搜索帖子</param>
+            <param name="key">搜索的关键字，根据用户昵称、帖子文本及标签搜索帖子</param>
             <param name="pagingParameters">分页参数</param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetMyPostsAsync(System.Guid,System.String,Arise.DDD.API.Paging.PagingParameters)">
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetMyPostsAsync(System.Guid,System.String,System.String,Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             用户的帖子
             </summary>
             <param name="userId">用户id</param>
+            <param name="privateTag">帖子标签</param>
+            <param name="key">搜索的关键字，根据用户昵称、帖子文本及标签搜索帖子</param>
             <param name="pagingParameters">分页参数</param>
             <returns></returns>
         </member>

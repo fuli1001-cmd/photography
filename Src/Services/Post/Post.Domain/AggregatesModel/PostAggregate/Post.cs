@@ -310,14 +310,13 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
 
         private void AddTagChangedDomainEvent(string newPublicTags)
         {
-            var oldPublicTags = PublicTags ?? string.Empty;
-            var newTagList = newPublicTags.Split(",");
-            var oldTagList = oldPublicTags.Split(",");
+            var newTagList = string.IsNullOrWhiteSpace(newPublicTags) ? Array.Empty<string>() : newPublicTags.Split(",");
+            var oldTagList = string.IsNullOrWhiteSpace(PublicTags) ? Array.Empty<string>() : PublicTags.Split(",");
 
             // 本次新增的标签
-            var appliedTags = newTagList.Where(t => !oldPublicTags.Contains(t)).ToList();
+            var appliedTags = newTagList.Where(t => string.IsNullOrWhiteSpace(PublicTags) || !PublicTags.Contains(t)).ToList();
             // 本次去掉的标签
-            var removedTags = oldTagList.Where(t => !newPublicTags.Contains(t)).ToList();
+            var removedTags = oldTagList.Where(t => string.IsNullOrWhiteSpace(newPublicTags) || !newPublicTags.Contains(t)).ToList();
 
             var tagChangedDomainEvent = new PublicTagChangedDomainEvent(appliedTags, removedTags);
             AddDomainEvent(tagChangedDomainEvent);

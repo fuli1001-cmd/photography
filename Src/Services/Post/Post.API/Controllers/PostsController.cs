@@ -98,7 +98,7 @@ namespace Photography.Services.Post.API.Controllers
         /// 获取同城帖子列表
         /// </summary>
         /// <param name="cityCode">城市代码</param>
-        /// <param name="key">搜索的关键字，根据用户昵称和帖子文本内容搜索帖子</param>
+        /// <param name="key">搜索的关键字，根据用户昵称、帖子文本及标签搜索帖子</param>
         /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
         [HttpGet]
@@ -121,15 +121,17 @@ namespace Photography.Services.Post.API.Controllers
         /// 用户的帖子
         /// </summary>
         /// <param name="userId">用户id</param>
+        /// <param name="privateTag">帖子标签</param>
+        /// <param name="key">搜索的关键字，根据用户昵称、帖子文本及标签搜索帖子</param>
         /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
         [HttpGet]
         [Route("user/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [AllowAnonymous]
-        public async Task<ActionResult<PagedResponseWrapper>> GetMyPostsAsync(Guid userId, [FromQuery(Name = "privateTag")] string privateTag, [FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<PagedResponseWrapper>> GetMyPostsAsync(Guid userId, [FromQuery(Name = "privateTag")] string privateTag, [FromQuery(Name = "key")] string key, [FromQuery] PagingParameters pagingParameters)
         {
-            var posts = await _postQueries.GetUserPostsAsync(userId, privateTag, pagingParameters);
+            var posts = await _postQueries.GetUserPostsAsync(userId, privateTag, key, pagingParameters);
             return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
         }
 

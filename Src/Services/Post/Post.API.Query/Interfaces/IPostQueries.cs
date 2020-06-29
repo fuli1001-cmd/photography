@@ -9,7 +9,7 @@ namespace Photography.Services.Post.API.Query.Interfaces
     public interface IPostQueries
     {
         // 用户的帖子
-        Task<PagedList<PostViewModel>> GetUserPostsAsync(Guid userId, string privateTag, PagingParameters pagingParameters);
+        Task<PagedList<PostViewModel>> GetUserPostsAsync(Guid userId, string privateTag, string key, PagingParameters pagingParameters);
 
         // 赞过的帖子
         Task<PagedList<PostViewModel>> GetLikedPostsAsync(PagingParameters pagingParameters);

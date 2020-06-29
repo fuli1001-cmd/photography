@@ -13,10 +13,11 @@ namespace Photography.Services.Post.Infrastructure.EntityConfigurations
         {
             builder.Ignore(e => e.DomainEvents);
             builder.HasIndex(c => c.UserCount);
+            builder.HasIndex(c => c.Name);
             builder.Property(c => c.Name).IsRequired();
-            builder.HasIndex(c => c.Name).IsUnique();
-
+            
             builder.HasMany(c => c.UserCircleRelations).WithOne(uc => uc.Circle).HasForeignKey(uc => uc.CircleId).OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(c => c.Owner).WithMany(u => u.Circles).HasForeignKey(c => c.OwnerId).OnDelete(DeleteBehavior.Restrict);
 
             //posts navigation properties
             var postsNavigation = builder.Metadata.FindNavigation(nameof(Circle.Posts));

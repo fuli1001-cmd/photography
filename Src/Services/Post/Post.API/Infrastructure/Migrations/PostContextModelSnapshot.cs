@@ -19,6 +19,42 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.CircleAggregate.Circle", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackgroundImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("UserCount")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("VerifyJoin")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name");
+
+                    b.HasIndex("OwnerId");
+
+                    b.HasIndex("UserCount");
+
+                    b.ToTable("Circles");
+                });
+
             modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.CommentAggregate.Comment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -74,6 +110,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("AppointmentedUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CircleId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CityCode")
@@ -172,6 +211,8 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
 
                     b.HasIndex("AppointmentedUserId");
 
+                    b.HasIndex("CircleId");
+
                     b.HasIndex("ForwardedPostId");
 
                     b.HasIndex("UpdatedTime");
@@ -262,6 +303,35 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.UserCircleRelationAggregate.UserCircleRelation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CircleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("JoinTime")
+                        .HasColumnType("float");
+
+                    b.Property<bool>("Topping")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CircleId");
+
+                    b.HasIndex("JoinTime");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserCircleRelations");
+                });
+
             modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.UserCommentRelationAggregate.UserCommentRelation", b =>
                 {
                     b.Property<Guid>("Id")
@@ -331,6 +401,15 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.ToTable("UserRelations");
                 });
 
+            modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.CircleAggregate.Circle", b =>
+                {
+                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "Owner")
+                        .WithMany("Circles")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.CommentAggregate.Comment", b =>
                 {
                     b.HasOne("Photography.Services.Post.Domain.AggregatesModel.CommentAggregate.Comment", "ParentComment")
@@ -363,6 +442,10 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         .HasForeignKey("AppointmentedUserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.CircleAggregate.Circle", "Circle")
+                        .WithMany("Posts")
+                        .HasForeignKey("CircleId");
+
                     b.HasOne("Photography.Services.Post.Domain.AggregatesModel.PostAggregate.Post", "ForwardedPost")
                         .WithMany("ForwardingPosts")
                         .HasForeignKey("ForwardedPostId")
@@ -389,6 +472,21 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.UserCircleRelationAggregate.UserCircleRelation", b =>
+                {
+                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.CircleAggregate.Circle", "Circle")
+                        .WithMany("UserCircleRelations")
+                        .HasForeignKey("CircleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "User")
+                        .WithMany("UserCircleRelations")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.UserCommentRelationAggregate.UserCommentRelation", b =>

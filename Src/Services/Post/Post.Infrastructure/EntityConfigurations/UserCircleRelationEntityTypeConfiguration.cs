@@ -12,6 +12,7 @@ namespace Photography.Services.Post.Infrastructure.EntityConfigurations
         public void Configure(EntityTypeBuilder<UserCircleRelation> builder)
         {
             builder.Ignore(e => e.DomainEvents);
+            builder.HasIndex(uc => uc.JoinTime);
         }
     }
 }

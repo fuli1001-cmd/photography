@@ -1,5 +1,8 @@
-﻿using Arise.DDD.Domain.SeedWork;
+﻿using Arise.DDD.Domain.Exceptions;
+using Arise.DDD.Domain.SeedWork;
+using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserCircleRelationAggregate;
+using Photography.Services.Post.Domain.Events;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -23,6 +26,9 @@ namespace Photography.Services.Post.Domain.AggregatesModel.CircleAggregate
         // 圈子人数
         public int UserCount { get; private set; }
 
+        public Guid OwnerId { get; private set; }
+        public User Owner { get; private set; }
+
         // 用户圈子多对多关系
         private readonly List<UserCircleRelation> _userCircleRelations = null;
         public IReadOnlyCollection<UserCircleRelation> UserCircleRelations => _userCircleRelations;
@@ -30,5 +36,39 @@ namespace Photography.Services.Post.Domain.AggregatesModel.CircleAggregate
         // 圈子的帖子
         private readonly List<PostAggregate.Post> _posts = null;
         public IReadOnlyCollection<PostAggregate.Post> Posts => _posts;
+
+        public Circle(string name, string description, bool verifyJoin, string backgroundImage, Guid ownerId)
+        {
+            Name = name;
+            Description = description;
+            VerifyJoin = verifyJoin;
+            BackgroundImage = backgroundImage;
+            OwnerId = ownerId;
+        }
+
+        public void Update(string name, string description, bool verifyJoin, string backgroundImage, Guid ownerId)
+        {
+            if (ownerId != OwnerId)
+                throw new ClientException("操作失败", new List<string> { $"Circle {Id} does not belong to user {ownerId}" });
+
+            Name = name;
+            Description = description;
+            VerifyJoin = verifyJoin;
+            BackgroundImage = backgroundImage;
+        }
+
+        public void Delete(Guid ownerId)
+        {
+            if (ownerId != OwnerId)
+                throw new ClientException("操作失败", new List<string> { $"Circle {Id} does not belong to user {ownerId}" });
+
+            AddCircleDeletedDomainEvent();
+        }
+
+        private void AddCircleDeletedDomainEvent()
+        {
+            var @event = new CircleDeletedDomainEvent(Id);
+            AddDomainEvent(@event);
+        }
     }
 }

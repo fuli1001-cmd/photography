@@ -23,67 +23,26 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Posts",
+                name: "Circles",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    Text = table.Column<string>(nullable: true),
-                    CreatedTime = table.Column<double>(nullable: false),
-                    UpdatedTime = table.Column<double>(nullable: false),
-                    PostType = table.Column<int>(nullable: false),
-                    UserId = table.Column<Guid>(nullable: false),
-                    Latitude = table.Column<double>(nullable: true),
-                    Longitude = table.Column<double>(nullable: true),
-                    LocationName = table.Column<string>(nullable: true),
-                    Address = table.Column<string>(nullable: true),
-                    CityCode = table.Column<string>(nullable: true),
-                    LikeCount = table.Column<int>(nullable: false, defaultValue: 0),
-                    ShareCount = table.Column<int>(nullable: false, defaultValue: 0),
-                    CommentCount = table.Column<int>(nullable: false, defaultValue: 0),
-                    Score = table.Column<int>(nullable: false, defaultValue: 0),
-                    Commentable = table.Column<bool>(nullable: true, defaultValue: true),
-                    ForwardType = table.Column<int>(nullable: false, defaultValue: 0),
-                    ShareType = table.Column<int>(nullable: false, defaultValue: 0),
-                    Visibility = table.Column<int>(nullable: false, defaultValue: 0),
-                    ViewPassword = table.Column<string>(nullable: true),
-                    ShowOriginalText = table.Column<bool>(nullable: true, defaultValue: true),
-                    PublicTags = table.Column<string>(nullable: true),
-                    PrivateTag = table.Column<string>(nullable: true),
-                    ForwardedPostId = table.Column<Guid>(nullable: true),
-                    AppointedTime = table.Column<double>(nullable: true),
-                    Price = table.Column<decimal>(nullable: true),
-                    PayerType = table.Column<int>(nullable: true),
-                    AppointmentDealStatus = table.Column<int>(nullable: true),
-                    AppointmentedUserId = table.Column<Guid>(nullable: true),
-                    AppointmentedToPostId = table.Column<Guid>(nullable: true)
+                    Name = table.Column<string>(nullable: false),
+                    Description = table.Column<string>(nullable: true),
+                    VerifyJoin = table.Column<bool>(nullable: false),
+                    BackgroundImage = table.Column<string>(nullable: true),
+                    UserCount = table.Column<int>(nullable: false),
+                    OwnerId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Posts", x => x.Id);
+                    table.PrimaryKey("PK_Circles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Posts_Posts_AppointmentedToPostId",
-                        column: x => x.AppointmentedToPostId,
-                        principalTable: "Posts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Posts_Users_AppointmentedUserId",
-                        column: x => x.AppointmentedUserId,
+                        name: "FK_Circles_Users_OwnerId",
+                        column: x => x.OwnerId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Posts_Posts_ForwardedPostId",
-                        column: x => x.ForwardedPostId,
-                        principalTable: "Posts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Posts_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -126,6 +85,104 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_UserRelations_Users_FollowerId",
                         column: x => x.FollowerId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Posts",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    Text = table.Column<string>(nullable: true),
+                    CreatedTime = table.Column<double>(nullable: false),
+                    UpdatedTime = table.Column<double>(nullable: false),
+                    PostType = table.Column<int>(nullable: false),
+                    UserId = table.Column<Guid>(nullable: false),
+                    Latitude = table.Column<double>(nullable: true),
+                    Longitude = table.Column<double>(nullable: true),
+                    LocationName = table.Column<string>(nullable: true),
+                    Address = table.Column<string>(nullable: true),
+                    CityCode = table.Column<string>(nullable: true),
+                    LikeCount = table.Column<int>(nullable: false, defaultValue: 0),
+                    ShareCount = table.Column<int>(nullable: false, defaultValue: 0),
+                    CommentCount = table.Column<int>(nullable: false, defaultValue: 0),
+                    Score = table.Column<int>(nullable: false, defaultValue: 0),
+                    Commentable = table.Column<bool>(nullable: true, defaultValue: true),
+                    ForwardType = table.Column<int>(nullable: false, defaultValue: 0),
+                    ShareType = table.Column<int>(nullable: false, defaultValue: 0),
+                    Visibility = table.Column<int>(nullable: false, defaultValue: 0),
+                    ViewPassword = table.Column<string>(nullable: true),
+                    ShowOriginalText = table.Column<bool>(nullable: true, defaultValue: true),
+                    PublicTags = table.Column<string>(nullable: true),
+                    PrivateTag = table.Column<string>(nullable: true),
+                    CircleId = table.Column<Guid>(nullable: true),
+                    ForwardedPostId = table.Column<Guid>(nullable: true),
+                    AppointedTime = table.Column<double>(nullable: true),
+                    Price = table.Column<decimal>(nullable: true),
+                    PayerType = table.Column<int>(nullable: true),
+                    AppointmentDealStatus = table.Column<int>(nullable: true),
+                    AppointmentedUserId = table.Column<Guid>(nullable: true),
+                    AppointmentedToPostId = table.Column<Guid>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Posts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Posts_Posts_AppointmentedToPostId",
+                        column: x => x.AppointmentedToPostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Posts_Users_AppointmentedUserId",
+                        column: x => x.AppointmentedUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Posts_Circles_CircleId",
+                        column: x => x.CircleId,
+                        principalTable: "Circles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Posts_Posts_ForwardedPostId",
+                        column: x => x.ForwardedPostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Posts_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserCircleRelations",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    UserId = table.Column<Guid>(nullable: false),
+                    CircleId = table.Column<Guid>(nullable: false),
+                    JoinTime = table.Column<double>(nullable: false),
+                    Topping = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserCircleRelations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserCircleRelations_Circles_CircleId",
+                        column: x => x.CircleId,
+                        principalTable: "Circles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserCircleRelations_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -241,6 +298,21 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Circles_Name",
+                table: "Circles",
+                column: "Name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Circles_OwnerId",
+                table: "Circles",
+                column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Circles_UserCount",
+                table: "Circles",
+                column: "UserCount");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Comments_ParentCommentId",
                 table: "Comments",
                 column: "ParentCommentId");
@@ -271,6 +343,11 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 column: "AppointmentedUserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Posts_CircleId",
+                table: "Posts",
+                column: "CircleId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Posts_ForwardedPostId",
                 table: "Posts",
                 column: "ForwardedPostId");
@@ -298,6 +375,21 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Tags_UserId",
                 table: "Tags",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserCircleRelations_CircleId",
+                table: "UserCircleRelations",
+                column: "CircleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserCircleRelations_JoinTime",
+                table: "UserCircleRelations",
+                column: "JoinTime");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserCircleRelations_UserId",
+                table: "UserCircleRelations",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -340,6 +432,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 name: "Tags");
 
             migrationBuilder.DropTable(
+                name: "UserCircleRelations");
+
+            migrationBuilder.DropTable(
                 name: "UserCommentRelations");
 
             migrationBuilder.DropTable(
@@ -353,6 +448,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Posts");
+
+            migrationBuilder.DropTable(
+                name: "Circles");
 
             migrationBuilder.DropTable(
                 name: "Users");

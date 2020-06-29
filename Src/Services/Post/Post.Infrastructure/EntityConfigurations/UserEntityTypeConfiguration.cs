@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Photography.Services.Post.Domain.AggregatesModel.CircleAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
 using System;
 using System.Collections.Generic;
@@ -26,14 +27,14 @@ namespace Photography.Services.Post.Infrastructure.EntityConfigurations
             var appointmentsNavigation = builder.Metadata.FindNavigation(nameof(User.Appointments));
             appointmentsNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 
-            //UserPostRelations navigation properties
             builder.HasMany(u => u.UserPostRelations).WithOne(pu => pu.User).HasForeignKey(pu => pu.UserId).OnDelete(DeleteBehavior.Restrict);
 
-            //UserCommentRelations navigation properties
             builder.HasMany(u => u.UserCommentRelations).WithOne(pu => pu.User).HasForeignKey(pu => pu.UserId).OnDelete(DeleteBehavior.Restrict);
 
-            //UserCircleRelations navigation properties
             builder.HasMany(u => u.UserCircleRelations).WithOne(pu => pu.User).HasForeignKey(pu => pu.UserId).OnDelete(DeleteBehavior.Restrict);
+
+            var circlesNavigation = builder.Metadata.FindNavigation(nameof(User.Circles));
+            circlesNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 
             ////followers navigation properties
             //var followersNavigation = builder.Metadata.FindNavigation(nameof(User.Followers));

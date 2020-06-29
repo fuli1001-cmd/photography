@@ -1,8 +1,10 @@
 ﻿using Arise.DDD.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Photography.Services.Post.Domain.AggregatesModel.CircleAggregate;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Photography.Services.Post.Infrastructure.Repositories
 {
@@ -11,6 +13,11 @@ namespace Photography.Services.Post.Infrastructure.Repositories
         public CircleRepository(PostContext context) : base(context)
         {
 
+        }
+
+        public async Task<Circle> GetCircleByNameAsync(string name)
+        {
+            return await _context.Circles.SingleOrDefaultAsync(c => c.Name.ToLower() == name.ToLower());
         }
     }
 }

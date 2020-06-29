@@ -20,6 +20,7 @@ using Photography.Services.Post.API.Query.Extensions;
 using Arise.DDD.API.Paging;
 using Photography.Services.Post.API.Query.EF.Models;
 using Microsoft.Extensions.Configuration;
+using Arise.DDD.Domain.Exceptions;
 
 namespace Photography.Services.Post.API.Query.EF
 {
@@ -44,7 +45,7 @@ namespace Photography.Services.Post.API.Query.EF
         /// </summary>
         /// <param name="userId">用户id</param>
         /// <returns></returns>
-        public async Task<PagedList<PostViewModel>> GetUserPostsAsync(Guid userId, string privateTag, PagingParameters pagingParameters)
+        public async Task<PagedList<PostViewModel>> GetUserPostsAsync(Guid userId, string privateTag, string key, PagingParameters pagingParameters)
         {
             var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
@@ -53,7 +54,7 @@ namespace Photography.Services.Post.API.Query.EF
             if (myId != Guid.Empty && myId == userId)
             {
                 // 查看自己的帖子时，返回所有的自己的帖子
-                queryablePosts = _postContext.Posts;
+                queryablePosts = _postContext.Posts.Where(p => p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post);
             }
             else
             {
@@ -61,15 +62,26 @@ namespace Photography.Services.Post.API.Query.EF
                 queryablePosts = GetAvailablePosts(myId);
             }
 
+            // 如果帖子种类不为空， 按帖子种类筛选一下
+            if (!string.IsNullOrWhiteSpace(privateTag))
+                queryablePosts = queryablePosts.Where(p => p.PrivateTag != null && p.PrivateTag.ToLower() == privateTag.ToLower());
+
+            // 有搜索关键字时，搜索昵称、文案和标签
+            if (!string.IsNullOrWhiteSpace(key))
+            {
+                key = key.ToLower();
+                queryablePosts = from p in queryablePosts
+                                 where p.User.Nickname.ToLower().Contains(key) 
+                                 || (p.Text != null && p.Text.ToLower().Contains(key)) 
+                                 || (p.PublicTags != null && p.PublicTags.ToLower().Contains(key))
+                                 select p;
+            }
+
             var queryableUserPosts = from p in queryablePosts
                                      join u in _postContext.Users
                                      on p.UserId equals u.Id
-                                     where p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post && p.UserId == userId
+                                     where p.UserId == userId
                                      select new UserPost { Post = p, User = u };
-
-            // 如果帖子种类不为空， 按帖子种类筛选一下
-            if (!string.IsNullOrWhiteSpace(privateTag))
-                queryableUserPosts = queryableUserPosts.Where(up => up.Post.PrivateTag.ToLower() == privateTag.ToLower());
 
             var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.UpdatedTime);
 
@@ -251,14 +263,18 @@ namespace Photography.Services.Post.API.Query.EF
 
             var queryablePosts = GetAvailablePosts(myId);
 
-            if (!string.IsNullOrEmpty(key))
+            // 有搜索关键字时，搜索昵称、文案和标签
+            if (!string.IsNullOrWhiteSpace(key))
             {
                 key = key.ToLower();
                 queryablePosts = from p in queryablePosts
-                                 where p.User.Nickname.ToLower().Contains(key) || p.Text.ToLower().Contains(key) || p.PublicTags.ToLower().Contains(key)
+                                 where p.User.Nickname.ToLower().Contains(key)
+                                 || (p.Text != null && p.Text.ToLower().Contains(key))
+                                 || (p.PublicTags != null && p.PublicTags.ToLower().Contains(key))
                                  select p;
             }
 
+            // 搜索城市代码
             if (!string.IsNullOrEmpty(cityCode))
                 queryablePosts = queryablePosts.Where(p => p.CityCode != null && p.CityCode.ToLower() == cityCode.ToLower());
 
@@ -271,6 +287,12 @@ namespace Photography.Services.Post.API.Query.EF
 
         public async Task<PagedList<PostViewModel>> GetPostsByPublicTagAsync(string tag, PagingParameters pagingParameters)
         {
+            if (string.IsNullOrWhiteSpace(tag))
+            {
+                _logger.LogError("GetPostsByPublicTagAsync: tag is empty.");
+                throw new ClientException("操作失败", new List<string> { "Can't get posts by empty tag" });
+            }
+
             var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
 
@@ -278,7 +300,7 @@ namespace Photography.Services.Post.API.Query.EF
             var queryablePosts = GetAvailablePosts(myId);
 
             // 具有该标签的帖子
-            queryablePosts = queryablePosts.Where(p => p.PublicTags.ToLower().Contains(tag.ToLower()));
+            queryablePosts = queryablePosts.Where(p => p.PublicTags != null && p.PublicTags.ToLower() == tag.ToLower());
 
             var queryableUserPosts = GetAvailableUserPosts(queryablePosts);
 

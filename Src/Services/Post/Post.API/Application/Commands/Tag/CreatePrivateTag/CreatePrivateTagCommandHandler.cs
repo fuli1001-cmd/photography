@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Arise.DDD.Domain.Exceptions;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Photography.Services.Post.Domain.AggregatesModel.TagAggregate;
@@ -29,8 +30,15 @@ namespace Photography.Services.Post.API.Application.Commands.Tag.CreatePrivateTa
         public async Task<bool> Handle(CreatePrivateTagCommand request, CancellationToken cancellationToken)
         {
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var tag = new Domain.AggregatesModel.TagAggregate.Tag(request.Name, myId);
+
+            // 同一用户不能创建重复名称的类别
+            var tag = await _tagRepository.GetUserPrivateTagByName(myId, request.Name);
+            if (tag != null)
+                throw new ClientException("类别已存在");
+
+            tag = new Domain.AggregatesModel.TagAggregate.Tag(request.Name, myId);
             _tagRepository.Add(tag);
+
             return await _tagRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
         }
     }

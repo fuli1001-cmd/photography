@@ -17,5 +17,26 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserCircleRelationAgg
 
         public Guid CircleId { get; private set; }
         public Circle Circle { get; private set; }
+
+        // 入圈时间
+        public double JoinTime { get; private set; }
+        
+        // 置顶显示该圈
+        public bool Topping { get; private set; }
+
+        public UserCircleRelation()
+        {
+            JoinTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+        }
+
+        public void ToppingCircle()
+        {
+            Topping = true;
+        }
+
+        public void UnToppingCircle()
+        {
+            Topping = false;
+        }
     }
 }
