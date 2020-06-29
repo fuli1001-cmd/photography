@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Photography.Services.Post.API.Application.Commands.Circle.CreateCircle;
 using Photography.Services.Post.API.Application.Commands.Circle.DeleteCircle;
+using Photography.Services.Post.API.Application.Commands.Circle.JoinCircle;
 using Photography.Services.Post.API.Application.Commands.Circle.ToppingCircle;
 using Photography.Services.Post.API.Application.Commands.Circle.UpdateCircle;
 using Photography.Services.Post.API.Query.Interfaces;
@@ -74,7 +75,7 @@ namespace Photography.Services.Post.API.Controllers
         }
 
         /// <summary>
-        /// 分页获取圈子列表
+        /// 分页获取圈子列表，按圈子内人数倒序排列
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -87,7 +88,7 @@ namespace Photography.Services.Post.API.Controllers
         }
 
         /// <summary>
-        /// 分页获取我的圈子列表
+        /// 分页获取我的圈子列表，按置顶、入圈时间倒序排列
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -107,6 +108,20 @@ namespace Photography.Services.Post.API.Controllers
         [Route("topping")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ResponseWrapper>> ToppingCircleAsync([FromBody] ToppingCircleCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 加入圈子
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("join")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ResponseWrapper>> JoinCircleAsync([FromBody] JoinCircleCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
