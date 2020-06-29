@@ -479,6 +479,16 @@
             <param name="pagingParameters">分页参数</param>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetCirclePostsAsync(System.Guid,System.String,System.String,Arise.DDD.API.Paging.PagingParameters)">
+            <summary>
+            圈子内的帖子
+            </summary>
+            <param name="circleId">圈子id</param>
+            <param name="type">查询类型：good - 精华，hot - 热门， newest - 最新</param>
+            <param name="key">搜索关键字</param>
+            <param name="pagingParameters">分页参数</param>
+            <returns></returns>
+        </member>
         <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetLikedPostsAsync(Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             我赞过的帖子

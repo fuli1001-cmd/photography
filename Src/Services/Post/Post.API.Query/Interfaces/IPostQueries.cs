@@ -37,5 +37,16 @@ namespace Photography.Services.Post.API.Query.Interfaces
 
         // 按公有标签获取帖子
         Task<PagedList<PostViewModel>> GetPostsByPublicTagAsync(string tag, PagingParameters pagingParameters);
+
+        /// <summary>
+        /// 指定圈子的帖子
+        /// </summary>
+        /// <param name="circleId">圈子id</param>
+        /// <param name="onlyGood">只查询精华帖</param>
+        /// <param name="key">搜索关键字</param>
+        /// <param name="sortBy">排序字段，score：按帖子分数排序，其它：按更新时间排序</param>
+        /// <param name="pagingParameters">分页参数</param>
+        /// <returns></returns>
+        Task<PagedList<PostViewModel>> GetCirclePostsAsync(Guid circleId, bool onlyGood, string key, string sortBy, PagingParameters pagingParameters);
     }
 }

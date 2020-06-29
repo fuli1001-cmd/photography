@@ -136,6 +136,33 @@ namespace Photography.Services.Post.API.Controllers
         }
 
         /// <summary>
+        /// 圈子内的帖子
+        /// </summary>
+        /// <param name="circleId">圈子id</param>
+        /// <param name="type">查询类型：good - 精华，hot - 热门， newest - 最新</param>
+        /// <param name="key">搜索关键字</param>
+        /// <param name="pagingParameters">分页参数</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("circle/{circleId}/{type}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
+        public async Task<ActionResult<PagedResponseWrapper>> GetCirclePostsAsync(Guid circleId, string type, [FromQuery(Name = "key")] string key, [FromQuery] PagingParameters pagingParameters)
+        {
+            PagedList<PostViewModel> posts = null;
+
+            type = type.ToLower();
+            if (type == "good")
+                posts = await _postQueries.GetCirclePostsAsync(circleId, true, key, string.Empty, pagingParameters);
+            else if (type == "hot")
+                posts = await _postQueries.GetCirclePostsAsync(circleId, false, key, "score", pagingParameters);
+            else if (type == "newest")
+                posts = await _postQueries.GetCirclePostsAsync(circleId, false, key, string.Empty, pagingParameters);
+
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
+        }
+
+        /// <summary>
         /// 我赞过的帖子
         /// </summary>
         /// <param name="pagingParameters">分页参数</param>

@@ -54,6 +54,9 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         // 帖子类别
         public string PrivateTag { get; private set; }
 
+        // 圈子里的精华帖子
+        public bool CircleGood { get; private set; }
+
         // 帖子的圈子
         public Guid? CircleId { get; private set; }
         public Circle Circle { get; private set; }

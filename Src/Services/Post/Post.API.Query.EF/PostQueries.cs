@@ -300,11 +300,49 @@ namespace Photography.Services.Post.API.Query.EF
             var queryablePosts = GetAvailablePosts(myId);
 
             // 具有该标签的帖子
-            queryablePosts = queryablePosts.Where(p => p.PublicTags != null && p.PublicTags.ToLower() == tag.ToLower());
+            queryablePosts = queryablePosts.Where(p => p.PublicTags != null && p.PublicTags.ToLower().Contains(tag.ToLower()));
 
             var queryableUserPosts = GetAvailableUserPosts(queryablePosts);
 
             var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.UpdatedTime);
+
+            return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
+        }
+
+        public async Task<PagedList<PostViewModel>> GetCirclePostsAsync(Guid circleId, bool onlyGood, string key, string sortBy, PagingParameters pagingParameters)
+        {
+            var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
+
+            // 可见的帖子
+            var queryablePosts = GetAvailablePosts(myId);
+
+            // 圈子的帖子
+            queryablePosts = queryablePosts.Where(p => p.CircleId == circleId);
+
+            // 只查询精华帖
+            if (onlyGood)
+                queryablePosts = queryablePosts.Where(p => p.CircleGood);
+
+            // 有搜索关键字时，搜索昵称、文案和标签
+            if (!string.IsNullOrWhiteSpace(key))
+            {
+                key = key.ToLower();
+                queryablePosts = from p in queryablePosts
+                                 where p.User.Nickname.ToLower().Contains(key)
+                                 || (p.Text != null && p.Text.ToLower().Contains(key))
+                                 || (p.PublicTags != null && p.PublicTags.ToLower().Contains(key))
+                                 select p;
+            }
+
+            if (!string.IsNullOrWhiteSpace(sortBy) && sortBy.ToLower() == "score")
+                queryablePosts = queryablePosts.OrderBy(p => p.Score);
+            else
+                queryablePosts = queryablePosts.OrderBy(p => p.UpdatedTime);
+
+            var queryableUserPosts = GetAvailableUserPosts(queryablePosts);
+
+            var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId);
 
             return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
         }
