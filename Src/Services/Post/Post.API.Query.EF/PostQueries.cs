@@ -421,7 +421,7 @@ namespace Photography.Services.Post.API.Query.EF
                        {
                            Id = up.Post.ForwardedPost.Id,
                            Text = up.Post.ForwardedPost.Text,
-                           PublicTags = up.Post.PublicTags,
+                           PublicTags = up.Post.ForwardedPost.PublicTags,
                            User = new BaseUserViewModel
                            {
                                Id = up.Post.ForwardedPost.User.Id,
@@ -486,16 +486,19 @@ namespace Photography.Services.Post.API.Query.EF
         /// <param name="postViewModel"></param>
         private void SetAttachment(PostViewModel postViewModel)
         {
-            // set ForwardedPost attachment width and height
-            if (postViewModel.ForwardedPost != null)
+            if (postViewModel != null)
             {
-                foreach (var attachment in postViewModel.ForwardedPost.PostAttachments)
+                // set ForwardedPost attachment width and height
+                if (postViewModel.ForwardedPost != null)
+                {
+                    foreach (var attachment in postViewModel.ForwardedPost.PostAttachments)
+                        attachment.SetProperties();
+                }
+
+                // set attachment width and height
+                foreach (var attachment in postViewModel.PostAttachments)
                     attachment.SetProperties();
             }
-
-            // set attachment width and height
-            foreach (var attachment in postViewModel.PostAttachments)
-                attachment.SetProperties();
         }
     }
 }

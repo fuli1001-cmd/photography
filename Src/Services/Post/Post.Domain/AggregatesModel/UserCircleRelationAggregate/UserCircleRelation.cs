@@ -27,6 +27,13 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserCircleRelationAgg
         public UserCircleRelation()
         {
             JoinTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+            Topping = false;
+        }
+
+        public UserCircleRelation(Guid userId, Guid circleId) : this()
+        {
+            UserId = userId;
+            CircleId = circleId;
         }
 
         public void ToppingCircle()

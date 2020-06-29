@@ -104,6 +104,11 @@
             圈子ID
             </summary>
         </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Circle.JoinCircle.JoinCircleCommand.CircleId">
+            <summary>
+            圈子ID
+            </summary>
+        </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.Circle.ToppingCircle.ToppingCircleCommand.CircleId">
             <summary>
             圈子ID
@@ -361,13 +366,13 @@
         </member>
         <member name="M:Photography.Services.Post.API.Controllers.CirclesController.GetCirclesAsync(Arise.DDD.API.Paging.PagingParameters)">
             <summary>
-            分页获取圈子列表
+            分页获取圈子列表，按圈子内人数倒序排列
             </summary>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.Post.API.Controllers.CirclesController.GetMyCirclesAsync(Arise.DDD.API.Paging.PagingParameters)">
             <summary>
-            分页获取我的圈子列表
+            分页获取我的圈子列表，按置顶、入圈时间倒序排列
             </summary>
             <returns></returns>
         </member>
@@ -375,6 +380,13 @@
             <summary>
             置顶圈子
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.CirclesController.JoinCircleAsync(Photography.Services.Post.API.Application.Commands.Circle.JoinCircle.JoinCircleCommand)">
+            <summary>
+            加入圈子
+            </summary>
+            <param name="command"></param>
             <returns></returns>
         </member>
         <member name="T:Photography.Services.Post.API.Controllers.CommentsController">
