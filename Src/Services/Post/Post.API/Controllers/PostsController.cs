@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Photography.Services.Post.API.Application.Commands.Post.DeletePost;
 using Photography.Services.Post.API.Application.Commands.Post.ForwardPosts;
+using Photography.Services.Post.API.Application.Commands.Post.MarkGoodPost;
 using Photography.Services.Post.API.Application.Commands.Post.PublishPost;
 using Photography.Services.Post.API.Application.Commands.Post.SharePost;
 using Photography.Services.Post.API.Application.Commands.Post.ToggleLikePost;
@@ -160,6 +161,20 @@ namespace Photography.Services.Post.API.Controllers
                 posts = await _postQueries.GetCirclePostsAsync(circleId, false, key, string.Empty, pagingParameters);
 
             return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
+        }
+
+        /// <summary>
+        /// 设置帖子为精华或取消设置为精华
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("circlegood")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ResponseWrapper>> MarkCircleGoodAsync([FromBody] MarkGoodPostCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
 
         /// <summary>

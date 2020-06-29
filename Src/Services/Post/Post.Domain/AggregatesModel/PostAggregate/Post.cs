@@ -304,6 +304,18 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             PrivateTag = null;
         }
 
+        // 设为精华帖
+        public void MarkCircleGood()
+        {
+            CircleGood = true;
+        }
+
+        // 取消精华帖
+        public void UnMarkCircleGood()
+        {
+            CircleGood = false;
+        }
+
         private void AddDeletedPostDomainEvent()
         {
             var commentIds = _comments.Select(c => c.Id).ToList();

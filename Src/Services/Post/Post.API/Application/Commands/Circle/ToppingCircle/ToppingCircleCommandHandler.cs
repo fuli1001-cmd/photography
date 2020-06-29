@@ -32,18 +32,25 @@ namespace Photography.Services.Post.API.Application.Commands.Circle.ToppingCircl
         {
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-            // 原来置顶的圈子
-            var oldToppingRelation = await _userCircleRelationRepository.GetToppingCircleRelationAsync(myId);
-            if (oldToppingRelation.CircleId == request.CircleId)
-                return true;
-
-            // 需要置顶的圈子
+            // 需要置顶或取消置顶的圈子
             var relation = await _userCircleRelationRepository.GetRelationAsync(request.CircleId, myId);
             if (relation == null)
-                throw new ClientException("操作失败", new List<string> { $"User {myId} is not in circle {request.CircleId}"});
+                throw new ClientException("操作失败", new List<string> { $"User {myId} is not in circle {request.CircleId}" });
 
-            relation.ToppingCircle();
-            oldToppingRelation.UnToppingCircle();
+            if (request.Topping)
+            {
+                // 原来置顶的圈子
+                var oldToppingRelation = await _userCircleRelationRepository.GetToppingCircleRelationAsync(myId);
+                if (oldToppingRelation.CircleId == request.CircleId)
+                    return true;
+
+                relation.ToppingCircle();
+                oldToppingRelation.UnToppingCircle();
+            }
+            else
+            {
+                relation.UnToppingCircle();
+            }
 
             return await _userCircleRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
         }
