@@ -11,5 +11,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.TagAggregate
         Task<List<Tag>> GetPublicTagsByNames(List<string> names);
 
         Task<Tag> GetUserPrivateTagByName(Guid userId, string name);
+
+        Task<int> GetUserPrivateTagCount(Guid userId);
     }
 }

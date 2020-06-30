@@ -74,6 +74,16 @@
             地址
             </summary>
         </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Circle.AddCircleMember.AddCircleMemberCommand.CircleId">
+            <summary>
+            圈子ID
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Circle.AddCircleMember.AddCircleMemberCommand.UserId">
+            <summary>
+            要加入圈子的用户id
+            </summary>
+        </member>
         <member name="T:Photography.Services.Post.API.Application.Commands.Circle.CreateCircle.CreateCircleCommand">
             <summary>
             创建圈子的命令
@@ -109,9 +119,19 @@
             圈子ID
             </summary>
         </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Circle.JoinCircle.JoinCircleCommand.Description">
+            <summary>
+            申请描述
+            </summary>
+        </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.Circle.ToppingCircle.ToppingCircleCommand.CircleId">
             <summary>
             圈子ID
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Circle.ToppingCircle.ToppingCircleCommand.Topping">
+            <summary>
+            置顶或取消置顶
             </summary>
         </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.Circle.UpdateCircle.UpdateCircleCommand.Id">
@@ -162,6 +182,16 @@
         <member name="P:Photography.Services.Post.API.Application.Commands.Comment.ToggleLikeComment.ToggleLikeCommentCommand.CommentId">
             <summary>
             要赞的评论id
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Post.MarkGoodPost.MarkGoodPostCommand.PostId">
+            <summary>
+            帖子id
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Post.MarkGoodPost.MarkGoodPostCommand.Good">
+            <summary>
+            是否设为精华
             </summary>
         </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.Post.PublishPost.PublishPostCommand.Attachments">
@@ -389,6 +419,13 @@
             <param name="command"></param>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.Post.API.Controllers.CirclesController.AddCircleMemberAsync(Photography.Services.Post.API.Application.Commands.Circle.AddCircleMember.AddCircleMemberCommand)">
+            <summary>
+            圈子管理员加用户入圈
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
         <member name="T:Photography.Services.Post.API.Controllers.CommentsController">
             <summary>
             帖子控制器
@@ -487,6 +524,13 @@
             <param name="type">查询类型：good - 精华，hot - 热门， newest - 最新</param>
             <param name="key">搜索关键字</param>
             <param name="pagingParameters">分页参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.MarkCircleGoodAsync(Photography.Services.Post.API.Application.Commands.Post.MarkGoodPost.MarkGoodPostCommand)">
+            <summary>
+            设置帖子为精华或取消设置为精华
+            </summary>
+            <param name="command"></param>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetLikedPostsAsync(Arise.DDD.API.Paging.PagingParameters)">

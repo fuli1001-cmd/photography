@@ -36,6 +36,10 @@ namespace Photography.Services.Post.API.Application.Commands.Tag.CreatePrivateTa
             if (tag != null)
                 throw new ClientException("类别已存在");
 
+            var privateTagCount = await _tagRepository.GetUserPrivateTagCount(myId);
+            if (privateTagCount >= 10)
+                throw new ClientException("圈子数量已达上限");
+
             tag = new Domain.AggregatesModel.TagAggregate.Tag(request.Name, myId);
             _tagRepository.Add(tag);
 

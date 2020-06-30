@@ -26,5 +26,10 @@ namespace Photography.Services.Post.Infrastructure.Repositories
         {
             return await _context.Tags.Where(t => t.UserId == userId && name.ToLower() == t.Name.ToLower()).SingleOrDefaultAsync();
         }
+
+        public async Task<int> GetUserPrivateTagCount(Guid userId)
+        {
+            return await _context.Tags.Where(t => t.UserId == userId).CountAsync();
+        }
     }
 }
