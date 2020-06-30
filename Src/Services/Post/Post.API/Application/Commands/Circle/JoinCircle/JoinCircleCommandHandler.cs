@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
+using Photography.Services.Post.API.Application.Commands.Circle.AddCircleMember;
 using Photography.Services.Post.Domain.AggregatesModel.CircleAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserCircleRelationAggregate;
 using System;
@@ -20,6 +21,7 @@ namespace Photography.Services.Post.API.Application.Commands.Circle.JoinCircle
         private readonly ICircleRepository _circleRepository;
         private readonly IUserCircleRelationRepository _userCircleRelationRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly AddCircleMemberCommandHandler _addCircleMemberCommandHandler;
         private readonly ILogger<JoinCircleCommandHandler> _logger;
         private readonly IServiceProvider _serviceProvider;
 
@@ -28,12 +30,14 @@ namespace Photography.Services.Post.API.Application.Commands.Circle.JoinCircle
         public JoinCircleCommandHandler(ICircleRepository circleRepository,
             IUserCircleRelationRepository userCircleRelationRepository,
             IHttpContextAccessor httpContextAccessor,
+            AddCircleMemberCommandHandler addCircleMemberCommandHandler,
             IServiceProvider serviceProvider,
             ILogger<JoinCircleCommandHandler> logger)
         {
             _circleRepository = circleRepository ?? throw new ArgumentNullException(nameof(circleRepository));
             _userCircleRelationRepository = userCircleRelationRepository ?? throw new ArgumentNullException(nameof(userCircleRelationRepository));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+            _addCircleMemberCommandHandler = addCircleMemberCommandHandler ?? throw new ArgumentNullException(nameof(addCircleMemberCommandHandler));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -53,27 +57,29 @@ namespace Photography.Services.Post.API.Application.Commands.Circle.JoinCircle
                 if (circle.VerifyJoin)
                 {
                     // 发送用户申请入圈事件
-                    await SendAppliedJoinCircleEventAsync(myId, circle.Id, circle.Name);
+                    await SendAppliedJoinCircleEventAsync(myId, circle);
                     return true;
                 }
 
                 // 直接入圈，创建user circle关系
-                userCircle = new UserCircleRelation(myId, request.CircleId);
-                _userCircleRelationRepository.Add(userCircle);
-                return await _userCircleRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
+                await _addCircleMemberCommandHandler.AddCircleMemberAsync(circle, myId, cancellationToken);
+                //userCircle = new UserCircleRelation(myId, request.CircleId);
+                //_userCircleRelationRepository.Add(userCircle);
+                //return await _userCircleRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
             }
 
             return true;
         }
 
         // 发送用户申请入圈事件
-        private async Task SendAppliedJoinCircleEventAsync(Guid myId, Guid circleId, string circleName)
+        private async Task SendAppliedJoinCircleEventAsync(Guid myId, Domain.AggregatesModel.CircleAggregate.Circle circle)
         {
             var @event = new AppliedJoinCircleEvent
             {
-                UserId = myId,
-                CircleId = circleId,
-                CircleName = circleName
+                ApplyUserId = myId,
+                CircleOwnerId = circle.OwnerId,
+                CircleId = circle.Id,
+                CircleName = circle.Name
             };
 
             _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));

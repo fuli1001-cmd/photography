@@ -28,19 +28,38 @@ namespace Photography.Services.Post.API.Query.EF
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// 圈子详情
+        /// </summary>
+        /// <param name="circleId"></param>
+        /// <returns></returns>
         public async Task<CircleViewModel> GetCircleAsync(Guid circleId)
         {
             var queryableCircle = _dbContext.Circles.Where(c => c.Id == circleId);
-            return await GetCircleViewModel(queryableCircle).SingleOrDefaultAsync();
+            var result = await GetCircleViewModel(queryableCircle).SingleOrDefaultAsync();
+            SetImageProperties(result.BackgroundImage);
+            return result;
         }
 
+        /// <summary>
+        /// 分页获取所有的圈子
+        /// </summary>
+        /// <param name="pagingParameters"></param>
+        /// <returns></returns>
         public async Task<PagedList<CircleViewModel>> GetCirclesAsync(PagingParameters pagingParameters)
         {
             var queryableCircle = _dbContext.Circles.OrderByDescending(c => c.UserCount);
             var queryableDto = GetCircleViewModel(queryableCircle);
-            return await PagedList<CircleViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
+            var result = await PagedList<CircleViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
+            result.ForEach(c => SetImageProperties(c.BackgroundImage));
+            return result;
         }
 
+        /// <summary>
+        /// 分页获取我的圈子
+        /// </summary>
+        /// <param name="pagingParameters"></param>
+        /// <returns></returns>
         public async Task<PagedList<CircleViewModel>> GetMyCirclesAsync(PagingParameters pagingParameters)
         {
             var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
@@ -54,19 +73,48 @@ namespace Photography.Services.Post.API.Query.EF
             
             var queryableDto = GetCircleViewModel(queryableCircle);
 
-            return await PagedList<CircleViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
+            var result = await PagedList<CircleViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
+
+            result.ForEach(c => SetImageProperties(c.BackgroundImage));
+
+            return result;
         }
 
         private IQueryable<CircleViewModel> GetCircleViewModel(IQueryable<Circle> queryableCircle)
         {
+            var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
+
             return queryableCircle.Select(c => new CircleViewModel
             {
                 Id = c.Id,
                 Name = c.Name,
                 Description = c.Description,
                 VerifyJoin = c.VerifyJoin,
-                BackgroundImage = c.BackgroundImage
+                BackgroundImage = new ImageViewModel { Name = c.BackgroundImage },
+                OwnerId = c.OwnerId,
+                UserCount = c.UserCount,
+                IsInCircle = myId == Guid.Empty ? false : c.UserCircleRelations.Any(uc => uc.UserId == myId),
+                Topping = c.UserCircleRelations.Any(uc => uc.UserId == myId) ? c.UserCircleRelations.SingleOrDefault(uc => uc.UserId == myId).Topping : false
             });
+        }
+
+        /// <summary>
+        /// 设置图片宽高属性
+        /// </summary>
+        /// <param name="image"></param>
+        private void SetImageProperties(ImageViewModel image)
+        {
+            var sections = image.Name.Split('$');
+            try
+            {
+                image.Width = int.Parse(sections[1]);
+                image.Height = int.Parse(sections[2]);
+            }
+            catch
+            {
+
+            }
         }
     }
 }

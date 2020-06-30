@@ -30,6 +30,11 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserCircleRelationAgg
             Topping = false;
         }
 
+        public UserCircleRelation(Guid userId) : this()
+        {
+            UserId = userId;
+        }
+
         public UserCircleRelation(Guid userId, Guid circleId) : this()
         {
             UserId = userId;

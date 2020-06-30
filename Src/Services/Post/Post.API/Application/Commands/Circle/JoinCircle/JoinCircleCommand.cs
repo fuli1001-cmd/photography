@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Photography.Services.Post.API.Application.Commands.Circle.JoinCircle
 {
+    /// <summary>
+    /// 申请加圈命令
+    /// </summary>
     public class JoinCircleCommand : IRequest<bool>
     {
         /// <summary>

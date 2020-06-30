@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Photography.Services.Post.API.Application.Commands.Circle.AddCircleMember
 {
+    /// <summary>
+    /// 圈主将用户加入圈子的命令
+    /// </summary>
     public class AddCircleMemberCommand : IRequest<bool>
     {
         /// <summary>

@@ -33,6 +33,10 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
         // 评论类容
         public string CommentText { get; private set; }
 
+        public Guid? CircleId { get; private set; }
+
+        public string CircleName { get; private set; }
+
         public Event()
         {
             CreatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
@@ -58,6 +62,8 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
         SharePost, // 分享帖子
         ReplyComment, // 回复评论
         LikeComment, // 点赞评论
-        Follow // 关注
+        Follow, // 关注
+        ApplyJoinCircle, // 申请加圈
+        JoinCircle // 加入圈子 
     }
 }

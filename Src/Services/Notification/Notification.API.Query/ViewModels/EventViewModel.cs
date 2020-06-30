@@ -24,5 +24,9 @@ namespace Photography.Services.Notification.API.Query.ViewModels
         public Guid? CommentId { get; set; }
 
         public string CommentText { get; set; }
+
+        public Guid? CircleId { get; set; }
+
+        public string CircleName { get; set; }
     }
 }

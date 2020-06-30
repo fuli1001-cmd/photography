@@ -57,7 +57,9 @@ namespace Photography.Services.Notification.Infrastructure.Queries
                                    CreatedTime = e.CreatedTime,
                                    PostId = e.PostId,
                                    CommentId = e.CommentId,
-                                   CommentText = e.CommentText
+                                   CommentText = e.CommentText,
+                                   CircleId = e.CircleId,
+                                   CircleName = e.CircleName
                                };
 
             return await PagedList<EventViewModel>.ToPagedListAsync(queryableDto, pagingParameters);

@@ -39,6 +39,8 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public string PublicTags { get; set; }
         // 帖子类别
         public string PrivateTag { get; set; }
+        // 圈子
+        public PostCircleViewModel Circle { get; set; }
 
         public PostUserViewModel User { get; set; }
         public ForwardedPostViewModel ForwardedPost { get; set; }

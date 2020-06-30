@@ -82,10 +82,11 @@ namespace Photography.Services.Post.API.Controllers
         [HttpGet]
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
         public async Task<ActionResult<ResponseWrapper>> GetCirclesAsync([FromQuery] PagingParameters pagingParameters)
         {
             var result = await _circleQueries.GetCirclesAsync(pagingParameters);
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(result));
         }
 
         /// <summary>
@@ -98,7 +99,7 @@ namespace Photography.Services.Post.API.Controllers
         public async Task<ActionResult<ResponseWrapper>> GetMyCirclesAsync([FromQuery] PagingParameters pagingParameters)
         {
             var result = await _circleQueries.GetMyCirclesAsync(pagingParameters);
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(result));
         }
 
         /// <summary>
@@ -115,7 +116,7 @@ namespace Photography.Services.Post.API.Controllers
         }
 
         /// <summary>
-        /// 加入圈子
+        /// 用户申请或直接加入圈子（取决于圈子是否需要入圈审核）
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>

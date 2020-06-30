@@ -429,6 +429,12 @@ namespace Photography.Services.Post.API.Query.EF
                        Visibility = up.Post.Visibility,
                        PublicTags = up.Post.PublicTags,
                        PrivateTag = up.Post.PrivateTag,
+                       Circle = up.Post.Circle == null ? null : new PostCircleViewModel
+                       { 
+                           Id = up.Post.Circle.Id, 
+                           Name = up.Post.Circle.Name,
+                           OwnerId = up.Post.Circle.OwnerId
+                       },
                        FriendIds = from upr in _postContext.UserPostRelations
                                    where upr.PostId == up.Post.Id && upr.UserPostRelationType == UserPostRelationType.View
                                    select upr.UserId.Value,
