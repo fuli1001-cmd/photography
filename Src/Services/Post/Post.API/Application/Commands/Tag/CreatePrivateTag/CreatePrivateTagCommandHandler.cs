@@ -34,11 +34,11 @@ namespace Photography.Services.Post.API.Application.Commands.Tag.CreatePrivateTa
             // 同一用户不能创建重复名称的类别
             var tag = await _tagRepository.GetUserPrivateTagByName(myId, request.Name);
             if (tag != null)
-                throw new ClientException("类别已存在");
+                throw new ClientException("相册分类已存在");
 
             var privateTagCount = await _tagRepository.GetUserPrivateTagCount(myId);
             if (privateTagCount >= 10)
-                throw new ClientException("圈子数量已达上限");
+                throw new ClientException("相册分类数量已达上限");
 
             tag = new Domain.AggregatesModel.TagAggregate.Tag(request.Name, myId);
             _tagRepository.Add(tag);
