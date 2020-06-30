@@ -19,9 +19,10 @@ namespace Photography.Services.Post.API.Query.Interfaces
         /// <summary>
         /// 分页获取所有的圈子
         /// </summary>
+        /// <param name="key"></param>
         /// <param name="pagingParameters"></param>
         /// <returns></returns>
-        Task<PagedList<CircleViewModel>> GetCirclesAsync(PagingParameters pagingParameters);
+        Task<PagedList<CircleViewModel>> GetCirclesAsync(string key, PagingParameters pagingParameters);
 
         /// <summary>
         /// 圈子详情

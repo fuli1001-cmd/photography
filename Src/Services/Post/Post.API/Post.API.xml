@@ -143,6 +143,11 @@
             申请描述
             </summary>
         </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Circle.QuitCircle.QuitCircleCommand.CircleId">
+            <summary>
+            圈子ID
+            </summary>
+        </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.Circle.ToppingCircle.ToppingCircleCommand.CircleId">
             <summary>
             圈子ID
@@ -413,10 +418,12 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.CirclesController.GetCirclesAsync(Arise.DDD.API.Paging.PagingParameters)">
+        <member name="M:Photography.Services.Post.API.Controllers.CirclesController.GetCirclesAsync(System.String,Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             分页获取圈子列表，按圈子内人数倒序排列
             </summary>
+            <param name="key">搜索关键字</param>
+            <param name="pagingParameters">分页参数</param>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.Post.API.Controllers.CirclesController.GetMyCirclesAsync(Arise.DDD.API.Paging.PagingParameters)">
@@ -434,6 +441,13 @@
         <member name="M:Photography.Services.Post.API.Controllers.CirclesController.JoinCircleAsync(Photography.Services.Post.API.Application.Commands.Circle.JoinCircle.JoinCircleCommand)">
             <summary>
             用户申请或直接加入圈子（取决于圈子是否需要入圈审核）
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.CirclesController.QuitCircleAsync(Photography.Services.Post.API.Application.Commands.Circle.QuitCircle.QuitCircleCommand)">
+            <summary>
+            用户退出圈子
             </summary>
             <param name="command"></param>
             <returns></returns>

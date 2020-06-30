@@ -44,11 +44,18 @@ namespace Photography.Services.Post.API.Query.EF
         /// <summary>
         /// 分页获取所有的圈子
         /// </summary>
+        /// <param name="key"></param>
         /// <param name="pagingParameters"></param>
         /// <returns></returns>
-        public async Task<PagedList<CircleViewModel>> GetCirclesAsync(PagingParameters pagingParameters)
+        public async Task<PagedList<CircleViewModel>> GetCirclesAsync(string key, PagingParameters pagingParameters)
         {
-            var queryableCircle = _dbContext.Circles.OrderByDescending(c => c.UserCount);
+            IQueryable<Circle> queryableCircle = _dbContext.Circles;
+
+            if (!string.IsNullOrEmpty(key))
+                queryableCircle = _dbContext.Circles.Where(c => c.Name.ToLower().Contains(key.ToLower()));
+
+            queryableCircle = queryableCircle.OrderByDescending(c => c.UserCount);
+
             var queryableDto = GetCircleViewModel(queryableCircle);
             var result = await PagedList<CircleViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
             result.ForEach(c => SetImageProperties(c.BackgroundImage));
@@ -95,7 +102,7 @@ namespace Photography.Services.Post.API.Query.EF
                 OwnerId = c.OwnerId,
                 UserCount = c.UserCount,
                 IsInCircle = myId == Guid.Empty ? false : c.UserCircleRelations.Any(uc => uc.UserId == myId),
-                Topping = c.UserCircleRelations.Any(uc => uc.UserId == myId) ? c.UserCircleRelations.SingleOrDefault(uc => uc.UserId == myId).Topping : false
+                Topping = myId == Guid.Empty ? false : (c.UserCircleRelations.Any(uc => uc.UserId == myId) ? c.UserCircleRelations.SingleOrDefault(uc => uc.UserId == myId).Topping : false)
             });
         }
 

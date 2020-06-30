@@ -44,8 +44,8 @@ namespace Photography.Services.Post.Domain.AggregatesModel.CircleAggregate
             VerifyJoin = verifyJoin;
             BackgroundImage = backgroundImage;
             OwnerId = ownerId;
-            //_userCircleRelations = new List<UserCircleRelation>();
-            //_userCircleRelations.Add(new UserCircleRelation(OwnerId));
+            _userCircleRelations = new List<UserCircleRelation>();
+            _userCircleRelations.Add(new UserCircleRelation(OwnerId));
         }
 
         public void Update(string name, string description, bool verifyJoin, string backgroundImage, Guid ownerId)

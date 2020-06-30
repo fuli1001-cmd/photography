@@ -9,6 +9,7 @@ using Photography.Services.Post.API.Application.Commands.Circle.AddCircleMember;
 using Photography.Services.Post.API.Application.Commands.Circle.CreateCircle;
 using Photography.Services.Post.API.Application.Commands.Circle.DeleteCircle;
 using Photography.Services.Post.API.Application.Commands.Circle.JoinCircle;
+using Photography.Services.Post.API.Application.Commands.Circle.QuitCircle;
 using Photography.Services.Post.API.Application.Commands.Circle.ToppingCircle;
 using Photography.Services.Post.API.Application.Commands.Circle.UpdateCircle;
 using Photography.Services.Post.API.Query.Interfaces;
@@ -78,14 +79,16 @@ namespace Photography.Services.Post.API.Controllers
         /// <summary>
         /// 分页获取圈子列表，按圈子内人数倒序排列
         /// </summary>
+        /// <param name="key">搜索关键字</param>
+        /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
         [HttpGet]
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [AllowAnonymous]
-        public async Task<ActionResult<ResponseWrapper>> GetCirclesAsync([FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<ResponseWrapper>> GetCirclesAsync([FromQuery(Name = "key")] string key, [FromQuery] PagingParameters pagingParameters)
         {
-            var result = await _circleQueries.GetCirclesAsync(pagingParameters);
+            var result = await _circleQueries.GetCirclesAsync(key, pagingParameters);
             return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(result));
         }
 
@@ -124,6 +127,20 @@ namespace Photography.Services.Post.API.Controllers
         [Route("join")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ResponseWrapper>> JoinCircleAsync([FromBody] JoinCircleCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 用户退出圈子
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("quit")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ResponseWrapper>> QuitCircleAsync([FromBody] QuitCircleCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
