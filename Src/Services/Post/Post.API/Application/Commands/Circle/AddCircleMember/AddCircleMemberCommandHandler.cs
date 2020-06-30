@@ -84,7 +84,7 @@ namespace Photography.Services.Post.API.Application.Commands.Circle.AddCircleMem
             return true;
         }
 
-        // 发送用户申请入圈事件
+        // 发送用户已入圈事件
         private async Task SendJoinedCircleEventAsync(Guid joinedUserId, Domain.AggregatesModel.CircleAggregate.Circle circle)
         {
             var @event = new JoinedCircleEvent

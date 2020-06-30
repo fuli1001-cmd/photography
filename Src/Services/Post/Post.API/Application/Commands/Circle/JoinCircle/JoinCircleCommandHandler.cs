@@ -21,7 +21,6 @@ namespace Photography.Services.Post.API.Application.Commands.Circle.JoinCircle
         private readonly ICircleRepository _circleRepository;
         private readonly IUserCircleRelationRepository _userCircleRelationRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly AddCircleMemberCommandHandler _addCircleMemberCommandHandler;
         private readonly ILogger<JoinCircleCommandHandler> _logger;
         private readonly IServiceProvider _serviceProvider;
 
@@ -30,14 +29,12 @@ namespace Photography.Services.Post.API.Application.Commands.Circle.JoinCircle
         public JoinCircleCommandHandler(ICircleRepository circleRepository,
             IUserCircleRelationRepository userCircleRelationRepository,
             IHttpContextAccessor httpContextAccessor,
-            AddCircleMemberCommandHandler addCircleMemberCommandHandler,
             IServiceProvider serviceProvider,
             ILogger<JoinCircleCommandHandler> logger)
         {
             _circleRepository = circleRepository ?? throw new ArgumentNullException(nameof(circleRepository));
             _userCircleRelationRepository = userCircleRelationRepository ?? throw new ArgumentNullException(nameof(userCircleRelationRepository));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
-            _addCircleMemberCommandHandler = addCircleMemberCommandHandler ?? throw new ArgumentNullException(nameof(addCircleMemberCommandHandler));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -61,11 +58,18 @@ namespace Photography.Services.Post.API.Application.Commands.Circle.JoinCircle
                     return true;
                 }
 
-                // 直接入圈，创建user circle关系
-                await _addCircleMemberCommandHandler.AddCircleMemberAsync(circle, myId, cancellationToken);
-                //userCircle = new UserCircleRelation(myId, request.CircleId);
-                //_userCircleRelationRepository.Add(userCircle);
-                //return await _userCircleRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
+                // 无需审核，直接入圈，创建user circle关系
+                //await _addCircleMemberCommandHandler.AddCircleMemberAsync(circle, myId, cancellationToken);
+                userCircle = new UserCircleRelation(myId, request.CircleId);
+                _userCircleRelationRepository.Add(userCircle);
+                if (await _userCircleRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
+                {
+                    await SendJoinedCircleEventAsync(myId, circle);
+                    return true;
+                }
+
+                // 保存失败
+                throw new ApplicationException("操作失败");
             }
 
             return true;
@@ -86,6 +90,22 @@ namespace Photography.Services.Post.API.Application.Commands.Circle.JoinCircle
             await _messageSession.Publish(@event);
 
             _logger.LogInformation("----- Published AppliedJoinCircleEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
+        }
+
+        // 发送用户已入圈事件
+        private async Task SendJoinedCircleEventAsync(Guid joinedUserId, Domain.AggregatesModel.CircleAggregate.Circle circle)
+        {
+            var @event = new JoinedCircleEvent
+            {
+                JoinedUserId = joinedUserId,
+                CircleOwnerId = circle.OwnerId,
+                CircleName = circle.Name
+            };
+
+            _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
+            await _messageSession.Publish(@event);
+
+            _logger.LogInformation("----- Published JoinedCircleEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
         }
     }
 }
