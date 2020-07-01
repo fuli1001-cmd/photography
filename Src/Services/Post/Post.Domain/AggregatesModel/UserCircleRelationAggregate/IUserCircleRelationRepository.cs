@@ -22,12 +22,5 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserCircleRelationAgg
         /// <param name="userId"></param>
         /// <returns></returns>
         Task<UserCircleRelation> GetRelationAsync(Guid circleId, Guid userId);
-
-        /// <summary>
-        /// 获取指定用户的置顶圈子关系
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        Task<UserCircleRelation> GetToppingCircleRelationAsync(Guid userId);
     }
 }

@@ -25,10 +25,5 @@ namespace Photography.Services.Post.Infrastructure.Repositories
         {
             return await _context.UserCircleRelations.Where(uc => uc.CircleId == circleId).ToListAsync();
         }
-
-        public async Task<UserCircleRelation> GetToppingCircleRelationAsync(Guid userId)
-        {
-            return await _context.UserCircleRelations.Where(uc => uc.Topping && uc.UserId == userId).SingleOrDefaultAsync();
-        }
     }
 }
