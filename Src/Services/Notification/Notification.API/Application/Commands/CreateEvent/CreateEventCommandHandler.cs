@@ -28,7 +28,7 @@ namespace Photography.Services.Notification.API.Application.Commands.CreateEvent
             if (request.FromUserId != request.ToUserId)
             {
                 _logger.LogInformation("****************** CreateEventCommandHandler 2");
-                var @event = new Event(request.FromUserId, request.ToUserId, request.EventType, request.PostId, request.CommentId, request.CommentText);
+                var @event = new Event(request.FromUserId, request.ToUserId, request.EventType, request.PostId, request.CommentId, request.CommentText, request.CircleId, request.CircleName);
                 _logger.LogInformation("****************** CreateEventCommandHandler 3");
                 _eventRepository.Add(@event);
                 _logger.LogInformation("****************** CreateEventCommandHandler 4");

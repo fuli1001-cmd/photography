@@ -44,7 +44,7 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
             CreatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
 
-        public Event(Guid fromUserId, Guid toUserId, EventType eventType, Guid? postId, Guid? commentId, string commentText)
+        public Event(Guid fromUserId, Guid toUserId, EventType eventType, Guid? postId, Guid? commentId, string commentText, Guid? circleId, string circleName)
             : this()
         {
             FromUserId = fromUserId;
@@ -53,6 +53,8 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
             PostId = postId;
             CommentId = commentId;
             CommentText = commentText;
+            CircleId = circleId;
+            CircleName = circleName;
         }
 
         public void MarkAsProcessed()
