@@ -29,7 +29,7 @@ namespace Photography.Services.Post.API.Application.Commands.Circle.DeleteCircle
 
         public async Task<bool> Handle(DeleteCircleCommand request, CancellationToken cancellationToken)
         {
-            var circle = await _circleRepository.GetByIdAsync(request.Id);
+            var circle = await _circleRepository.GetCircleWithPostsAsync(request.Id);
             if (circle == null)
                 throw new ClientException("圈子不存在");
 
