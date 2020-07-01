@@ -34,6 +34,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                 {
                     FromUserId = message.JoinedUserId,
                     ToUserId = message.CircleOwnerId,
+                    CircleId = message.CircleId,
                     CircleName = message.CircleName,
                     EventType = Domain.AggregatesModel.EventAggregate.EventType.JoinCircle
                 };

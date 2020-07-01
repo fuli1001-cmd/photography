@@ -94,6 +94,7 @@ namespace Photography.Services.Post.API.Application.Commands.Circle.AddCircleMem
             {
                 JoinedUserId = joinedUserId,
                 CircleOwnerId = circle.OwnerId,
+                CircleId = circle.Id,
                 CircleName = circle.Name
             };
 

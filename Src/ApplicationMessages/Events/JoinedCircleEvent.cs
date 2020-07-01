@@ -12,6 +12,9 @@ namespace ApplicationMessages.Events
         // 圈主id
         public Guid CircleOwnerId { get; set; }
 
+        // 圈子id
+        public Guid CircleId { get; set; }
+
         // 圈子名
         public string CircleName { get; set; }
     }
