@@ -406,6 +406,8 @@ namespace Photography.Services.Post.API.Query.EF
 
         private IQueryable<PostViewModel> GetQueryablePostViewModels(IQueryable<UserPost> queryableUserPosts, Guid myId)
         {
+            var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value ?? string.Empty;
+
             return from up in queryableUserPosts
                    select new PostViewModel
                    {
@@ -454,7 +456,9 @@ namespace Photography.Services.Post.API.Query.EF
                                        select ur.Id)
                                        .Any()
                        },
+                       // 非私有附件、用户自己的帖子、或者管理员
                        PostAttachments = from a in up.Post.PostAttachments
+                                         where !a.IsPrivate || up.Post.UserId == myId || role == "admin"
                                          select new PostAttachmentViewModel
                                          {
                                              Id = a.Id,

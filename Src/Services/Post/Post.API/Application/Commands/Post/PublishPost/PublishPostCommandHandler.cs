@@ -52,7 +52,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
                     throw new ClientException("操作失败", new List<string> { $"Tag {request.PrivateTag} does not exist."});
             }
 
-            var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType)).ToList();
+            var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType, a.IsPrivate)).ToList();
             var post = Domain.AggregatesModel.PostAggregate.Post.CreatePost(request.Text, request.Commentable, request.ForwardType, request.ShareType,
                 request.Visibility, request.ViewPassword, request.PublicTags, request.PrivateTag, request.CircleId, request.Latitude, request.Longitude, request.LocationName,
                 request.Address, request.CityCode, request.FriendIds, attachments, userId);

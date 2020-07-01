@@ -43,6 +43,11 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
         public string Text { get; set; }
 
         /// <summary>
+        /// 仅自己可见
+        /// </summary>
+        public bool IsPrivate { get; set; }
+
+        /// <summary>
         /// 文件类型
         /// </summary>
         [Required]

@@ -43,7 +43,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.UpdatePost
             if (post.UserId != userId)
                 throw new ClientException("操作失败", new List<string> { $"Post {post.Id} does not belong to user {userId}" });
 
-            var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType)).ToList();
+            var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType, a.IsPrivate)).ToList();
 
             post.Update(request.Text, request.Commentable, request.ForwardType, request.ShareType, request.Visibility,
                 request.ViewPassword, request.PublicTags, request.PrivateTag, request.CircleId, request.Latitude, request.Longitude, request.LocationName, request.Address,

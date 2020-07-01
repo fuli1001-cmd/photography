@@ -71,11 +71,16 @@ namespace Photography.ApiGateways.ApiGwBase.Controllers
                 return StatusCode((int)HttpStatusCode.BadRequest, ResponseWrapper.CreateErrorResponseWrapper((StatusCode)(int)HttpStatusCode.BadRequest, "验证码错误"));
 
             var code = "Code" + loginPhoneDto.Code;
-            
-            if (await _authService.LoginWithPhoneNumberAsync(loginPhoneDto.PhoneNumber, code))
+
+            // 注册手机号，一次性密码为Code + 验证码，
+            if (await _authService.RegisterWithPhoneNumberAsync(loginPhoneDto.PhoneNumber, code))
             {
+                // 使用一次性密码登录
                 var result = await _userService.LoginWithPhoneNumberAsync(loginPhoneDto.PhoneNumber, code, loginPhoneDto.ClientType, loginPhoneDto.RegistrationId);
+                
+                // 手机用户只能通过验证码登录，登录成功后将手机用户密码改为随机密码（更安全：避免通过手机号和code+验证码作为密码登录）
                 await _authService.ChangeToRandomPasswordAsync(loginPhoneDto.PhoneNumber, code, Path.GetRandomFileName().Replace(".", string.Empty));
+
                 return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
             }
 

@@ -24,7 +24,7 @@ namespace Photography.ApiGateways.ApiGwBase.Services
             _client.BaseAddress = new Uri(_serviceSettings.AuthService);
         }
 
-        public async Task<bool> LoginWithPhoneNumberAsync(string phoneNumber, string code)
+        public async Task<bool> RegisterWithPhoneNumberAsync(string phoneNumber, string code)
         {
             var content = new { PhoneNumber = phoneNumber, VerifyCode = code };
             var httpContent = new StringContent(JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json");
