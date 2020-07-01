@@ -41,11 +41,17 @@ namespace Photography.Services.Post.API.Application.Commands.Circle.ToppingCircl
             {
                 // 原来置顶的圈子
                 var oldToppingRelation = await _userCircleRelationRepository.GetToppingCircleRelationAsync(myId);
-                if (oldToppingRelation.CircleId == request.CircleId)
-                    return true;
+
+                if (oldToppingRelation != null)
+                {
+                    // 该圈子已经置顶
+                    if (oldToppingRelation.CircleId == request.CircleId)
+                        return true;
+
+                    oldToppingRelation.UnToppingCircle();
+                }
 
                 relation.ToppingCircle();
-                oldToppingRelation.UnToppingCircle();
             }
             else
             {

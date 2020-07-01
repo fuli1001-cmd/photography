@@ -19,6 +19,11 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
         [DataMember]
         [Required]
         public List<Attachment> Attachments { get; set; }
+
+        /// <summary>
+        /// 圈子id
+        /// </summary>
+        public Guid? CircleId { get; set; }
     }
 
     /// <summary>

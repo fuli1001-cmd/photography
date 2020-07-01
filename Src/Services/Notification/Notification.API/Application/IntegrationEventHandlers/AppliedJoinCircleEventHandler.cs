@@ -34,6 +34,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                     ToUserId = message.CircleOwnerId,
                     CircleId = message.CircleId,
                     CircleName = message.CircleName,
+                    CommentText = message.ApplyDescription, // CommentText创建时还没有圈子功能，这里共用CommentText来存储加圈描述
                     EventType = Domain.AggregatesModel.EventAggregate.EventType.ApplyJoinCircle
                 };
 

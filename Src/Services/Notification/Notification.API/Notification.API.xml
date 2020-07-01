@@ -4,6 +4,11 @@
         <name>Notification.API</name>
     </assembly>
     <members>
+        <member name="T:Photography.Services.Notification.API.Application.Commands.ProcessEvent.ProcessEventCommand">
+            <summary>
+            将事件标记为已处理的命令
+            </summary>
+        </member>
         <member name="M:Photography.Services.Notification.API.Controllers.EventsController.GetUserReceivedEventsAsync(Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             用户的事件

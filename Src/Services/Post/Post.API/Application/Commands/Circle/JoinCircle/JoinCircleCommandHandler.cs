@@ -51,20 +51,28 @@ namespace Photography.Services.Post.API.Application.Commands.Circle.JoinCircle
                 if (circle == null)
                     throw new ClientException("操作失败", new List<string> { $"Circle {request.CircleId} dos not exist." });
 
+                _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
+
                 if (circle.VerifyJoin)
                 {
                     // 发送用户申请入圈事件
-                    await SendAppliedJoinCircleEventAsync(myId, circle);
+                    await SendAppliedJoinCircleEventAsync(myId, circle, request.Description);
                     return true;
                 }
 
                 // 无需审核，直接入圈，创建user circle关系
-                //await _addCircleMemberCommandHandler.AddCircleMemberAsync(circle, myId, cancellationToken);
-                userCircle = new UserCircleRelation(myId, request.CircleId);
-                _userCircleRelationRepository.Add(userCircle);
-                if (await _userCircleRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
+                ////await _addCircleMemberCommandHandler.AddCircleMemberAsync(circle, myId, cancellationToken);
+                //userCircle = new UserCircleRelation(myId, request.CircleId);
+                //_userCircleRelationRepository.Add(userCircle);
+                //if (await _userCircleRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
+                //{
+                //    await SendJoinedCircleEventAsync(myId, circle);
+                //    return true;
+                //}
+                //添加并发送用户已入圈事件
+                if (await AddCircleMemberCommandHandler.AddCircleMemberAsync(circle.Id, myId, _userCircleRelationRepository, cancellationToken))
                 {
-                    await SendJoinedCircleEventAsync(myId, circle);
+                    await AddCircleMemberCommandHandler.SendJoinedCircleEventAsync(circle, myId, _messageSession, _logger);
                     return true;
                 }
 
@@ -72,40 +80,24 @@ namespace Photography.Services.Post.API.Application.Commands.Circle.JoinCircle
                 throw new ApplicationException("操作失败");
             }
 
-            return true;
+            throw new ClientException("操作失败", new List<string> { $"User {myId} is already in circle {request.CircleId}" });
         }
 
         // 发送用户申请入圈事件
-        private async Task SendAppliedJoinCircleEventAsync(Guid myId, Domain.AggregatesModel.CircleAggregate.Circle circle)
+        private async Task SendAppliedJoinCircleEventAsync(Guid myId, Domain.AggregatesModel.CircleAggregate.Circle circle, string applyDescription)
         {
             var @event = new AppliedJoinCircleEvent
             {
                 ApplyUserId = myId,
                 CircleOwnerId = circle.OwnerId,
                 CircleId = circle.Id,
-                CircleName = circle.Name
+                CircleName = circle.Name,
+                ApplyDescription = applyDescription
             };
 
-            _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
             await _messageSession.Publish(@event);
 
             _logger.LogInformation("----- Published AppliedJoinCircleEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
-        }
-
-        // 发送用户已入圈事件
-        private async Task SendJoinedCircleEventAsync(Guid joinedUserId, Domain.AggregatesModel.CircleAggregate.Circle circle)
-        {
-            var @event = new JoinedCircleEvent
-            {
-                JoinedUserId = joinedUserId,
-                CircleOwnerId = circle.OwnerId,
-                CircleName = circle.Name
-            };
-
-            _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
-            await _messageSession.Publish(@event);
-
-            _logger.LogInformation("----- Published JoinedCircleEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
         }
     }
 }

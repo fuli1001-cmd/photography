@@ -17,5 +17,8 @@ namespace ApplicationMessages.Events
 
         // 圈子名
         public string CircleName { get; set; }
+
+        // 申请加圈的描述
+        public string ApplyDescription { get; set; }
     }
 }

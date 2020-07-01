@@ -30,12 +30,14 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
         // 事件关联评论id
         public Guid? CommentId { get; private set; }
 
-        // 评论类容
+        // 评论类容或申请加圈的描述
         public string CommentText { get; private set; }
 
         public Guid? CircleId { get; private set; }
 
         public string CircleName { get; private set; }
+
+        public bool Processed { get; private set; }
 
         public Event()
         {
@@ -51,6 +53,11 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
             PostId = postId;
             CommentId = commentId;
             CommentText = commentText;
+        }
+
+        public void MarkAsProcessed()
+        {
+            Processed = true;
         }
     }
 

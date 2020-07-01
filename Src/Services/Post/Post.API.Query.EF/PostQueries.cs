@@ -429,6 +429,7 @@ namespace Photography.Services.Post.API.Query.EF
                        Visibility = up.Post.Visibility,
                        PublicTags = up.Post.PublicTags,
                        PrivateTag = up.Post.PrivateTag,
+                       CircleGood = up.Post.CircleGood,
                        Circle = up.Post.Circle == null ? null : new PostCircleViewModel
                        { 
                            Id = up.Post.Circle.Id, 

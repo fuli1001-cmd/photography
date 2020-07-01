@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
 using Photography.Services.Notification.API.Application.Commands.CreateEvent;
+using Photography.Services.Notification.API.Application.Commands.ProcessEvent;
 using Serilog.Context;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,8 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
             {
                 _logger.LogInformation("----- Handling JoinedCircleEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                var command = new CreateEventCommand
+                // 创建用户已入圈的事件
+                var createEventCommand = new CreateEventCommand
                 {
                     FromUserId = message.JoinedUserId,
                     ToUserId = message.CircleOwnerId,
@@ -36,7 +38,17 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                     EventType = Domain.AggregatesModel.EventAggregate.EventType.JoinCircle
                 };
 
-                await _mediator.Send(command);
+                await _mediator.Send(createEventCommand);
+
+                // 将申请入圈事件标记为已处理
+                var processEventCommand = new ProcessEventCommand
+                {
+                    FromUserId = message.JoinedUserId,
+                    ToUserId = message.CircleOwnerId,
+                    EventType = Domain.AggregatesModel.EventAggregate.EventType.ApplyJoinCircle
+                };
+
+                await _mediator.Send(processEventCommand);
             }
         }
     }

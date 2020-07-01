@@ -1,6 +1,7 @@
 ﻿using Arise.DDD.Domain.SeedWork;
 using Photography.Services.Post.Domain.AggregatesModel.CircleAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
+using Photography.Services.Post.Domain.Events;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -49,6 +50,28 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserCircleRelationAgg
         public void UnToppingCircle()
         {
             Topping = false;
+        }
+
+        public void Join()
+        {
+            AddJoinedCircleDomainEvent();
+        }
+
+        public void Quit()
+        {
+            AddQuittedCircleDomainEvent();
+        }
+
+        private void AddJoinedCircleDomainEvent()
+        {
+            var @event = new JoinedCircleDomainEvent(CircleId);
+            AddDomainEvent(@event);
+        }
+
+        private void AddQuittedCircleDomainEvent()
+        {
+            var @event = new QuittedCircleDomainEvent(CircleId);
+            AddDomainEvent(@event);
         }
     }
 }

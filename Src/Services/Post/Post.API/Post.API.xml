@@ -89,12 +89,13 @@
             要加入圈子的用户id
             </summary>
         </member>
-        <member name="M:Photography.Services.Post.API.Application.Commands.Circle.AddCircleMember.AddCircleMemberCommandHandler.AddCircleMemberAsync(Photography.Services.Post.Domain.AggregatesModel.CircleAggregate.Circle,System.Guid,System.Threading.CancellationToken)">
+        <member name="M:Photography.Services.Post.API.Application.Commands.Circle.AddCircleMember.AddCircleMemberCommandHandler.AddCircleMemberAsync(System.Guid,System.Guid,Photography.Services.Post.Domain.AggregatesModel.UserCircleRelationAggregate.IUserCircleRelationRepository,System.Threading.CancellationToken)">
             <summary>
-            将用户家圈子
+            将用户加入圈子，使用静态方法是因为JoinCircleCommandHandler也需要加用户入圈
             </summary>
-            <param name="circle">圈子对象</param>
+            <param name="circleId">圈子id</param>
             <param name="joinedUserId">要加入圈子的用户id</param>
+            <param name="userCircleRelationRepository"></param>
             <param name="cancellationToken"></param>
             <returns></returns>
         </member>
@@ -221,6 +222,11 @@
         <member name="P:Photography.Services.Post.API.Application.Commands.Post.PublishPost.PublishPostCommand.Attachments">
             <summary>
             附件数组
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Post.PublishPost.PublishPostCommand.CircleId">
+            <summary>
+            圈子id
             </summary>
         </member>
         <member name="T:Photography.Services.Post.API.Application.Commands.Post.PublishPost.Attachment">

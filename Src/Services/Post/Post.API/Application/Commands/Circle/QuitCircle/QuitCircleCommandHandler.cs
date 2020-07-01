@@ -44,6 +44,7 @@ namespace Photography.Services.Post.API.Application.Commands.Circle.QuitCircle
             if (circle.OwnerId == myId)
                 throw new ClientException("操作失败", new List<string> { $"User {myId} is the owner of the circle {request.CircleId}, can't quit circle." });
 
+            userCircle.Quit();
             _userCircleRelationRepository.Remove(userCircle);
 
             return await _userCircleRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);

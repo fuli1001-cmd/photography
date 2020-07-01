@@ -46,6 +46,8 @@ namespace Photography.Services.Post.Domain.AggregatesModel.CircleAggregate
             OwnerId = ownerId;
             _userCircleRelations = new List<UserCircleRelation>();
             _userCircleRelations.Add(new UserCircleRelation(OwnerId));
+
+            IncreaseUserCount();
         }
 
         public void Update(string name, string description, bool verifyJoin, string backgroundImage, Guid ownerId)
@@ -65,6 +67,16 @@ namespace Photography.Services.Post.Domain.AggregatesModel.CircleAggregate
                 throw new ClientException("操作失败", new List<string> { $"Circle {Id} does not belong to user {ownerId}" });
 
             AddCircleDeletedDomainEvent();
+        }
+
+        public void IncreaseUserCount()
+        {
+            UserCount++;
+        }
+
+        public void DecreaseUserCount()
+        {
+            UserCount = Math.Max(0, UserCount - 1);
         }
 
         private void AddCircleDeletedDomainEvent()

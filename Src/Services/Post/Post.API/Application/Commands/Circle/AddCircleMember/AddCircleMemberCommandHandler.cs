@@ -49,43 +49,46 @@ namespace Photography.Services.Post.API.Application.Commands.Circle.AddCircleMem
             if (circle.OwnerId != myId)
                 throw new ClientException("操作失败", new List<string> { $"Circle {request.CircleId} does not belong to user {myId}" });
 
-            return await AddCircleMemberAsync(circle, request.UserId, cancellationToken);
+            // 添加并发送用户已入圈事件
+            if (await AddCircleMemberAsync(circle.Id, request.UserId, _userCircleRelationRepository, cancellationToken))
+            {
+                var messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
+                await SendJoinedCircleEventAsync(circle, request.UserId, messageSession, _logger);
+                return true;
+            }
+
+            throw new ApplicationException("操作失败");
         }
 
         /// <summary>
-        /// 将用户家圈子
+        /// 将用户加入圈子，使用静态方法是因为JoinCircleCommandHandler也需要加用户入圈
         /// </summary>
-        /// <param name="circle">圈子对象</param>
+        /// <param name="circleId">圈子id</param>
         /// <param name="joinedUserId">要加入圈子的用户id</param>
+        /// <param name="userCircleRelationRepository"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<bool> AddCircleMemberAsync(Domain.AggregatesModel.CircleAggregate.Circle circle, Guid joinedUserId, CancellationToken cancellationToken)
+        public static async Task<bool> AddCircleMemberAsync(Guid circleId, Guid joinedUserId, 
+            IUserCircleRelationRepository userCircleRelationRepository, CancellationToken cancellationToken)
         {
-            var userCircle = await _userCircleRelationRepository.GetRelationAsync(circle.Id, joinedUserId);
+            var userCircle = await userCircleRelationRepository.GetRelationAsync(circleId, joinedUserId);
 
-            // 如果用户不在圈子则加入圈子，如果已在，直接返回true
             if (userCircle == null)
             {
-                userCircle = new UserCircleRelation(joinedUserId, circle.Id);
-                
-                _userCircleRelationRepository.Add(userCircle);
+                userCircle = new UserCircleRelation(joinedUserId, circleId);
 
-                if (await _userCircleRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
-                {
-                    // 发送用户已加入圈子的事件
-                    await SendJoinedCircleEventAsync(joinedUserId, circle);
-                    return true;
-                }
+                userCircle.Join();
+                userCircleRelationRepository.Add(userCircle);
 
-                // 保存失败
-                throw new ApplicationException("操作失败");
+                return await userCircleRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
             }
 
-            return true;
+            throw new ClientException("操作失败", new List<string> { $"User {joinedUserId} is already in circle {circleId}" });
         }
 
         // 发送用户已入圈事件
-        private async Task SendJoinedCircleEventAsync(Guid joinedUserId, Domain.AggregatesModel.CircleAggregate.Circle circle)
+        public static async Task SendJoinedCircleEventAsync(Domain.AggregatesModel.CircleAggregate.Circle circle, Guid joinedUserId, 
+            IMessageSession messageSession, ILogger logger)
         {
             var @event = new JoinedCircleEvent
             {
@@ -94,10 +97,9 @@ namespace Photography.Services.Post.API.Application.Commands.Circle.AddCircleMem
                 CircleName = circle.Name
             };
 
-            _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
-            await _messageSession.Publish(@event);
+            await messageSession.Publish(@event);
 
-            _logger.LogInformation("----- Published JoinedCircleEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
+            logger.LogInformation("----- Published JoinedCircleEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
         }
     }
 }
