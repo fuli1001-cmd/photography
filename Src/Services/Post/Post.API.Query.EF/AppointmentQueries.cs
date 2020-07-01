@@ -41,7 +41,7 @@ namespace Photography.Services.Post.API.Query.EF
         {
             IQueryable<UserPost> queryableUserPosts;
 
-            var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value ?? string.Empty;
+            var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
             if (role != "admin")
             {
                 var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);

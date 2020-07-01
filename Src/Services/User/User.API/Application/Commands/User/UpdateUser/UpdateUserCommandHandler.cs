@@ -42,7 +42,7 @@ namespace Photography.Services.User.API.Application.Commands.User.UpdateUser
         public async Task<bool> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
             // 管理员无需以下检查
-            var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value ?? string.Empty;
+            var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
             if (role != "admin")
             {
                 // 检查是否是自己

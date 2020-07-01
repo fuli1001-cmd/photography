@@ -66,6 +66,8 @@ namespace Photography.Services.Post.Domain.AggregatesModel.CircleAggregate
             if (ownerId != OwnerId)
                 throw new ClientException("操作失败", new List<string> { $"Circle {Id} does not belong to user {ownerId}" });
 
+            _posts.ForEach(p => p.MoveOutFromCircle());
+
             AddCircleDeletedDomainEvent();
         }
 

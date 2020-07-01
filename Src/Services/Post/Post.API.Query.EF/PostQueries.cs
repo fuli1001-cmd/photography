@@ -406,7 +406,7 @@ namespace Photography.Services.Post.API.Query.EF
 
         private IQueryable<PostViewModel> GetQueryablePostViewModels(IQueryable<UserPost> queryableUserPosts, Guid myId)
         {
-            var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value ?? string.Empty;
+            var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
 
             return from up in queryableUserPosts
                    select new PostViewModel

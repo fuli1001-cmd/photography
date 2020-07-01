@@ -45,7 +45,7 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.DeleteA
             // 历史原因：
             // 没有管理平台之前只有手机用户操作自己的数据，因此DeleteAppointmentCommand中没有要求传入UserId
             // 管理平台加入之后也是用这个API，但是管理平台必须传UserId，才能知道是操作的哪个用户的数据
-            var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value ?? string.Empty;
+            var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
             if (role == "admin")
             {
                 if (request.UserId == null)
