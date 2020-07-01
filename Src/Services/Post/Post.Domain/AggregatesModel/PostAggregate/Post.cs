@@ -196,6 +196,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             PublicTags = publicTags;
             PrivateTag = privateTag;
             CircleId = circleId;
+            CircleGood = false; // 帖子编辑后自动取消精华帖
             Latitude = latitude;
             Longitude = longitude;
             LocationName = locationName;
@@ -316,6 +317,12 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         public void UnMarkCircleGood()
         {
             CircleGood = false;
+        }
+
+        public void MoveOutFromCircle()
+        {
+            CircleGood = false;
+            CircleId = null;
         }
 
         private void AddDeletedPostDomainEvent()

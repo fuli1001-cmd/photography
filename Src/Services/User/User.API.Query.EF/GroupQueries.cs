@@ -47,7 +47,7 @@ namespace Photography.Services.User.API.Query.EF
             return await GetQueryableGroupViewModels(queryableGroups).SingleOrDefaultAsync();
         }
 
-        public async Task<PagedList<GroupViewModel>> GetGroupsAsync(PagingParameters pagingParameters)
+        public async Task<IEnumerable<GroupViewModel>> GetGroupsAsync()
         {
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
@@ -57,9 +57,7 @@ namespace Photography.Services.User.API.Query.EF
                                   where gu.UserId == myId
                                   select g;
 
-            var queryableGroupViewModels = GetQueryableGroupViewModels(queryableGroups);
-
-            return await PagedList<GroupViewModel>.ToPagedListAsync(queryableGroupViewModels, pagingParameters);
+            return await GetQueryableGroupViewModels(queryableGroups).ToListAsync();
         }
 
         private IQueryable<GroupViewModel> GetQueryableGroupViewModels(IQueryable<Domain.AggregatesModel.GroupAggregate.Group> queryableGroups)

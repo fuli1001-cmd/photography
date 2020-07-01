@@ -9,5 +9,12 @@ namespace Photography.Services.Post.Domain.AggregatesModel.CircleAggregate
     public interface ICircleRepository : IRepository<Circle>
     {
         Task<Circle> GetCircleByNameAsync(string name);
+
+        /// <summary>
+        /// 用户的圈子数量
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        Task<int> GetUserCircleCount(Guid userId);
     }
 }

@@ -174,10 +174,10 @@ namespace Photography.Services.User.API.Controllers
         [HttpGet]
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<PagedResponseWrapper>> GetGroupsAsync([FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<ResponseWrapper>> GetGroupsAsync()
         {
-            var result = await _groupQueries.GetGroupsAsync(pagingParameters);
-            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(result));
+            var result = await _groupQueries.GetGroupsAsync();
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
     }
 }

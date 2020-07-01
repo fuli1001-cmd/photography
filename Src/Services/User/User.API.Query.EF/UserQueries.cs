@@ -156,7 +156,9 @@ namespace Photography.Services.User.API.Query.EF
                              {
                                  Id = u.Id,
                                  Nickname = u.Nickname,
-                                 Avatar = u.Avatar
+                                 Avatar = u.Avatar,
+                                 FollowersCount = u.FollowerCount,
+                                 PostCount = u.PostCount
                              }).ToListAsync();
 
             var MyFollowedUserIds = await _identityContext.UserRelations.Where(r => r.FollowerId == myId).Select(r => r.FollowedUserId).ToListAsync();
@@ -198,7 +200,9 @@ namespace Photography.Services.User.API.Query.EF
                                            Id = u.Id,
                                            Nickname = u.Nickname,
                                            Avatar = u.Avatar,
-                                           Followed = true
+                                           Followed = true,
+                                           FollowersCount = u.FollowerCount,
+                                           PostCount = u.PostCount
                                        }).ToListAsync();
 
             if (myId != userId)

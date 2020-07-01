@@ -55,7 +55,21 @@ namespace Photography.Services.User.API.Query.ViewModels
     public class FollowerViewModel : BaseUserViewModel
     {
         public string Avatar { get; set; }
+
+        /// <summary>
+        /// 是否已关注此人
+        /// </summary>
         public bool Followed { get; set; }
+
+        /// <summary>
+        /// 粉丝数量
+        /// </summary>
+        public int FollowersCount { get; set; }
+
+        /// <summary>
+        /// 贴子数量
+        /// </summary>
+        public int PostCount { get; set; }
     }
 
     public class UserSearchResult : FollowerViewModel

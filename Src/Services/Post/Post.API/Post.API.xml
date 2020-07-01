@@ -219,6 +219,11 @@
             是否设为精华
             </summary>
         </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Post.MovePostOutFromCircle.MovePostOutFromCircleCommand.PostId">
+            <summary>
+            帖子id
+            </summary>
+        </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.Post.PublishPost.PublishPostCommand.Attachments">
             <summary>
             附件数组
@@ -424,6 +429,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.Post.API.Controllers.CirclesController.GetCircleAsync(System.Guid)">
+            <summary>
+            圈子详情
+            </summary>
+            <param name="circleId"></param>
+            <returns></returns>
+        </member>
         <member name="M:Photography.Services.Post.API.Controllers.CirclesController.GetCirclesAsync(System.String,Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             分页获取圈子列表，按圈子内人数倒序排列
@@ -440,7 +452,7 @@
         </member>
         <member name="M:Photography.Services.Post.API.Controllers.CirclesController.ToppingCircleAsync(Photography.Services.Post.API.Application.Commands.Circle.ToppingCircle.ToppingCircleCommand)">
             <summary>
-            置顶圈子
+            置顶或取消置顶圈子
             </summary>
             <returns></returns>
         </member>
@@ -568,6 +580,13 @@
         <member name="M:Photography.Services.Post.API.Controllers.PostsController.MarkCircleGoodAsync(Photography.Services.Post.API.Application.Commands.Post.MarkGoodPost.MarkGoodPostCommand)">
             <summary>
             设置帖子为精华或取消设置为精华
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.MoveOutFromCircleAsync(Photography.Services.Post.API.Application.Commands.Post.MovePostOutFromCircle.MovePostOutFromCircleCommand)">
+            <summary>
+            把帖子移除圈子
             </summary>
             <param name="command"></param>
             <returns></returns>

@@ -39,6 +39,10 @@ namespace Photography.Services.Post.API.Application.Commands.Circle.CreateCircle
                 throw new ClientException("圈子名已存在");
 
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var circleCount = await _circleRepository.GetUserCircleCount(myId);
+            if (circleCount >= 5)
+                throw new ClientException("圈子数量已达上限");
+
             circle = new Domain.AggregatesModel.CircleAggregate.Circle(request.Name, request.Description, request.VerifyJoin, request.BackgroundImage, myId);
             _circleRepository.Add(circle);
 

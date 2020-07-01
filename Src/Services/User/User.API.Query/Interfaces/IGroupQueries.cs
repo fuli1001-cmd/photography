@@ -11,6 +11,6 @@ namespace Photography.Services.User.API.Query.Interfaces
     {
         Task<GroupViewModel> GetGroupAsync(Guid? groupId, int? oldGroupId);
 
-        Task<PagedList<GroupViewModel>> GetGroupsAsync(PagingParameters pagingParameters);
+        Task<IEnumerable<GroupViewModel>> GetGroupsAsync();
     }
 }

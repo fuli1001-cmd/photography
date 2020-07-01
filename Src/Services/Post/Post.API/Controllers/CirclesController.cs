@@ -77,6 +77,21 @@ namespace Photography.Services.Post.API.Controllers
         }
 
         /// <summary>
+        /// 圈子详情
+        /// </summary>
+        /// <param name="circleId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{circleId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
+        public async Task<ActionResult<ResponseWrapper>> GetCircleAsync(Guid circleId)
+        {
+            var result = await _circleQueries.GetCircleAsync(circleId);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
         /// 分页获取圈子列表，按圈子内人数倒序排列
         /// </summary>
         /// <param name="key">搜索关键字</param>
@@ -86,7 +101,7 @@ namespace Photography.Services.Post.API.Controllers
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [AllowAnonymous]
-        public async Task<ActionResult<ResponseWrapper>> GetCirclesAsync([FromQuery(Name = "key")] string key, [FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<PagedResponseWrapper>> GetCirclesAsync([FromQuery(Name = "key")] string key, [FromQuery] PagingParameters pagingParameters)
         {
             var result = await _circleQueries.GetCirclesAsync(key, pagingParameters);
             return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(result));
@@ -99,14 +114,14 @@ namespace Photography.Services.Post.API.Controllers
         [HttpGet]
         [Route("mine")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<ResponseWrapper>> GetMyCirclesAsync([FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<PagedResponseWrapper>> GetMyCirclesAsync([FromQuery] PagingParameters pagingParameters)
         {
             var result = await _circleQueries.GetMyCirclesAsync(pagingParameters);
             return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(result));
         }
 
         /// <summary>
-        /// 置顶圈子
+        /// 置顶或取消置顶圈子
         /// </summary>
         /// <returns></returns>
         [HttpPost]

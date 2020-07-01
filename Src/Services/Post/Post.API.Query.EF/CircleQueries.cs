@@ -37,7 +37,8 @@ namespace Photography.Services.Post.API.Query.EF
         {
             var queryableCircle = _dbContext.Circles.Where(c => c.Id == circleId);
             var result = await GetCircleViewModel(queryableCircle).SingleOrDefaultAsync();
-            SetImageProperties(result.BackgroundImage);
+            if (result != null)
+                SetImageProperties(result.BackgroundImage);
             return result;
         }
 
@@ -112,15 +113,18 @@ namespace Photography.Services.Post.API.Query.EF
         /// <param name="image"></param>
         private void SetImageProperties(ImageViewModel image)
         {
-            var sections = image.Name.Split('$');
-            try
+            if (!string.IsNullOrWhiteSpace(image.Name))
             {
-                image.Width = int.Parse(sections[1]);
-                image.Height = int.Parse(sections[2]);
-            }
-            catch
-            {
+                var sections = image.Name.Split('$');
+                try
+                {
+                    image.Width = int.Parse(sections[1]);
+                    image.Height = int.Parse(sections[2]);
+                }
+                catch
+                {
 
+                }
             }
         }
     }

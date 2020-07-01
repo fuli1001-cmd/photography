@@ -221,7 +221,7 @@
             <param name="groupId"></param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.User.API.Controllers.GroupsController.GetGroupsAsync(Arise.DDD.API.Paging.PagingParameters)">
+        <member name="M:Photography.Services.User.API.Controllers.GroupsController.GetGroupsAsync">
             <summary>
             用户的群列表
             </summary>
