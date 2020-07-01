@@ -55,7 +55,7 @@ namespace Photography.Services.Post.API.Query.EF
             if (!string.IsNullOrEmpty(key))
                 queryableCircle = _dbContext.Circles.Where(c => c.Name.ToLower().Contains(key.ToLower()));
 
-            queryableCircle = queryableCircle.OrderByDescending(c => c.UserCount);
+            queryableCircle = queryableCircle.OrderByDescending(c => c.UserCount).ThenBy(c => c.Name);
 
             var queryableDto = GetCircleViewModel(queryableCircle);
             var result = await PagedList<CircleViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
@@ -76,7 +76,7 @@ namespace Photography.Services.Post.API.Query.EF
             var queryableCircle = from c in _dbContext.Circles
                                   join uc in _dbContext.UserCircleRelations
                                   on new { CircleId = c.Id, UserId = myId } equals new { CircleId = uc.CircleId, UserId = uc.UserId }
-                                  orderby uc.Topping, uc.JoinTime descending
+                                  orderby uc.Topping descending, uc.JoinTime descending
                                   select c;
             
             var queryableDto = GetCircleViewModel(queryableCircle);
