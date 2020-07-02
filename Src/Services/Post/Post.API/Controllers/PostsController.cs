@@ -323,12 +323,45 @@ namespace Photography.Services.Post.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("post/{postId}/{sharedUserId}")]
+        [Route("share/{postId}/{sharedUserId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [AllowAnonymous]
         public async Task<ActionResult<PostViewModel>> GetSharedPostAsync(Guid postId, Guid sharedUserId)
         {
             var post = await _postQueries.GetSharedPostAsync(postId, sharedUserId);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(post));
+        }
+
+        /// <summary>
+        /// 获取分享的类别下的所有帖子
+        /// </summary>
+        /// <param name="privateTag"></param>
+        /// <param name="sharedUserId"></param>
+        /// <param name="pagingParameters"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("share/privatetag/{privateTag}/{sharedUserId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
+        public async Task<ActionResult<PostViewModel>> GetSharedPostAsync(string privateTag, Guid sharedUserId, [FromQuery] PagingParameters pagingParameters)
+        {
+            var post = await _postQueries.GetSharedPostsAsync(privateTag, sharedUserId, pagingParameters);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(post));
+        }
+
+        /// <summary>
+        /// 获取分享的用户的所有帖子
+        /// </summary>
+        /// <param name="sharedUserId"></param>
+        /// <param name="pagingParameters"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("share/{sharedUserId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
+        public async Task<ActionResult<PostViewModel>> GetSharedPostAsync(Guid sharedUserId, [FromQuery] PagingParameters pagingParameters)
+        {
+            var post = await _postQueries.GetSharedPostsAsync(sharedUserId, pagingParameters);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(post));
         }
     }

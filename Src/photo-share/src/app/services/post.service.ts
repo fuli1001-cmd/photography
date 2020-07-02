@@ -10,13 +10,32 @@ export class PostService {
 
   constructor(private http: HttpClient) { }
 
-  async getPostAsync(postId: string, userId: string): Promise<Post> {
+  async getPostAsync(postId: string, sharedUserId: string): Promise<Post> {
+    let apiUrl = ConfigService.config.serviceBase + '/posts/share/' + postId + '/' + sharedUserId;
+    return await this.requestAsync<Post>(apiUrl);
+  }
+
+  async getTagPostsAsync(privateTag: string, sharedUserId: string): Promise<Post[]> {
+    let apiUrl = ConfigService.config.serviceBase + '/posts/share/privatetag/' + privateTag + '/' + sharedUserId;
+    return await this.requestAsync<Post[]>(apiUrl);
+  }
+
+  async getUserPostsAsync(sharedUserId: string): Promise<Post[]> {
+    let apiUrl = ConfigService.config.serviceBase + '/posts/share/' + sharedUserId;
+    return await this.requestAsync<Post[]>(apiUrl);
+  }
+
+  async requestAsync<T>(apiUrl: string): Promise<T> {
     try {
-      let apiUrl = ConfigService.config.serviceBase + 'posts/post/' + postId;
       let response = await this.http.get<any>(apiUrl).toPromise();
-      return response.data;
+
+      if (response.code == 0)
+        return response.data as T;
+
+      console.log(`${apiUrl} error: ${response.message}`);
+      return null;
     } catch (err) {
-      console.log(`getPost error: ${err}`);
+      console.log(`${apiUrl} error: ${err}`);
       return null;
     }
   }

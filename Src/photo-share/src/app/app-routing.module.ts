@@ -4,10 +4,11 @@ import { DownloadComponent } from './components/download/download.component';
 
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { HomeComponent } from './components/home/home.component';
 
 
 const routes: Routes = [
-    { path: '', component: PostComponent },
+    { path: '', component: HomeComponent },
     { path: 'photo', component: PhotoComponent },
     { path: 'download', component: DownloadComponent }
 ];

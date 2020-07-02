@@ -12,7 +12,7 @@ import { PhotoComponent } from './components/photo/photo.component';
 import { DownloadComponent } from './components/download/download.component';
 import { UserBarComponent } from './components/user-bar/user-bar.component';
 import { AdBarComponent } from './components/ad-bar/ad-bar.component';
-import { HomeComponent } from './home/home.component';
+import { HomeComponent } from './components/home/home.component';
 
 export function initializeApp(configService: ConfigService) {
   return () => configService.load();

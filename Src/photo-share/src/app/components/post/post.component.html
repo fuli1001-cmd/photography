@@ -1,16 +1,18 @@
-<div *ngIf="post && !showBigPhoto" class="view-container">
+<div class="view-container">
+    <user-bar [post]="post"></user-bar>
+
     <!-- 帖子文字类容 -->
     <div class="row no-gutters text">{{post.text}}</div>
 
     <!-- 帖子照片 -->
-    <div [ngClass]="{'blur': !showPhotos}">
+    <div [ngClass]="{'blur': post.viewPassword && post.viewPassword.length > 0}">
         <!-- 多张照片使用九宫格显示 -->
         <div class="row no-gutters" *ngIf="post.postAttachments.length > 1">
             <div class="col-4 card card-photo" *ngFor="let attachment of post.postAttachments; let i = index" (click)="onClickPhoto(i)">
                 <div class="embed-responsive embed-responsive-1by1">
                     <img class="card-img embed-responsive-item pt-2 pb-2" 
                     [ngClass]="{'pr-2': i % 3 == 0 || i % 3 == 1, 'pl-2': i % 3 == 2 || i % 3 == 1}"
-                    src="{{attachment.name}}" />
+                    src="{{attachment.attachmentType == 0 ? attachment.name : attachment.thumbnail}}" />
                     <img src="../../../assets/images/play.png" class="btn-play" *ngIf="attachment.attachmentType == 1">
                 </div>
             </div>
@@ -20,7 +22,7 @@
             <div class="col-12 card card-photo" (click)="onClickPhoto(0)">
                 <div class="embed-responsive embed-responsive-1by1">
                     <img class="card-img embed-responsive-item pt-2 pb-2 pl-2 pr-2" 
-                    src="{{post.postAttachments[0].name}}" />
+                    src="{{post.postAttachments[0].attachmentType == 0 ? post.postAttachments[0].name : post.postAttachments[0].thumbnail}}" />
                     <img src="../../../assets/images/play.png" class="btn-play" *ngIf="post.postAttachments[0].attachmentType == 1">
                 </div>
             </div>
@@ -28,7 +30,7 @@
     </div>
 
     <!-- 密码查看 -->
-    <div *ngIf="!showPhotos" class="div-password">
+    <div *ngIf="post.viewPassword && post.viewPassword.length > 0" class="div-password">
         <div class="row no-gutters">
             <input type="text" class="form-control" [(ngModel)]="password">
         </div>
