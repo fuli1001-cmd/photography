@@ -13,11 +13,10 @@ namespace Photography.Services.Post.API.Query.Interfaces
         /// </summary>
         /// <param name="userId">用户id</param>
         /// <param name="privateTag">帖子类别</param>
-        /// <param name="noPrivateTag">true：只查询未分类帖子,如果指定了privateTag，则忽略此参数</param>
         /// <param name="key">搜索关键字</param>
         /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
-        Task<PagedList<PostViewModel>> GetUserPostsAsync(Guid userId, string privateTag, bool noPrivateTag, string key, PagingParameters pagingParameters);
+        Task<PagedList<PostViewModel>> GetUserPostsAsync(Guid userId, string privateTag, string key, PagingParameters pagingParameters);
 
         // 赞过的帖子
         Task<PagedList<PostViewModel>> GetLikedPostsAsync(PagingParameters pagingParameters);
@@ -37,8 +36,14 @@ namespace Photography.Services.Post.API.Query.Interfaces
         // 获取帖子详情
         Task<PostViewModel> GetPostAsync(Guid postId);
 
-        // 获取分享的帖子的详情
+        // 获取分享的帖子
         Task<PostViewModel> GetSharedPostAsync(Guid postId, Guid sharedUserId);
+
+        // 分页获取分享的类别下的所有帖子
+        Task<PagedList<PostViewModel>> GetSharedPostsAsync(string privateTag, Guid sharedUserId, PagingParameters pagingParameters);
+
+        // 分页获取分享的用户的所有帖子
+        Task<PagedList<PostViewModel>> GetSharedPostsAsync(Guid sharedUserId, PagingParameters pagingParameters);
 
         // 搜索帖子
         Task<PagedList<PostViewModel>> SearchPosts(string key, string cityCode, PagingParameters pagingParameters);

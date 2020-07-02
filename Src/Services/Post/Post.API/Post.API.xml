@@ -339,9 +339,19 @@
             地址
             </summary>
         </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.Post.SharePost.SharePostCommand.PostIds">
+        <member name="T:Photography.Services.Post.API.Application.Commands.Post.Share.ShareCommand">
             <summary>
-            点分享的帖子id
+            分享命令
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Post.Share.ShareCommand.PostIds">
+            <summary>
+            要分享的帖子id
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Post.Share.ShareCommand.PrivateTagNames">
+            <summary>
+            要分享的帖子类别名称
             </summary>
         </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.Post.ToggleLikePost.ToggleLikePostCommand.PostId">
@@ -562,13 +572,12 @@
             <param name="pagingParameters">分页参数</param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetMyPostsAsync(System.Guid,System.String,System.Boolean,System.String,Arise.DDD.API.Paging.PagingParameters)">
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetMyPostsAsync(System.Guid,System.String,System.String,Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             用户的帖子
             </summary>
             <param name="userId">用户id</param>
             <param name="privateTag">帖子标签</param>
-            <param name="noPrivateTag">true：只查询未分类帖子,如果指定了privateTag，则忽略此参数</param>
             <param name="key">搜索的关键字，根据用户昵称、帖子文本及标签搜索帖子</param>
             <param name="pagingParameters">分页参数</param>
             <returns></returns>
@@ -651,7 +660,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.ShareAsync(Photography.Services.Post.API.Application.Commands.Post.SharePost.SharePostCommand)">
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.ShareAsync(Photography.Services.Post.API.Application.Commands.Post.Share.ShareCommand)">
             <summary>
             分享帖子
             </summary>

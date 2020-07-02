@@ -21,6 +21,7 @@ using Arise.DDD.API.Paging;
 using Photography.Services.Post.API.Query.EF.Models;
 using Microsoft.Extensions.Configuration;
 using Arise.DDD.Domain.Exceptions;
+using Photography.Services.Post.Domain.AggregatesModel.UserShareAggregate;
 
 namespace Photography.Services.Post.API.Query.EF
 {
@@ -45,11 +46,10 @@ namespace Photography.Services.Post.API.Query.EF
         /// </summary>
         /// <param name="userId">用户id</param>
         /// <param name="privateTag">帖子类别</param>
-        /// <param name="noPrivateTag">true：只查询未分类帖子,如果指定了privateTag，则忽略此参数</param>
         /// <param name="key">搜索关键字</param>
         /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
-        public async Task<PagedList<PostViewModel>> GetUserPostsAsync(Guid userId, string privateTag, bool noPrivateTag, string key, PagingParameters pagingParameters)
+        public async Task<PagedList<PostViewModel>> GetUserPostsAsync(Guid userId, string privateTag, string key, PagingParameters pagingParameters)
         {
             var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
@@ -68,10 +68,13 @@ namespace Photography.Services.Post.API.Query.EF
 
             // 如果帖子种类不为空， 按帖子种类筛选一下
             if (!string.IsNullOrWhiteSpace(privateTag))
-                queryablePosts = queryablePosts.Where(p => p.PrivateTag != null && p.PrivateTag.ToLower() == privateTag.ToLower());
-            else if (noPrivateTag)
-                // 如果privateTag没有传，才根据noPrivateTag查询
-                queryablePosts = queryablePosts.Where(p => p.PrivateTag == null || p.PrivateTag == "");
+            {
+                // “未分类”未系统保留关键字，表示帖子不属于任何类别
+                if (privateTag == "未分类")
+                    queryablePosts = queryablePosts.Where(p => p.PrivateTag == null || p.PrivateTag == "");
+                else
+                    queryablePosts = queryablePosts.Where(p => p.PrivateTag != null && p.PrivateTag.ToLower() == privateTag.ToLower());
+            }
 
             // 有搜索关键字时，搜索昵称、文案和标签
             if (!string.IsNullOrWhiteSpace(key))
@@ -238,15 +241,14 @@ namespace Photography.Services.Post.API.Query.EF
             var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
 
-            var validSeconds = _configuration.GetValue<int>("ShareValidTime") * 3600;
-            var curSeconds = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+            var userShares = GetUserShares(sharedUserId);
 
             var queryableUserPosts = from p in _postContext.Posts
                                      join u in _postContext.Users
                                      on p.UserId equals u.Id
-                                     join us in _postContext.UserShares
+                                     join us in userShares
                                      on p.Id equals us.PostId
-                                     where p.Id == postId && us.UserId == sharedUserId && (us.CreatedTime + validSeconds) >= curSeconds
+                                     where p.Id == postId
                                      select new UserPost { Post = p, User = u };
 
             var postViewModel = await GetQueryablePostViewModels(queryableUserPosts, myId).SingleOrDefaultAsync();
@@ -254,6 +256,65 @@ namespace Photography.Services.Post.API.Query.EF
             SetAttachment(postViewModel);
 
             return postViewModel;
+        }
+
+        public async Task<PagedList<PostViewModel>> GetSharedPostsAsync(string privateTag, Guid sharedUserId, PagingParameters pagingParameters)
+        {
+            var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
+
+            var userShares = GetUserShares(sharedUserId);
+
+            var queryableUserPosts = from p in _postContext.Posts
+                                     join u in _postContext.Users
+                                     on p.UserId equals u.Id
+                                     join us in userShares
+                                     on p.PrivateTag equals us.PrivateTag
+                                     select new UserPost { Post = p, User = u };
+
+            if (privateTag == "未分类")
+                queryableUserPosts = queryableUserPosts.Where(up => up.Post.PrivateTag == null || up.Post.PrivateTag == "");
+            else
+                queryableUserPosts = queryableUserPosts.Where(up => up.Post.PrivateTag == privateTag);
+
+            var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.UpdatedTime);
+
+            var result = await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
+
+            result.ForEach(p => SetAttachment(p));
+
+            return result;
+        }
+
+        public async Task<PagedList<PostViewModel>> GetSharedPostsAsync(Guid sharedUserId, PagingParameters pagingParameters)
+        {
+            var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
+
+            if (await GetUserShares(sharedUserId).CountAsync() == 0)
+                return null;
+
+            var queryableUserPosts = from p in _postContext.Posts
+                                     join u in _postContext.Users
+                                     on p.UserId equals u.Id
+                                     where u.Id == sharedUserId
+                                     select new UserPost { Post = p, User = u };
+
+            var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.UpdatedTime);
+
+            var result = await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
+
+            result.ForEach(p => SetAttachment(p));
+
+            return result;
+        }
+
+        private IQueryable<UserShare> GetUserShares(Guid sharedUserId)
+        {
+            var validSeconds = _configuration.GetValue<int>("ShareValidTime") * 3600;
+            var curSeconds = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+
+            return _postContext.UserShares.Where(us => us.UserId == sharedUserId && (us.CreatedTime + validSeconds) >= curSeconds);
         }
 
         /// <summary>

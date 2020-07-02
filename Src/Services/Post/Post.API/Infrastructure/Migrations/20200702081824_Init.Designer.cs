@@ -10,7 +10,7 @@ using Photography.Services.Post.Infrastructure;
 namespace Photography.Services.Post.API.Infrastructure.Migrations
 {
     [DbContext(typeof(PostContext))]
-    [Migration("20200702062029_Init")]
+    [Migration("20200702081824_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -421,11 +421,8 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<Guid?>("PostId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("TagId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("UnSpecifiedTag")
-                        .HasColumnType("bit");
+                    b.Property<string>("PrivateTag")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -434,11 +431,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.HasIndex("TagId");
+                    b.HasIndex("PrivateTag");
 
-                    b.HasIndex("UserId", "PostId");
-
-                    b.HasIndex("UserId", "TagId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserShares");
                 });
@@ -579,10 +574,6 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.HasOne("Photography.Services.Post.Domain.AggregatesModel.PostAggregate.Post", "Post")
                         .WithMany("UserShares")
                         .HasForeignKey("PostId");
-
-                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.TagAggregate.Tag", "Tag")
-                        .WithMany("UserShares")
-                        .HasForeignKey("TagId");
 
                     b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "User")
                         .WithMany()

@@ -12,8 +12,9 @@ namespace Photography.Services.Post.Infrastructure.EntityConfigurations
         public void Configure(EntityTypeBuilder<UserShare> builder)
         {
             builder.Ignore(e => e.DomainEvents);
-            builder.HasIndex(us => new { us.UserId, us.PostId });
-            builder.HasIndex(us => new { us.UserId, us.TagId });
+            builder.HasIndex(us => us.UserId);
+            builder.HasIndex(us => us.PostId);
+            builder.HasIndex(us => us.PrivateTag);
         }
     }
 }

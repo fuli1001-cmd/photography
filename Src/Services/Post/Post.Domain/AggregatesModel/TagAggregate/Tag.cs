@@ -20,9 +20,6 @@ namespace Photography.Services.Post.Domain.AggregatesModel.TagAggregate
         public User User { get; private set; }
         public Guid? UserId { get; private set; }
 
-        private readonly List<UserShare> _userShares = null;
-        public IReadOnlyCollection<UserShare> UserShares => _userShares;
-
         public Tag(string name)
         {
             Name = name;

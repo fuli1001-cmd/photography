@@ -13,60 +13,51 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Photography.Services.Post.API.Application.Commands.Post.SharePost
+namespace Photography.Services.Post.API.Application.Commands.Post.Share
 {
-    public class SharePostCommandHandler : IRequestHandler<SharePostCommand, bool>
+    public class ShareCommandHandler : IRequestHandler<ShareCommand, bool>
     {
         private readonly IUserShareRepository _userShareRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ILogger<SharePostCommandHandler> _logger;
+        private readonly ILogger<ShareCommandHandler> _logger;
 
-        public SharePostCommandHandler(
+        public ShareCommandHandler(
             IUserShareRepository userShareRepository,
             IHttpContextAccessor httpContextAccessor,
-            ILogger<SharePostCommandHandler> logger)
+            ILogger<ShareCommandHandler> logger)
         {
             _userShareRepository = userShareRepository ?? throw new ArgumentNullException(nameof(userShareRepository));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<bool> Handle(SharePostCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(ShareCommand request, CancellationToken cancellationToken)
         {
-            var shareUser = true;
+            var shared = false;
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
             if (request.PostIds != null)
             {
-                shareUser = request.PostIds.Count == 0;
-
                 request.PostIds.ForEach(postId =>
                 {
                     var userShare = new UserShare();
                     userShare.SharePost(myId, postId);
+                    shared = true;
                 });
             }
 
-            if (request.PrivateTagIds != null)
+            if (request.PrivateTagNames != null)
             {
-                shareUser = request.PrivateTagIds.Count == 0;
-
-                request.PrivateTagIds.ForEach(privateTagId =>
+                request.PrivateTagNames.ForEach(privateTagName =>
                 {
                     var userShare = new UserShare();
-                    userShare.ShareTag(myId, privateTagId);
+                    userShare.ShareTag(myId, privateTagName);
+                    shared = true;
                 });
             }
 
-            if (request.UnSpecifiedPrivateTag)
-            {
-                shareUser = false;
-
-                var userShare = new UserShare();
-                userShare.ShareUnSpecifiedTag(myId);
-            }
-
-            if (shareUser)
+            // 既没有分享帖子，分享帖子类别，即分享用户（所有的帖子）
+            if (!shared)
             {
                 var userShare = new UserShare();
                 userShare.ShareUser(myId);

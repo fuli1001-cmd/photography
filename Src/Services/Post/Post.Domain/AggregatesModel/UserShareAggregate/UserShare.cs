@@ -17,12 +17,8 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserShareAggregate
         public Guid? PostId { get; private set; }
         public PostAggregate.Post Post { get; private set; }
 
-        // 被分享的帖子分类id
-        public Guid? TagId { get; private set; }
-        public Tag Tag { get; private set; }
-
-        // 分享帖子、帖子分类、用户时，该值为false，分享未分类帖子时，改值为true
-        public bool UnSpecifiedTag { get; private set; }
+        // 被分享的帖子分类名称
+        public string PrivateTag { get; private set; }
 
         // 分享时间
         public double CreatedTime { get; private set; }
@@ -45,18 +41,11 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserShareAggregate
             PostId = postId;
         }
 
-        // 分享帖子类别（即分享该类别下的所有帖子）
-        public void ShareTag(Guid userId, Guid tagId)
+        // 分享帖子类别（即分享该类别下的所有帖子，或分享未分类的帖子）
+        public void ShareTag(Guid userId, string privateTag)
         {
             UserId = userId;
-            TagId = tagId;
-        }
-
-        // 分享未分类帖子
-        public void ShareUnSpecifiedTag(Guid userId)
-        {
-            UserId = userId;
-            UnSpecifiedTag = true;
+            PrivateTag = privateTag;
         }
     }
 }
