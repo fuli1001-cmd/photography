@@ -1,23 +1,4 @@
 <div *ngIf="post && !showBigPhoto" class="view-container">
-    <!-- 用户信息 -->
-    <div class="row no-gutters row-user-info">
-        <div class="col-auto col-avatar">
-            <img src="{{post.user.avatar}}" class="rounded-circle avatar" (click)="goDownload()">
-        </div>
-        <div class="col col-vertical-center">
-            <div class="row no-gutters text-center">
-                <div class="col-auto name" (click)="goDownload()">{{post.user.nickname}}</div>
-                <div class="col-auto">
-                    <span class="align-middle pl-2 pr-2 pt-1 pb-1 user-type">摄影师</span>
-                </div>
-            </div>
-            <div class="row no-gutters date">{{(post.updatedTime == null ? post.createdTime : post.updatedTime) | date: 'yyyy-MM-dd'}}</div>
-        </div>
-        <div class="col col-vertical-center">
-            <button type="button" class="btn btn-outline-primary float-right btn-follow" (click)="goDownload()">+ 关注</button>
-        </div>
-    </div>
-
     <!-- 帖子文字类容 -->
     <div class="row no-gutters text">{{post.text}}</div>
 
@@ -54,15 +35,5 @@
         <div class="row no-gutters justify-content-center">
             <button type="button" class="btn btn-outline-primary float-right btn-password" (click)="onClickViewByPassword()">查看</button>
         </div>
-    </div>
-</div>
-
-<div class="row no-gutters fixed-bottom div-product" *ngIf="!showBigPhoto" routerLink="/download">
-    <div class="col-auto col-vertical-center">
-        <img src="../../../assets/images/logo_mini.png" class="image-product">
-    </div>
-    <div class="col-auto col-vertical-center">
-        <div class="row no-gutters text1-product">旅拍、婚纱照、汉服照、亲子照</div>
-        <div class="row no-gutters text2-product">即刻下载Sense想怎么拍都行~</div>
     </div>
 </div>

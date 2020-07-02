@@ -8,8 +8,16 @@ namespace Photography.Services.Post.API.Query.Interfaces
 {
     public interface IPostQueries
     {
-        // 用户的帖子
-        Task<PagedList<PostViewModel>> GetUserPostsAsync(Guid userId, string privateTag, string key, PagingParameters pagingParameters);
+        /// <summary>
+        /// 用户的帖子
+        /// </summary>
+        /// <param name="userId">用户id</param>
+        /// <param name="privateTag">帖子类别</param>
+        /// <param name="noPrivateTag">true：只查询未分类帖子,如果指定了privateTag，则忽略此参数</param>
+        /// <param name="key">搜索关键字</param>
+        /// <param name="pagingParameters">分页参数</param>
+        /// <returns></returns>
+        Task<PagedList<PostViewModel>> GetUserPostsAsync(Guid userId, string privateTag, bool noPrivateTag, string key, PagingParameters pagingParameters);
 
         // 赞过的帖子
         Task<PagedList<PostViewModel>> GetLikedPostsAsync(PagingParameters pagingParameters);

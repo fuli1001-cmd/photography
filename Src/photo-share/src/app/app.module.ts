@@ -10,6 +10,9 @@ import { PostComponent } from './components/post/post.component';
 import { ConfigService } from './services/config.service';
 import { PhotoComponent } from './components/photo/photo.component';
 import { DownloadComponent } from './components/download/download.component';
+import { UserBarComponent } from './components/user-bar/user-bar.component';
+import { AdBarComponent } from './components/ad-bar/ad-bar.component';
+import { HomeComponent } from './home/home.component';
 
 export function initializeApp(configService: ConfigService) {
   return () => configService.load();
@@ -19,7 +22,10 @@ export function initializeApp(configService: ConfigService) {
     AppComponent,
     PostComponent,
     PhotoComponent,
-    DownloadComponent
+    DownloadComponent,
+    UserBarComponent,
+    AdBarComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,29 @@
+.avatar {
+    cursor: pointer;
+    width: 13%;
+}
+
+.name {
+    font-size: 4vw;
+	font-weight: normal;
+	font-stretch: normal;
+	line-height: 43px;
+	letter-spacing: -1px;
+	color: #333333;
+	margin-right: 15px;
+	cursor: pointer;
+}
+
+.date {
+    font-size: 3vw;
+	font-weight: normal;
+	font-stretch: normal;
+	line-height: 40px;
+	letter-spacing: 0px;
+	color: #6d737a;
+}
+
+.btn-follow {
+    width: 76px;
+    border-radius: 20px;
+}

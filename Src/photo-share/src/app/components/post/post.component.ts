@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PostService } from 'src/app/services/post.service';
 import { Post } from 'src/app/models/post';
@@ -12,9 +12,8 @@ import { StateService } from 'src/app/services/state.service';
 })
 export class PostComponent implements OnInit {
 
-  @ViewChild('videoPlayer') videoplayer: ElementRef;
+  @Input() post: Post;
 
-  post: Post;
   password: string;
   showPhotos: boolean;
   showBigPhoto: boolean;
@@ -94,15 +93,6 @@ export class PostComponent implements OnInit {
     this.stateService.attachments = this.post.postAttachments;
     this.stateService.photoIndex = this.selectedPhotoIndex;
     this.router.navigate(['/photo']);
-  }
-
-  onClickVideo(): void {
-    console.log("onClickVideo");
-    // this.videoplayer.nativeElement.play();
-  }
-
-  goDownload(): void {
-    this.router.navigate(['/download']);
   }
 
 }

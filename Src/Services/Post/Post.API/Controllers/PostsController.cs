@@ -124,6 +124,7 @@ namespace Photography.Services.Post.API.Controllers
         /// </summary>
         /// <param name="userId">用户id</param>
         /// <param name="privateTag">帖子标签</param>
+        /// <param name="noPrivateTag">true：只查询未分类帖子,如果指定了privateTag，则忽略此参数</param>
         /// <param name="key">搜索的关键字，根据用户昵称、帖子文本及标签搜索帖子</param>
         /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
@@ -131,9 +132,9 @@ namespace Photography.Services.Post.API.Controllers
         [Route("user/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [AllowAnonymous]
-        public async Task<ActionResult<PagedResponseWrapper>> GetMyPostsAsync(Guid userId, [FromQuery(Name = "privateTag")] string privateTag, [FromQuery(Name = "key")] string key, [FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<PagedResponseWrapper>> GetMyPostsAsync(Guid userId, [FromQuery(Name = "privateTag")] string privateTag, [FromQuery(Name = "noPrivateTag")] bool noPrivateTag, [FromQuery(Name = "key")] string key, [FromQuery] PagingParameters pagingParameters)
         {
-            var posts = await _postQueries.GetUserPostsAsync(userId, privateTag, key, pagingParameters);
+            var posts = await _postQueries.GetUserPostsAsync(userId, privateTag, noPrivateTag, key, pagingParameters);
             return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
         }
 

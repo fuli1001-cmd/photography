@@ -12,7 +12,10 @@ namespace Photography.Services.Post.API.Application.Commands.Post.SharePost
         /// <summary>
         /// 点分享的帖子id
         /// </summary>
-        [Required]
         public List<Guid> PostIds { get; set; }
+
+        public List<Guid> PrivateTagIds { get; set; }
+
+        public bool UnSpecifiedPrivateTag { get; set; }
     }
 }

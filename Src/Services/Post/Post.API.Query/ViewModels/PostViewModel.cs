@@ -67,5 +67,10 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public int Width { get; set; }
         public int Height { get; set; }
         public string Thumbnail { get; set; }
+
+        /// <summary>
+        /// 仅仅自己可见
+        /// </summary>
+        public bool IsPrivate { get; set; }
     }
 }

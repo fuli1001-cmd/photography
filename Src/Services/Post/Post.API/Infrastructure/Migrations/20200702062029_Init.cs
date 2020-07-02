@@ -117,6 +117,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     ShowOriginalText = table.Column<bool>(nullable: true, defaultValue: true),
                     PublicTags = table.Column<string>(nullable: true),
                     PrivateTag = table.Column<string>(nullable: true),
+                    CircleGood = table.Column<bool>(nullable: false),
                     CircleId = table.Column<Guid>(nullable: true),
                     ForwardedPostId = table.Column<Guid>(nullable: true),
                     AppointedTime = table.Column<double>(nullable: true),
@@ -232,6 +233,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     Text = table.Column<string>(nullable: true),
                     AttachmentType = table.Column<int>(nullable: false),
                     AttachmentStatus = table.Column<int>(nullable: true),
+                    IsPrivate = table.Column<bool>(nullable: false),
                     PostId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
@@ -270,6 +272,40 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserShares",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    UserId = table.Column<Guid>(nullable: false),
+                    PostId = table.Column<Guid>(nullable: true),
+                    TagId = table.Column<Guid>(nullable: true),
+                    UnSpecifiedTag = table.Column<bool>(nullable: false),
+                    CreatedTime = table.Column<double>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserShares", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserShares_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserShares_Tags_TagId",
+                        column: x => x.TagId,
+                        principalTable: "Tags",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserShares_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -421,15 +457,32 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 name: "IX_UserRelations_FollowerId",
                 table: "UserRelations",
                 column: "FollowerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserShares_PostId",
+                table: "UserShares",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserShares_TagId",
+                table: "UserShares",
+                column: "TagId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserShares_UserId_PostId",
+                table: "UserShares",
+                columns: new[] { "UserId", "PostId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserShares_UserId_TagId",
+                table: "UserShares",
+                columns: new[] { "UserId", "TagId" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
                 name: "PostAttachments");
-
-            migrationBuilder.DropTable(
-                name: "Tags");
 
             migrationBuilder.DropTable(
                 name: "UserCircleRelations");
@@ -444,7 +497,13 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 name: "UserRelations");
 
             migrationBuilder.DropTable(
+                name: "UserShares");
+
+            migrationBuilder.DropTable(
                 name: "Comments");
+
+            migrationBuilder.DropTable(
+                name: "Tags");
 
             migrationBuilder.DropTable(
                 name: "Posts");

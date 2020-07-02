@@ -44,8 +44,12 @@ namespace Photography.Services.Post.API.Query.EF
         /// 用户的帖子
         /// </summary>
         /// <param name="userId">用户id</param>
+        /// <param name="privateTag">帖子类别</param>
+        /// <param name="noPrivateTag">true：只查询未分类帖子,如果指定了privateTag，则忽略此参数</param>
+        /// <param name="key">搜索关键字</param>
+        /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
-        public async Task<PagedList<PostViewModel>> GetUserPostsAsync(Guid userId, string privateTag, string key, PagingParameters pagingParameters)
+        public async Task<PagedList<PostViewModel>> GetUserPostsAsync(Guid userId, string privateTag, bool noPrivateTag, string key, PagingParameters pagingParameters)
         {
             var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
@@ -65,6 +69,9 @@ namespace Photography.Services.Post.API.Query.EF
             // 如果帖子种类不为空， 按帖子种类筛选一下
             if (!string.IsNullOrWhiteSpace(privateTag))
                 queryablePosts = queryablePosts.Where(p => p.PrivateTag != null && p.PrivateTag.ToLower() == privateTag.ToLower());
+            else if (noPrivateTag)
+                // 如果privateTag没有传，才根据noPrivateTag查询
+                queryablePosts = queryablePosts.Where(p => p.PrivateTag == null || p.PrivateTag == "");
 
             // 有搜索关键字时，搜索昵称、文案和标签
             if (!string.IsNullOrWhiteSpace(key))
@@ -237,9 +244,9 @@ namespace Photography.Services.Post.API.Query.EF
             var queryableUserPosts = from p in _postContext.Posts
                                      join u in _postContext.Users
                                      on p.UserId equals u.Id
-                                     join upr in _postContext.UserPostRelations
-                                     on p.Id equals upr.PostId
-                                     where p.Id == postId && upr.UserId == sharedUserId && (upr.CreatedTime + validSeconds) >= curSeconds
+                                     join us in _postContext.UserShares
+                                     on p.Id equals us.PostId
+                                     where p.Id == postId && us.UserId == sharedUserId && (us.CreatedTime + validSeconds) >= curSeconds
                                      select new UserPost { Post = p, User = u };
 
             var postViewModel = await GetQueryablePostViewModels(queryableUserPosts, myId).SingleOrDefaultAsync();
@@ -336,9 +343,9 @@ namespace Photography.Services.Post.API.Query.EF
             }
 
             if (!string.IsNullOrWhiteSpace(sortBy) && sortBy.ToLower() == "score")
-                queryablePosts = queryablePosts.OrderBy(p => p.Score);
+                queryablePosts = queryablePosts.OrderByDescending(p => p.Score);
             else
-                queryablePosts = queryablePosts.OrderBy(p => p.UpdatedTime);
+                queryablePosts = queryablePosts.OrderByDescending(p => p.UpdatedTime);
 
             var queryableUserPosts = GetAvailableUserPosts(queryablePosts);
 
@@ -464,7 +471,8 @@ namespace Photography.Services.Post.API.Query.EF
                                              Id = a.Id,
                                              Name = a.Name,
                                              Text = a.Text,
-                                             AttachmentType = a.AttachmentType
+                                             AttachmentType = a.AttachmentType,
+                                             IsPrivate = a.IsPrivate
                                          },
                        ForwardedPost = up.Post.ForwardedPostId == null ? null : new ForwardedPostViewModel
                        {
@@ -477,12 +485,14 @@ namespace Photography.Services.Post.API.Query.EF
                                Nickname = up.Post.ForwardedPost.User.Nickname
                            },
                            PostAttachments = from fa in up.Post.ForwardedPost.PostAttachments
+                                             where !fa.IsPrivate || up.Post.ForwardedPost.UserId == myId || role == "admin"
                                              select new PostAttachmentViewModel
                                              {
                                                  Id = fa.Id,
                                                  Name = fa.Name,
                                                  Text = fa.Text,
-                                                 AttachmentType = fa.AttachmentType
+                                                 AttachmentType = fa.AttachmentType,
+                                                 IsPrivate = fa.IsPrivate
                                              }
                        }
                    };

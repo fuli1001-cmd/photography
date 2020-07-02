@@ -1,5 +1,6 @@
 ﻿using Arise.DDD.Domain.SeedWork;
 using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
+using Photography.Services.Post.Domain.AggregatesModel.UserShareAggregate;
 using Photography.Services.Post.Domain.Events;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,9 @@ namespace Photography.Services.Post.Domain.AggregatesModel.TagAggregate
         // 私有标签（即帖子类别）所属用户
         public User User { get; private set; }
         public Guid? UserId { get; private set; }
+
+        private readonly List<UserShare> _userShares = null;
+        public IReadOnlyCollection<UserShare> UserShares => _userShares;
 
         public Tag(string name)
         {

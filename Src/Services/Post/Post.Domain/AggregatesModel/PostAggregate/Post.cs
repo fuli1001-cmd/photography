@@ -5,6 +5,7 @@ using Photography.Services.Post.Domain.AggregatesModel.CommentAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.TagAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggregate;
+using Photography.Services.Post.Domain.AggregatesModel.UserShareAggregate;
 using Photography.Services.Post.Domain.Events;
 using System;
 using System.Collections.Generic;
@@ -69,6 +70,9 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
 
         private readonly List<UserPostRelation> _userPostRelations = null;
         public IReadOnlyCollection<UserPostRelation> UserPostRelations => _userPostRelations;
+
+        private readonly List<UserShare> _userShares = null;
+        public IReadOnlyCollection<UserShare> UserShares => _userShares;
 
         private readonly List<Comment> _comments = null;
         public IReadOnlyCollection<Comment> Comments => _comments;
@@ -292,8 +296,9 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         public void Share(Guid shareUserId)
         {
             ShareCount++;
-            var upr = new UserPostRelation(shareUserId, UserPostRelationType.Share);
-            _userPostRelations.Add(upr);
+            var us = new UserShare();
+            us.SharePost(shareUserId, Id);
+            _userShares.Add(us);
         }
 
         public void Comment()
