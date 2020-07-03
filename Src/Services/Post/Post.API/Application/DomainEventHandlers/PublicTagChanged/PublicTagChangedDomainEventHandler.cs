@@ -28,31 +28,37 @@ namespace Photography.Services.Post.API.Application.DomainEventHandlers.PublicTa
             _logger.LogInformation("----- Handling PublicTagChangedDomainEvent: at {AppName} - ({@DomainEvent})", Program.AppName, notification);
 
             // 处理本次应用的标签
-            var appliedTags = await _tagRepository.GetPublicTagsByNames(notification.AppliedTags);
-            notification.AppliedTags.ForEach(name =>
+            if (notification.AppliedTags.Count > 0)
             {
-                var tag = appliedTags.SingleOrDefault(t => t.Name.ToLower() == name.ToLower());
-                if (tag == null)
+                var appliedTags = await _tagRepository.GetPublicTagsByNames(notification.AppliedTags);
+                notification.AppliedTags.ForEach(name =>
                 {
-                    tag = new Tag(name);
-                    _tagRepository.Add(tag);
-                }
-                else
-                {
-                    tag.IncreaseCount();
-                }
-            });
+                    var tag = appliedTags.SingleOrDefault(t => t.Name.ToLower() == name.ToLower());
+                    if (tag == null)
+                    {
+                        tag = new Tag(name);
+                        _tagRepository.Add(tag);
+                    }
+                    else
+                    {
+                        tag.IncreaseCount();
+                    }
+                });
+            }
 
             // 处理本次去掉的标签
-            var removedTags = await _tagRepository.GetPublicTagsByNames(notification.RemovedTags);
-            removedTags.ForEach(t =>
+            if (notification.RemovedTags.Count > 0)
             {
-                t.DecreaseCount();
+                var removedTags = await _tagRepository.GetPublicTagsByNames(notification.RemovedTags);
+                removedTags.ForEach(t =>
+                {
+                    t.DecreaseCount();
 
-                // 标签引用次数为0时，删掉标签
-                if (t.Count == 0)
-                    _tagRepository.Remove(t);
-            });
+                    // 标签引用次数为0时，删掉标签
+                    if (t.Count == 0)
+                        _tagRepository.Remove(t);
+                });
+            }
         }
     }
 }
