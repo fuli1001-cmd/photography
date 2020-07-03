@@ -62,13 +62,13 @@ namespace Photography.Services.Post.Infrastructure.Repositories
                    .SingleOrDefaultAsync();
         }
 
-        public async Task<Dictionary<Guid, Guid>> GetPostsUserIdsAsync(List<Guid> postIds)
-        {
-            var dic = new Dictionary<Guid, Guid>();
-            var posts = await _context.Posts.Where(p => postIds.Contains(p.Id)).ToListAsync();
-            posts.ForEach(p => dic.Add(p.Id, p.UserId));
-            return dic;
-        }
+        //public async Task<Dictionary<Guid, Guid>> GetPostsUserIdsAsync(List<Guid> postIds)
+        //{
+        //    var dic = new Dictionary<Guid, Guid>();
+        //    var posts = await _context.Posts.Where(p => postIds.Contains(p.Id)).ToListAsync();
+        //    posts.ForEach(p => dic.Add(p.Id, p.UserId));
+        //    return dic;
+        //}
 
         public async Task<List<Domain.AggregatesModel.PostAggregate.Post>> GetPostsAsync(List<Guid> postIds)
         {

@@ -70,10 +70,14 @@ namespace Photography.Services.Post.API.Application.Commands.Post.ForwardPosts
 
             if (await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
             {
-                var postUserIds = await _postRepository.GetPostsUserIdsAsync(request.ForwardPostIds);
+                //var postUserIds = await _postRepository.GetPostsUserIdsAsync(request.ForwardPostIds);
                 foreach(var p in posts)
                 {
-                    await SendPostForwardedEventAsync(myId, postUserIds[p.ForwardedPostId.Value], p.ForwardedPostId.Value, p.Id);
+                    var forwardedPost = toBeForwardedPosts.FirstOrDefault(p => p.Id == p.ForwardedPostId.Value);
+                    if (forwardedPost == null)
+                        forwardedPost = originalPosts.FirstOrDefault(p => p.Id == p.ForwardedPostId.Value);
+
+                    await SendPostForwardedEventAsync(myId, forwardedPost.UserId, p.ForwardedPostId.Value, p.Id);
                 }
             }
 
