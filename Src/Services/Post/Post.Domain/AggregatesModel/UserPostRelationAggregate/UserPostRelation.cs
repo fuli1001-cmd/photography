@@ -70,6 +70,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggre
     public enum UserPostRelationType
     {
         View,
-        Like
+        Like,
+        Share
     }
 }

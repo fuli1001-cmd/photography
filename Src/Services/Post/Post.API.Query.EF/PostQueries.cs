@@ -21,7 +21,6 @@ using Arise.DDD.API.Paging;
 using Photography.Services.Post.API.Query.EF.Models;
 using Microsoft.Extensions.Configuration;
 using Arise.DDD.Domain.Exceptions;
-using Photography.Services.Post.Domain.AggregatesModel.UserShareAggregate;
 
 namespace Photography.Services.Post.API.Query.EF
 {
@@ -241,14 +240,10 @@ namespace Photography.Services.Post.API.Query.EF
             var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
 
-            var userShares = GetUserShares(sharedUserId);
-
             var queryableUserPosts = from p in _postContext.Posts
                                      join u in _postContext.Users
                                      on p.UserId equals u.Id
-                                     join us in userShares
-                                     on p.Id equals us.PostId
-                                     where p.Id == postId
+                                     where p.Id == postId && p.UserId == sharedUserId
                                      select new UserPost { Post = p, User = u };
 
             var postViewModel = await GetQueryablePostViewModels(queryableUserPosts, myId).SingleOrDefaultAsync();
@@ -263,13 +258,10 @@ namespace Photography.Services.Post.API.Query.EF
             var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
 
-            var userShares = GetUserShares(sharedUserId);
-
             var queryableUserPosts = from p in _postContext.Posts
                                      join u in _postContext.Users
                                      on p.UserId equals u.Id
-                                     join us in userShares
-                                     on p.PrivateTag equals us.PrivateTag
+                                     where p.UserId == sharedUserId
                                      select new UserPost { Post = p, User = u };
 
             if (privateTag == "未分类")
@@ -291,13 +283,10 @@ namespace Photography.Services.Post.API.Query.EF
             var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
 
-            if (await GetUserShares(sharedUserId).CountAsync() == 0)
-                return null;
-
             var queryableUserPosts = from p in _postContext.Posts
                                      join u in _postContext.Users
                                      on p.UserId equals u.Id
-                                     where u.Id == sharedUserId
+                                     where p.UserId == sharedUserId
                                      select new UserPost { Post = p, User = u };
 
             var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.UpdatedTime);
@@ -307,14 +296,6 @@ namespace Photography.Services.Post.API.Query.EF
             result.ForEach(p => SetAttachment(p));
 
             return result;
-        }
-
-        private IQueryable<UserShare> GetUserShares(Guid sharedUserId)
-        {
-            var validSeconds = _configuration.GetValue<int>("ShareValidTime") * 3600;
-            var curSeconds = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
-
-            return _postContext.UserShares.Where(us => us.UserId == sharedUserId && (us.CreatedTime + validSeconds) >= curSeconds);
         }
 
         /// <summary>

@@ -32,10 +32,6 @@ namespace Photography.Services.Post.Infrastructure.EntityConfigurations
             var commentsNavigation = builder.Metadata.FindNavigation(nameof(Domain.AggregatesModel.PostAggregate.Post.Comments));
             commentsNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 
-            //UserShares navigation properties
-            var sharesNavigation = builder.Metadata.FindNavigation(nameof(Domain.AggregatesModel.PostAggregate.Post.UserShares));
-            sharesNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
-
             // self navigation properties
             builder.HasMany(p => p.ForwardingPosts).WithOne(p => p.ForwardedPost).HasForeignKey(p => p.ForwardedPostId).IsRequired(false).OnDelete(DeleteBehavior.Restrict);
 

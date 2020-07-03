@@ -5,7 +5,6 @@ using Photography.Services.Post.Domain.AggregatesModel.CommentAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.TagAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggregate;
-using Photography.Services.Post.Domain.AggregatesModel.UserShareAggregate;
 using Photography.Services.Post.Domain.Events;
 using System;
 using System.Collections.Generic;
@@ -71,9 +70,6 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
 
         private readonly List<UserPostRelation> _userPostRelations = null;
         public IReadOnlyCollection<UserPostRelation> UserPostRelations => _userPostRelations;
-
-        private readonly List<UserShare> _userShares = null;
-        public IReadOnlyCollection<UserShare> UserShares => _userShares;
 
         private readonly List<Comment> _comments = null;
         public IReadOnlyCollection<Comment> Comments => _comments;
@@ -246,6 +242,10 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         public void SetForwardPostId(Guid forwardedPostId)
         {
             ForwardedPostId = forwardedPostId;
+        }
+
+        public void IncreaseForwardCount()
+        {
             ForwardCount++;
         }
 
@@ -295,9 +295,11 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             LikeCount = Math.Max(LikeCount - 1, 0);
         }
 
-        public void Share()
+        public void Share(Guid sharedUserId)
         {
             ShareCount++;
+            var upr = new UserPostRelation(sharedUserId, UserPostRelationType.Share);
+            _userPostRelations.Add(upr);
         }
 
         public void Comment()

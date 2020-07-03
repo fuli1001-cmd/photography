@@ -38,17 +38,34 @@ namespace Photography.Services.Post.API.Application.Commands.Post.ForwardPosts
 
         public async Task<IEnumerable<PostViewModel>> Handle(ForwardPostsCommand request, CancellationToken cancellationToken)
         {
+            // 被转发的帖子对象list
+            var toBeForwardedPosts = await _postRepository.GetPostsAsync(request.ForwardPostIds);
+
+            // 被转发的帖子转发过的原始帖子对象list
+            var originalPosts = await _postRepository.GetPostsAsync(toBeForwardedPosts.Where(p => p.ForwardedPostId != null).Select(p => p.ForwardedPostId.Value).ToList());
+
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var posts = new List<Domain.AggregatesModel.PostAggregate.Post>();
-            
-            request.ForwardPostIds.ForEach(forwardPostId =>
+
+            toBeForwardedPosts.ForEach(toBeForwardedPost =>
             {
+                // 创建新帖子
                 var post = Domain.AggregatesModel.PostAggregate.Post.CreatePost(request.Text, request.Commentable, request.ForwardType, request.ShareType,
                     request.Visibility, request.ViewPassword, request.PublicTags, request.PrivateTag, null, request.Latitude, request.Longitude, request.LocationName,
                     request.Address, request.CityCode, request.FriendIds, null, myId, request.ShowOriginalText);
-                post.SetForwardPostId(forwardPostId);
+                post.SetForwardPostId(toBeForwardedPost.ForwardedPostId ?? toBeForwardedPost.Id);
                 _postRepository.Add(post);
                 posts.Add(post);
+
+                // 增加被转发帖子的转发数
+                toBeForwardedPost.IncreaseForwardCount();
+
+                // 被转发帖子是转发贴时，还要增加原始帖的转发数
+                if (toBeForwardedPost.ForwardedPostId != null)
+                {
+                    var originalPost = originalPosts.FirstOrDefault(p => p.Id == toBeForwardedPost.ForwardedPostId.Value);
+                    originalPost.IncreaseForwardCount();
+                }
             });
 
             if (await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))

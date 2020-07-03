@@ -346,17 +346,7 @@
         </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.Post.Share.ShareCommand.PostIds">
             <summary>
-            要分享的帖子id
-            </summary>
-        </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.Post.Share.ShareCommand.PrivateTagNames">
-            <summary>
-            要分享的帖子类别名称
-            </summary>
-        </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.Post.Share.ShareCommand.NoAd">
-            <summary>
-            无广告分享
+            分享的帖子id
             </summary>
         </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.Post.ToggleLikePost.ToggleLikePostCommand.PostId">
@@ -672,26 +662,28 @@
             <param name="sharePostCommand"></param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetSharedPostAsync(System.Guid,System.Guid)">
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetSharedPostAsync(System.String,System.String,System.String)">
             <summary>
             获取分享的帖子的详情
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetSharedPostAsync(System.String,System.Guid,Arise.DDD.API.Paging.PagingParameters)">
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetSharedPostAsync(System.String,System.String,System.String,Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             获取分享的类别下的所有帖子
             </summary>
-            <param name="privateTag"></param>
-            <param name="sharedUserId"></param>
+            <param name="encryptedPrivateTag"></param>
+            <param name="encryptedSharedUserId"></param>
+            <param name="encryptedTimestamp"></param>
             <param name="pagingParameters"></param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetSharedPostAsync(System.Guid,Arise.DDD.API.Paging.PagingParameters)">
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetSharedPostAsync(System.String,System.String,Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             获取分享的用户的所有帖子
             </summary>
-            <param name="sharedUserId"></param>
+            <param name="encryptedSharedUserId"></param>
+            <param name="encryptedTimestamp"></param>
             <param name="pagingParameters"></param>
             <returns></returns>
         </member>
@@ -719,6 +711,29 @@
             </summary>
             <param name="command"></param>
             <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Utilities.Encryptor.GetMD5_32(System.String,System.String)">
+            <summary>  
+            SHA1加密字符串  
+            </summary>  
+            <param name="source">源字符串</param>  
+            <returns>加密后的字符串</returns>  
+        </member>
+        <member name="M:Photography.Services.Post.API.Utilities.Encryptor.EncryptDES(System.String,System.String)">
+            <summary>  
+            DES加密字符串  
+            </summary>  
+            <param name="encryptString">待加密的字符串</param>  
+            <param name="encryptKey">加密密钥,要求为8位</param>  
+            <returns>加密成功返回加密后的字符串，失败返回源串</returns>  
+        </member>
+        <member name="M:Photography.Services.Post.API.Utilities.Encryptor.DecryptDES(System.String,System.String)">
+            <summary>  
+            DES解密字符串  
+            </summary>  
+            <param name="decryptString">待解密的字符串</param>  
+            <param name="decryptKey">解密密钥,要求为8位,和加密密钥相同</param>  
+            <returns>解密成功返回解密后的字符串，失败返源串</returns>  
         </member>
     </members>
 </doc>

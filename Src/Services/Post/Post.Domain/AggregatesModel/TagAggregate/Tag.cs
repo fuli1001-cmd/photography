@@ -1,6 +1,5 @@
 ﻿using Arise.DDD.Domain.SeedWork;
 using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
-using Photography.Services.Post.Domain.AggregatesModel.UserShareAggregate;
 using Photography.Services.Post.Domain.Events;
 using System;
 using System.Collections.Generic;

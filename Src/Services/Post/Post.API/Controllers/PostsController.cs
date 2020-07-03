@@ -2,6 +2,7 @@
 using Arise.DDD.API.Paging;
 using Arise.DDD.API.Response;
 using Arise.DDD.Domain.Exceptions;
+using AutoMapper.Configuration;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,12 +19,14 @@ using Photography.Services.Post.API.Application.Commands.Post.UpdatePost;
 using Photography.Services.Post.API.Infrastructure;
 using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
+using Photography.Services.Post.API.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace Photography.Services.Post.API.Controllers
 {
@@ -39,11 +42,15 @@ namespace Photography.Services.Post.API.Controllers
         private readonly ILogger<PostsController> _logger;
         private readonly IPostQueries _postQueries;
         private readonly IMediator _mediator;
+        private readonly Microsoft.Extensions.Configuration.IConfiguration _configuration;
 
-        public PostsController(IMediator mediator, IPostQueries postQueries, ILogger<PostsController> logger)
+        private const string _decryptKey = "Vs16.5.4";
+
+        public PostsController(IMediator mediator, IPostQueries postQueries, Microsoft.Extensions.Configuration.IConfiguration configuration, ILogger<PostsController> logger)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _postQueries = postQueries ?? throw new ArgumentNullException(nameof(postQueries));
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -323,46 +330,133 @@ namespace Photography.Services.Post.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("share/{postId}/{sharedUserId}")]
+        [Route("share/{encryptedPostId}/{encryptedSharedUserId}/{timestamp}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [AllowAnonymous]
-        public async Task<ActionResult<PostViewModel>> GetSharedPostAsync(Guid postId, Guid sharedUserId)
+        public async Task<ActionResult<PostViewModel>> GetSharedPostAsync(string encryptedPostId, string encryptedSharedUserId, string encryptedTimestamp)
         {
-            var post = await _postQueries.GetSharedPostAsync(postId, sharedUserId);
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(post));
+            var postId = DecryptGuid(encryptedPostId);
+            var sharedUserId = DecryptGuid(encryptedSharedUserId);
+            var timestamp = DecryptTimestamp(encryptedTimestamp);
+
+            _logger.LogInformation("postId: {postId}, sharedUserId: {sharedUserId}, timestamp: {timestamp}", postId, sharedUserId, timestamp);
+
+            if (postId != Guid.Empty && sharedUserId != Guid.Empty && CheckShareTime(timestamp))
+            {
+                var post = await _postQueries.GetSharedPostAsync(postId, sharedUserId);
+                return Ok(ResponseWrapper.CreateOkResponseWrapper(post));
+            }
+
+            return new ObjectResult(ResponseWrapper.CreateErrorResponseWrapper((StatusCode)HttpStatusCode.BadRequest, "分享的帖子不存在或已过期"));
         }
 
         /// <summary>
         /// 获取分享的类别下的所有帖子
         /// </summary>
-        /// <param name="privateTag"></param>
-        /// <param name="sharedUserId"></param>
+        /// <param name="encryptedPrivateTag"></param>
+        /// <param name="encryptedSharedUserId"></param>
+        /// <param name="encryptedTimestamp"></param>
         /// <param name="pagingParameters"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("share/privatetag/{privateTag}/{sharedUserId}")]
+        [Route("share/privatetag/{privateTag}/{encryptedSharedUserId}/{timestamp}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [AllowAnonymous]
-        public async Task<ActionResult<PostViewModel>> GetSharedPostAsync(string privateTag, Guid sharedUserId, [FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<PostViewModel>> GetSharedPostAsync(string encryptedPrivateTag, string encryptedSharedUserId, string encryptedTimestamp, [FromQuery] PagingParameters pagingParameters)
         {
-            var post = await _postQueries.GetSharedPostsAsync(privateTag, sharedUserId, pagingParameters);
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(post));
+            var privateTag = Encryptor.DecryptDES(encryptedPrivateTag, _decryptKey);
+            var sharedUserId = DecryptGuid(encryptedSharedUserId);
+            var timestamp = DecryptTimestamp(encryptedTimestamp);
+
+            _logger.LogInformation("privateTag: {privateTag}, sharedUserId: {sharedUserId}, timestamp: {timestamp}", privateTag, sharedUserId, timestamp);
+
+            if (sharedUserId != Guid.Empty && privateTag != encryptedPrivateTag && CheckShareTime(timestamp))
+            {
+                var post = await _postQueries.GetSharedPostsAsync(privateTag, sharedUserId, pagingParameters);
+                return Ok(ResponseWrapper.CreateOkResponseWrapper(post));
+            }
+
+            return new ObjectResult(ResponseWrapper.CreateErrorResponseWrapper((StatusCode)HttpStatusCode.BadRequest, "分享的帖子不存在或已过期"));
         }
 
         /// <summary>
         /// 获取分享的用户的所有帖子
         /// </summary>
-        /// <param name="sharedUserId"></param>
+        /// <param name="encryptedSharedUserId"></param>
+        /// <param name="encryptedTimestamp"></param>
         /// <param name="pagingParameters"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("share/{sharedUserId}")]
+        [Route("share/{sharedUserId}/{timestamp}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [AllowAnonymous]
-        public async Task<ActionResult<PostViewModel>> GetSharedPostAsync(Guid sharedUserId, [FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<PostViewModel>> GetSharedPostAsync(string encryptedSharedUserId, string encryptedTimestamp, [FromQuery] PagingParameters pagingParameters)
         {
-            var post = await _postQueries.GetSharedPostsAsync(sharedUserId, pagingParameters);
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(post));
+            var sharedUserId = DecryptGuid(encryptedSharedUserId);
+            var timestamp = DecryptTimestamp(encryptedTimestamp);
+
+            _logger.LogInformation("sharedUserId: {sharedUserId}, timestamp: {timestamp}", sharedUserId, timestamp);
+
+            if (sharedUserId != Guid.Empty && CheckShareTime(timestamp))
+            {
+                var post = await _postQueries.GetSharedPostsAsync(sharedUserId, pagingParameters);
+                return Ok(ResponseWrapper.CreateOkResponseWrapper(post));
+            }
+
+            return new ObjectResult(ResponseWrapper.CreateErrorResponseWrapper((StatusCode)HttpStatusCode.BadRequest, "分享的帖子不存在或已过期"));
+        }
+
+        private bool CheckShareTime(double createdSeconds)
+        {
+            var validSeconds = _configuration.GetValue<int>("ShareValidTime") * 3600;
+            var curSeconds = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+            return createdSeconds + validSeconds >= curSeconds;
+        }
+
+        private Guid DecryptGuid(string encryptedGuid)
+        {
+            try
+            {
+                return Guid.Parse(Encryptor.DecryptDES(encryptedGuid, _decryptKey));
+            }
+            catch
+            {
+                return Guid.Empty;
+            }
+        }
+
+        private double DecryptTimestamp(string encryptedTimestamp)
+        {
+            try
+            {
+                var timestamp = Encryptor.DecryptDES(encryptedTimestamp, _decryptKey);
+                if (timestamp != encryptedTimestamp)
+                {
+                    double seconds = 0;
+                    if (double.TryParse(timestamp, out seconds))
+                        return seconds;
+                }
+                return 0;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
+        [HttpGet]
+        [Route("test")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
+        public void test()
+        {
+            //var text = "630f1fa9-f11a-43ff-9145-5ec72d552ad7";
+            //var encrypt = Encryptor.EncryptDES(text, _decryptKey);
+            //var descypt = Encryptor.DecryptDES(encrypt, _decryptKey);
+            //_logger.LogInformation("***********原文：{text}, 密文：{encrypt}，解密后：{descypt}", text, encrypt, descypt);
+
+            _logger.LogInformation(Encryptor.DecryptDES("jPDW4S/qg4pADmkz+uaAKNecOi0STm3dWIAaUqsvFbiB5i9ak3qoWA==", _decryptKey));
+            _logger.LogInformation(Encryptor.DecryptDES("YYksKFNKcoyb+6YXiUR0IeDSuTal9Xi0eAdsREk07wbEMIHhNlFJzQ==", _decryptKey));
         }
     }
 }

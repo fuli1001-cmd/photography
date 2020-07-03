@@ -13,18 +13,8 @@ namespace Photography.Services.Post.API.Application.Commands.Post.Share
     public class ShareCommand : IRequest<bool>
     {
         /// <summary>
-        /// 要分享的帖子id
+        /// 分享的帖子id
         /// </summary>
         public List<Guid> PostIds { get; set; }
-
-        /// <summary>
-        /// 要分享的帖子类别名称
-        /// </summary>
-        public List<string> PrivateTagNames { get; set; }
-
-        /// <summary>
-        /// 无广告分享
-        /// </summary>
-        public bool NoAd { get; set; }
     }
 }
