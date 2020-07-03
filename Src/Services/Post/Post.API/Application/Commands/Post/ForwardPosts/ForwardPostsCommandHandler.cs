@@ -73,9 +73,10 @@ namespace Photography.Services.Post.API.Application.Commands.Post.ForwardPosts
                 //var postUserIds = await _postRepository.GetPostsUserIdsAsync(request.ForwardPostIds);
                 foreach(var p in posts)
                 {
-                    var forwardedPost = toBeForwardedPosts.FirstOrDefault(p => p.Id == p.ForwardedPostId.Value);
+                    _logger.LogInformation("*************************** ForwardedPostId: {ForwardedPostId}", p.ForwardedPostId ?? Guid.Empty);
+                    var forwardedPost = toBeForwardedPosts.FirstOrDefault(p => p.Id == p.ForwardedPostId);
                     if (forwardedPost == null)
-                        forwardedPost = originalPosts.FirstOrDefault(p => p.Id == p.ForwardedPostId.Value);
+                        forwardedPost = originalPosts.FirstOrDefault(p => p.Id == p.ForwardedPostId);
 
                     await SendPostForwardedEventAsync(myId, forwardedPost.UserId, p.ForwardedPostId.Value, p.Id);
                 }
