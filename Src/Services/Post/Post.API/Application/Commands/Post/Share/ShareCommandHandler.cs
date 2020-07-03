@@ -42,6 +42,9 @@ namespace Photography.Services.Post.API.Application.Commands.Post.Share
                 {
                     var userShare = new UserShare();
                     userShare.SharePost(myId, postId,request.NoAd);
+
+                    _userShareRepository.Add(userShare);
+
                     shared = true;
                 });
             }
@@ -52,6 +55,9 @@ namespace Photography.Services.Post.API.Application.Commands.Post.Share
                 {
                     var userShare = new UserShare();
                     userShare.ShareTag(myId, privateTagName, request.NoAd);
+
+                    _userShareRepository.Add(userShare);
+
                     shared = true;
                 });
             }
@@ -61,6 +67,8 @@ namespace Photography.Services.Post.API.Application.Commands.Post.Share
             {
                 var userShare = new UserShare();
                 userShare.ShareUser(myId, request.NoAd);
+
+                _userShareRepository.Add(userShare);
             }
 
             return await _userShareRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
