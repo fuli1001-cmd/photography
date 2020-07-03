@@ -40,6 +40,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         public int LikeCount { get; private set; }
         public int ShareCount { get; private set; }
         public int CommentCount { get; private set; }
+        public int ForwardCount { get; private set; }
         // for hot posts
         public int Score { get; private set; }
         public bool? Commentable { get; private set; }
@@ -245,6 +246,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         public void SetForwardPostId(Guid forwardedPostId)
         {
             ForwardedPostId = forwardedPostId;
+            ForwardCount++;
         }
 
         public void CancelAppointmentDeal(Guid userId)

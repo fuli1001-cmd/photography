@@ -482,7 +482,7 @@ namespace Photography.Services.Post.API.Query.EF
                        Id = up.Post.Id,
                        Text = up.Post.Text,
                        LikeCount = up.Post.LikeCount,
-                       ShareCount = up.Post.ShareCount,
+                       ShareCount = up.Post.ShareCount + up.Post.ForwardCount,
                        CommentCount = up.Post.CommentCount,
                        CreatedTime = up.Post.CreatedTime,
                        UpdatedTime = up.Post.UpdatedTime,
