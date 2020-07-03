@@ -58,18 +58,18 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserShareAggregate
             PrivateTag = privateTag;
             NoAd = noAd;
 
-            AddTagSharedDomainEvent(privateTag);
+            AddTagSharedDomainEvent();
         }
 
         private void AddPostSharedDomainEvent()
         {
-            var @event = new PostSharedDomainEvent(Id);
+            var @event = new PostSharedDomainEvent(PostId.Value);
             AddDomainEvent(@event);
         }
 
-        private void AddTagSharedDomainEvent(string privateTag)
+        private void AddTagSharedDomainEvent()
         {
-            var @event = new PrivateTagSharedDomainEvent(privateTag);
+            var @event = new PrivateTagSharedDomainEvent(PrivateTag);
             AddDomainEvent(@event);
         }
 
