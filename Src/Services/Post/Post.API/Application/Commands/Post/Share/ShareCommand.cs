@@ -21,5 +21,10 @@ namespace Photography.Services.Post.API.Application.Commands.Post.Share
         /// 要分享的帖子类别名称
         /// </summary>
         public List<string> PrivateTagNames { get; set; }
+
+        /// <summary>
+        /// 无广告分享
+        /// </summary>
+        public bool NoAd { get; set; }
     }
 }

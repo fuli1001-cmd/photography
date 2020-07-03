@@ -25,5 +25,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         Task<List<Post>> GetPostsAsync(List<Guid> postIds);
 
         Task<List<Post>> GetUserPostsByPrivateTag(Guid userId, string privateTag);
+
+        Task<List<Post>> GetUserPostsAsync(Guid userId);
     }
 }

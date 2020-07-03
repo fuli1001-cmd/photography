@@ -354,6 +354,11 @@
             要分享的帖子类别名称
             </summary>
         </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Post.Share.ShareCommand.NoAd">
+            <summary>
+            无广告分享
+            </summary>
+        </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.Post.ToggleLikePost.ToggleLikePostCommand.PostId">
             <summary>
             点赞的帖子id
@@ -671,6 +676,23 @@
             <summary>
             获取分享的帖子的详情
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetSharedPostAsync(System.String,System.Guid,Arise.DDD.API.Paging.PagingParameters)">
+            <summary>
+            获取分享的类别下的所有帖子
+            </summary>
+            <param name="privateTag"></param>
+            <param name="sharedUserId"></param>
+            <param name="pagingParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetSharedPostAsync(System.Guid,Arise.DDD.API.Paging.PagingParameters)">
+            <summary>
+            获取分享的用户的所有帖子
+            </summary>
+            <param name="sharedUserId"></param>
+            <param name="pagingParameters"></param>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.Post.API.Controllers.TagsController.GetPopularPublicTagsAsync">

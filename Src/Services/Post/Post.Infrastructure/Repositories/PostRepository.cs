@@ -83,5 +83,10 @@ namespace Photography.Services.Post.Infrastructure.Repositories
         {
             return await _context.Posts.Where(p => p.UserId == userId && p.PrivateTag.ToLower() == privateTag.ToLower() && p.PostType == PostType.Post).ToListAsync();
         }
+
+        public async Task<List<Domain.AggregatesModel.PostAggregate.Post>> GetUserPostsAsync(Guid userId)
+        {
+            return await _context.Posts.Where(p => p.UserId == userId && p.PostType == PostType.Post).ToListAsync();
+        }
     }
 }

@@ -41,7 +41,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.Share
                 request.PostIds.ForEach(postId =>
                 {
                     var userShare = new UserShare();
-                    userShare.SharePost(myId, postId);
+                    userShare.SharePost(myId, postId,request.NoAd);
                     shared = true;
                 });
             }
@@ -51,7 +51,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.Share
                 request.PrivateTagNames.ForEach(privateTagName =>
                 {
                     var userShare = new UserShare();
-                    userShare.ShareTag(myId, privateTagName);
+                    userShare.ShareTag(myId, privateTagName, request.NoAd);
                     shared = true;
                 });
             }
@@ -60,7 +60,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.Share
             if (!shared)
             {
                 var userShare = new UserShare();
-                userShare.ShareUser(myId);
+                userShare.ShareUser(myId, request.NoAd);
             }
 
             return await _userShareRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
