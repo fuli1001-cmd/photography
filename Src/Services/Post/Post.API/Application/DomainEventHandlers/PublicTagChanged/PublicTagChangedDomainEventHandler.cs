@@ -25,6 +25,8 @@ namespace Photography.Services.Post.API.Application.DomainEventHandlers.PublicTa
 
         public async Task Handle(PublicTagChangedDomainEvent notification, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("----- Handling PublicTagChangedDomainEvent: at {AppName} - ({@DomainEvent})", Program.AppName, notification);
+
             // 处理本次应用的标签
             var appliedTags = await _tagRepository.GetPublicTagsByNames(notification.AppliedTags);
             notification.AppliedTags.ForEach(name =>

@@ -30,6 +30,8 @@ namespace Photography.Services.Post.API.Application.DomainEventHandlers.UserShar
 
         public async Task Handle(UserSharedDomainEvent notification, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("----- Handling UserSharedDomainEvent: at {AppName} - ({@DomainEvent})", Program.AppName, notification);
+
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var posts = await _postRepository.GetUserPostsAsync(myId);
             posts.ForEach(p => p.Share());

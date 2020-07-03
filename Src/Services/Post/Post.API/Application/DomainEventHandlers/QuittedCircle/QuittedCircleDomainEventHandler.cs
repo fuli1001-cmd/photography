@@ -25,6 +25,8 @@ namespace Photography.Services.Post.API.Application.DomainEventHandlers.QuittedC
 
         public async Task Handle(QuittedCircleDomainEvent notification, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("----- Handling QuittedCircleDomainEvent: at {AppName} - ({@DomainEvent})", Program.AppName, notification);
+
             var circle = await _circleRepository.GetByIdAsync(notification.CircleId);
             circle.DecreaseUserCount();
         }

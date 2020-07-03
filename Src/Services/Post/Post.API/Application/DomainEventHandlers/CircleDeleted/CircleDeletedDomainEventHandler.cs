@@ -25,6 +25,8 @@ namespace Photography.Services.Post.API.Application.DomainEventHandlers.CircleDe
 
         public async Task Handle(CircleDeletedDomainEvent notification, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("----- Handling CircleDeletedDomainEvent: at {AppName} - ({@DomainEvent})", Program.AppName, notification);
+
             var relations = await _userCircleRelationRepository.GetRelationsByCircleIdAsync(notification.CircleId);
             relations.ForEach(r => _userCircleRelationRepository.Remove(r));
         }

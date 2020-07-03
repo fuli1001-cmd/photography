@@ -25,6 +25,8 @@ namespace Photography.Services.Post.API.Application.DomainEventHandlers.PostShar
 
         public async Task Handle(PostSharedDomainEvent notification, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("----- Handling PostSharedDomainEvent: at {AppName} - ({@DomainEvent})", Program.AppName, notification);
+
             var post = await _postRepository.GetByIdAsync(notification.PostId);
             post.Share();
         }

@@ -25,6 +25,8 @@ namespace Photography.Services.Post.API.Application.DomainEventHandlers.JoinedCi
 
         public async Task Handle(JoinedCircleDomainEvent notification, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("----- Handling JoinedCircleDomainEvent: at {AppName} - ({@DomainEvent})", Program.AppName, notification);
+
             var circle = await _circleRepository.GetByIdAsync(notification.CircleId);
             circle.IncreaseUserCount();
         }

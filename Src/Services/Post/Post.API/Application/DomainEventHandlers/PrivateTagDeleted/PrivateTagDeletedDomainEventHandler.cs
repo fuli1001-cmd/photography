@@ -25,6 +25,8 @@ namespace Photography.Services.Post.API.Application.DomainEventHandlers.PrivateT
 
         public async Task Handle(PrivateTagDeletedDomainEvent notification, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("----- Handling PrivateTagDeletedDomainEvent: at {AppName} - ({@DomainEvent})", Program.AppName, notification);
+
             var posts = await _postRepository.GetUserPostsByPrivateTag(notification.UserId, notification.Name);
             posts.ForEach(p => p.RemovePrivateTag());
         }

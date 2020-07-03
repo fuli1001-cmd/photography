@@ -30,6 +30,8 @@ namespace Photography.Services.Post.API.Application.DomainEventHandlers.PrivateT
 
         public async Task Handle(PrivateTagSharedDomainEvent notification, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("----- Handling PrivateTagSharedDomainEvent: at {AppName} - ({@DomainEvent})", Program.AppName, notification);
+
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var posts = await _postRepository.GetUserPostsByPrivateTag(myId, notification.PrivateTag);
             posts.ForEach(p => p.Share());
