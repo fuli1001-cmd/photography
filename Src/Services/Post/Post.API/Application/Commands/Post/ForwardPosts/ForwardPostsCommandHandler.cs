@@ -70,28 +70,14 @@ namespace Photography.Services.Post.API.Application.Commands.Post.ForwardPosts
 
             if (await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
             {
-                //var postUserIds = await _postRepository.GetPostsUserIdsAsync(request.ForwardPostIds);
-                foreach(var p in posts)
+                foreach(var post in posts)
                 {
-                    _logger.LogInformation("*************************** ForwardedPostId 1: {ForwardedPostId}", p.ForwardedPostId ?? Guid.Empty);
-                    var forwardedPost = toBeForwardedPosts.FirstOrDefault(p => p.Id == p.ForwardedPostId);
+                    var forwardedPost = toBeForwardedPosts.FirstOrDefault(p => p.Id == post.ForwardedPostId.Value);
 
                     if (forwardedPost == null)
-                    {
-                        _logger.LogInformation("*************************** forwardedPost is null, get from originalPosts");
-                        forwardedPost = originalPosts.FirstOrDefault(p => p.Id == p.ForwardedPostId);
-                    }
+                        forwardedPost = originalPosts.FirstOrDefault(p => p.Id == post.ForwardedPostId.Value);
 
-                    if (forwardedPost == null)
-                        _logger.LogInformation("*************************** forwardedPost is null!!!");
-
-                    _logger.LogInformation("*************************** ForwardedPostId 2: {ForwardedPostId}", p.ForwardedPostId ?? Guid.Empty);
-                    if (p.ForwardedPostId != null)
-                        _logger.LogInformation("*************************** ForwardedPostId 3: {ForwardedPostId}", p.ForwardedPostId.Value);
-
-                    await SendPostForwardedEventAsync(myId, forwardedPost.UserId, p.ForwardedPostId.Value, p.Id);
-
-                    _logger.LogInformation("*************************** SendPostForwardedEventAsync");
+                    await SendPostForwardedEventAsync(myId, forwardedPost.UserId, post.ForwardedPostId.Value, post.Id);
                 }
             }
 

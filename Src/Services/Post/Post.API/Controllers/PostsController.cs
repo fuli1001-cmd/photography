@@ -444,19 +444,19 @@ namespace Photography.Services.Post.API.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("test")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [AllowAnonymous]
-        public void test()
-        {
-            //var text = "630f1fa9-f11a-43ff-9145-5ec72d552ad7";
-            //var encrypt = Encryptor.EncryptDES(text, _decryptKey);
-            //var descypt = Encryptor.DecryptDES(encrypt, _decryptKey);
-            //_logger.LogInformation("***********原文：{text}, 密文：{encrypt}，解密后：{descypt}", text, encrypt, descypt);
+        //[HttpGet]
+        //[Route("test")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[AllowAnonymous]
+        //public void test()
+        //{
+        //    //var text = "630f1fa9-f11a-43ff-9145-5ec72d552ad7";
+        //    //var encrypt = Encryptor.EncryptDES(text, _decryptKey);
+        //    //var descypt = Encryptor.DecryptDES(encrypt, _decryptKey);
+        //    //_logger.LogInformation("***********原文：{text}, 密文：{encrypt}，解密后：{descypt}", text, encrypt, descypt);
 
-            _logger.LogInformation(Encryptor.DecryptDES("jPDW4S/qg4pADmkz+uaAKNecOi0STm3dWIAaUqsvFbiB5i9ak3qoWA==", _decryptKey));
-            _logger.LogInformation(Encryptor.DecryptDES("YYksKFNKcoyb+6YXiUR0IeDSuTal9Xi0eAdsREk07wbEMIHhNlFJzQ==", _decryptKey));
-        }
+        //    _logger.LogInformation(Encryptor.DecryptDES("jPDW4S/qg4pADmkz+uaAKNecOi0STm3dWIAaUqsvFbiB5i9ak3qoWA==", _decryptKey));
+        //    _logger.LogInformation(Encryptor.DecryptDES("YYksKFNKcoyb+6YXiUR0IeDSuTal9Xi0eAdsREk07wbEMIHhNlFJzQ==", _decryptKey));
+        //}
     }
 }
