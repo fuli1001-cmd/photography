@@ -56,7 +56,7 @@ jobs:
           
           docker push ${{ secrets.DOCKER_USER }}/photography-manager:${{ github.sha }}
           docker push ${{ secrets.DOCKER_USER }}/photography-manager:linux   
-      -name: Deploy
+      - name: Deploy
         run: |
           touch ~/.ssh/id_rsa
           echo ${{ secrets.ID_RSA }} >> ~/.ssh/id_rsa
