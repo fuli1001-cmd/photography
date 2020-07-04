@@ -1,0 +1,28 @@
+name: Backend Chat CI/CD
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+      
+jobs:
+  cd:
+    runs-on: ubuntu-18.04
+    
+    steps:
+      - uses: actions/checkout@v2
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build
+        run: docker-compose build
+      - name: Tags
+        run: |
+          docker tag photography-apigwbase ${{ secrets.DOCKER_USER }}/photography-apigwbase:${{ github.sha }}
+          docker tag photography-apigwbase ${{ secrets.DOCKER_USER }}/photography-apigwbase:linux
+      - name: Push
+        run: |
+          docker push ${{ secrets.DOCKER_USER }}/photography-apigwbase:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USER }}/photography-apigwbase:linux

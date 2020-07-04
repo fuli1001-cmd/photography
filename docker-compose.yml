@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   apigwbase:
-    image: fuli1001/photography-apigwbase:linux
+    image: photography-apigwbase
     build:
       context: .
       dockerfile: Src/ApiGateways/ApiGwBase/Dockerfile
@@ -10,7 +10,7 @@ services:
       - photonetwork
 
   userapi:
-    image: fuli1001/photography-userapi:linux
+    image: photography-userapi
     build:
       context: .
       dockerfile: Src/Services/User/User.API/Dockerfile
@@ -18,7 +18,7 @@ services:
       - photonetwork
 
   postapi:
-    image: fuli1001/photography-postapi:linux
+    image: photography-postapi
     build:
       context: .
       dockerfile: Src/Services/Post/Post.API/Dockerfile
@@ -26,7 +26,7 @@ services:
       - photonetwork
 
   orderapi:
-    image: fuli1001/photography-orderapi:linux
+    image: photography-orderapi
     build:
       context: .
       dockerfile: Src/Services/Order/Order.API/Dockerfile
@@ -34,7 +34,7 @@ services:
       - photonetwork
 
   notificationapi:
-    image: fuli1001/photography-notificationapi:linux
+    image: photography-notificationapi
     build:
       context: .
       dockerfile: Src/Services/Notification/Notification.API/Dockerfile
@@ -42,7 +42,7 @@ services:
       - photonetwork
 
   manager:
-    image: fuli1001/photography-manager:linux
+    image: photography-manager
     build:
       context: .
       dockerfile: Src/WebApps/Management/Dockerfile
