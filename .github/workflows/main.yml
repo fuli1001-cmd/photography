@@ -57,11 +57,9 @@ jobs:
           docker push ${{ secrets.DOCKER_USER }}/photography-manager:${{ github.sha }}
           docker push ${{ secrets.DOCKER_USER }}/photography-manager:linux   
       - name: Deploy
-        run: |
-          ssh
-          sudo apt-get update
-          sudo apt-get install openssh-server
-          mkdir ~/.ssh
-          touch ~/.ssh/id_rsa
-          echo ${{ secrets.ID_RSA }} >> ~/.ssh/id_rsa
-          ssh -t ${{ secrets.TEST_SERVER_USER }}@121.196.28.120 'docker stack deploy --compose-file /root/photo/deploy/photo/docker-compose.yml --compose-file /root/photo/deploy/photo/docker-compose.override.yml photo'
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          command: docker stack deploy --compose-file ~/photo/deploy/photo/docker-compose.yml --compose-file ~/photo/deploy/photo/docker-compose.override.yml photo
+          host: ${{ secrets.TEST_SERVER }}
+          username: ${{ secrets.TEST_SERVER_USER }}
+          privateKey: ${{ secrets.ID_RSA }}
