@@ -18,9 +18,6 @@ jobs:
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
         
-      - name: Replace ocelot.json with production configs
-        run: cp ./Src/ApiGateways/ApiGwBase/configuration.production.json ./Src/ApiGateways/ApiGwBase/ocelot.json
-        
       - name: Build
         run: docker-compose build
         
