@@ -1,0 +1,73 @@
+name: Photography CI/CD (Test)
+
+on:
+  push:
+    branches:
+      - test
+  pull_request:
+    branches:
+      - test
+      
+jobs:
+  cd:
+    runs-on: ubuntu-18.04
+    
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+        
+      - name: Replace ocelot.json with production configs
+        run: cp ./Src/ApiGateways/ApiGwBase/configuration.production.json ./Src/ApiGateways/ApiGwBase/ocelot.json
+        
+      - name: Build
+        run: docker-compose build
+        
+      - name: Tags
+        run: |
+          docker tag photography-apigwbase ${{ secrets.DOCKER_USER }}/photography-apigwbase:${{ github.sha }}
+          docker tag photography-apigwbase ${{ secrets.DOCKER_USER }}/photography-apigwbase:linux
+          
+          docker tag photography-userapi ${{ secrets.DOCKER_USER }}/photography-userapi:${{ github.sha }}
+          docker tag photography-userapi ${{ secrets.DOCKER_USER }}/photography-userapi:linux
+          
+          docker tag photography-postapi ${{ secrets.DOCKER_USER }}/photography-postapi:${{ github.sha }}
+          docker tag photography-postapi ${{ secrets.DOCKER_USER }}/photography-postapi:linux
+          
+          docker tag photography-orderapi ${{ secrets.DOCKER_USER }}/photography-orderapi:${{ github.sha }}
+          docker tag photography-orderapi ${{ secrets.DOCKER_USER }}/photography-orderapi:linux
+          
+          docker tag photography-notificationapi ${{ secrets.DOCKER_USER }}/photography-notificationapi:${{ github.sha }}
+          docker tag photography-notificationapi ${{ secrets.DOCKER_USER }}/photography-notificationapi:linux
+          
+          docker tag photography-manager ${{ secrets.DOCKER_USER }}/photography-manager:${{ github.sha }}
+          docker tag photography-manager ${{ secrets.DOCKER_USER }}/photography-manager:linux
+          
+      - name: Push
+        run: |
+          docker push ${{ secrets.DOCKER_USER }}/photography-apigwbase:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USER }}/photography-apigwbase:linux
+          
+          docker push ${{ secrets.DOCKER_USER }}/photography-userapi:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USER }}/photography-userapi:linux
+          
+          docker push ${{ secrets.DOCKER_USER }}/photography-postapi:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USER }}/photography-postapi:linux
+          
+          docker push ${{ secrets.DOCKER_USER }}/photography-orderapi:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USER }}/photography-orderapi:linux
+          
+          docker push ${{ secrets.DOCKER_USER }}/photography-notificationapi:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USER }}/photography-notificationapi:linux
+          
+          docker push ${{ secrets.DOCKER_USER }}/photography-manager:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USER }}/photography-manager:linux   
+          
+      - name: Deploy
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          command: docker stack deploy --compose-file ~/photo/deploy/photo/docker-compose.yml --compose-file ~/photo/deploy/photo/docker-compose.override.yml photo
+          host: ${{ secrets.TEST_SERVER }}
+          username: ${{ secrets.TEST_SERVER_USER }}
+          privateKey: ${{ secrets.ID_RSA }}

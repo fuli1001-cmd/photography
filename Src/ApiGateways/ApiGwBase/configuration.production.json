@@ -26,6 +26,44 @@
     },
 
     {
+      "DownstreamPathTemplate": "/api/tags/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "postapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/tags/{everything}",
+      "UpstreamHttpMethod": []
+    },
+
+    {
+      "DownstreamPathTemplate": "/api/circles",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "postapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/circles",
+      "UpstreamHttpMethod": []
+    },
+    {
+      "DownstreamPathTemplate": "/api/circles/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "postapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/circles/{everything}",
+      "UpstreamHttpMethod": []
+    },
+
+    {
       "DownstreamPathTemplate": "/api/appointments",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -98,6 +136,31 @@
         }
       ],
       "UpstreamPathTemplate": "/api/users/{everything}",
+      "UpstreamHttpMethod": []
+    },
+
+    {
+      "DownstreamPathTemplate": "/api/albums",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "userapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/albums",
+      "UpstreamHttpMethod": []
+    },
+    {
+      "DownstreamPathTemplate": "/api/albums/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "userapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/albums/{everything}",
       "UpstreamHttpMethod": []
     },
 
