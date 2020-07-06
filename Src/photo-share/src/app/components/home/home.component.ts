@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Post } from 'src/app/models/post';
 import { ConfigService } from 'src/app/services/config.service';
 import { Attachment } from 'src/app/models/attachment';
+import { PagedPost } from 'src/app/models/paged-post';
 
 @Component({
   selector: 'app-home',
@@ -12,7 +13,8 @@ import { Attachment } from 'src/app/models/attachment';
 })
 export class HomeComponent implements OnInit {
 
-  posts: Post[];
+  pagedPosts: PagedPost;
+  param: string;
 
   constructor(private postService: PostService, 
     private activatedRoute: ActivatedRoute) { }
@@ -20,32 +22,36 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(async params => {
       // 获取url参数
-      let postId = this.activatedRoute.snapshot.queryParamMap.get('postid');
-      let sharedUserId = this.activatedRoute.snapshot.queryParamMap.get('userid');
-      let privateTag = this.activatedRoute.snapshot.queryParamMap.get('privateTag');
+      this.param = this.activatedRoute.snapshot.queryParamMap.get('s');
 
-      console.log(`postId: ${postId}, sharedUserId: ${sharedUserId}, privateTag: ${privateTag}`);
-
-      this.posts = [];
+      console.log(`param: ${this.param}`);
 
       // 获取帖子数据
-      if (sharedUserId) {
-        if (postId) {
-          let post = await this.postService.getPostAsync(postId, sharedUserId);
-          if (post)
-            this.posts.push(post);
-        } else if (privateTag) {
-          this.posts = await this.postService.getTagPostsAsync(privateTag, sharedUserId);
-        } else {
-          this.posts = await this.postService.getUserPostsAsync(sharedUserId);
-        }
-
-        if (!this.posts)
-          this.posts = [];
-
-        this.posts.forEach(p => this.setPost(p));
-      }
+      this.pagedPosts = await this.getPagedPostsAsync(1);
     });
+  }
+
+  async getPagedPostsAsync(pageNumber: number): Promise<PagedPost> {
+    var pagedPosts = await this.postService.getPostsAsync(this.param, pageNumber);
+
+    if (pagedPosts && pagedPosts.data)
+      pagedPosts.data.forEach(p => this.setPost(p));
+
+    console.log(pagedPosts);
+
+    return pagedPosts;
+  }
+
+  async onScroll(): Promise<void> {
+    console.log('scrolled!!');
+
+    if (this.pagedPosts.pagingInfo.currentPage < this.pagedPosts.pagingInfo.totalPages) {
+      var pagedPosts = await this.getPagedPostsAsync(this.pagedPosts.pagingInfo.currentPage + 1);
+      if (pagedPosts) {
+        this.pagedPosts.pagingInfo = pagedPosts.pagingInfo;
+        pagedPosts.data.forEach(p => this.pagedPosts.data.push(p));
+      }
+    }
   }
 
   // 设置帖子的一些属性
@@ -68,6 +74,7 @@ export class HomeComponent implements OnInit {
 
   // 设置附件文件路径
   setAttachment(attachment: Attachment): void {
+    console.log(ConfigService.config.fileServer);
     attachment.name = ConfigService.config.fileServer + '/' + attachment.name;
     attachment.thumbnail = ConfigService.config.fileServer + '/' + attachment.thumbnail;
   }

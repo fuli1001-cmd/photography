@@ -298,8 +298,6 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         public void Share(Guid sharedUserId)
         {
             ShareCount++;
-            var upr = new UserPostRelation(sharedUserId, UserPostRelationType.Share);
-            _userPostRelations.Add(upr);
         }
 
         public void Comment()

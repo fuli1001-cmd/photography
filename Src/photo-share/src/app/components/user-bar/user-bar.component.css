@@ -1,29 +1,46 @@
 .avatar {
     cursor: pointer;
-    width: 13%;
+    width: 100%;
 }
 
 .name {
-    font-size: 4vw;
+    font-size: 5vw;
 	font-weight: normal;
 	font-stretch: normal;
-	line-height: 43px;
+	/* line-height: 43px; */
 	letter-spacing: -1px;
 	color: #333333;
 	margin-right: 15px;
 	cursor: pointer;
+
+	overflow: hidden;
+	white-space: nowrap; /* Don't forget this one */
+	text-overflow: ellipsis;
+	max-width: 70%;
+}
+
+.user-type {
+	background-color: #60acff;
+	border-radius: 4px;
+	opacity: 0.2;
+    font-size: 3vw;
+	font-weight: normal;
+	font-stretch: normal;
+	/* line-height: 40px; */
+	letter-spacing: 0px;
+	color:white;
 }
 
 .date {
     font-size: 3vw;
 	font-weight: normal;
 	font-stretch: normal;
-	line-height: 40px;
+	/* line-height: 40px; */
 	letter-spacing: 0px;
 	color: #6d737a;
 }
 
 .btn-follow {
-    width: 76px;
+    font-size: 3vw;
     border-radius: 20px;
 }

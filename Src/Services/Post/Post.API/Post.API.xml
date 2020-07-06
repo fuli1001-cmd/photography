@@ -662,31 +662,6 @@
             <param name="sharePostCommand"></param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetSharedPostAsync(System.String,System.String,System.String)">
-            <summary>
-            获取分享的帖子的详情
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetSharedPostAsync(System.String,System.String,System.String,Arise.DDD.API.Paging.PagingParameters)">
-            <summary>
-            获取分享的类别下的所有帖子
-            </summary>
-            <param name="encryptedPrivateTag"></param>
-            <param name="encryptedSharedUserId"></param>
-            <param name="encryptedTimestamp"></param>
-            <param name="pagingParameters"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetSharedPostAsync(System.String,System.String,Arise.DDD.API.Paging.PagingParameters)">
-            <summary>
-            获取分享的用户的所有帖子
-            </summary>
-            <param name="encryptedSharedUserId"></param>
-            <param name="encryptedTimestamp"></param>
-            <param name="pagingParameters"></param>
-            <returns></returns>
-        </member>
         <member name="M:Photography.Services.Post.API.Controllers.TagsController.GetPopularPublicTagsAsync">
             <summary>
             推荐标签

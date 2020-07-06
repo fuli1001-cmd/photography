@@ -237,13 +237,17 @@ namespace Photography.Services.Post.API.Query.EF
         /// <returns></returns>
         public async Task<PostViewModel> GetSharedPostAsync(Guid postId, Guid sharedUserId)
         {
+            var sharedUser = await _postContext.Users.FirstOrDefaultAsync(u => u.Id == sharedUserId);
+            if (sharedUser == null)
+                throw new ClientException("操作失败", new List<string> { $"User {sharedUserId} does not exist." });
+
             var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
 
             var queryableUserPosts = from p in _postContext.Posts
                                      join u in _postContext.Users
                                      on p.UserId equals u.Id
-                                     where p.Id == postId && p.UserId == sharedUserId
+                                     where p.Id == postId
                                      select new UserPost { Post = p, User = u };
 
             var postViewModel = await GetQueryablePostViewModels(queryableUserPosts, myId).SingleOrDefaultAsync();

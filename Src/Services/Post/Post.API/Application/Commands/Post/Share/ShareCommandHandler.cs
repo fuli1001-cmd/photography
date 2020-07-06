@@ -30,14 +30,13 @@ namespace Photography.Services.Post.API.Application.Commands.Post.Share
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        // todo：改成只增加分享数量，不存数据
         public async Task<bool> Handle(ShareCommand request, CancellationToken cancellationToken)
         {
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
             foreach (var postId in request.PostIds)
             {
-                var post = await _postRepository.GetPostWithAttachmentsById(postId);
+                var post = await _postRepository.GetByIdAsync(postId);
                 post.Share(myId);
             }
 

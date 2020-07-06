@@ -73,7 +73,7 @@ namespace Photography.Services.Post.API.Utilities
                 byte[] inputByteArray = Encoding.UTF8.GetBytes(encryptString);
                 DESCryptoServiceProvider dCSP = new DESCryptoServiceProvider();
                 MemoryStream mStream = new MemoryStream();
-                CryptoStream cStream = new CryptoStream(mStream, dCSP.CreateEncryptor(rgbKey, rgbIV), CryptoStreamMode.Write);
+                CryptoStream cStream = new CryptoStream(mStream, dCSP.CreateEncryptor(rgbKey, rgbKey), CryptoStreamMode.Write);
                 cStream.Write(inputByteArray, 0, inputByteArray.Length);
                 cStream.FlushFinalBlock();
                 return Convert.ToBase64String(mStream.ToArray());
@@ -100,7 +100,49 @@ namespace Photography.Services.Post.API.Utilities
                 byte[] inputByteArray = Convert.FromBase64String(decryptString);
                 DESCryptoServiceProvider DCSP = new DESCryptoServiceProvider();
                 MemoryStream mStream = new MemoryStream();
-                CryptoStream cStream = new CryptoStream(mStream, DCSP.CreateDecryptor(rgbKey, rgbIV), CryptoStreamMode.Write);
+                CryptoStream cStream = new CryptoStream(mStream, DCSP.CreateDecryptor(rgbKey, rgbKey), CryptoStreamMode.Write);
+                cStream.Write(inputByteArray, 0, inputByteArray.Length);
+                cStream.FlushFinalBlock();
+                return Encoding.UTF8.GetString(mStream.ToArray());
+            }
+            catch
+            {
+                return decryptString;
+            }
+
+        }
+
+        public static string EncryptDES(string encryptString, string encryptKey, string iv)
+        {
+            try
+            {
+                byte[] rgbKey = Encoding.UTF8.GetBytes(encryptKey.Substring(0, 8));
+                byte[] rgbIV = Encoding.UTF8.GetBytes(iv.Substring(0, 8));
+                byte[] inputByteArray = Encoding.UTF8.GetBytes(encryptString);
+                DESCryptoServiceProvider dCSP = new DESCryptoServiceProvider();
+                MemoryStream mStream = new MemoryStream();
+                CryptoStream cStream = new CryptoStream(mStream, dCSP.CreateEncryptor(rgbKey, rgbKey), CryptoStreamMode.Write);
+                cStream.Write(inputByteArray, 0, inputByteArray.Length);
+                cStream.FlushFinalBlock();
+                return Convert.ToBase64String(mStream.ToArray());
+            }
+            catch
+            {
+                return encryptString;
+            }
+
+        }
+
+        public static string DecryptDES(string decryptString, string decryptKey, string iv)
+        {
+            try
+            {
+                byte[] rgbKey = Encoding.UTF8.GetBytes(decryptKey);
+                byte[] rgbIV = Encoding.UTF8.GetBytes(iv.Substring(0, 8));
+                byte[] inputByteArray = Convert.FromBase64String(decryptString);
+                DESCryptoServiceProvider DCSP = new DESCryptoServiceProvider();
+                MemoryStream mStream = new MemoryStream();
+                CryptoStream cStream = new CryptoStream(mStream, DCSP.CreateDecryptor(rgbKey, rgbKey), CryptoStreamMode.Write);
                 cStream.Write(inputByteArray, 0, inputByteArray.Length);
                 cStream.FlushFinalBlock();
                 return Encoding.UTF8.GetString(mStream.ToArray());

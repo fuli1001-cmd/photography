@@ -1,8 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PostService } from 'src/app/services/post.service';
 import { Post } from 'src/app/models/post';
-import { ConfigService } from '../../services/config.service';
 import { StateService } from 'src/app/services/state.service';
 
 @Component({

@@ -1,5 +1,4 @@
-<div class="view-container">
-    <user-bar [post]="post"></user-bar>
+<div>
 
     <!-- 帖子文字类容 -->
     <div class="row no-gutters text">{{post.text}}</div>
@@ -21,7 +20,7 @@
         <div class="row no-gutters" *ngIf="post.postAttachments.length == 1">
             <div class="col-12 card card-photo" (click)="onClickPhoto(0)">
                 <div class="embed-responsive embed-responsive-1by1">
-                    <img class="card-img embed-responsive-item pt-2 pb-2 pl-2 pr-2" 
+                    <img class="card-img embed-responsive-item" 
                     src="{{post.postAttachments[0].attachmentType == 0 ? post.postAttachments[0].name : post.postAttachments[0].thumbnail}}" />
                     <img src="../../../assets/images/play.png" class="btn-play" *ngIf="post.postAttachments[0].attachmentType == 1">
                 </div>
