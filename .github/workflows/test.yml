@@ -24,42 +24,42 @@ jobs:
       - name: Tags
         run: |
           docker tag photography-apigwbase ${{ secrets.DOCKER_USER }}/photography-apigwbase:${{ github.sha }}
-          docker tag photography-apigwbase ${{ secrets.DOCKER_USER }}/photography-apigwbase:linux
+          docker tag photography-apigwbase ${{ secrets.DOCKER_USER }}/photography-apigwbase:linux-test
           
           docker tag photography-userapi ${{ secrets.DOCKER_USER }}/photography-userapi:${{ github.sha }}
-          docker tag photography-userapi ${{ secrets.DOCKER_USER }}/photography-userapi:linux
+          docker tag photography-userapi ${{ secrets.DOCKER_USER }}/photography-userapi:linux-test
           
           docker tag photography-postapi ${{ secrets.DOCKER_USER }}/photography-postapi:${{ github.sha }}
-          docker tag photography-postapi ${{ secrets.DOCKER_USER }}/photography-postapi:linux
+          docker tag photography-postapi ${{ secrets.DOCKER_USER }}/photography-postapi:linux-test
           
           docker tag photography-orderapi ${{ secrets.DOCKER_USER }}/photography-orderapi:${{ github.sha }}
-          docker tag photography-orderapi ${{ secrets.DOCKER_USER }}/photography-orderapi:linux
+          docker tag photography-orderapi ${{ secrets.DOCKER_USER }}/photography-orderapi:linux-test
           
           docker tag photography-notificationapi ${{ secrets.DOCKER_USER }}/photography-notificationapi:${{ github.sha }}
-          docker tag photography-notificationapi ${{ secrets.DOCKER_USER }}/photography-notificationapi:linux
+          docker tag photography-notificationapi ${{ secrets.DOCKER_USER }}/photography-notificationapi:linux-test
           
           docker tag photography-manager ${{ secrets.DOCKER_USER }}/photography-manager:${{ github.sha }}
-          docker tag photography-manager ${{ secrets.DOCKER_USER }}/photography-manager:linux
+          docker tag photography-manager ${{ secrets.DOCKER_USER }}/photography-manager:linux-test
           
       - name: Push
         run: |
           docker push ${{ secrets.DOCKER_USER }}/photography-apigwbase:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USER }}/photography-apigwbase:linux
+          docker push ${{ secrets.DOCKER_USER }}/photography-apigwbase:linux-test
           
           docker push ${{ secrets.DOCKER_USER }}/photography-userapi:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USER }}/photography-userapi:linux
+          docker push ${{ secrets.DOCKER_USER }}/photography-userapi:linux-test
           
           docker push ${{ secrets.DOCKER_USER }}/photography-postapi:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USER }}/photography-postapi:linux
+          docker push ${{ secrets.DOCKER_USER }}/photography-postapi:linux-test
           
           docker push ${{ secrets.DOCKER_USER }}/photography-orderapi:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USER }}/photography-orderapi:linux
+          docker push ${{ secrets.DOCKER_USER }}/photography-orderapi:linux-test
           
           docker push ${{ secrets.DOCKER_USER }}/photography-notificationapi:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USER }}/photography-notificationapi:linux
+          docker push ${{ secrets.DOCKER_USER }}/photography-notificationapi:linux-test
           
           docker push ${{ secrets.DOCKER_USER }}/photography-manager:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USER }}/photography-manager:linux   
+          docker push ${{ secrets.DOCKER_USER }}/photography-manager:linux-test
           
       - name: Deploy
         uses: garygrossgarten/github-action-ssh@release
