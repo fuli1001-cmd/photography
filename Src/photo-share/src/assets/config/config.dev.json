@@ -1,5 +1,5 @@
 {
-    "serviceBase": "http://192.168.1.133:5000/api",
+    "serviceBase": "http://121.196.28.120:5101/api",
     "fileServer": "http://121.196.28.120:8081",
     "iosUpgradeUrl": "https://apps.apple.com/cn/app/id1516790011?mt=8",
     "androidUpgradeUrl": "http://www.baidu.com"
