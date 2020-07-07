@@ -4,7 +4,7 @@
 
 .post-area {
     /* 避免被固定位置的search-bar挡住一部分 */
-    margin-top: 14%;
+    margin-top: 18%;
     /* 避免被固定位置的ad-bar挡住一部分 */
     margin-bottom: 15%;
 }
