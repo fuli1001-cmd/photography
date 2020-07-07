@@ -38,7 +38,7 @@ export class HomeComponent implements OnInit {
       this.param = this.activatedRoute.snapshot.queryParamMap.get('s');
 
       // 解密参数，
-      this.noAd = this.decryptParam().NoAd;
+      this.noAd = this.decryptParam().noAd;
 
       // 获取帖子数据
       this.allPosts = await this.getPagedPostsAsync(this.searchkey, 1);
