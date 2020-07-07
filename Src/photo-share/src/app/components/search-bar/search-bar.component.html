@@ -1,0 +1,10 @@
+<div class="row">
+    <div class="input-group col">
+        <input class="form-control py-2 border-right-0 border" type="search" placeholder="搜索" [(ngModel)]="searchKey" (ngModelChange)="searchKeyChanged()">
+        <span class="input-group-append">
+            <button class="btn btn-outline-secondary border-left-0 border" type="button" (click)="onClickSearch()">
+                <i class="fa fa-search"></i>
+            </button>
+        </span>
+    </div>
+</div>

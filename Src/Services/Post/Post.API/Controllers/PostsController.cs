@@ -407,53 +407,50 @@ namespace Photography.Services.Post.API.Controllers
         //    return new ObjectResult(ResponseWrapper.CreateErrorResponseWrapper((StatusCode)HttpStatusCode.BadRequest, "分享的帖子不存在或已过期"));
         //}
 
+        /// <summary>
+        /// 获取分享的帖子
+        /// </summary>
+        /// <param name="s">加密过的分享信息</param>
+        /// <param name="k">搜索关键字</param>
+        /// <param name="pagingParameters">分页参数</param>
+        /// <returns></returns>
         [HttpGet]
         [Route("share")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [AllowAnonymous]
-        public async Task<ActionResult<ResponseWrapper>> GetShareDataAsync([FromQuery]string s, [FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<ResponseWrapper>> GetShareDataAsync([FromQuery]string s, [FromQuery]string k, [FromQuery] PagingParameters pagingParameters)
         {
-            _logger.LogInformation("************************参数：" + s);
             PagedList<PostViewModel> posts = null;
 
-            //var obj = new ShareInfo
-            //{
-            //    //PostId = Guid.Parse("ee435146-7c98-4f0f-2864-08d81e52dd46"),
-            //    //UserId = Guid.Parse("aa45a4b5-4123-40fe-933a-079a22968b0f"),
-            //    UserId = Guid.Parse("FD29910F-25A1-46BE-BEF6-763683CF9924"),
-            //    PrivateTag = "爱国者",
-            //    NoAd = false,
-            //    Timestamp = 1594018609.0804238
-            //};
-            //s = Encryptor.EncryptDES(JsonConvert.SerializeObject(obj), _decryptKey, _decryptKey);
-            //_logger.LogInformation("****************encrypted obj str " + s);
-
             var descryptedStr = Encryptor.DecryptDES(s, _decryptKey, _decryptKey);
-            _logger.LogInformation("***************descrypted str: {descryptedStr}", descryptedStr);
 
-            var shareInfo = JsonConvert.DeserializeObject<ShareInfo>(descryptedStr);
-            _logger.LogInformation("***************new obj: {@newObj}", shareInfo);
-
-            if (shareInfo.UserId != Guid.Empty && CheckShareTime(shareInfo.Timestamp))
+            if (descryptedStr != s)
             {
-                if (shareInfo.PostId != Guid.Empty)
+                var shareInfo = JsonConvert.DeserializeObject<ShareInfo>(descryptedStr);
+
+                _logger.LogInformation("GetShareDataAsync: {@ShareInfo}", shareInfo);
+
+                if (shareInfo.UserId != Guid.Empty && CheckShareTime(shareInfo.Timestamp))
                 {
-                    _logger.LogInformation("单个帖子");
-                    var post = await _postQueries.GetSharedPostAsync(shareInfo.PostId, shareInfo.UserId);
-                    posts = new PagedList<PostViewModel>(new List<PostViewModel> { post }, 1, new PagingParameters { PageNumber = 1, PageSize = 1 });
-                    return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
-                }
-                else if (!string.IsNullOrWhiteSpace(shareInfo.PrivateTag))
-                {
-                    _logger.LogInformation("帖子标签");
-                    posts = await _postQueries.GetSharedPostsAsync(shareInfo.PrivateTag, shareInfo.UserId, pagingParameters);
-                    return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
-                }
-                else
-                {
-                    _logger.LogInformation("用户帖子");
-                    posts = await _postQueries.GetSharedPostsAsync(shareInfo.UserId, pagingParameters);
-                    return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
+                    if (shareInfo.PostId != Guid.Empty)
+                    {
+                        _logger.LogInformation("GetShareDataAsync: single post");
+                        var post = await _postQueries.GetSharedPostAsync(shareInfo.PostId, shareInfo.UserId);
+                        posts = new PagedList<PostViewModel>(new List<PostViewModel> { post }, 1, new PagingParameters { PageNumber = 1, PageSize = 1 });
+                        return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
+                    }
+                    else if (!string.IsNullOrWhiteSpace(shareInfo.PrivateTag))
+                    {
+                        _logger.LogInformation("GetShareDataAsync: tag posts");
+                        posts = await _postQueries.GetSharedPostsAsync(shareInfo.PrivateTag, shareInfo.UserId, k, pagingParameters);
+                        return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
+                    }
+                    else
+                    {
+                        _logger.LogInformation("GetShareDataAsync: user posts");
+                        posts = await _postQueries.GetSharedPostsAsync(shareInfo.UserId, k, pagingParameters);
+                        return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
+                    }
                 }
             }
 
@@ -462,7 +459,6 @@ namespace Photography.Services.Post.API.Controllers
 
         private bool CheckShareTime(double createdSeconds)
         {
-            return true;
             var validSeconds = _configuration.GetValue<int>("ShareValidTime") * 3600;
             var curSeconds = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
             return createdSeconds + validSeconds >= curSeconds;

@@ -40,10 +40,10 @@ namespace Photography.Services.Post.API.Query.Interfaces
         Task<PostViewModel> GetSharedPostAsync(Guid postId, Guid sharedUserId);
 
         // 分页获取分享的类别下的所有帖子
-        Task<PagedList<PostViewModel>> GetSharedPostsAsync(string privateTag, Guid sharedUserId, PagingParameters pagingParameters);
+        Task<PagedList<PostViewModel>> GetSharedPostsAsync(string privateTag, Guid sharedUserId, string key, PagingParameters pagingParameters);
 
         // 分页获取分享的用户的所有帖子
-        Task<PagedList<PostViewModel>> GetSharedPostsAsync(Guid sharedUserId, PagingParameters pagingParameters);
+        Task<PagedList<PostViewModel>> GetSharedPostsAsync(Guid sharedUserId, string key, PagingParameters pagingParameters);
 
         // 搜索帖子
         Task<PagedList<PostViewModel>> SearchPosts(string key, string cityCode, PagingParameters pagingParameters);

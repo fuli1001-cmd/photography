@@ -257,7 +257,7 @@ namespace Photography.Services.Post.API.Query.EF
             return postViewModel;
         }
 
-        public async Task<PagedList<PostViewModel>> GetSharedPostsAsync(string privateTag, Guid sharedUserId, PagingParameters pagingParameters)
+        public async Task<PagedList<PostViewModel>> GetSharedPostsAsync(string privateTag, Guid sharedUserId, string key, PagingParameters pagingParameters)
         {
             var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
@@ -273,6 +273,16 @@ namespace Photography.Services.Post.API.Query.EF
             else
                 queryableUserPosts = queryableUserPosts.Where(up => up.Post.PrivateTag == privateTag);
 
+            if (!string.IsNullOrWhiteSpace(key))
+            {
+                key = key.ToLower();
+                queryableUserPosts = from up in queryableUserPosts
+                                     where up.User.Nickname.ToLower().Contains(key)
+                                     || (up.Post.Text != null && up.Post.Text.ToLower().Contains(key))
+                                     || (up.Post.PublicTags != null && up.Post.PublicTags.ToLower().Contains(key))
+                                     select up;
+            }
+
             var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.UpdatedTime);
 
             var result = await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
@@ -282,7 +292,7 @@ namespace Photography.Services.Post.API.Query.EF
             return result;
         }
 
-        public async Task<PagedList<PostViewModel>> GetSharedPostsAsync(Guid sharedUserId, PagingParameters pagingParameters)
+        public async Task<PagedList<PostViewModel>> GetSharedPostsAsync(Guid sharedUserId, string key, PagingParameters pagingParameters)
         {
             var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
@@ -292,6 +302,16 @@ namespace Photography.Services.Post.API.Query.EF
                                      on p.UserId equals u.Id
                                      where p.UserId == sharedUserId
                                      select new UserPost { Post = p, User = u };
+
+            if (!string.IsNullOrWhiteSpace(key))
+            {
+                key = key.ToLower();
+                queryableUserPosts = from up in queryableUserPosts
+                                     where up.User.Nickname.ToLower().Contains(key)
+                                     || (up.Post.Text != null && up.Post.Text.ToLower().Contains(key))
+                                     || (up.Post.PublicTags != null && up.Post.PublicTags.ToLower().Contains(key))
+                                     select up;
+            }
 
             var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.UpdatedTime);
 

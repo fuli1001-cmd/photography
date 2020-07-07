@@ -1,9 +1,20 @@
-<div *ngIf="pagedPosts" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()">
-    <div *ngFor="let post of pagedPosts.data">
-        <div class="p-3">
-            <user-bar [post]="post"></user-bar>
-            <post [post]="post"></post>
+<div style="position:relative;">
+    <div *ngIf="displayData" class="post-area" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()">
+        <div class="p-3 search-bar fixed-top">
+            <search-bar></search-bar>
         </div>
-        <div style="background-color: lightgrey; height: 10px;"></div>
+        <div *ngFor="let post of displayData.data">
+            <div class="p-3">
+                <user-bar [post]="post"></user-bar>
+                <post [post]="post"></post>
+            </div>
+            <div class="separator"></div>
+        </div>
+    </div>
+    <div class="spinner-border text-secondary spinner" role="status" *ngIf="showSpinner">
+        <span class="sr-only">Loading...</span>
+    </div>
+    <div class="fixed-bottom ad-bar" *ngIf="!noAd">
+        <ad-bar></ad-bar>
     </div>
 </div>

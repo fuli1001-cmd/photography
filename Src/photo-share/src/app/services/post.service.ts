@@ -11,23 +11,12 @@ export class PostService {
 
   constructor(private http: HttpClient) { }
 
-  // async getPostAsync(postId: string, sharedUserId: string): Promise<Post> {
-  //   let apiUrl = ConfigService.config.serviceBase + '/posts/share/' + postId + '/' + sharedUserId;
-  //   return await this.requestAsync<Post>(apiUrl);
-  // }
+  async getPostsAsync(param: string, searchkey: string, pageNumber: number): Promise<PagedPost> {
+    let apiUrl = ConfigService.config.serviceBase + '/posts/share?s=' + encodeURIComponent(param) + '&pageNumber=' + pageNumber;
+    
+    if (searchkey)
+      apiUrl += '&k=' + encodeURIComponent(searchkey)
 
-  // async getTagPostsAsync(privateTag: string, sharedUserId: string): Promise<Post[]> {
-  //   let apiUrl = ConfigService.config.serviceBase + '/posts/share/privatetag/' + privateTag + '/' + sharedUserId;
-  //   return await this.requestAsync<Post[]>(apiUrl);
-  // }
-
-  // async getUserPostsAsync(sharedUserId: string): Promise<Post[]> {
-  //   let apiUrl = ConfigService.config.serviceBase + '/posts/share/' + sharedUserId;
-  //   return await this.requestAsync<Post[]>(apiUrl);
-  // }
-
-  async getPostsAsync(param: string, pageNumber: number): Promise<PagedPost> {
-    let apiUrl = ConfigService.config.serviceBase + '/posts/share?s=' + encodeURIComponent(param) + '&pageNumber=' + pageNumber + "&pageSize=2";
     return await this.requestAsync<PagedPost>(apiUrl);
   }
 

@@ -8,7 +8,7 @@
             <img src="{{attachment.name}}" class="d-block w-100" *ngIf="attachment.attachmentType == 0">
 
             <video controls #videoPlayer *ngIf="attachment.attachmentType == 1" class="video">
-                <source src="{{attachment.thumbnail}}" type="video/mp4" />
+                <source src="{{attachment.name}}" type="video/mp4" />
                 浏览器不支持
             </video>
 

@@ -3,4 +3,5 @@ export interface Config {
     fileServer: string;
     iosUpgradeUrl: string;
     androidUpgradeUrl: string;
+    decryptKey: string;
 }

@@ -662,6 +662,15 @@
             <param name="sharePostCommand"></param>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetShareDataAsync(System.String,System.String,Arise.DDD.API.Paging.PagingParameters)">
+            <summary>
+            获取分享的帖子
+            </summary>
+            <param name="s">加密过的分享信息</param>
+            <param name="k">搜索关键字</param>
+            <param name="pagingParameters">分页参数</param>
+            <returns></returns>
+        </member>
         <member name="M:Photography.Services.Post.API.Controllers.TagsController.GetPopularPublicTagsAsync">
             <summary>
             推荐标签
