@@ -5,7 +5,7 @@
         </div>
         <div *ngFor="let post of displayData.data">
             <div class="p-3">
-                <user-bar [post]="post"></user-bar>
+                <user-bar [post]="post" [noAd]="noAd"></user-bar>
                 <post [post]="post"></post>
             </div>
             <div class="separator"></div>

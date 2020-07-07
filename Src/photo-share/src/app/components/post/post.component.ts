@@ -24,6 +24,9 @@ export class PostComponent implements OnInit {
   }
 
   onClickPhoto(index): void {
+    if (this.post.viewPassword)
+      return;
+      
     this.stateService.attachments = this.post.postAttachments;
     this.stateService.photoIndex = index;
     this.router.navigate(['/photo']);

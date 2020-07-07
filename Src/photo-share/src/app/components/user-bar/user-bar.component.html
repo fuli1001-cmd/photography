@@ -3,10 +3,10 @@
     <div class="col-2">
         <img src="{{post.user.avatar}}" class="rounded-circle avatar" routerLink="/download">
     </div>
-    <div class="col col-vertical-center ml-2">
+    <div class="col align-self-center ml-2">
         <div class="row no-gutters">
             <div class="col-auto align-self-center name" routerLink="/download"><span>{{post.user.nickname}}</span></div>
-            <div class="col-auto">
+            <div class="col-auto align-self-center">
                 <span class="align-middle pl-2 pr-2 pt-1 pb-1 user-type">{{post.user.userType == 0 ? '摄影师' : '模特'}}</span>
             </div>
         </div>
@@ -16,7 +16,7 @@
             </div>
         </div>
     </div>
-    <div class="col-auto col-vertical-center align-self-center">
+    <div class="col-auto align-self-center" *ngIf="!noAd">
         <button type="button" class="btn btn-outline-primary float-right btn-follow" (click)="goDownload()">+ 关注</button>
     </div>
 </div>

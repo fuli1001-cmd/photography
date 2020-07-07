@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 export class UserBarComponent implements OnInit {
 
   @Input() post: Post;
+  @Input() noAd: boolean;
 
   constructor(private router: Router) { }
 

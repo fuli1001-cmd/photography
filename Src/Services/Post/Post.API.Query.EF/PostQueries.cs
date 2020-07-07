@@ -247,7 +247,7 @@ namespace Photography.Services.Post.API.Query.EF
             var queryableUserPosts = from p in _postContext.Posts
                                      join u in _postContext.Users
                                      on p.UserId equals u.Id
-                                     where p.Id == postId
+                                     where p.Id == postId && p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post
                                      select new UserPost { Post = p, User = u };
 
             var postViewModel = await GetQueryablePostViewModels(queryableUserPosts, myId).SingleOrDefaultAsync();
@@ -265,7 +265,7 @@ namespace Photography.Services.Post.API.Query.EF
             var queryableUserPosts = from p in _postContext.Posts
                                      join u in _postContext.Users
                                      on p.UserId equals u.Id
-                                     where p.UserId == sharedUserId
+                                     where p.UserId == sharedUserId && p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post
                                      select new UserPost { Post = p, User = u };
 
             if (privateTag == "未分类")
@@ -300,7 +300,7 @@ namespace Photography.Services.Post.API.Query.EF
             var queryableUserPosts = from p in _postContext.Posts
                                      join u in _postContext.Users
                                      on p.UserId equals u.Id
-                                     where p.UserId == sharedUserId
+                                     where p.UserId == sharedUserId && p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post
                                      select new UserPost { Post = p, User = u };
 
             if (!string.IsNullOrWhiteSpace(key))

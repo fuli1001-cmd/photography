@@ -37,8 +37,8 @@ export class HomeComponent implements OnInit {
       // 获取url参数
       this.param = this.activatedRoute.snapshot.queryParamMap.get('s');
 
-      // 解密参数，
-      this.noAd = this.decryptParam().noAd;
+      // 解密参数
+      this.noAd = this.decryptParam()?.noAd ?? false;
 
       // 获取帖子数据
       this.allPosts = await this.getPagedPostsAsync(this.searchkey, 1);
@@ -145,6 +145,9 @@ export class HomeComponent implements OnInit {
   }
 
   private decryptParam(): any {
+    if (!this.param)
+      return null;
+
     let decryptKey = 'Vs16.5.4';
     let key = CryptoJS.enc.Utf8.parse(decryptKey);
     let iv = CryptoJS.enc.Utf8.parse(decryptKey);
