@@ -30,7 +30,7 @@ export class PostService {
       console.log(`${apiUrl} error: ${response.message}`);
       return null;
     } catch (err) {
-      console.log(`${apiUrl} error: ${err}`);
+      console.log(`${apiUrl} error: ${JSON.stringify(err)}`);
       return null;
     }
   }

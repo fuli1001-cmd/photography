@@ -145,8 +145,9 @@ export class HomeComponent implements OnInit {
   }
 
   private decryptParam(): any {
-    let key = CryptoJS.enc.Utf8.parse(ConfigService.config.decryptKey);
-    let iv = CryptoJS.enc.Utf8.parse(ConfigService.config.decryptKey);
+    let decryptKey = 'Vs16.5.4';
+    let key = CryptoJS.enc.Utf8.parse(decryptKey);
+    let iv = CryptoJS.enc.Utf8.parse(decryptKey);
     let decrypted = CryptoJS.DES.decrypt(this.param, key, { iv: iv, mode: CryptoJS.mode.CBC });
     let paramObj = JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
     return paramObj;
