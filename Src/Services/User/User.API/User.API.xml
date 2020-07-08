@@ -61,6 +61,26 @@
             要follow的用户id
             </summary>
         </member>
+        <member name="T:Photography.Services.User.API.Application.Commands.User.UploadIdCard.UploadIdCardCommand">
+            <summary>
+            上传身份证
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.User.UploadIdCard.UploadIdCardCommand.IdCardFront">
+            <summary>
+            身份证正面
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.User.UploadIdCard.UploadIdCardCommand.IdCardBack">
+            <summary>
+            身份证背面
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.User.UploadIdCard.UploadIdCardCommand.IdCardHold">
+            <summary>
+            手持身份证
+            </summary>
+        </member>
         <member name="M:Photography.Services.User.API.BackwardCompatibility.Utils.Encryptor.GetMD5_32(System.String,System.String)">
             <summary>  
             SHA1加密字符串  
@@ -315,6 +335,13 @@
         <member name="M:Photography.Services.User.API.Controllers.UsersController.AllowViewFollowersAsync(Photography.Services.User.API.Application.Commands.User.AllowViewFollowers.AllowViewFollowersCommand)">
             <summary>
             设置是否允许查看关注我的人
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.UsersController.UploadIdCardAsync(Photography.Services.User.API.Application.Commands.User.UploadIdCard.UploadIdCardCommand)">
+            <summary>
+            上传身份证照片
             </summary>
             <param name="command"></param>
             <returns></returns>

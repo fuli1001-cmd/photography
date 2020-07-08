@@ -227,6 +227,8 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
             IdCardFront = idCardFront;
             IdCardBack = idCardBack;
             IdCardHold = idCardHold;
+
+            RealNameRegistrationStatus = IdAuthStatus.Authenticating;
         }
     }
 
