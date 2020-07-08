@@ -49,7 +49,7 @@ namespace Photography.Services.User.API.Query.ViewModels
     public class MeViewModel : UserViewModel
     {
         public string Code { get; set; }
-        public RealNameRegistrationStatus RealNameRegistrationStatus { get; set; }
+        public IdAuthStatus RealNameRegistrationStatus { get; set; }
     }
 
     public class FollowerViewModel : BaseUserViewModel

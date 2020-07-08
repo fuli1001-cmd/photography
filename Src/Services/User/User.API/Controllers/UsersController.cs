@@ -15,6 +15,7 @@ using Photography.Services.User.API.Application.Commands.User.MuteUser;
 using Photography.Services.User.API.Application.Commands.User.ToggleFollow;
 using Photography.Services.User.API.Application.Commands.User.UpdateBackground;
 using Photography.Services.User.API.Application.Commands.User.UpdateUser;
+using Photography.Services.User.API.Application.Commands.User.UploadIdCard;
 using Photography.Services.User.API.BackwardCompatibility.ViewModels;
 using Photography.Services.User.API.Query.Interfaces;
 using Photography.Services.User.API.Query.ViewModels;
@@ -232,6 +233,20 @@ namespace Photography.Services.User.API.Controllers
         [Route("allowviewfollowers")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<bool>> AllowViewFollowersAsync([FromBody] AllowViewFollowersCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 上传身份证照片
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("idcard")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<bool>> UploadIdCardAsync([FromBody] UploadIdCardCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));

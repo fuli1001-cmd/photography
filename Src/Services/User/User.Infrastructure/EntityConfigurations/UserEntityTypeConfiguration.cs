@@ -13,7 +13,7 @@ namespace Photography.Services.User.Infrastructure.EntityConfigurations
         {
             builder.Ignore(e => e.DomainEvents);
             builder.Property(u => u.Code).IsRequired();
-            builder.Property(u => u.RealNameRegistrationStatus).HasDefaultValue(RealNameRegistrationStatus.NotRegister);
+            builder.Property(u => u.RealNameRegistrationStatus).HasDefaultValue(IdAuthStatus.NoIdCard);
             builder.Property(u => u.Score).HasDefaultValue(0);
             builder.Property(u => u.LikedCount).HasDefaultValue(0);
             builder.Property(u => u.FollowerCount).HasDefaultValue(0);

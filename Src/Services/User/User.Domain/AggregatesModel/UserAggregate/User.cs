@@ -1,4 +1,5 @@
-﻿using Arise.DDD.Domain.SeedWork;
+﻿using Arise.DDD.Domain.Exceptions;
+using Arise.DDD.Domain.SeedWork;
 using Photography.Services.User.Domain.AggregatesModel.GroupAggregate;
 using Photography.Services.User.Domain.AggregatesModel.GroupUserAggregate;
 using Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate;
@@ -61,7 +62,13 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         public string Code { get; private set; }
 
         // 实名认证状态
-        public RealNameRegistrationStatus RealNameRegistrationStatus { get; private set; }
+        public IdAuthStatus RealNameRegistrationStatus { get; private set; }
+
+        public string IdCardFront { get; private set; }
+
+        public string IdCardBack { get; private set; }
+
+        public string IdCardHold { get; private set; }
 
         public bool ViewFollowersAllowed { get; private set; }
 
@@ -208,6 +215,19 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         {
             ViewFollowedUsersAllowed = value;
         }
+
+        public void SetIdCard(string idCardFront, string idCardBack, string idCardHold)
+        {
+            if (RealNameRegistrationStatus == IdAuthStatus.Authenticating)
+                throw new ClientException("操作失败", new List<string> { $"Authentication in process." });
+
+            if (RealNameRegistrationStatus == IdAuthStatus.Authenticated)
+                throw new ClientException("操作失败", new List<string> { $"Already Authenticated." });
+
+            IdCardFront = idCardFront;
+            IdCardBack = idCardBack;
+            IdCardHold = idCardHold;
+        }
     }
 
     public enum UserType
@@ -222,10 +242,11 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         Male
     }
 
-    public enum RealNameRegistrationStatus
+    public enum IdAuthStatus
     {
-        NotRegister,
+        NoIdCard,
         Authenticating,
-        Authenticated
+        Authenticated,
+        AuthenticateFailed
     }
 }
