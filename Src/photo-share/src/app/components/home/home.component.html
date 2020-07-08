@@ -1,8 +1,21 @@
-<div style="position:relative;">
+<div style="position:relative;" *ngIf="!viewPassword">
     <div *ngIf="displayData" class="post-area" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()">
         <div class="p-3 search-bar fixed-top">
+            <!-- 搜索条 -->
             <search-bar></search-bar>
+
+            <!-- 帖子类别下拉框 -->
+            <div class="btn-group mt-2" *ngIf="privateTags && privateTags.length > 0">
+                <button type="button" class="btn dropdown-btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{selectedTag}}
+                </button>
+                <div class="dropdown-menu">
+                <a class="dropdown-item" (click)="onClickTag(tag)" *ngFor="let tag of privateTags">{{tag}}</a>
+                </div>
+            </div>
         </div>
+
+        <!-- 帖子区域 -->
         <div *ngFor="let post of displayData.data">
             <div class="p-3">
                 <user-bar [post]="post" [noAd]="noAd"></user-bar>
@@ -10,11 +23,18 @@
             </div>
             <div class="separator"></div>
         </div>
+
+        <!-- 广告条 -->
+        <div class="fixed-bottom ad-bar" *ngIf="!noAd">
+            <ad-bar></ad-bar>
+        </div>
     </div>
-    <div class="spinner-border text-secondary spinner" role="status" *ngIf="showSpinner">
+
+    <!-- 加载指示器 -->
+    <!-- <div class="spinner-border text-secondary spinner" role="status" *ngIf="showSpinner">
         <span class="sr-only">Loading...</span>
-    </div>
-    <div class="fixed-bottom ad-bar" *ngIf="!noAd">
-        <ad-bar></ad-bar>
-    </div>
+    </div> -->
 </div>
+
+<!-- 密码查看 -->
+<password *ngIf="viewPassword && viewPassword.length > 0"></password>

@@ -7,6 +7,7 @@ import { Attachment } from 'src/app/models/attachment';
 import { PagedPost } from 'src/app/models/paged-post';
 import { SearchEventService } from 'src/app/services/search-event.service';
 import * as CryptoJS from 'crypto-js';
+import { PasswordEventService } from 'src/app/services/password-event.service';
 
 
 @Component({
@@ -16,48 +17,75 @@ import * as CryptoJS from 'crypto-js';
 })
 export class HomeComponent implements OnInit {
 
-  // 没有搜索过滤的帖子数据和搜索结果分开存储，以便在清空搜索关键字时能回到为搜索页面状态
-  allPosts: PagedPost; // 没有搜索过滤的帖子数据
-  searchedPosts: PagedPost; // 搜索结果
+  // 未搜索过滤的帖子数据和搜索过滤的帖子数据分开存储，以便在清空搜索关键字时能回到未搜索页面状态
+  allPosts: PagedPost; // 未搜索过滤的帖子数据
+  searchedPosts: PagedPost; // 搜索过滤的帖子数据
   displayData: PagedPost; // 用于显示，要么显示allPosts，要么显示searchedPosts（searchkey不为空时）
   searchkey: string; // 搜索关键字
+  privateTags: string[]; // 帖子类别
+  selectedTag: string; // 选中的类别
   param: string; // 页面url中的查询参数
   noAd: boolean; // 是否显示广告栏
+  viewPassword: string; // 查看密码
   showSpinner: boolean; // 是否显示等待标志
   querying: boolean; // 表示是否正在调用后台服务进行查询
 
   constructor(private postService: PostService, 
     private activatedRoute: ActivatedRoute,
-    private searchEventService: SearchEventService) { }
+    private searchEventService: SearchEventService,
+    private passwordEventService: PasswordEventService) { }
 
   ngOnInit(): void {
-    this.registerSearchEvent();
+    this.privateTags = [];
+    this.allPosts = this.getEmptyPagedPost();
+    this.searchedPosts = this.getEmptyPagedPost();
+    this.registerEvents();
 
+    // 取得url param并根据param获取数据
     this.activatedRoute.queryParams.subscribe(async params => {
       // 获取url参数
       this.param = this.activatedRoute.snapshot.queryParamMap.get('s');
 
       // 解密参数
-      this.noAd = this.decryptParam()?.noAd ?? false;
+      let paramObj = this.decryptParam();
 
-      // 获取帖子数据
-      this.allPosts = await this.getPagedPostsAsync(this.searchkey, 1);
+      // 参数中必须要有userId
+      if (paramObj?.userId) {
+        this.noAd = paramObj.noAd ?? false;
+        this.viewPassword = paramObj.pwd;
 
-      this.displayData = this.allPosts;
+        // 获取帖子数据
+        await this.retrivePosts(1);
+
+        // 获取帖子种类
+        if (!paramObj.postId && !paramObj.privateTag) {
+          this.privateTags = ['全部分类', '未分类'];
+          let privateTags = await this.getPrivateTags(paramObj.userId);
+          privateTags.forEach(t => this.privateTags.push(t));
+          this.selectedTag = this.privateTags[0];
+        }
+      }
     });
   }
 
-  private async getPagedPostsAsync(searchkey: string, pageNumber: number): Promise<PagedPost> {
-    this.querying = true;
+  private async getPrivateTags(userId: string): Promise<string[]> {
+    return await this.postService.getPrivateTagsAsync(userId) ?? [];
+  }
 
-    var pagedPosts = await this.postService.getPostsAsync(this.param, searchkey, pageNumber);
+  async retrivePosts(pageNumber: number): Promise<void> {
+    this.querying = true;
+    this.showSpinner = true;
+
+    let tag = this.selectedTag == '全部分类' ? null : this.selectedTag;
+    var pagedPosts = await this.postService.getPostsAsync(this.param, tag, this.searchkey, pageNumber);
 
     if (pagedPosts && pagedPosts.data)
       pagedPosts.data.forEach(p => this.setPost(p));
 
-    this.querying = false;
+    this.appendPosts(pagedPosts);
 
-    return pagedPosts;
+    this.querying = false;
+    this.showSpinner = false;
   }
 
   // 设置帖子的一些属性
@@ -84,37 +112,9 @@ export class HomeComponent implements OnInit {
     attachment.thumbnail = ConfigService.config.fileServer + '/' + attachment.thumbnail;
   }
 
-  async onScroll(): Promise<void> {
-    // 立即设置querying为true，避免上拉时多次触发该事件导致重复调用API
-    if (this.querying)
-      return;
-
-    this.querying = true;
-    this.showSpinner = true;
-    let hasMore = false;
-    let nextPage = 1;
-
-    // 有搜索关键字时，使用searchResult，否则使用pagedPosts
-    if (this.searchkey) {
-      hasMore = this.searchedPosts.pagingInfo.currentPage < this.searchedPosts.pagingInfo.totalPages;
-      nextPage = this.searchedPosts.pagingInfo.currentPage + 1;
-    } else {
-      hasMore = this.allPosts.pagingInfo.currentPage < this.allPosts.pagingInfo.totalPages;
-      nextPage = this.allPosts.pagingInfo.currentPage + 1;
-    }
-
-    if (hasMore) {
-      var pagedPosts = await this.getPagedPostsAsync(this.searchkey, nextPage);
-      this.appendPosts(pagedPosts);
-    }
-
-    this.querying = false;
-    this.showSpinner = false;
-  }
-
+  // 如果搜索关键字不为空，则将帖子数据加到搜索结果中，否则加到中
   private appendPosts(pagedPosts: PagedPost): void {
     if (pagedPosts) {
-      // 如果搜索关键字不为空，则将帖子数据加到搜索结果中，否则加到中
       if (this.searchkey) {
         this.searchedPosts.pagingInfo = pagedPosts.pagingInfo;
         pagedPosts.data.forEach(p => this.searchedPosts.data.push(p));
@@ -127,20 +127,55 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  private registerSearchEvent(): void {
+  async onScroll(): Promise<void> {
+    if (this.querying)
+      return;
+
+    console.log("onScroll");
+
+    // 立即设置querying为true，避免上拉时多次触发该事件导致重复调用API
+    this.querying = true;
+    let hasMore = false;
+    let nextPage = 1;
+
+    // 有搜索关键字时，使用searchResult，否则使用pagedPosts
+    if (this.searchkey) {
+      hasMore = this.searchedPosts.pagingInfo.currentPage < this.searchedPosts.pagingInfo.totalPages;
+      nextPage = this.searchedPosts.pagingInfo.currentPage + 1;
+    } else {
+      hasMore = this.allPosts.pagingInfo.currentPage < this.allPosts.pagingInfo.totalPages;
+      nextPage = this.allPosts.pagingInfo.currentPage + 1;
+    }
+
+    if (hasMore) 
+      await this.retrivePosts(nextPage);
+
+    this.querying = false;
+  }
+
+  private registerEvents(): void {
     this.searchEventService.searchEvent.subscribe(async searchkey => {
       this.searchkey = searchkey;
-      
+
+      // 搜索关键字变化，只清空搜索过滤的数据
+      this.searchedPosts = this.getEmptyPagedPost();
+
+      // 搜索关键字不为空，重新搜索数据，否则重新显示未筛选过的数据
       if (this.searchkey) {
-        // 搜索关键字改变，重新获取搜索数据并显示
-        this.searchedPosts = await this.getPagedPostsAsync(this.searchkey, 1);
-        this.displayData = this.searchedPosts;
+        await this.retrivePosts(1);
       }
       else {
-        // 搜索关键字清空，重新显示为筛选过的数据
-        this.searchedPosts = null;
+        // 如果未筛选数据为空，可能是在清空搜索关键字之前进行了种类选择，此种情况下需要重新获取未筛选数据
+        if (this.allPosts.data.length == 0)
+          await this.retrivePosts(1);
+
         this.displayData = this.allPosts;
       }
+    });
+
+    this.passwordEventService.enteredPasswordEvent.subscribe(password => {
+      if (password == this.viewPassword)
+        this.viewPassword = null;
     });
   }
 
@@ -156,4 +191,26 @@ export class HomeComponent implements OnInit {
     return paramObj;
   }
 
+  async onClickTag(tag): Promise<void> {
+    if (tag != this.selectedTag) {
+      // 种类变换，清空所有数据
+      this.allPosts = this.getEmptyPagedPost();
+      this.searchedPosts = this.getEmptyPagedPost();
+
+      this.selectedTag = tag;
+      await this.retrivePosts(1);
+    }
+  }
+
+  private getEmptyPagedPost(): PagedPost {
+    return {
+      data: [],
+      pagingInfo: {
+        currentPage: 1,
+        totalPages: 1,
+        pageSize: 10, 
+        totalCount: 0
+      }
+    };
+  }
 }

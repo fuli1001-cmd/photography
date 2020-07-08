@@ -32,28 +32,5 @@
 }
 
 .blur {
-	opacity: 0.1;
-}
-
-.div-password {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-}
-
-.btn-password {
-	background-color: #3d444d;
-    color: white;
-    width: 100%;
-	border-radius: .25rem;
-	margin-top: 20px;
-}
-
-.btn-play {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	width: 20%;
+	opacity: 0.04;
 }

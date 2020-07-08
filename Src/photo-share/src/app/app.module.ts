@@ -15,6 +15,7 @@ import { AdBarComponent } from './components/ad-bar/ad-bar.component';
 import { HomeComponent } from './components/home/home.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
+import { PasswordComponent } from './components/password/password.component';
 
 export function initializeApp(configService: ConfigService) {
   return () => configService.load();
@@ -28,7 +29,8 @@ export function initializeApp(configService: ConfigService) {
     UserBarComponent,
     AdBarComponent,
     HomeComponent,
-    SearchBarComponent
+    SearchBarComponent,
+    PasswordComponent
   ],
   imports: [
     BrowserModule,

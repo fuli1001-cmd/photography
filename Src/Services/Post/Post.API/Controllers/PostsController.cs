@@ -326,91 +326,11 @@ namespace Photography.Services.Post.API.Controllers
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
 
-        ///// <summary>
-        ///// 获取分享的帖子的详情
-        ///// </summary>
-        ///// <returns></returns>
-        //[HttpGet]
-        //[Route("share/{encryptedPostId}/{encryptedSharedUserId}/{timestamp}")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[AllowAnonymous]
-        //public async Task<ActionResult<PostViewModel>> GetSharedPostAsync(string encryptedPostId, string encryptedSharedUserId, string encryptedTimestamp)
-        //{
-        //    var postId = DecryptGuid(encryptedPostId);
-        //    var sharedUserId = DecryptGuid(encryptedSharedUserId);
-        //    var timestamp = DecryptTimestamp(encryptedTimestamp);
-
-        //    _logger.LogInformation("postId: {postId}, sharedUserId: {sharedUserId}, timestamp: {timestamp}", postId, sharedUserId, timestamp);
-
-        //    if (postId != Guid.Empty && sharedUserId != Guid.Empty && CheckShareTime(timestamp))
-        //    {
-        //        var post = await _postQueries.GetSharedPostAsync(postId, sharedUserId);
-        //        return Ok(ResponseWrapper.CreateOkResponseWrapper(post));
-        //    }
-
-        //    return new ObjectResult(ResponseWrapper.CreateErrorResponseWrapper((StatusCode)HttpStatusCode.BadRequest, "分享的帖子不存在或已过期"));
-        //}
-
-        ///// <summary>
-        ///// 获取分享的类别下的所有帖子
-        ///// </summary>
-        ///// <param name="encryptedPrivateTag"></param>
-        ///// <param name="encryptedSharedUserId"></param>
-        ///// <param name="encryptedTimestamp"></param>
-        ///// <param name="pagingParameters"></param>
-        ///// <returns></returns>
-        //[HttpGet]
-        //[Route("share/privatetag/{privateTag}/{encryptedSharedUserId}/{timestamp}")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[AllowAnonymous]
-        //public async Task<ActionResult<PostViewModel>> GetSharedPostAsync(string encryptedPrivateTag, string encryptedSharedUserId, string encryptedTimestamp, [FromQuery] PagingParameters pagingParameters)
-        //{
-        //    var privateTag = Encryptor.DecryptDES(encryptedPrivateTag, _decryptKey);
-        //    var sharedUserId = DecryptGuid(encryptedSharedUserId);
-        //    var timestamp = DecryptTimestamp(encryptedTimestamp);
-
-        //    _logger.LogInformation("privateTag: {privateTag}, sharedUserId: {sharedUserId}, timestamp: {timestamp}", privateTag, sharedUserId, timestamp);
-
-        //    if (sharedUserId != Guid.Empty && privateTag != encryptedPrivateTag && CheckShareTime(timestamp))
-        //    {
-        //        var post = await _postQueries.GetSharedPostsAsync(privateTag, sharedUserId, pagingParameters);
-        //        return Ok(ResponseWrapper.CreateOkResponseWrapper(post));
-        //    }
-
-        //    return new ObjectResult(ResponseWrapper.CreateErrorResponseWrapper((StatusCode)HttpStatusCode.BadRequest, "分享的帖子不存在或已过期"));
-        //}
-
-        ///// <summary>
-        ///// 获取分享的用户的所有帖子
-        ///// </summary>
-        ///// <param name="encryptedSharedUserId"></param>
-        ///// <param name="encryptedTimestamp"></param>
-        ///// <param name="pagingParameters"></param>
-        ///// <returns></returns>
-        //[HttpGet]
-        //[Route("share/{sharedUserId}/{timestamp}")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[AllowAnonymous]
-        //public async Task<ActionResult<PostViewModel>> GetSharedPostAsync(string encryptedSharedUserId, string encryptedTimestamp, [FromQuery] PagingParameters pagingParameters)
-        //{
-        //    var sharedUserId = DecryptGuid(encryptedSharedUserId);
-        //    var timestamp = DecryptTimestamp(encryptedTimestamp);
-
-        //    _logger.LogInformation("sharedUserId: {sharedUserId}, timestamp: {timestamp}", sharedUserId, timestamp);
-
-        //    if (sharedUserId != Guid.Empty && CheckShareTime(timestamp))
-        //    {
-        //        var post = await _postQueries.GetSharedPostsAsync(sharedUserId, pagingParameters);
-        //        return Ok(ResponseWrapper.CreateOkResponseWrapper(post));
-        //    }
-
-        //    return new ObjectResult(ResponseWrapper.CreateErrorResponseWrapper((StatusCode)HttpStatusCode.BadRequest, "分享的帖子不存在或已过期"));
-        //}
-
         /// <summary>
         /// 获取分享的帖子
         /// </summary>
         /// <param name="s">加密过的分享信息</param>
+        /// <param name="t">帖子类别，当分享的是用户的所有帖子时，可根据类别来筛选</param>
         /// <param name="k">搜索关键字</param>
         /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
@@ -418,7 +338,7 @@ namespace Photography.Services.Post.API.Controllers
         [Route("share")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [AllowAnonymous]
-        public async Task<ActionResult<ResponseWrapper>> GetShareDataAsync([FromQuery]string s, [FromQuery]string k, [FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<ResponseWrapper>> GetShareDataAsync([FromQuery]string s, [FromQuery]string t, [FromQuery]string k, [FromQuery] PagingParameters pagingParameters)
         {
             PagedList<PostViewModel> posts = null;
 
@@ -429,6 +349,13 @@ namespace Photography.Services.Post.API.Controllers
                 var shareInfo = JsonConvert.DeserializeObject<ShareInfo>(descryptedStr);
 
                 _logger.LogInformation("GetShareDataAsync: {@ShareInfo}", shareInfo);
+
+                // 优先搜索加密对象中的分类，若其无值，则搜索url参数中的分类
+                // 其场景是：客户端可以分享三种类型，1. 单个帖子，2. 帖子分类，3. 用户的全部帖子
+                // 当分享的是第三种时，加密对象中只有用户id（帖子id和帖子分类为空）
+                // 在网页上查看分享时，对与第三种可以选择帖子分类来筛选，选择的分类通过url参数privateTag传上来
+                if (string.IsNullOrWhiteSpace(shareInfo.PrivateTag))
+                    shareInfo.PrivateTag = t;
 
                 if (shareInfo.UserId != Guid.Empty && CheckShareTime(shareInfo.Timestamp))
                 {
