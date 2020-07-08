@@ -14,6 +14,10 @@
             <div class="col-auto align-self-center date">
                 <span>{{(post.updatedTime == null ? post.createdTime : post.updatedTime) | date: 'yyyy-MM-dd hh:mm'}}</span>
             </div>
+            <div class="col-auto align-self-center date" *ngIf="post.locationName">
+                <i class="fa fa-map-marker"></i>
+                <span>{{post.locationName}}</span>
+            </div>
         </div>
     </div>
     <div class="col-auto align-self-center" *ngIf="!noAd">
