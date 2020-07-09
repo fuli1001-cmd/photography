@@ -261,7 +261,11 @@ namespace Photography.Services.User.API.Query.EF
                                      Birthday = u.Birthday,
                                      UserType = u.UserType,
                                      Province = u.Province,
-                                     City = u.City
+                                     City = u.City,
+                                     IdCardBack = u.IdCardBack,
+                                     IdCardFront = u.IdCardFront,
+                                     IdCardHold = u.IdCardHold,
+                                     RealNameRegistrationStatus = u.RealNameRegistrationStatus
                                  };
 
             return await PagedList<ExaminingUserViewModel>.ToPagedListAsync(queryableDto, pagingParameters);

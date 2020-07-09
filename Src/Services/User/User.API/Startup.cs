@@ -69,10 +69,10 @@ namespace Photography.Services.User.API
                     options.RequireHttpsMetadata = false;
                 });
 
-            //services.AddAuthorization(options =>
-            //{
-            //    options.AddPolicy("AdminOnly", policy => policy.RequireClaim(ClaimTypes.Role, "admin"));
-            //});
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy => policy.RequireClaim(ClaimTypes.Role, "admin"));
+            });
 
             services.AddHttpContextAccessor();
 

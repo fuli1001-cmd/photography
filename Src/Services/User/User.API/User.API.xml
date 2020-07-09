@@ -45,6 +45,21 @@
             false：接收消息
             </summary>
         </member>
+        <member name="T:Photography.Services.User.API.Application.Commands.User.AuthRealName.AuthRealNameCommand">
+            <summary>
+            实名认证
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.User.AuthRealName.AuthRealNameCommand.UserId">
+            <summary>
+            被审核用户id
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.User.AuthRealName.AuthRealNameCommand.Passed">
+            <summary>
+            是否通过审核
+            </summary>
+        </member>
         <member name="P:Photography.Services.User.API.Application.Commands.User.MuteUser.MuteUserCommand.UserId">
             <summary>
             要免打扰的用户id
@@ -342,6 +357,13 @@
         <member name="M:Photography.Services.User.API.Controllers.UsersController.UploadIdCardAsync(Photography.Services.User.API.Application.Commands.User.UploadIdCard.UploadIdCardCommand)">
             <summary>
             上传身份证照片
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.UsersController.AuthRealNameAsync(Photography.Services.User.API.Application.Commands.User.AuthRealName.AuthRealNameCommand)">
+            <summary>
+            实名认证
             </summary>
             <param name="command"></param>
             <returns></returns>

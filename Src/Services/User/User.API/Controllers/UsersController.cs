@@ -11,6 +11,7 @@ using Photography.Services.User.API.Application.Commands.Login;
 using Photography.Services.User.API.Application.Commands.Logout;
 using Photography.Services.User.API.Application.Commands.User.AllowViewFollowedUsers;
 using Photography.Services.User.API.Application.Commands.User.AllowViewFollowers;
+using Photography.Services.User.API.Application.Commands.User.AuthRealName;
 using Photography.Services.User.API.Application.Commands.User.MuteUser;
 using Photography.Services.User.API.Application.Commands.User.ToggleFollow;
 using Photography.Services.User.API.Application.Commands.User.UpdateBackground;
@@ -253,6 +254,21 @@ namespace Photography.Services.User.API.Controllers
         }
 
         /// <summary>
+        /// 实名认证
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("authrealname")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<ActionResult<bool>> AuthRealNameAsync([FromBody] AuthRealNameCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
         /// 获取用于审核的用户列表
         /// </summary>
         /// <param name="pagingParameters"></param>
@@ -260,6 +276,7 @@ namespace Photography.Services.User.API.Controllers
         [HttpGet]
         [Route("examining")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<PagedResponseWrapper>> GetExaminingUsersAsync([FromQuery] PagingParameters pagingParameters)
         {
             var users = await _userQueries.GetExaminingUsersAsync(pagingParameters);

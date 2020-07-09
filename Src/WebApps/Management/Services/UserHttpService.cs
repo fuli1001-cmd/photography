@@ -43,6 +43,15 @@ namespace Photography.WebApps.Management.Services
 
                 if (!string.IsNullOrWhiteSpace(u.BackgroundImage))
                     u.BackgroundImage = _serviceSettings.FileServer + "/" + u.BackgroundImage;
+
+                if (!string.IsNullOrWhiteSpace(u.IdCardFront))
+                    u.IdCardFront = _serviceSettings.FileServer + "/" + u.IdCardFront;
+
+                if (!string.IsNullOrWhiteSpace(u.IdCardBack))
+                    u.IdCardBack = _serviceSettings.FileServer + "/" + u.IdCardBack;
+
+                if (!string.IsNullOrWhiteSpace(u.IdCardHold))
+                    u.IdCardHold = _serviceSettings.FileServer + "/" + u.IdCardHold;
             });
 
             return result;
@@ -50,8 +59,6 @@ namespace Photography.WebApps.Management.Services
 
         public async Task<bool> UpdateUserAsync(User user)
         {
-            bool result = false;
-
             // 更新用户信息
             var updateUserCommand = new 
             { 
@@ -78,6 +85,20 @@ namespace Photography.WebApps.Management.Services
             var httpContent = new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json");
             var response = await _client.PutAsync("/api/users/backgroundimage", httpContent);
             response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<PagedResponseWrapper<bool>>(await response.Content.ReadAsStringAsync()).Data;
+        }
+
+        public async Task<bool> AuthRealNameAsync(User user, bool passed)
+        {
+            var command = new
+            {
+                UserId = user.Id,
+                Passed = passed
+            };
+            var httpContent = new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json");
+            var response = await _client.PutAsync("/api/users/authrealname", httpContent);
+            response.EnsureSuccessStatusCode();
+
             return JsonConvert.DeserializeObject<PagedResponseWrapper<bool>>(await response.Content.ReadAsStringAsync()).Data;
         }
     }

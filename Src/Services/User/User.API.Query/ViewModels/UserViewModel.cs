@@ -101,6 +101,14 @@ namespace Photography.Services.User.API.Query.ViewModels
         public string Province { get; set; }
 
         public string City { get; set; }
+
+        public string IdCardFront { get; set; }
+
+        public string IdCardBack { get; set; }
+
+        public string IdCardHold { get; set; }
+
+        public IdAuthStatus RealNameRegistrationStatus { get; set; }
     }
 
     public class BaseUserViewModel

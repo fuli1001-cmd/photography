@@ -63,5 +63,18 @@ namespace Photography.WebApps.Management.Data
                 return false;
             }
         }
+
+        public async Task<bool> AuthRealNameAsync(ViewModels.User user, bool passed)
+        {
+            try
+            {
+                return await _userHttpService.AuthRealNameAsync(user, passed);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("AuthRealNameAsync failed, {@Exception}", ex);
+                return false;
+            }
+        }
     }
 }

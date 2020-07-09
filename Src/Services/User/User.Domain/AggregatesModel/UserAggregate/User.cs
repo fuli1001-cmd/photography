@@ -230,6 +230,11 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
 
             RealNameRegistrationStatus = IdAuthStatus.Authenticating;
         }
+
+        public void AuthRealName(bool passed)
+        {
+            RealNameRegistrationStatus = passed ? IdAuthStatus.Authenticated : IdAuthStatus.Rejected;
+        }
     }
 
     public enum UserType
@@ -249,6 +254,6 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         NoIdCard,
         Authenticating,
         Authenticated,
-        AuthenticateFailed
+        Rejected
     }
 }

@@ -1,73 +1,153 @@
 ﻿@page "/users/{userId}"
 
 @using Photography.WebApps.Management.Data
-@inject UserService UserService
+@inject UserService userService
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+
+@if (saveResult != null)
+{
+    if (saveResult.Value)
+    {
+        <div class="alert alert-success" role="alert">操作成功</div>
+    }
+    if (!saveResult.Value)
+    {
+        <div class="alert alert-danger" role="alert">操作失败</div>
+    }
+}
 
 <h3>用户管理</h3>
 
 @if (user != null)
 {
-    <div style="margin-bottom:10px;"><input @bind="user.Nickname" /></div>
-    <div style="margin-bottom:10px;"><input @bind="user.Sign" /></div>
-    @if (!string.IsNullOrWhiteSpace(user.Avatar))
-    {
-        <div style="margin-bottom:10px;">
-            <img src="@user.Avatar" style="width:200px;" />
-            <button @onclick="DeleteAvatar">删除头像</button>
-        </div>
-    }
-    @if (!string.IsNullOrWhiteSpace(user.BackgroundImage))
-    {
-        <div style="margin-bottom:10px;">
-            <img src="@user.BackgroundImage" style="width:200px;" />
-            <button @onclick="DeleteBackgroundImage">删除背景图</button>
-        </div>
-    }
-    <button @onclick="@(async () => await SaveUserAsync())">保存</button>
-    <button @onclick="Back">返回</button>
+    <div class="mt-5">昵称</div>
+    <div style="margin-bottom:10px;">
+        <input type="text" class="form-control" @bind="user.Nickname" />
+    </div>
 
-    @if (saveFailed)
+    <div>个人说明</div>
+    <div style="margin-bottom:10px;">
+        <textarea class="form-control" @bind="user.Sign"></textarea>
+    </div>
+
+    <div class="row no-gutters mt-3">
+        <div class="col-12 text-right">
+            <button type="button" class="btn btn-primary" @onclick="@(async () => await SaveUserAsync())">保存</button>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(user.Avatar) || !string.IsNullOrWhiteSpace(user.BackgroundImage))
     {
-        <span style="color:red">保存失败</span>
+        <div class="mt-5 mb-5" style="width:100%; height:1px; background-color:lightgray;"></div>
+        <div class="row no-gutters mt-4">
+            @if (!string.IsNullOrWhiteSpace(user.Avatar))
+            {
+                <div class="col-6">
+                    <div>头像</div>
+                    <div class="card" style="border:0">
+                        <img src="@user.Avatar" class="card-img-top pr-1" alt="头像">
+                        <div class="card-body align-self-center">
+                            <button type="button" class="btn btn-danger" @onclick="DeleteAvatar">删除头像</button>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (!string.IsNullOrWhiteSpace(user.BackgroundImage))
+            {
+                <div class="col-6">
+                    <div>背景图</div>
+                    <div class="card" style="border:0">
+                        <img src="@user.BackgroundImage" class="card-img-top pl-1" alt="背景图">
+                        <div class="card-body align-self-center">
+                            <button type="button" class="btn btn-danger" @onclick="DeleteBackgroundImage">删除背景图</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(user.IdCardFront))
+    {
+        <div class="mt-5 mb-5" style="width:100%; height:1px; background-color:lightgray;"></div>
+        <div>
+            <span>实名认证</span>
+            @if (user.RealNameRegistrationStatus == ViewModels.IdAuthStatus.Authenticated)
+            {
+                <span>（已通过）</span>
+            }
+            else @if (user.RealNameRegistrationStatus == ViewModels.IdAuthStatus.Rejected)
+            {
+                <span>（已拒绝）</span>
+            }
+            else @if (user.RealNameRegistrationStatus == ViewModels.IdAuthStatus.Authenticating)
+            {
+                <span>（未审核）</span>
+            }
+        </div>
+        <div class="row no-gutters">
+            <div class="col-4">
+                <div class="card" style="border:0">
+                    <img src="@user.IdCardFront" class="card-img-top pr-1" alt="身份证正面">
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card" style="border:0">
+                    <img src="@user.IdCardBack" class="card-img-top pr-1 pl-1" alt="身份证背面">
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card" style="border:0">
+                    <img src="@user.IdCardHold" class="card-img-top pl-1" alt="手持身份证">
+                </div>
+            </div>
+        </div>
+        <div class="row no-gutters mt-3">
+            <div class="col-6 text-center">
+                <button type="button" class="btn btn-primary" @onclick="@(async () => await AuthRealNameAsync(true))">通过</button>
+            </div>
+            <div class="col-6 text-center">
+                <button type="button" class="btn btn-danger" @onclick="@(async () => await AuthRealNameAsync(false))">拒绝</button>
+            </div>
+        </div>
     }
 }
 
 @code {
     private Photography.WebApps.Management.ViewModels.User user;
-    private bool saveFailed;
+    private bool? saveResult;
 
     [Parameter]
     public string UserId { get; set; }
 
     protected override void OnInitialized()
     {
-        saveFailed = false;
-
-        if (UserService.PagedData != null)
-            user = UserService.PagedData.Data.FirstOrDefault(u => u.Id == Guid.Parse(UserId));
+        if (userService.PagedData != null)
+            user = userService.PagedData.Data.FirstOrDefault(u => u.Id == Guid.Parse(UserId));
     }
 
-    private void DeleteAvatar()
+    private async Task DeleteAvatar()
     {
         user.Avatar = null;
+        saveResult = await userService.UpdateUserAsync(user);
     }
 
-    private void DeleteBackgroundImage()
+    private async Task DeleteBackgroundImage()
     {
         user.BackgroundImage = null;
+        saveResult = await userService.UpdateUserBackgroundAsync(user);
     }
 
     private async Task SaveUserAsync()
     {
-        var updateUserTask = UserService.UpdateUserAsync(user);
-        var updateBackgroundTask = UserService.UpdateUserBackgroundAsync(user);
-        await Task.WhenAll(new Task[] { updateUserTask, updateBackgroundTask });
+        saveResult = await userService.UpdateUserAsync(user);
+    }
 
-        if (updateUserTask.Result && updateBackgroundTask.Result)
-            Back();
-        else
-            saveFailed = true;
+    private async Task AuthRealNameAsync(bool passed)
+    {
+        saveResult = await userService.AuthRealNameAsync(user, passed);
+        if (saveResult.Value)
+            user.RealNameRegistrationStatus = passed ? ViewModels.IdAuthStatus.Authenticated : ViewModels.IdAuthStatus.Rejected;
     }
 
     private void Back()
