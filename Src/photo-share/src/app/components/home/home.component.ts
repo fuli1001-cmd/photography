@@ -94,7 +94,7 @@ export class HomeComponent implements OnInit {
       post.updatedTime = new Date(post.updatedTime * 1000);
     
     post.createdTime = new Date(post.createdTime * 1000);
-    post.user.avatar = ConfigService.config.fileServer + '/' + post.user.avatar;
+    post.user.avatar = post.user.avatar ? ConfigService.config.fileServer + '/' + post.user.avatar : '../../../assets/images/default_avatar.png';
     post.postAttachments.forEach(a => this.setAttachment(a));
     
     if (post.forwardedPost) {
