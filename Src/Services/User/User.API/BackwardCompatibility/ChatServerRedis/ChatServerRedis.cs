@@ -141,13 +141,6 @@ namespace Photography.Services.User.API.BackwardCompatibility.ChatServerRedis
 
         public async Task WriteUserAsync(Domain.AggregatesModel.UserAggregate.User user)
         {
-            var userStr = await _redisService.StringGetAsync(user.ChatServerUserId.ToString());
-            _logger.LogInformation("******************** " + userStr);
-            object obj = JsonConvert.DeserializeObject(userStr);
-            var objJson = SerializeUtil.DeserializeBytesToString((byte[])obj, true);
-            var userinfolite = SerializeUtil.DeserializeJsonToObject<UserInfoLite>(objJson);
-            _logger.LogInformation("userinfolite: {@userinfolite}", userinfolite);
-
             var chatServerUser = new UserInfoLite
             {
                 userId = user.ChatServerUserId,
@@ -156,7 +149,8 @@ namespace Photography.Services.User.API.BackwardCompatibility.ChatServerRedis
                 clientType = user.ClientType,
                 avatar = user.Avatar,
                 tel = user.Phonenumber,
-                registrationId = user.RegistrationId
+                registrationId = user.RegistrationId,
+                connectionInfos = await GetUserConnectionInfoAsync(user.ChatServerUserId)
             };
             
             string json = SerializeUtil.SerializeToJson(chatServerUser);
@@ -190,6 +184,22 @@ namespace Photography.Services.User.API.BackwardCompatibility.ChatServerRedis
             await _redisService.StringSetAsync(oldToken, json, null);
 
             _logger.LogInformation("Redis TokenUser: {@RedisTokenUser}", tokenUser);
+        }
+
+        private async Task<List<ConnectionInfo>> GetUserConnectionInfoAsync(int chatServerUserId)
+        {
+            try
+            {
+                var bytesJson = await _redisService.StringGetAsync(chatServerUserId.ToString());
+                var bytes = JsonConvert.DeserializeObject<byte[]>(bytesJson);
+                var objJson = SerializeUtil.DeserializeBytesToString(bytes, true);
+                var userInfoLite = SerializeUtil.DeserializeJsonToObject<UserInfoLite>(objJson);
+                return userInfoLite.connectionInfos;
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

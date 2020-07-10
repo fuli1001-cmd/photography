@@ -18,6 +18,14 @@ namespace Photography.Services.User.API.BackwardCompatibility.Models
         public bool muted { get; set; }
         public int stateCode { get; set; }
         public int clientType { get; set; }
+        public List<ConnectionInfo> connectionInfos { get; set; }
+    }
+
+    public class ConnectionInfo
+    {
+        public string ServerName;
+        public string SessionId;
+        public int ClientType;
     }
 
     public class Token
