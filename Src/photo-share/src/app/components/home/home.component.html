@@ -1,11 +1,8 @@
-<div style="position:relative;" *ngIf="!viewPassword">
-    <div *ngIf="displayData" class="post-area" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()">
-        <div class="p-3 search-bar fixed-top">
-            <!-- 搜索条 -->
-            <search-bar></search-bar>
-
-            <!-- 帖子类别下拉框 -->
-            <div class="btn-group mt-2" *ngIf="privateTags && privateTags.length > 0">
+<div style="position:relative;" *ngIf="!viewPassword" [hidden]="displayBigPhoto">
+    <div class="row no-gutters p-3 search-bar fixed-top">
+        <!-- 帖子类别下拉框 -->
+        <div class="col-auto align-self-center mr-2 mb-2" *ngIf="privateTags && privateTags.length > 0">
+            <div class="btn-group mt-2">
                 <button type="button" class="btn dropdown-btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {{selectedTag}}
                 </button>
@@ -15,6 +12,13 @@
             </div>
         </div>
 
+        <!-- 搜索条 -->
+        <div class="col align-self-center">
+            <search-bar></search-bar>
+        </div>
+    </div>
+
+    <div *ngIf="displayData" class="margin-top-22" [ngClass]="{'margin-bottom-15': !noAd}" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()">
         <!-- 帖子区域 -->
         <div *ngFor="let post of displayData.data">
             <div class="p-3">
@@ -23,11 +27,11 @@
             </div>
             <div class="separator"></div>
         </div>
+    </div>
 
-        <!-- 广告条 -->
-        <div class="fixed-bottom ad-bar" *ngIf="!noAd">
-            <ad-bar></ad-bar>
-        </div>
+    <!-- 广告条 -->
+    <div class="fixed-bottom ad-bar" *ngIf="!noAd">
+        <ad-bar></ad-bar>
     </div>
 
     <!-- 加载指示器 -->
@@ -37,4 +41,7 @@
 </div>
 
 <!-- 密码查看 -->
-<password *ngIf="viewPassword && viewPassword.length > 0"></password>
+<password [correctPassword]="viewPassword" *ngIf="viewPassword && viewPassword.length > 0"></password>
+
+<!-- 大图显示照片 -->
+<photo *ngIf="displayBigPhoto"></photo>

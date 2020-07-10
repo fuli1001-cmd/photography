@@ -2,6 +2,7 @@
 	background-color: #333333;
 	height: 100%;
 	width: 100%;
+	cursor: pointer;
 }
 
 .big-photo-carousel {
@@ -25,4 +26,12 @@
 
 .carousel-control-next, .carousel-control-prev {
     height: 90%;
+}
+
+.icon-close {
+	position: absolute;
+	top: 30px;
+	right: 0;
+	transform: translate(-50%, -50%);
+	width: 10%;
 }

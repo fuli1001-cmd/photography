@@ -1,22 +1,19 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Attachment } from 'src/app/models/attachment';
-import { StateService } from 'src/app/services/state.service';
+import { Component, OnInit } from '@angular/core';
+import { PhotoEventService } from 'src/app/services/photo-event.service';
 
 @Component({
-  selector: 'app-photo',
+  selector: 'photo',
   templateUrl: './photo.component.html',
   styleUrls: ['./photo.component.css']
 })
 export class PhotoComponent implements OnInit {
 
-  // attachments: Attachment[];
-  // photoIndex: number;
+  constructor(public photoEventService: PhotoEventService) { }
 
-  constructor(public stateService: StateService) { }
+  ngOnInit(): void { }
 
-  ngOnInit(): void {
-    // this.attachments = this.stateService.attachments;
-    // this.photoIndex = this.stateService.photoIndex;
+  close(): void {
+    this.photoEventService.closePhoto();
   }
 
 }

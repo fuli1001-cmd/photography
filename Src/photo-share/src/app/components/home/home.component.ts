@@ -8,6 +8,8 @@ import { PagedPost } from 'src/app/models/paged-post';
 import { SearchEventService } from 'src/app/services/search-event.service';
 import * as CryptoJS from 'crypto-js';
 import { PasswordEventService } from 'src/app/services/password-event.service';
+import { PhotoEventService } from 'src/app/services/photo-event.service';
+import { ViewportScroller } from '@angular/common';
 
 
 @Component({
@@ -29,11 +31,15 @@ export class HomeComponent implements OnInit {
   viewPassword: string; // 查看密码
   showSpinner: boolean; // 是否显示等待标志
   querying: boolean; // 表示是否正在调用后台服务进行查询
+  displayBigPhoto: boolean // 是否大图显示照片
+  position: any;
 
   constructor(private postService: PostService, 
     private activatedRoute: ActivatedRoute,
     private searchEventService: SearchEventService,
-    private passwordEventService: PasswordEventService) { }
+    private passwordEventService: PasswordEventService,
+    private photoEventService: PhotoEventService,
+    private viewportScroller: ViewportScroller) { }
 
   ngOnInit(): void {
     this.privateTags = [];
@@ -131,8 +137,6 @@ export class HomeComponent implements OnInit {
     if (this.querying)
       return;
 
-    console.log("onScroll");
-
     // 立即设置querying为true，避免上拉时多次触发该事件导致重复调用API
     this.querying = true;
     let hasMore = false;
@@ -177,9 +181,25 @@ export class HomeComponent implements OnInit {
       if (password == this.viewPassword)
         this.viewPassword = null;
     });
+
+    this.photoEventService.photoSelectedEvent.subscribe(() => {
+      this.displayBigPhoto = true;
+      this.position = this.viewportScroller.getScrollPosition();
+    });
+
+    this.photoEventService.photoClosedEvent.subscribe(() => {
+      this.displayBigPhoto = false;
+      window.setTimeout(() => {
+        this.viewportScroller.scrollToPosition(this.position);
+      }, 0);
+    });
   }
 
   private decryptParam(): any {
+    console.log(this.param);
+    this.param = decodeURIComponent(this.param);
+    console.log(this.param);
+
     if (!this.param)
       return null;
 
@@ -187,7 +207,13 @@ export class HomeComponent implements OnInit {
     let key = CryptoJS.enc.Utf8.parse(decryptKey);
     let iv = CryptoJS.enc.Utf8.parse(decryptKey);
     let decrypted = CryptoJS.DES.decrypt(this.param, key, { iv: iv, mode: CryptoJS.mode.CBC });
+
+    let test = decrypted.toString(CryptoJS.enc.Utf8);
+    console.log(test);
     let paramObj = JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
+
+    console.log(paramObj);
+
     return paramObj;
   }
 

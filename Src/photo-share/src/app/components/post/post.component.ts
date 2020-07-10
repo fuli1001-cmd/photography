@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Post } from 'src/app/models/post';
 import { StateService } from 'src/app/services/state.service';
 import { PasswordEventService } from 'src/app/services/password-event.service';
+import { PhotoEventService } from 'src/app/services/photo-event.service';
 
 @Component({
   selector: 'post',
@@ -20,7 +21,8 @@ export class PostComponent implements OnInit {
 
   constructor(private stateService: StateService, 
     private router: Router,
-    private passwordEventService: PasswordEventService) { }
+    private passwordEventService: PasswordEventService,
+    private photoEventService: PhotoEventService) { }
 
   ngOnInit(): void {
     this.registerEvents();
@@ -30,9 +32,7 @@ export class PostComponent implements OnInit {
     if (this.post.viewPassword)
       return;
       
-    this.stateService.attachments = this.post.postAttachments;
-    this.stateService.photoIndex = index;
-    this.router.navigate(['/photo']);
+    this.photoEventService.selectPhoto(this.post.postAttachments, index);
   }
 
   private registerEvents(): void {

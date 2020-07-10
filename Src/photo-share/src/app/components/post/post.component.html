@@ -28,5 +28,5 @@
     </div>
 
     <!-- 密码查看 -->
-    <password *ngIf="post.viewPassword && post.viewPassword.length > 0"></password>
+    <password [correctPassword]="post.viewPassword" *ngIf="post.viewPassword && post.viewPassword.length > 0"></password>
 </div>

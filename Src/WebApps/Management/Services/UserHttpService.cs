@@ -59,13 +59,17 @@ namespace Photography.WebApps.Management.Services
 
         public async Task<bool> UpdateUserAsync(User user)
         {
+            string avatar = user.Avatar;
+            if (!string.IsNullOrWhiteSpace(avatar))
+                avatar = avatar.Replace(_serviceSettings.FileServer + "/", string.Empty);
+
             // 更新用户信息
             var updateUserCommand = new 
             { 
                 UserId = user.Id, 
                 Nickname = user.Nickname,
                 Sign = user.Sign,
-                Avatar = user.Avatar,
+                Avatar = avatar,
                 Gender = user.Gender,
                 Birthday = user.Birthday,
                 UserType = user.UserType,
@@ -81,7 +85,11 @@ namespace Photography.WebApps.Management.Services
 
         public async Task<bool> UpdateUserBackgroundAsync(User user)
         {
-            var command = new { BackgroundImage = user.BackgroundImage, UserId = user.Id };
+            string backgroundImage = user.BackgroundImage;
+            if (!string.IsNullOrWhiteSpace(backgroundImage))
+                backgroundImage = backgroundImage.Replace(_serviceSettings.FileServer + "/", string.Empty);
+
+            var command = new { BackgroundImage = backgroundImage, UserId = user.Id };
             var httpContent = new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json");
             var response = await _client.PutAsync("/api/users/backgroundimage", httpContent);
             response.EnsureSuccessStatusCode();
