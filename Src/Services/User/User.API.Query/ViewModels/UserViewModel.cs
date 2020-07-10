@@ -44,12 +44,13 @@ namespace Photography.Services.User.API.Query.ViewModels
         public bool ViewFollowedUsersAllowed { get; set; }
 
         public int ChatServerUserId { get; set; }
+
+        public IdAuthStatus RealNameRegistrationStatus { get; set; }
     }
 
     public class MeViewModel : UserViewModel
     {
         public string Code { get; set; }
-        public IdAuthStatus RealNameRegistrationStatus { get; set; }
     }
 
     public class FollowerViewModel : BaseUserViewModel

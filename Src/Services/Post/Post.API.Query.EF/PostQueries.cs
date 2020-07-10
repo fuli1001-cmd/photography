@@ -280,6 +280,9 @@ namespace Photography.Services.Post.API.Query.EF
                                      where up.User.Nickname.ToLower().Contains(key)
                                      || (up.Post.Text != null && up.Post.Text.ToLower().Contains(key))
                                      || (up.Post.PublicTags != null && up.Post.PublicTags.ToLower().Contains(key))
+                                     || (up.Post.ForwardedPost != null && up.Post.ForwardedPost.User.Nickname.ToLower().Contains(key))
+                                     || (up.Post.ShowOriginalText != null && up.Post.ShowOriginalText.Value && up.Post.ForwardedPost != null && up.Post.ForwardedPost.Text != null && up.Post.ForwardedPost.Text.ToLower().Contains(key))
+                                     || (up.Post.ForwardedPost != null && up.Post.ForwardedPost.PublicTags != null && up.Post.ForwardedPost.PublicTags.ToLower().Contains(key))
                                      select up;
             }
 
@@ -310,6 +313,9 @@ namespace Photography.Services.Post.API.Query.EF
                                      where up.User.Nickname.ToLower().Contains(key)
                                      || (up.Post.Text != null && up.Post.Text.ToLower().Contains(key))
                                      || (up.Post.PublicTags != null && up.Post.PublicTags.ToLower().Contains(key))
+                                     || (up.Post.ForwardedPost != null && up.Post.ForwardedPost.User.Nickname.ToLower().Contains(key))
+                                     || (up.Post.ShowOriginalText != null && up.Post.ShowOriginalText.Value && up.Post.ForwardedPost != null && up.Post.ForwardedPost.Text != null && up.Post.ForwardedPost.Text.ToLower().Contains(key))
+                                     || (up.Post.ForwardedPost != null && up.Post.ForwardedPost.PublicTags != null && up.Post.ForwardedPost.PublicTags.ToLower().Contains(key))
                                      select up;
             }
 
