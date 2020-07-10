@@ -141,6 +141,13 @@ namespace Photography.Services.User.API.BackwardCompatibility.ChatServerRedis
 
         public async Task WriteUserAsync(Domain.AggregatesModel.UserAggregate.User user)
         {
+            var userStr = await _redisService.StringGetAsync(user.ChatServerUserId.ToString());
+            _logger.LogInformation("******************** " + userStr);
+            object obj = JsonConvert.DeserializeObject(userStr);
+            var objJson = SerializeUtil.DeserializeBytesToString((byte[])obj, true);
+            var userinfolite = SerializeUtil.DeserializeJsonToObject<UserInfoLite>(objJson);
+            _logger.LogInformation("userinfolite: {@userinfolite}", userinfolite);
+
             var chatServerUser = new UserInfoLite
             {
                 userId = user.ChatServerUserId,
