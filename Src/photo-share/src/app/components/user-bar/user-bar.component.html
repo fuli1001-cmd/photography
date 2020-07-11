@@ -1,15 +1,17 @@
 <!-- 用户信息 -->
 <div class="row no-gutters">
-    <div class="col-2">
-        <img src="{{post.user.avatar}}" class="rounded-circle avatar" routerLink="/download">
-    </div>
+  <div class="col-2">
+    <img src="{{post.user.avatar}}" class="rounded-circle avatar" *ngIf="noAd">
+    <img src="{{post.user.avatar}}" class="rounded-circle avatar" routerLink="/download" *ngIf="!noAd">
+  </div>
     <div class="col align-self-center ml-2">
-        <div class="row no-gutters">
-            <div class="col-auto align-self-center name" routerLink="/download"><span>{{post.user.nickname}}</span></div>
-            <div class="col-auto align-self-center">
-                <span class="align-middle pl-2 pr-2 pt-1 pb-1 user-type">{{post.user.userType == 0 ? '摄影师' : '模特'}}</span>
-            </div>
+      <div class="row no-gutters">
+        <div class="col-auto align-self-center name" *ngIf="noAd"><span>{{post.user.nickname}}</span></div>
+        <div class="col-auto align-self-center name" routerLink="/download" *ngIf="!noAd"><span>{{post.user.nickname}}</span></div>
+        <div class="col-auto align-self-center">
+          <span class="align-middle pl-2 pr-2 pt-1 pb-1 user-type">{{post.user.userType == 0 ? '摄影师' : '模特'}}</span>
         </div>
+      </div>
         <div class="row no-gutters">
             <div class="col-auto align-self-center date">
                 <span>{{(post.updatedTime == null ? post.createdTime : post.updatedTime) | date: 'yyyy-MM-dd hh:mm'}}</span>
