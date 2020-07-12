@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - test
+    paths:
+      - '!Src/photo-share/**'
+      - '!.github/workflows/**'
   pull_request:
     branches:
       - test
