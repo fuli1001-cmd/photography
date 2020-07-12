@@ -1,16 +1,16 @@
-name: photo-share (Test)
+name: ApiGw (Test)
 
 on:
   push:
     branches:
       - test
     paths:
-      - 'Src/WebApps/photo-share/**'
+      - 'Src/ApiGateways/ApiGwBase/**'
   pull_request:
     branches:
       - test
     paths:
-      - 'Src/WebApps/photo-share/**'
+      - 'Src/ApiGateways/ApiGwBase/**'
       
 jobs:
   cd:
@@ -23,17 +23,17 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
         
       - name: Build
-        run: docker build -f ./Src/WebApps/photo-share/Dockerfile -t photography-photoshare .
+        run: docker build -f ./Src/ApiGateways/ApiGwBase/Dockerfile -t photography-apigwbase .
         
       - name: Tags
         run: |
-          docker tag photography-photoshare ${{ secrets.DOCKER_USER }}/photography-photoshare:${{ github.sha }}
-          docker tag photography-photoshare ${{ secrets.DOCKER_USER }}/photography-photoshare:linux
+          docker tag photography-apigwbase ${{ secrets.DOCKER_USER }}/photography-apigwbase:${{ github.sha }}
+          docker tag photography-apigwbase ${{ secrets.DOCKER_USER }}/photography-apigwbase:linux-test
           
       - name: Push
         run: |
-          docker push ${{ secrets.DOCKER_USER }}/photography-photoshare:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USER }}/photography-photoshare:linux
+          docker push ${{ secrets.DOCKER_USER }}/photography-apigwbase:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USER }}/photography-apigwbase:linux-test
           
       - name: Deploy
         uses: garygrossgarten/github-action-ssh@release

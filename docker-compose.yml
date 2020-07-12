@@ -52,6 +52,13 @@ services:
     build:
       context: .
       dockerfile: Src/WebApps/Management/Dockerfile
+      
+  photoshare:
+    #image: fuli1001/photography-photoshare:linux
+    image: photography-photoshare
+    build:
+      context: .
+      dockerfile: Src/WebApps/photo-share/Dockerfile
 
   #rabbitmq:
   #  image: rabbitmq:3-management-alpine

@@ -1,14 +1,14 @@
-name: photo-share (Test)
+name: photo-share (Prod)
 
 on:
   push:
     branches:
-      - test
+      - master
     paths:
       - 'Src/WebApps/photo-share/**'
   pull_request:
     branches:
-      - test
+      - master
     paths:
       - 'Src/WebApps/photo-share/**'
       

@@ -1,16 +1,16 @@
-name: photo-share (Test)
+name: ApiGw (Prod)
 
 on:
   push:
     branches:
-      - test
+      - master
     paths:
-      - 'Src/WebApps/photo-share/**'
+      - 'Src/ApiGateways/ApiGwBase/**'
   pull_request:
     branches:
-      - test
+      - master
     paths:
-      - 'Src/WebApps/photo-share/**'
+      - 'Src/ApiGateways/ApiGwBase/**'
       
 jobs:
   cd:
@@ -22,18 +22,21 @@ jobs:
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
         
+      - name: Replace ocelot.json with production configs
+        run: cp ./Src/ApiGateways/ApiGwBase/configuration.production.json ./Src/ApiGateways/ApiGwBase/ocelot.json
+        
       - name: Build
-        run: docker build -f ./Src/WebApps/photo-share/Dockerfile -t photography-photoshare .
+        run: docker build -f ./Src/ApiGateways/ApiGwBase/Dockerfile -t photography-apigwbase .
         
       - name: Tags
         run: |
-          docker tag photography-photoshare ${{ secrets.DOCKER_USER }}/photography-photoshare:${{ github.sha }}
-          docker tag photography-photoshare ${{ secrets.DOCKER_USER }}/photography-photoshare:linux
+          docker tag photography-apigwbase ${{ secrets.DOCKER_USER }}/photography-apigwbase:${{ github.sha }}
+          docker tag photography-apigwbase ${{ secrets.DOCKER_USER }}/photography-apigwbase:linux-prod
           
       - name: Push
         run: |
-          docker push ${{ secrets.DOCKER_USER }}/photography-photoshare:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USER }}/photography-photoshare:linux
+          docker push ${{ secrets.DOCKER_USER }}/photography-apigwbase:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USER }}/photography-apigwbase:linux-prod
           
       - name: Deploy
         uses: garygrossgarten/github-action-ssh@release
