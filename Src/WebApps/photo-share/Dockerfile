@@ -8,5 +8,5 @@ RUN ng build --prod
 
 ### STAGE 2: Run ###
 FROM nginx:1.19.1-alpine
-COPY Src/WebApps/photo-share/nginx.conf /etc/nginx/conf.d/photo-share.conf
+COPY Src/WebApps/photo-share/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /usr/src/app/dist/photo-share /usr/share/nginx/html
