@@ -1,11 +1,9 @@
 ### STAGE 1: Build ###
 FROM node:12.18.2-alpine3.12 AS build
 WORKDIR /usr/src/app
-COPY Src/photo-share/package.json Src/photo-share/package-lock.json ./
+COPY Src/photo-share/ ./
 RUN npm install
-COPY . .
-WORKDIR "/usr/src/app/Src/photo-share"
-RUN npm run build
+RUN ng build --prod
 
 ### STAGE 2: Run ###
 FROM nginx:1.19.1-alpine
