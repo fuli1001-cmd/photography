@@ -76,5 +76,18 @@ namespace Photography.WebApps.Management.Data
                 return false;
             }
         }
+
+        public async Task<bool> DisableUserAsync(ViewModels.User user, bool disabled)
+        {
+            try
+            {
+                return await _userHttpService.DisableUserAsync(user, disabled);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("DisableUserAsync failed, {@Exception}", ex);
+                return false;
+            }
+        }
     }
 }

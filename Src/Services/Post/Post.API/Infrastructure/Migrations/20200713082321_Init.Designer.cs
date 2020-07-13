@@ -10,7 +10,7 @@ using Photography.Services.Post.Infrastructure;
 namespace Photography.Services.Post.API.Infrastructure.Migrations
 {
     [DbContext(typeof(PostContext))]
-    [Migration("20200702081824_Init")]
+    [Migration("20200713082321_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -135,6 +135,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
 
                     b.Property<double>("CreatedTime")
                         .HasColumnType("float");
+
+                    b.Property<int>("ForwardCount")
+                        .HasColumnType("int");
 
                     b.Property<int>("ForwardType")
                         .ValueGeneratedOnAdd()
@@ -295,6 +298,12 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<string>("Avatar")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("DisabledTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IdAuthenticated")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Nickname")
                         .HasColumnType("nvarchar(max)");
 
@@ -407,35 +416,6 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.HasIndex("FollowerId");
 
                     b.ToTable("UserRelations");
-                });
-
-            modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.UserShareAggregate.UserShare", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<double>("CreatedTime")
-                        .HasColumnType("float");
-
-                    b.Property<Guid?>("PostId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("PrivateTag")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PostId");
-
-                    b.HasIndex("PrivateTag");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserShares");
                 });
 
             modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.CircleAggregate.Circle", b =>
@@ -566,19 +546,6 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         .WithMany("Followers")
                         .HasForeignKey("FollowerId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.UserShareAggregate.UserShare", b =>
-                {
-                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.PostAggregate.Post", "Post")
-                        .WithMany("UserShares")
-                        .HasForeignKey("PostId");
-
-                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

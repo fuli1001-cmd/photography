@@ -77,7 +77,8 @@ namespace Photography.Services.Post.API.Application.Commands.Post.DeletePost
 
         private async Task SendPostDeletedEventAsync(Guid userId)
         {
-            var @event = new PostDeletedEvent { UserId = userId };
+            var operatorId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var @event = new PostDeletedEvent { UserId = userId, OperatorId = operatorId };
             _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
             await _messageSession.Publish(@event);
             _logger.LogInformation("----- Published PostDeletedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);

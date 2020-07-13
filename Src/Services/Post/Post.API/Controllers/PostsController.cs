@@ -386,7 +386,7 @@ namespace Photography.Services.Post.API.Controllers
 
         private bool CheckShareTime(double createdSeconds)
         {
-            var validSeconds = _configuration.GetValue<int>("ShareValidTime") * 3600;
+            var validSeconds = _configuration.GetValue<int>("ShareValidHours") * 3600;
             var curSeconds = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
             return createdSeconds + validSeconds >= curSeconds;
         }

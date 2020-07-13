@@ -266,6 +266,7 @@ namespace Photography.Services.User.API.Query.EF
                                      IdCardBack = u.IdCardBack,
                                      IdCardFront = u.IdCardFront,
                                      IdCardHold = u.IdCardHold,
+                                     Disabled = u.DisabledTime == null ? false : DateTime.UtcNow < u.DisabledTime.Value,
                                      RealNameRegistrationStatus = u.RealNameRegistrationStatus
                                  };
 

@@ -13,6 +13,16 @@ namespace Photography.WebApps.Management.ViewModels
 
         public List<PostAttachment> PostAttachments { get; set; }
 
+        public Visibility Visibility { get; set; }
+
         public User User { get; set; }
+    }
+
+    public enum Visibility
+    {
+        Public,
+        Friends,
+        Password,
+        SelectedFriends
     }
 }

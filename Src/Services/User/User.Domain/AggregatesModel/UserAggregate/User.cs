@@ -78,6 +78,12 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
 
         public double UpdatedTime { get; private set; }
 
+        // 用户被禁用到的时间点，null表示未禁用
+        public DateTime? DisabledTime { get; private set; }
+
+        // 被禁次数
+        public int DisabledCount { get; private set; }
+
         #region BackwardCompatibility: ChatServer needed Property
         public int ChatServerUserId { get; private set; }
         public string RegistrationId { get; private set; }
@@ -234,6 +240,22 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         public void AuthRealName(bool passed)
         {
             RealNameRegistrationStatus = passed ? IdAuthStatus.Authenticated : IdAuthStatus.Rejected;
+        }
+
+        public void Disable(double disableHours)
+        {
+            // 如果用户目前处于禁用状态，则直接返回，不改变被禁到的时间
+            if (DisabledTime != null && DisabledTime.Value > DateTime.UtcNow)
+                return;
+
+            // 按指数方式设置被禁到的时间，并增加被禁次数用于下次计算被禁到的时间
+            DisabledTime = DateTime.UtcNow.AddHours(disableHours * Math.Pow(2, DisabledCount));
+            DisabledCount++;
+        }
+
+        public void Enable()
+        {
+            DisabledTime = null;
         }
     }
 

@@ -57,7 +57,17 @@
                 </td>
                 <td>
                     <button type="button" class="btn btn-danger btn-sm" @onclick="@(async () => await DeleteAvatarAsync(user))">删除头像</button>
-                    <button type="button" class="btn btn-danger btn-sm" @onclick="@(async () => await DeleteBackgroundImageAsync(user))">删除背景图</button>
+                    <button type="button" class="btn btn-danger btn-sm" @onclick="@(async () => await DeleteBackgroundImageAsync(user))">
+                        删除背景图
+                    </button>
+                    @if (user.Disabled)
+                    {
+                        <button type="button" class="btn btn-danger btn-sm" @onclick="@(async () => await EnableUserAsync(user))">启用</button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-danger btn-sm" @onclick="@(async () => await DisableUserAsync(user))">禁用</button>
+                    }
                 </td>
             </tr>
             }
@@ -117,5 +127,15 @@
             if (!await UserService.UpdateUserBackgroundAsync(user))
                 user.BackgroundImage = backgroundImage;
         }
+    }
+
+    private async Task EnableUserAsync(ViewModels.User user)
+    {
+        await UserService.DisableUserAsync(user, false);
+    }
+
+    private async Task DisableUserAsync(ViewModels.User user)
+    {
+        await UserService.DisableUserAsync(user, true);
     }
 }

@@ -15,7 +15,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     Nickname = table.Column<string>(nullable: true),
                     Avatar = table.Column<string>(nullable: true),
                     UserType = table.Column<int>(nullable: true),
-                    Score = table.Column<int>(nullable: false, defaultValue: 0)
+                    Score = table.Column<int>(nullable: false, defaultValue: 0),
+                    IdAuthenticated = table.Column<bool>(nullable: false),
+                    DisabledTime = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -108,6 +110,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     LikeCount = table.Column<int>(nullable: false, defaultValue: 0),
                     ShareCount = table.Column<int>(nullable: false, defaultValue: 0),
                     CommentCount = table.Column<int>(nullable: false, defaultValue: 0),
+                    ForwardCount = table.Column<int>(nullable: false),
                     Score = table.Column<int>(nullable: false, defaultValue: 0),
                     Commentable = table.Column<bool>(nullable: true, defaultValue: true),
                     ForwardType = table.Column<int>(nullable: false, defaultValue: 0),
@@ -275,33 +278,6 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserShares",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    UserId = table.Column<Guid>(nullable: false),
-                    PostId = table.Column<Guid>(nullable: true),
-                    PrivateTag = table.Column<string>(nullable: true),
-                    CreatedTime = table.Column<double>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserShares", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserShares_Posts_PostId",
-                        column: x => x.PostId,
-                        principalTable: "Posts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_UserShares_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "UserCommentRelations",
                 columns: table => new
                 {
@@ -450,21 +426,6 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 name: "IX_UserRelations_FollowerId",
                 table: "UserRelations",
                 column: "FollowerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserShares_PostId",
-                table: "UserShares",
-                column: "PostId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserShares_PrivateTag",
-                table: "UserShares",
-                column: "PrivateTag");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserShares_UserId",
-                table: "UserShares",
-                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -486,9 +447,6 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserRelations");
-
-            migrationBuilder.DropTable(
-                name: "UserShares");
 
             migrationBuilder.DropTable(
                 name: "Comments");

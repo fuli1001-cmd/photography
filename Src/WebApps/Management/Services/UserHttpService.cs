@@ -109,5 +109,19 @@ namespace Photography.WebApps.Management.Services
 
             return JsonConvert.DeserializeObject<PagedResponseWrapper<bool>>(await response.Content.ReadAsStringAsync()).Data;
         }
+
+        public async Task<bool> DisableUserAsync(User user, bool disabled)
+        {
+            var command = new
+            {
+                UserId = user.Id,
+                Disabled = disabled
+            };
+            var httpContent = new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json");
+            var response = await _client.PutAsync("/api/users/disable", httpContent);
+            response.EnsureSuccessStatusCode();
+
+            return JsonConvert.DeserializeObject<PagedResponseWrapper<bool>>(await response.Content.ReadAsStringAsync()).Data;
+        }
     }
 }

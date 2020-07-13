@@ -339,8 +339,14 @@ namespace Photography.Services.Post.API.Query.EF
         {
             var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
+            var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+            
+            IQueryable<Domain.AggregatesModel.PostAggregate.Post> queryablePosts = null;
 
-            var queryablePosts = GetAvailablePosts(myId);
+            if (role == "admin")
+                queryablePosts = _postContext.Posts;
+            else
+                queryablePosts = GetAvailablePosts(myId);
 
             // 有搜索关键字时，搜索昵称、文案和标签
             if (!string.IsNullOrWhiteSpace(key))

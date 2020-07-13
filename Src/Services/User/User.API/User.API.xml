@@ -60,6 +60,21 @@
             是否通过审核
             </summary>
         </member>
+        <member name="T:Photography.Services.User.API.Application.Commands.User.DisableUser.DisableUserCommand">
+            <summary>
+            禁用或启用用户
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.User.DisableUser.DisableUserCommand.UserId">
+            <summary>
+            禁用或启用的用户id
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.User.DisableUser.DisableUserCommand.Disabled">
+            <summary>
+            禁用或启用
+            </summary>
+        </member>
         <member name="P:Photography.Services.User.API.Application.Commands.User.MuteUser.MuteUserCommand.UserId">
             <summary>
             要免打扰的用户id
@@ -373,6 +388,13 @@
             获取用于审核的用户列表
             </summary>
             <param name="pagingParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.UsersController.DisableUserAsync(Photography.Services.User.API.Application.Commands.User.DisableUser.DisableUserCommand)">
+            <summary>
+            禁用用户发布贴子、更新帖子、发布约拍的功能
+            </summary>
+            <param name="command"></param>
             <returns></returns>
         </member>
     </members>

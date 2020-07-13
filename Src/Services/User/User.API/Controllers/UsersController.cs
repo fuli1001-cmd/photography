@@ -12,6 +12,7 @@ using Photography.Services.User.API.Application.Commands.Logout;
 using Photography.Services.User.API.Application.Commands.User.AllowViewFollowedUsers;
 using Photography.Services.User.API.Application.Commands.User.AllowViewFollowers;
 using Photography.Services.User.API.Application.Commands.User.AuthRealName;
+using Photography.Services.User.API.Application.Commands.User.DisableUser;
 using Photography.Services.User.API.Application.Commands.User.MuteUser;
 using Photography.Services.User.API.Application.Commands.User.ToggleFollow;
 using Photography.Services.User.API.Application.Commands.User.UpdateBackground;
@@ -281,6 +282,21 @@ namespace Photography.Services.User.API.Controllers
         {
             var users = await _userQueries.GetExaminingUsersAsync(pagingParameters);
             return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(users));
+        }
+
+        /// <summary>
+        /// 禁用用户发布贴子、更新帖子、发布约拍的功能
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("disable")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<ActionResult<ResponseWrapper>> DisableUserAsync([FromBody] DisableUserCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
     }
 }

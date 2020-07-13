@@ -4,16 +4,19 @@ using System.Text;
 
 namespace ApplicationMessages.Events
 {
-    public class PostDeletedEvent : BaseEvent
+    /// <summary>
+    /// 用户被禁事件
+    /// </summary>
+    public class UserDisabledEvent : BaseEvent
     {
         /// <summary>
-        /// 被删除帖子所属用户id
+        /// 用户id
         /// </summary>
         public Guid UserId { get; set; }
 
         /// <summary>
-        /// 操作删除的用户id
+        /// 被禁用到的时间点
         /// </summary>
-        public Guid OperatorId { get; set; }
+        public DateTime? DisabledTime { get; set; }
     }
 }

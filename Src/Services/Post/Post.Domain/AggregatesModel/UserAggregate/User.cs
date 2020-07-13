@@ -19,6 +19,9 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
         public int Score { get; private set; }
         public bool IdAuthenticated { get; private set; }
 
+        // 用户被禁用到的时间点，null表示未禁用
+        public DateTime? DisabledTime { get; private set; }
+
         private readonly List<PostAggregate.Post> _posts = null;
         public IReadOnlyCollection<PostAggregate.Post> Posts => _posts;
 
@@ -70,6 +73,21 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
         public void AuthRealName(bool passed)
         {
             IdAuthenticated = passed;
+        }
+
+        public void SetDisabledTime(DateTime? disabledTime)
+        {
+            DisabledTime = disabledTime;
+        }
+
+        /// <summary>
+        /// 检查用户是否在被禁期限内
+        /// </summary>
+        /// <param name="disableHours">禁用小时数</param>
+        /// <returns></returns>
+        public bool IsDisabled()
+        {
+            return DisabledTime == null ? false : DateTime.UtcNow <= DisabledTime.Value;
         }
     }
 

@@ -73,6 +73,7 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
         LikeComment, // 点赞评论
         Follow, // 关注
         ApplyJoinCircle, // 申请加圈
-        JoinCircle // 加入圈子 
+        JoinCircle, // 加入圈子
+        DeletePost // 删除帖子
     }
 }

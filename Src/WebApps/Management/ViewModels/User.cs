@@ -33,6 +33,8 @@ namespace Photography.WebApps.Management.ViewModels
 
         public string IdCardHold { get; set; }
 
+        public bool Disabled { get; set; }
+
         public IdAuthStatus RealNameRegistrationStatus { get; set; }
     }
 
