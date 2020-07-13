@@ -47,10 +47,7 @@ namespace Photography.Services.User.API.Application.Commands.User.DisableUser
 
             if (await _userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
             {
-                // 只发送用户被禁事件，不需发送被启用事件
-                if (request.Disabled)
-                    await SendUserDisabledEventAsync(user);
-
+                await SendUserDisabledEventAsync(user);
                 return true;
             }
 

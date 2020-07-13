@@ -81,7 +81,12 @@ namespace Photography.WebApps.Management.Data
         {
             try
             {
-                return await _userHttpService.DisableUserAsync(user, disabled);
+                var result = await _userHttpService.DisableUserAsync(user, disabled);
+                
+                if (result)
+                    user.Disabled = disabled;
+
+                return result;
             }
             catch (Exception ex)
             {
