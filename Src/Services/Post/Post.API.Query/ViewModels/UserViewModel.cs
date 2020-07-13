@@ -10,6 +10,7 @@ namespace Photography.Services.Post.API.Query.ViewModels
     {
         public Guid Id { get; set; }
         public string Nickname { get; set; }
+        public IdAuthStatus RealNameRegistrationStatus { get; set; }
     }
 
     public class PostUserViewModel : BaseUserViewModel
@@ -29,5 +30,11 @@ namespace Photography.Services.Post.API.Query.ViewModels
     public class CommentUserViewModel : BaseUserViewModel
     {
         public string Avatar { get; set; }
+    }
+
+    public enum IdAuthStatus
+    {
+        NotAuthenticated = 0,
+        Authenticated = 2 // 值设为2以便客户端使用
     }
 }

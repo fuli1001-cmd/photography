@@ -132,7 +132,8 @@ namespace Photography.Services.Post.API.Query.EF
                            Nickname = up.User.Nickname,
                            Avatar = up.User.Avatar,
                            UserType = up.User.UserType,
-                           Score = up.User.Score
+                           Score = up.User.Score,
+                           RealNameRegistrationStatus = up.User.IdAuthenticated ? IdAuthStatus.Authenticated : IdAuthStatus.NotAuthenticated,
                        },
                        PostAttachments = from a in up.Post.PostAttachments
                                          select new PostAttachmentViewModel

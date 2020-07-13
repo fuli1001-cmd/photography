@@ -10,6 +10,7 @@ namespace Photography.Services.Order.Domain.AggregatesModel.UserAggregate
         public string Nickname { get; private set; }
         public string Avatar { get; private set; }
         public UserType? UserType { get; private set; }
+        public bool IdAuthenticated { get; private set; }
 
         private readonly List<OrderAggregate.Order> _user1Orders = null;
         public IReadOnlyCollection<OrderAggregate.Order> User1Orders => _user1Orders;
@@ -36,6 +37,11 @@ namespace Photography.Services.Order.Domain.AggregatesModel.UserAggregate
             Nickname = nickName;
             Avatar = avatar;
             UserType = userType;
+        }
+
+        public void AuthRealName(bool passed)
+        {
+            IdAuthenticated = passed;
         }
     }
 

@@ -20,14 +20,12 @@ namespace Photography.Services.Order.Infrastructure.Queries
     {
         private readonly OrderContext _dbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IMapper _mapper;
         private readonly ILogger<OrderQueries> _logger;
 
-        public OrderQueries(OrderContext dbContext, IHttpContextAccessor httpContextAccessor, IMapper mapper, ILogger<OrderQueries> logger)
+        public OrderQueries(OrderContext dbContext, IHttpContextAccessor httpContextAccessor, ILogger<OrderQueries> logger)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -106,7 +104,8 @@ namespace Photography.Services.Order.Infrastructure.Queries
                                       Id = u.Id,
                                       Nickname = u.Nickname,
                                       Avatar = u.Avatar,
-                                      UserType = u.UserType
+                                      UserType = u.UserType,
+                                      RealNameRegistrationStatus = u.IdAuthenticated ? IdAuthStatus.Authenticated : IdAuthStatus.NotAuthenticated
                                   }).SingleOrDefault()
                    };
         }

@@ -530,6 +530,7 @@ namespace Photography.Services.Post.API.Query.EF
                            Nickname = up.User.Nickname,
                            Avatar = up.User.Avatar,
                            UserType = up.User.UserType,
+                           RealNameRegistrationStatus = up.User.IdAuthenticated ? IdAuthStatus.Authenticated : IdAuthStatus.NotAuthenticated,
                            Followed = (from ur in _postContext.UserRelations
                                        where ur.FollowerId == myId && ur.FollowedUserId == up.User.Id
                                        select ur.Id)

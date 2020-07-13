@@ -60,27 +60,6 @@ namespace Photography.Services.Post.API.Query.EF
             });
 
             return pagedDto;
-
-            //var deals = await _postContext.Posts
-            //    .Where(p => p.AppointmentedUserId == myId && p.PostType == PostType.AppointmentDeal && p.AppointmentDealStatus == AppointmentDealStatus.Created)
-            //    .OrderBy(p => p.AppointedTime)
-            //    .Include(p => p.PostAttachments)
-            //    .Include(p => p.User)
-            //    .ToListAsync();
-
-            //var vms = _mapper.Map<List<AppointmentViewModel>>(deals);
-
-            //// 设置付款方，由于这里查询的是收到的约拍交易，支付视角相对于发出的约拍交易是反的,
-            //// 而约拍交易是由交易发出人创建的，所以支付方需要对调一下。
-            //vms.ForEach(vm =>
-            //{
-            //    if (vm.PayerType == PayerType.Me)
-            //        vm.PayerType = PayerType.You;
-            //    else if (vm.PayerType == PayerType.You)
-            //        vm.PayerType = PayerType.Me;
-            //});
-
-            //return vms;
         }
 
         public async Task<PagedList<AppointmentViewModel>> GetSentAppointmentDealsAsync(PagingParameters pagingParameters)
@@ -99,29 +78,6 @@ namespace Photography.Services.Post.API.Query.EF
             var pagedDto = await GetPagedAppointmentViewModelsAsync(queryableDto, pagingParameters);
 
             return pagedDto;
-
-            //var deals = await _postContext.Posts
-            //    .Where(p => p.UserId == myId && p.PostType == PostType.AppointmentDeal && p.AppointmentDealStatus == AppointmentDealStatus.Created)
-            //    .OrderBy(p => p.AppointedTime)
-            //    .Include(p => p.PostAttachments)
-            //    .Include(p => p.AppointmentedUser)
-            //    .ToListAsync();
-
-            //var dealsViewModel = _mapper.Map<List<AppointmentViewModel>>(deals);
-            //dealsViewModel.ForEach(dvm =>
-            //{
-            //    var deal = deals.FirstOrDefault(d => d.Id == dvm.Id);
-            //    dvm.User = new AppointmentUserViewModel
-            //    {
-            //        Id = deal.AppointmentedUser.Id,
-            //        Nickname = deal.AppointmentedUser.Nickname,
-            //        Avatar = deal.AppointmentedUser.Avatar,
-            //        UserType = deal.AppointmentedUser.UserType,
-            //        Score = deal.AppointmentedUser.Score
-            //    };
-            //});
-
-            //return dealsViewModel;
         }
 
         private IQueryable<AppointmentViewModel> GetQueryableAppointmentViewModels(IQueryable<UserPost> queryableUserPosts)
@@ -146,7 +102,8 @@ namespace Photography.Services.Post.API.Query.EF
                            Nickname = up.User.Nickname,
                            Avatar = up.User.Avatar,
                            UserType = up.User.UserType,
-                           Score = up.User.Score
+                           Score = up.User.Score,
+                           RealNameRegistrationStatus = up.User.IdAuthenticated ? IdAuthStatus.Authenticated : IdAuthStatus.NotAuthenticated
                        },
                        PostAttachments = from a in up.Post.PostAttachments
                                          select new PostAttachmentViewModel

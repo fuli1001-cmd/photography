@@ -4,6 +4,21 @@
         <name>Order.API</name>
     </assembly>
     <members>
+        <member name="T:Photography.Services.Order.API.Application.Commands.User.AuthRealName.AuthRealNameCommand">
+            <summary>
+            实名认证
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Order.API.Application.Commands.User.AuthRealName.AuthRealNameCommand.UserId">
+            <summary>
+            被审核用户id
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Order.API.Application.Commands.User.AuthRealName.AuthRealNameCommand.Passed">
+            <summary>
+            是否通过审核
+            </summary>
+        </member>
         <member name="P:Photography.Services.Order.API.Application.Commands.CheckProcessed.CheckProcessedCommand.OrderId">
             <summary>
             验收精修片的订单ID

@@ -17,6 +17,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
         public string Avatar { get; private set; }
         public UserType? UserType { get; private set; }
         public int Score { get; private set; }
+        public bool IdAuthenticated { get; private set; }
 
         private readonly List<PostAggregate.Post> _posts = null;
         public IReadOnlyCollection<PostAggregate.Post> Posts => _posts;
@@ -64,6 +65,11 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
             Nickname = nickName;
             Avatar = avatar;
             UserType = userType;
+        }
+
+        public void AuthRealName(bool passed)
+        {
+            IdAuthenticated = passed;
         }
     }
 

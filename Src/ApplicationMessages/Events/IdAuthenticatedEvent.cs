@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ApplicationMessages.Events
 {
-    public class IdAuthFinished
+    public class IdAuthenticatedEvent : BaseEvent
     {
         /// <summary>
         /// 认证用户id
