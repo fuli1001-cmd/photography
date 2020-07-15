@@ -18,8 +18,8 @@ namespace Photography.WebApps.Management.Services
         private readonly ServiceSettings _serviceSettings;
         private readonly ILogger<PostHttpService> _logger;
 
-        private const string FilePrefix = "app/";
-        private const string FileThumbnailPrefix = "appthumbnail/";
+        private const string FilePrefix = "/app/";
+        private const string FileThumbnailPrefix = "/appthumbnail/";
 
         public PostHttpService(HttpClient client, IOptions<ServiceSettings> serviceSettingsOptions, ILogger<PostHttpService> logger)
         {

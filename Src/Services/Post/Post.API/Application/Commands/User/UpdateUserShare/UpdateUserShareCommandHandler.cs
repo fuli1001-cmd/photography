@@ -40,6 +40,8 @@ namespace Photography.Services.Post.API.Application.Commands.User.UpdateUserShar
                     userShare = new UserShare(request.SharerId, request.PrivateTag);
                 else
                     userShare = new UserShare(request.SharerId);
+
+                _userShareRepository.Add(userShare);
             }
 
             userShare.IncreaseVisitCount();

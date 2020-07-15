@@ -19,7 +19,7 @@ namespace Photography.WebApps.Management.Services
         private readonly ServiceSettings _serviceSettings;
         private readonly ILogger<UserHttpService> _logger;
 
-        private const string FileThumbnailPrefix = "appthumbnail/";
+        private const string FileThumbnailPrefix = "/appthumbnail/";
 
         public UserHttpService(HttpClient client, IOptions<ServiceSettings> serviceSettingsOptions, ILogger<UserHttpService> logger)
         {
