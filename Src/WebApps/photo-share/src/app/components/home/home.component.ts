@@ -34,8 +34,8 @@ export class HomeComponent implements OnInit {
   displayBigPhoto: boolean // 是否大图显示照片
   position: any;
 
-  readonly filePrefix:string = 'app/';
-  readonly fileThumbnailPrefix = 'appthumbnail/';
+  readonly filePrefix:string = '/app/';
+  readonly fileThumbnailPrefix = '/appthumbnail/';
 
   constructor(private postService: PostService, 
     private activatedRoute: ActivatedRoute,
