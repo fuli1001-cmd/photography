@@ -10,7 +10,7 @@ using Photography.Services.Post.Infrastructure;
 namespace Photography.Services.Post.API.Infrastructure.Migrations
 {
     [DbContext(typeof(PostContext))]
-    [Migration("20200713082321_Init")]
+    [Migration("20200715083642_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -418,6 +418,35 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.ToTable("UserRelations");
                 });
 
+            modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.UserShareAggregate.UserShare", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PrivateTag")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid>("SharerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("VisitCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SharerId");
+
+                    b.HasIndex("SharerId", "PostId");
+
+                    b.HasIndex("SharerId", "PrivateTag");
+
+                    b.ToTable("UserShares");
+                });
+
             modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.CircleAggregate.Circle", b =>
                 {
                     b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "Owner")
@@ -545,6 +574,15 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "Follower")
                         .WithMany("Followers")
                         .HasForeignKey("FollowerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.UserShareAggregate.UserShare", b =>
+                {
+                    b.HasOne("Photography.Services.Post.Domain.AggregatesModel.UserAggregate.User", "Sharer")
+                        .WithMany("UserShares")
+                        .HasForeignKey("SharerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

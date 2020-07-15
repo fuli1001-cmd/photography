@@ -93,6 +93,27 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserShares",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    SharerId = table.Column<Guid>(nullable: false),
+                    PostId = table.Column<Guid>(nullable: true),
+                    PrivateTag = table.Column<string>(nullable: true),
+                    VisitCount = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserShares", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserShares_Users_SharerId",
+                        column: x => x.SharerId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Posts",
                 columns: table => new
                 {
@@ -426,6 +447,21 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 name: "IX_UserRelations_FollowerId",
                 table: "UserRelations",
                 column: "FollowerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserShares_SharerId",
+                table: "UserShares",
+                column: "SharerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserShares_SharerId_PostId",
+                table: "UserShares",
+                columns: new[] { "SharerId", "PostId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserShares_SharerId_PrivateTag",
+                table: "UserShares",
+                columns: new[] { "SharerId", "PrivateTag" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -447,6 +483,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserRelations");
+
+            migrationBuilder.DropTable(
+                name: "UserShares");
 
             migrationBuilder.DropTable(
                 name: "Comments");

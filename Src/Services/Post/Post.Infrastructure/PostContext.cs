@@ -21,6 +21,7 @@ using Photography.Services.Post.Domain.AggregatesModel.UserRelationAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.TagAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.CircleAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserCircleRelationAggregate;
+using Photography.Services.Post.Domain.AggregatesModel.UserShareAggregate;
 
 namespace Photography.Services.Post.Infrastructure
 {
@@ -36,6 +37,7 @@ namespace Photography.Services.Post.Infrastructure
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Circle> Circles { get; set; }
         public DbSet<UserCircleRelation> UserCircleRelations { get; set; }
+        public DbSet<UserShare> UserShares { get; set; }
 
 
         private readonly IMediator _mediator;
@@ -63,6 +65,7 @@ namespace Photography.Services.Post.Infrastructure
             modelBuilder.ApplyConfiguration(new TagEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new CircleEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new UserCircleRelationEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new UserShareEntityTypeConfiguration());
 
             //foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
             //{

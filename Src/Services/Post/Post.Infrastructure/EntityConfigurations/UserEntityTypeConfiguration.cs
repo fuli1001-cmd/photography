@@ -23,6 +23,9 @@ namespace Photography.Services.Post.Infrastructure.EntityConfigurations
             var commentsNavigation = builder.Metadata.FindNavigation(nameof(User.Comments));
             commentsNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 
+            var sharesNavigation = builder.Metadata.FindNavigation(nameof(User.UserShares));
+            sharesNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
             //appointments navigation properties
             var appointmentsNavigation = builder.Metadata.FindNavigation(nameof(User.Appointments));
             appointmentsNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);

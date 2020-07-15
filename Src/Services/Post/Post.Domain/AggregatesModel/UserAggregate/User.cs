@@ -5,6 +5,7 @@ using Photography.Services.Post.Domain.AggregatesModel.UserCircleRelationAggrega
 using Photography.Services.Post.Domain.AggregatesModel.UserCommentRelationAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserPostRelationAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserRelationAggregate;
+using Photography.Services.Post.Domain.AggregatesModel.UserShareAggregate;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -44,6 +45,9 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
         // 用户作为圈主的圈子
         private readonly List<Circle> _circles = null;
         public IReadOnlyCollection<Circle> Circles => _circles;
+
+        private readonly List<UserShare> _userShares = null;
+        public IReadOnlyCollection<UserShare> UserShares => _userShares;
 
         // Note: self reference many to many relations can't use field, so use property directly here.
         //private readonly List<UserRelation> _followers;

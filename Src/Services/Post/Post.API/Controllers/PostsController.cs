@@ -28,6 +28,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Photography.Services.Post.API.Application.Commands.User.UpdateUserShare;
 
 namespace Photography.Services.Post.API.Controllers
 {
@@ -362,6 +363,12 @@ namespace Photography.Services.Post.API.Controllers
                     if (shareInfo.PostId != Guid.Empty)
                     {
                         _logger.LogInformation("GetShareDataAsync: single post");
+
+                        // update usershare info
+                        var command = new UpdateUserShareCommand { SharerId = shareInfo.UserId, PostId = shareInfo.PostId };
+                        await _mediator.Send(command);
+
+                        // get share data and return
                         var post = await _postQueries.GetSharedPostAsync(shareInfo.PostId, shareInfo.UserId);
                         posts = new PagedList<PostViewModel>(new List<PostViewModel> { post }, 1, new PagingParameters { PageNumber = 1, PageSize = 1 });
                         return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
@@ -369,12 +376,24 @@ namespace Photography.Services.Post.API.Controllers
                     else if (!string.IsNullOrWhiteSpace(shareInfo.PrivateTag))
                     {
                         _logger.LogInformation("GetShareDataAsync: tag posts");
+
+                        // update usershare info
+                        var command = new UpdateUserShareCommand { SharerId = shareInfo.UserId, PrivateTag = shareInfo.PrivateTag };
+                        await _mediator.Send(command);
+
+                        // get share data and return
                         posts = await _postQueries.GetSharedPostsAsync(shareInfo.PrivateTag, shareInfo.UserId, k, pagingParameters);
                         return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
                     }
                     else
                     {
                         _logger.LogInformation("GetShareDataAsync: user posts");
+
+                        // update usershare info
+                        var command = new UpdateUserShareCommand { SharerId = shareInfo.UserId };
+                        await _mediator.Send(command);
+
+                        // get share data and return
                         posts = await _postQueries.GetSharedPostsAsync(shareInfo.UserId, k, pagingParameters);
                         return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
                     }
