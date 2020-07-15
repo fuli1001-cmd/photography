@@ -364,9 +364,9 @@ namespace Photography.Services.Post.API.Controllers
                     {
                         _logger.LogInformation("GetShareDataAsync: single post");
 
-                        // update usershare info
-                        var command = new UpdateUserShareCommand { SharerId = shareInfo.UserId, PostId = shareInfo.PostId };
-                        await _mediator.Send(command);
+                        // update usershare info only when pagenumber is 1, means do not update when user scroll page
+                        if (pagingParameters.PageNumber == 1)
+                            await UpdateUserShareAsync(shareInfo.UserId, shareInfo.PostId, null);
 
                         // get share data and return
                         var post = await _postQueries.GetSharedPostAsync(shareInfo.PostId, shareInfo.UserId);
@@ -377,9 +377,9 @@ namespace Photography.Services.Post.API.Controllers
                     {
                         _logger.LogInformation("GetShareDataAsync: tag posts");
 
-                        // update usershare info
-                        var command = new UpdateUserShareCommand { SharerId = shareInfo.UserId, PrivateTag = shareInfo.PrivateTag };
-                        await _mediator.Send(command);
+                        // update usershare info only when pagenumber is 1, means do not update when user scroll page
+                        if (pagingParameters.PageNumber == 1)
+                            await UpdateUserShareAsync(shareInfo.UserId, null, shareInfo.PrivateTag);
 
                         // get share data and return
                         posts = await _postQueries.GetSharedPostsAsync(shareInfo.PrivateTag, shareInfo.UserId, k, pagingParameters);
@@ -389,9 +389,9 @@ namespace Photography.Services.Post.API.Controllers
                     {
                         _logger.LogInformation("GetShareDataAsync: user posts");
 
-                        // update usershare info
-                        var command = new UpdateUserShareCommand { SharerId = shareInfo.UserId };
-                        await _mediator.Send(command);
+                        // update usershare info only when pagenumber is 1, means do not update when user scroll page
+                        if (pagingParameters.PageNumber == 1)
+                            await UpdateUserShareAsync(shareInfo.UserId, null, null);
 
                         // get share data and return
                         posts = await _postQueries.GetSharedPostsAsync(shareInfo.UserId, k, pagingParameters);
@@ -401,6 +401,12 @@ namespace Photography.Services.Post.API.Controllers
             }
 
             return new ObjectResult(ResponseWrapper.CreateErrorResponseWrapper((StatusCode)HttpStatusCode.BadRequest, "分享的帖子不存在或已过期"));
+        }
+
+        private async Task UpdateUserShareAsync(Guid userId, Guid? postId, string privateTag)
+        {
+            var command = new UpdateUserShareCommand { SharerId = userId, PostId = postId, PrivateTag = privateTag };
+            await _mediator.Send(command);
         }
 
         private bool CheckShareTime(double createdSeconds)
