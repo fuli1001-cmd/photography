@@ -34,6 +34,9 @@ export class HomeComponent implements OnInit {
   displayBigPhoto: boolean // 是否大图显示照片
   position: any;
 
+  readonly filePrefix:string = 'app/';
+  readonly fileThumbnailPrefix = 'appthumbnail/';
+
   constructor(private postService: PostService, 
     private activatedRoute: ActivatedRoute,
     private searchEventService: SearchEventService,
@@ -100,7 +103,7 @@ export class HomeComponent implements OnInit {
       post.updatedTime = new Date(post.updatedTime * 1000);
     
     post.createdTime = new Date(post.createdTime * 1000);
-    post.user.avatar = post.user.avatar ? ConfigService.config.fileServer + '/' + post.user.avatar : '../../../assets/images/default_avatar.png';
+    post.user.avatar = post.user.avatar ? ConfigService.config.fileServer + this.fileThumbnailPrefix + post.user.avatar : '../../../assets/images/default_avatar.png';
     post.postAttachments.forEach(a => this.setAttachment(a));
     
     if (post.forwardedPost) {
@@ -114,8 +117,11 @@ export class HomeComponent implements OnInit {
 
   // 设置附件文件路径
   private setAttachment(attachment: Attachment): void {
-    attachment.name = ConfigService.config.fileServer + '/' + attachment.name;
-    attachment.thumbnail = ConfigService.config.fileServer + '/' + attachment.thumbnail;
+    // 视频文件无缩略图
+    attachment.name = attachment.attachmentType == 0 ? 
+      ConfigService.config.fileServer + this.fileThumbnailPrefix + attachment.name :
+      ConfigService.config.fileServer + this.filePrefix + attachment.name
+    attachment.thumbnail = ConfigService.config.fileServer + this.fileThumbnailPrefix + attachment.thumbnail;
   }
 
   // 如果搜索关键字不为空，则将帖子数据加到搜索结果中，否则加到中
@@ -184,6 +190,8 @@ export class HomeComponent implements OnInit {
 
     this.photoEventService.photoSelectedEvent.subscribe(() => {
       this.displayBigPhoto = true;
+      // 大图显示时，替换缩略图为大图
+      this.photoEventService.attachments.forEach(a => a.name = a.name.replace(this.fileThumbnailPrefix, this.filePrefix));
       this.position = this.viewportScroller.getScrollPosition();
     });
 

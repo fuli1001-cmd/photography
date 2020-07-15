@@ -18,6 +18,9 @@ namespace Photography.WebApps.Management.Services
         private readonly ServiceSettings _serviceSettings;
         private readonly ILogger<PostHttpService> _logger;
 
+        private const string FilePrefix = "app/";
+        private const string FileThumbnailPrefix = "appthumbnail/";
+
         public PostHttpService(HttpClient client, IOptions<ServiceSettings> serviceSettingsOptions, ILogger<PostHttpService> logger)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
@@ -59,7 +62,10 @@ namespace Photography.WebApps.Management.Services
             {
                 post.PostAttachments.ForEach(attachment =>
                 {
-                    attachment.Name = _serviceSettings.FileServer + "/" + attachment.Name;
+                    if (attachment.AttachmentType == AttachmentType.Image)
+                        attachment.Name = _serviceSettings.FileServer + FileThumbnailPrefix + attachment.Name;
+                    else
+                        attachment.Name = _serviceSettings.FileServer + FilePrefix + attachment.Name;
                 });
             });
 

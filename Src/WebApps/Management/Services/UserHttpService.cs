@@ -19,6 +19,8 @@ namespace Photography.WebApps.Management.Services
         private readonly ServiceSettings _serviceSettings;
         private readonly ILogger<UserHttpService> _logger;
 
+        private const string FileThumbnailPrefix = "appthumbnail/";
+
         public UserHttpService(HttpClient client, IOptions<ServiceSettings> serviceSettingsOptions, ILogger<UserHttpService> logger)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
@@ -39,19 +41,19 @@ namespace Photography.WebApps.Management.Services
             result.Data.ForEach(u =>
             {
                 if (!string.IsNullOrWhiteSpace(u.Avatar))
-                    u.Avatar = _serviceSettings.FileServer + "/" + u.Avatar;
+                    u.Avatar = _serviceSettings.FileServer + FileThumbnailPrefix + u.Avatar;
 
                 if (!string.IsNullOrWhiteSpace(u.BackgroundImage))
-                    u.BackgroundImage = _serviceSettings.FileServer + "/" + u.BackgroundImage;
+                    u.BackgroundImage = _serviceSettings.FileServer + FileThumbnailPrefix + u.BackgroundImage;
 
                 if (!string.IsNullOrWhiteSpace(u.IdCardFront))
-                    u.IdCardFront = _serviceSettings.FileServer + "/" + u.IdCardFront;
+                    u.IdCardFront = _serviceSettings.FileServer + FileThumbnailPrefix + u.IdCardFront;
 
                 if (!string.IsNullOrWhiteSpace(u.IdCardBack))
-                    u.IdCardBack = _serviceSettings.FileServer + "/" + u.IdCardBack;
+                    u.IdCardBack = _serviceSettings.FileServer + FileThumbnailPrefix + u.IdCardBack;
 
                 if (!string.IsNullOrWhiteSpace(u.IdCardHold))
-                    u.IdCardHold = _serviceSettings.FileServer + "/" + u.IdCardHold;
+                    u.IdCardHold = _serviceSettings.FileServer + FileThumbnailPrefix + u.IdCardHold;
             });
 
             return result;
@@ -61,7 +63,7 @@ namespace Photography.WebApps.Management.Services
         {
             string avatar = user.Avatar;
             if (!string.IsNullOrWhiteSpace(avatar))
-                avatar = avatar.Replace(_serviceSettings.FileServer + "/", string.Empty);
+                avatar = avatar.Replace(_serviceSettings.FileServer + FileThumbnailPrefix, string.Empty);
 
             // 更新用户信息
             var updateUserCommand = new 
@@ -87,7 +89,7 @@ namespace Photography.WebApps.Management.Services
         {
             string backgroundImage = user.BackgroundImage;
             if (!string.IsNullOrWhiteSpace(backgroundImage))
-                backgroundImage = backgroundImage.Replace(_serviceSettings.FileServer + "/", string.Empty);
+                backgroundImage = backgroundImage.Replace(_serviceSettings.FileServer + FileThumbnailPrefix, string.Empty);
 
             var command = new { BackgroundImage = backgroundImage, UserId = user.Id };
             var httpContent = new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json");
