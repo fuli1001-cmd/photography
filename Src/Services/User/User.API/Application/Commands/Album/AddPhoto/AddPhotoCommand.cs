@@ -14,8 +14,21 @@ namespace Photography.Services.User.API.Application.Commands.Album.AddPhoto
         public Guid AlbumId { get; set; }
 
         /// <summary>
-        /// 要加入的照片名称
+        /// 要加入的照片名称和显示名称数组
         /// </summary>
-        public List<string> Names { get; set; }
+        public List<PhotoNameInfo> Names { get; set; }
+    }
+
+    public class PhotoNameInfo
+    {
+        /// <summary>
+        /// 照片文件名
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// 照片文件显示名
+        /// </summary>
+        public string DisplayName { get; set; }
     }
 }

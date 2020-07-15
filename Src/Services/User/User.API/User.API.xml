@@ -11,7 +11,17 @@
         </member>
         <member name="P:Photography.Services.User.API.Application.Commands.Album.AddPhoto.AddPhotoCommand.Names">
             <summary>
-            要加入的照片名称
+            要加入的照片名称和显示名称数组
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.Album.AddPhoto.PhotoNameInfo.Name">
+            <summary>
+            照片文件名
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.Album.AddPhoto.PhotoNameInfo.DisplayName">
+            <summary>
+            照片文件显示名
             </summary>
         </member>
         <member name="P:Photography.Services.User.API.Application.Commands.Album.MovePhoto.MovePhotoCommand.NewAlbumId">

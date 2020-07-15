@@ -25,10 +25,10 @@ namespace Photography.Services.User.Domain.AggregatesModel.AlbumPhotoAggregate
             UpdatedTime = CreatedTime;
         }
 
-        public AlbumPhoto(string name) : this()
+        public AlbumPhoto(string name, string displayName) : this()
         {
             Name = name;
-            DisplayName = name;
+            DisplayName = displayName;
         }
 
         public AlbumPhoto MoveToAlbum(Guid albumId)

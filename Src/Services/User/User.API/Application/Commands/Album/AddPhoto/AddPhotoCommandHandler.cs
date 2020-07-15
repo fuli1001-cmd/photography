@@ -40,9 +40,9 @@ namespace Photography.Services.User.API.Application.Commands.Album.AddPhoto
             if (album.UserId != myId)
                 throw new ClientException("操作失败", new List<string> { $"Album {request.AlbumId} does not belong to user {myId}." });
 
-            request.Names.ForEach(name =>
+            request.Names.ForEach(nameInfo =>
             {
-                var photo = new AlbumPhoto(name);
+                var photo = new AlbumPhoto(nameInfo.Name, nameInfo.DisplayName);
                 album.AddPhoto(photo);
             });
 
