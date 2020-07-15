@@ -41,7 +41,7 @@ jobs:
       - name: Deploy
         uses: garygrossgarten/github-action-ssh@release
         with:
-          command: docker service update --image ${{ secrets.DOCKER_USER }}/photography-photoshare:linux
+          command: docker service update --image ${{ secrets.DOCKER_USER }}/photography-photoshare:linux photo_photoshare
           host: ${{ secrets.TEST_SERVER }}
           username: ${{ secrets.TEST_SERVER_USER }}
           privateKey: ${{ secrets.ID_RSA }}
