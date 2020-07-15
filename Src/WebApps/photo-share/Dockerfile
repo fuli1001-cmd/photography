@@ -5,6 +5,7 @@ WORKDIR /usr/src/app
 COPY Src/WebApps/photo-share/ ./
 RUN npm install
 RUN ng build --prod
+RUN ls
 
 ### STAGE 2: Run ###
 FROM nginx:1.19.1-alpine
