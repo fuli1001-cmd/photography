@@ -11,5 +11,9 @@ namespace Photography.Services.User.API.Query.ViewModels
         public string Name { get; set; }
 
         public string DisplayName { get; set; }
+
+        public double CreatedTime { get; set; }
+
+        public double UpdatedTime { get; set; }
     }
 }
