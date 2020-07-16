@@ -42,7 +42,8 @@ namespace Photography.Services.Post.API.Application.Commands.Comment.DeleteComme
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
 
-            if (comment.Id != myId && role != "admin")
+            // 发布该评论的人、发布该评论所属的帖子的人、管理员可以删除该评论
+            if (comment.UserId != myId && comment.Post.UserId != myId && role != "admin")
                 throw new ClientException("操作失败", new List<string> { $"Comment {request.CommentId} does not belong to user {myId}" });
             
             comment.Delete();
