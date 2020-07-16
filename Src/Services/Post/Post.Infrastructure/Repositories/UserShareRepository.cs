@@ -15,17 +15,17 @@ namespace Photography.Services.Post.Infrastructure.Repositories
 
         public async Task<UserShare> GetUserShareAsync(Guid sharerId)
         {
-            return await _context.UserShares.FirstOrDefaultAsync(s => s.SharerId == sharerId);
+            return await _context.UserShares.FirstOrDefaultAsync(s => s.SharerId == sharerId && s.PostId == null && s.PrivateTag == null);
         }
 
         public async Task<UserShare> GetUserShareAsync(Guid sharerId, Guid postId)
         {
-            return await _context.UserShares.FirstOrDefaultAsync(s => s.SharerId == sharerId && s.PostId == postId);
+            return await _context.UserShares.FirstOrDefaultAsync(s => s.SharerId == sharerId && s.PostId == postId && s.PrivateTag == null);
         }
 
         public async Task<UserShare> GetUserShareAsync(Guid sharerId, string privateTag)
         {
-            return await _context.UserShares.FirstOrDefaultAsync(s => s.SharerId == sharerId && s.PrivateTag == privateTag);
+            return await _context.UserShares.FirstOrDefaultAsync(s => s.SharerId == sharerId && s.PrivateTag == privateTag && s.PostId == null);
         }
     }
 }
