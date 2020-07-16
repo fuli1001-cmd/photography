@@ -74,7 +74,6 @@ namespace Photography.Services.Post.Domain.AggregatesModel.CommentAggregate
         public void Delete()
         {
             AddCommentDeletedDomainEvent();
-            _subComments.Clear();
         }
 
         private void AddRepliedPostDomainEvent()

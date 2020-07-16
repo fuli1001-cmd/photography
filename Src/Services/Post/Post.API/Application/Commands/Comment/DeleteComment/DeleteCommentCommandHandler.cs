@@ -45,10 +45,12 @@ namespace Photography.Services.Post.API.Application.Commands.Comment.DeleteComme
             // 发布该评论的人、发布该评论所属的帖子的人、管理员可以删除该评论
             if (comment.UserId != myId && comment.Post.UserId != myId && role != "admin")
                 throw new ClientException("操作失败", new List<string> { $"Comment {request.CommentId} does not belong to user {myId}" });
-            
-            comment.Delete();
 
-            _commentRepository.Update(comment);
+            // 发送评论被删除的domain event
+            comment.Delete();
+            // 删除子评论
+            comment.SubComments.ToList().ForEach(c => _commentRepository.Remove(c));
+            // 删除本评论
             _commentRepository.Remove(comment);
 
             await _commentRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
