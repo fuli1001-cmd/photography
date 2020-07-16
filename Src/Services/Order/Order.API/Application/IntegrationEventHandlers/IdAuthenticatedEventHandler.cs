@@ -32,6 +32,7 @@ namespace Photography.Services.Order.API.Application.IntegrationEventHandlers
 
                 await _mediator.Send(command);
             }
+
         }
     }
 }

@@ -7,6 +7,11 @@ namespace ApplicationMessages.Events
     public class IdAuthenticatedEvent : BaseEvent
     {
         /// <summary>
+        /// 操作员id
+        /// </summary>
+        public Guid OperatorId { get; set; }
+
+        /// <summary>
         /// 认证用户id
         /// </summary>
         public Guid UserId { get; set; }

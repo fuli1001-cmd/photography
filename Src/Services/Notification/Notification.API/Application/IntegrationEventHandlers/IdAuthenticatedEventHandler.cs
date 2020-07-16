@@ -31,6 +31,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                 // 创建用户已入圈的事件
                 var createEventCommand = new CreateEventCommand
                 {
+                    FromUserId = message.OperatorId,
                     ToUserId = message.UserId,
                     EventType = message.Passed ? Domain.AggregatesModel.EventAggregate.EventType.IdAuthenticated : Domain.AggregatesModel.EventAggregate.EventType.IdRejected
                 };
