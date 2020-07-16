@@ -47,20 +47,27 @@ namespace Photography.Services.Order.API.Application.Commands.RejectOrder
             if (processingUserId != order.User1Id && processingUserId != order.User2Id)
                 throw new ClientException("操作失败", new List<string> { $"Order does not belong to user {order.User1Id} and user {order.User2Id}." });
 
-            order.Reject();
+            order.Reject(request.Description);
 
             if (await _orderRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
             {
                 var anotherUserId = processingUserId == order.User1Id ? order.User2Id : order.User1Id;
-                await SendOrderRejectedEventAsync(processingUserId, anotherUserId, request.DealId);
+                await SendOrderRejectedEventAsync(processingUserId, anotherUserId, request.DealId, order.Id, request.Description);
             }
 
             return await _orderQueries.GetOrderAsync(order.Id);
         }
 
-        private async Task SendOrderRejectedEventAsync(Guid processingUserId, Guid anotherUserId, Guid dealId)
+        private async Task SendOrderRejectedEventAsync(Guid processingUserId, Guid anotherUserId, Guid dealId, Guid orderId, string description)
         {
-            var @event = new OrderRejectedEvent { ProcessingUserId = processingUserId, AnotherUserId = anotherUserId, DealId = dealId };
+            var @event = new OrderRejectedEvent 
+            { 
+                ProcessingUserId = processingUserId, 
+                AnotherUserId = anotherUserId, 
+                DealId = dealId,
+                OrderId = orderId,
+                Description = description 
+            };
             _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
             await _messageSession.Publish(@event);
             _logger.LogInformation("----- Published OrderRejectedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);

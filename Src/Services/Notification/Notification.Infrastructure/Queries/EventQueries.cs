@@ -60,6 +60,7 @@ namespace Photography.Services.Notification.Infrastructure.Queries
                                    CommentText = e.CommentText,
                                    CircleId = e.CircleId,
                                    CircleName = e.CircleName,
+                                   OrderId = e.OrderId,
                                    Processed = e.Processed
                                };
 

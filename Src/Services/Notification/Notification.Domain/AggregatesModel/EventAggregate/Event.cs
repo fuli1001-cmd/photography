@@ -37,6 +37,8 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
 
         public string CircleName { get; private set; }
 
+        public Guid? OrderId { get; private set; }
+
         public bool Processed { get; private set; }
 
         public Event()
@@ -44,7 +46,7 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
             CreatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
 
-        public Event(Guid fromUserId, Guid toUserId, EventType eventType, Guid? postId, Guid? commentId, string commentText, Guid? circleId, string circleName)
+        public Event(Guid fromUserId, Guid toUserId, EventType eventType, Guid? postId, Guid? commentId, string commentText, Guid? circleId, string circleName, Guid? orderId)
             : this()
         {
             FromUserId = fromUserId;
@@ -55,6 +57,7 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
             CommentText = commentText;
             CircleId = circleId;
             CircleName = circleName;
+            OrderId = orderId;
         }
 
         public void MarkAsProcessed()
@@ -74,6 +77,10 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
         Follow, // 关注
         ApplyJoinCircle, // 申请加圈
         JoinCircle, // 加入圈子
-        DeletePost // 删除帖子
+        DeletePost, // 删除帖子
+        CancelOrder, // 取消订单
+        RejectOrder, // 拒绝订单
+        IdAuthenticated, // 实名认证通过
+        IdRejected // 实名认证被拒
     }
 }

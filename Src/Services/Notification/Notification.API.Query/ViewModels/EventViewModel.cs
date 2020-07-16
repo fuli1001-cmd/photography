@@ -23,14 +23,13 @@ namespace Photography.Services.Notification.API.Query.ViewModels
 
         public Guid? CommentId { get; set; }
 
-        /// <summary>
-        /// 评论类容或申请加圈的描述
-        /// </summary>
         public string CommentText { get; set; }
 
         public Guid? CircleId { get; set; }
 
         public string CircleName { get; set; }
+
+        public Guid? OrderId { get; set; }
 
         /// <summary>
         /// 事件是否已处理

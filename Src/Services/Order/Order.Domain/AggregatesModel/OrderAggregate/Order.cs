@@ -37,6 +37,9 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
 
         public OrderStatus OrderStatus { get; private set; }
 
+        // 取消或拒绝说明
+        public string Description { get; private set; }
+
         private readonly List<Attachment> _attachments = null;
         public IReadOnlyCollection<Attachment> Attachments => _attachments;
 
@@ -78,21 +81,23 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
             OrderStatus = OrderStatus.WaitingForShooting;
         }
 
-        public void Cancel()
+        public void Cancel(string description)
         {
             if (OrderStatus != OrderStatus.Created)
                 throw new ClientException("操作失败", new List<string> { "Current order status is not 'Created'." });
 
             OrderStatus = OrderStatus.Canceled;
+            Description = description;
             ClosedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
 
-        public void Reject()
+        public void Reject(string description)
         {
             if (OrderStatus != OrderStatus.Created)
                 throw new ClientException("操作失败", new List<string> { "Current order status is not 'Created'." });
 
             OrderStatus = OrderStatus.Rejected;
+            Description = description;
             ClosedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
 

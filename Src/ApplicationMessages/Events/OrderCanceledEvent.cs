@@ -14,5 +14,11 @@ namespace ApplicationMessages.Events
 
         // 订单对应的约拍交易id
         public Guid DealId { get; set; }
+
+        // 订单id
+        public Guid OrderId { get; set; }
+
+        // 取消说明
+        public string Description { get; set; }
     }
 }

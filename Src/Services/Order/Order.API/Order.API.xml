@@ -19,6 +19,16 @@
             是否通过审核
             </summary>
         </member>
+        <member name="P:Photography.Services.Order.API.Application.Commands.CancelOrder.CancelOrderCommand.DealId">
+            <summary>
+            要取消的订单所对应的约拍交易id
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Order.API.Application.Commands.CancelOrder.CancelOrderCommand.Description">
+            <summary>
+            取消说明
+            </summary>
+        </member>
         <member name="P:Photography.Services.Order.API.Application.Commands.CheckProcessed.CheckProcessedCommand.OrderId">
             <summary>
             验收精修片的订单ID
@@ -27,6 +37,16 @@
         <member name="P:Photography.Services.Order.API.Application.Commands.ConfirmShot.ConfirmShotCommand.OrderId">
             <summary>
             确认已拍片的订单ID
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Order.API.Application.Commands.RejectOrder.RejectOrderCommand.DealId">
+            <summary>
+            要拒绝的订单所对应的约拍交易id
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Order.API.Application.Commands.RejectOrder.RejectOrderCommand.Description">
+            <summary>
+            拒绝说明
             </summary>
         </member>
         <member name="P:Photography.Services.Order.API.Application.Commands.SelectOriginal.SelectOriginalCommand.OrderId">
