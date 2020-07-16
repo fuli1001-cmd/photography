@@ -118,10 +118,15 @@ namespace Photography.Services.Post.API.Controllers
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
 
+        /// <summary>
+        /// 删除评论，其子评论也会被删除
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<bool>> DeleteCommentAsync([FromBody] DeleteCommentCommand command)
+        public async Task<ActionResult<ResponseWrapper>> DeleteCommentAsync([FromBody] DeleteCommentCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));

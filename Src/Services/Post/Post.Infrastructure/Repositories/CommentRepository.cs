@@ -21,6 +21,7 @@ namespace Photography.Services.Post.Infrastructure.Repositories
             return await _context.Comments
                 .Where(c => c.Id == commentId)
                 .Include(c => c.SubComments)
+                .Include(c => c.Post)
                 .FirstOrDefaultAsync();
         }
     }

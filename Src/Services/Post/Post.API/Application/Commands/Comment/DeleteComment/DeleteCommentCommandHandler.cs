@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Photography.Services.Post.Domain.AggregatesModel.CommentAggregate;
+using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,23 +13,26 @@ using System.Threading.Tasks;
 
 namespace Photography.Services.Post.API.Application.Commands.Comment.DeleteComment
 {
-    public class DeleteCommentCommandHandler : IRequestHandler<DeleteCommentCommand, bool>
+    public class DeleteCommentCommandHandler : IRequestHandler<DeleteCommentCommand, int>
     {
         private readonly ICommentRepository _commentRepository;
+        private readonly IPostRepository _postRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<DeleteCommentCommandHandler> _logger;
 
         public DeleteCommentCommandHandler(
             ICommentRepository commentRepository,
+            IPostRepository postRepository,
             IHttpContextAccessor httpContextAccessor,
             ILogger<DeleteCommentCommandHandler> logger)
         {
             _commentRepository = commentRepository ?? throw new ArgumentNullException(nameof(commentRepository));
+            _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<bool> Handle(DeleteCommentCommand request, CancellationToken cancellationToken)
+        public async Task<int> Handle(DeleteCommentCommand request, CancellationToken cancellationToken)
         {
             var comment = await _commentRepository.GetCommentAsync(request.CommentId);
 
@@ -46,7 +50,9 @@ namespace Photography.Services.Post.API.Application.Commands.Comment.DeleteComme
             _commentRepository.Update(comment);
             _commentRepository.Remove(comment);
 
-            return await _commentRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
+            await _commentRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
+
+            return comment.Post.CommentCount;
         }
     }
 }

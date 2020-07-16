@@ -88,7 +88,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.CommentAggregate
             // 删除的评论包括当前评论及其所有子评论
             var commentIds = _subComments.Select(c => c.Id).ToList();
             commentIds.Add(Id);
-            var @event = new CommentDeletedDomainEvent(commentIds);
+            var @event = new CommentDeletedDomainEvent(PostId, commentIds);
             AddDomainEvent(@event);
         }
     }

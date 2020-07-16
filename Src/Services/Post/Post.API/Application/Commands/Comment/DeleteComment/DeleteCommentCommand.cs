@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Photography.Services.Post.API.Application.Commands.Comment.DeleteComment
 {
-    public class DeleteCommentCommand : IRequest<bool>
+    public class DeleteCommentCommand : IRequest<int>
     {
         /// <summary>
         /// 要删除的评论id

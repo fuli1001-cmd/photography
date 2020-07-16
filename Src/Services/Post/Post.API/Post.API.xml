@@ -581,6 +581,13 @@
             <param name="command"></param>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.Post.API.Controllers.CommentsController.DeleteCommentAsync(Photography.Services.Post.API.Application.Commands.Comment.DeleteComment.DeleteCommentCommand)">
+            <summary>
+            删除评论，其子评论也会被删除
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
         <member name="T:Photography.Services.Post.API.Controllers.PostsController">
             <summary>
             帖子控制器

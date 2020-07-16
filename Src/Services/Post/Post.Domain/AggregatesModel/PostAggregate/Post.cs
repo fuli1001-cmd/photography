@@ -300,10 +300,15 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             ShareCount++;
         }
 
-        public void Comment()
+        public void IncreaseCommentCount()
         {
             if (Commentable != null && Commentable.Value)
                 CommentCount++;
+        }
+
+        public void DecreaseCommentCount(int count)
+        {
+            CommentCount = Math.Max(CommentCount - count, 0);
         }
 
         public void RemovePrivateTag()
