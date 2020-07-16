@@ -1,9 +1,11 @@
-﻿using Arise.DDD.Domain.SeedWork;
+﻿using Arise.DDD.Domain.Exceptions;
+using Arise.DDD.Domain.SeedWork;
 using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserCommentRelationAggregate;
 using Photography.Services.Post.Domain.Events;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Photography.Services.Post.Domain.AggregatesModel.CommentAggregate
@@ -69,10 +71,25 @@ namespace Photography.Services.Post.Domain.AggregatesModel.CommentAggregate
             Likes = Math.Max(Likes - 1, 0);
         }
 
+        public void Delete()
+        {
+            AddCommentDeletedDomainEvent();
+            _subComments.Clear();
+        }
+
         private void AddRepliedPostDomainEvent()
         {
             var repliedPostDomainEvent = new RepliedPostDomainEvent(PostId);
             AddDomainEvent(repliedPostDomainEvent);
+        }
+
+        private void AddCommentDeletedDomainEvent()
+        {
+            // 删除的评论包括当前评论及其所有子评论
+            var commentIds = _subComments.Select(c => c.Id).ToList();
+            commentIds.Add(Id);
+            var @event = new CommentDeletedDomainEvent(commentIds);
+            AddDomainEvent(@event);
         }
     }
 }

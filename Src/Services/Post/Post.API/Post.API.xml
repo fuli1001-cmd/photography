@@ -184,6 +184,11 @@
             圈子封面图
             </summary>
         </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Comment.DeleteComment.DeleteCommentCommand.CommentId">
+            <summary>
+            要删除的评论id
+            </summary>
+        </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.Comment.ReplyComment.ReplyCommentCommand.Text">
             <summary>
             评论内容
@@ -707,13 +712,14 @@
             <param name="sharePostCommand"></param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetShareDataAsync(System.String,System.String,System.String,Arise.DDD.API.Paging.PagingParameters)">
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetShareDataAsync(System.String,System.String,System.String,System.Boolean,Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             获取分享的帖子
             </summary>
             <param name="s">加密过的分享信息</param>
             <param name="t">帖子类别，当分享的是用户的所有帖子时，可根据类别来筛选</param>
             <param name="k">搜索关键字</param>
+            <param name="c">是否统计访问次数</param>
             <param name="pagingParameters">分页参数</param>
             <returns></returns>
         </member>

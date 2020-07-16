@@ -333,13 +333,14 @@ namespace Photography.Services.Post.API.Controllers
         /// <param name="s">加密过的分享信息</param>
         /// <param name="t">帖子类别，当分享的是用户的所有帖子时，可根据类别来筛选</param>
         /// <param name="k">搜索关键字</param>
+        /// <param name="c">是否统计访问次数</param>
         /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
         [HttpGet]
         [Route("share")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [AllowAnonymous]
-        public async Task<ActionResult<ResponseWrapper>> GetShareDataAsync([FromQuery]string s, [FromQuery]string t, [FromQuery]string k, [FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<ResponseWrapper>> GetShareDataAsync([FromQuery]string s, [FromQuery]string t, [FromQuery]string k, [FromQuery] bool c, [FromQuery] PagingParameters pagingParameters)
         {
             PagedList<PostViewModel> posts = null;
 
@@ -364,8 +365,8 @@ namespace Photography.Services.Post.API.Controllers
                     {
                         _logger.LogInformation("GetShareDataAsync: single post");
 
-                        // update usershare info only when pagenumber is 1, means do not update when user scroll page
-                        if (pagingParameters.PageNumber == 1)
+                        // 统计访问次数
+                        if (c)
                             await UpdateUserShareAsync(shareInfo.UserId, shareInfo.PostId, null);
 
                         // get share data and return
@@ -377,8 +378,8 @@ namespace Photography.Services.Post.API.Controllers
                     {
                         _logger.LogInformation("GetShareDataAsync: tag posts");
 
-                        // update usershare info only when pagenumber is 1, means do not update when user scroll page
-                        if (pagingParameters.PageNumber == 1)
+                        // 统计访问次数
+                        if (c)
                             await UpdateUserShareAsync(shareInfo.UserId, null, shareInfo.PrivateTag);
 
                         // get share data and return
@@ -389,8 +390,8 @@ namespace Photography.Services.Post.API.Controllers
                     {
                         _logger.LogInformation("GetShareDataAsync: user posts");
 
-                        // update usershare info only when pagenumber is 1, means do not update when user scroll page
-                        if (pagingParameters.PageNumber == 1)
+                        // 统计访问次数
+                        if (c)
                             await UpdateUserShareAsync(shareInfo.UserId, null, null);
 
                         // get share data and return

@@ -9,10 +9,14 @@ import { PagedPost } from '../models/paged-post';
 })
 export class PostService {
 
+  counted: boolean;
+
   constructor(private http: HttpClient) { }
 
   async getPostsAsync(param: string, privateTag: string, searchkey: string, pageNumber: number): Promise<PagedPost> {
-    let apiUrl = ConfigService.config.serviceBase + '/posts/share?s=' + encodeURIComponent(param) + '&pageNumber=' + pageNumber;
+    let apiUrl = ConfigService.config.serviceBase + '/posts/share?s=' + encodeURIComponent(param) + '&pageNumber=' + pageNumber + '&c=' + !this.counted;
+
+    this.counted = true;
     
     if (privateTag)
       apiUrl += '&t=' + encodeURIComponent(privateTag)

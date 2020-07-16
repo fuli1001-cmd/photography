@@ -32,7 +32,7 @@ export class HomeComponent implements OnInit {
   showSpinner: boolean; // 是否显示等待标志
   querying: boolean; // 表示是否正在调用后台服务进行查询
   displayBigPhoto: boolean // 是否大图显示照片
-  position: any;
+  position: any; // 当前滚动位置
 
   readonly filePrefix:string = '/app/';
   readonly fileThumbnailPrefix = '/appthumbnail/';

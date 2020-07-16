@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Photography.Services.Post.API.Application.Commands.Comment.DeleteComment;
 using Photography.Services.Post.API.Application.Commands.Comment.ReplyComment;
 using Photography.Services.Post.API.Application.Commands.Comment.ReplyPost;
 using Photography.Services.Post.API.Application.Commands.Comment.ToggleLikeComment;
@@ -112,6 +113,15 @@ namespace Photography.Services.Post.API.Controllers
         [Route("togglelike")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<bool>> ToggleLikeCommentAsync([FromBody] ToggleLikeCommentCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        [HttpDelete]
+        [Route("")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<bool>> DeleteCommentAsync([FromBody] DeleteCommentCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
