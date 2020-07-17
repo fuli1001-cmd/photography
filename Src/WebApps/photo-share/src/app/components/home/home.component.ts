@@ -36,6 +36,7 @@ export class HomeComponent implements OnInit {
 
   readonly filePrefix:string = '/app/';
   readonly fileThumbnailPrefix = '/appthumbnail/';
+  readonly fileVideoPrefix = '/appvideo/';
 
   constructor(private postService: PostService, 
     private activatedRoute: ActivatedRoute,
@@ -120,7 +121,7 @@ export class HomeComponent implements OnInit {
     // 视频文件无缩略图
     attachment.name = attachment.attachmentType == 0 ? 
       ConfigService.config.fileServer + this.fileThumbnailPrefix + attachment.name :
-      ConfigService.config.fileServer + this.filePrefix + attachment.name
+      ConfigService.config.fileServer + this.fileVideoPrefix + attachment.name;
     attachment.thumbnail = ConfigService.config.fileServer + this.fileThumbnailPrefix + attachment.thumbnail;
   }
 
