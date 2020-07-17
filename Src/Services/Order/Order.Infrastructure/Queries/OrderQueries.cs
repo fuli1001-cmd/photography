@@ -90,6 +90,7 @@ namespace Photography.Services.Order.Infrastructure.Queries
                        LocationName = o.LocationName,
                        Address = o.Address,
                        ClosedTime = o.ClosedTime,
+                       Description = o.Description,
                        Attachments = from a in o.Attachments
                                      select new AttachmentViewModel
                                      {

@@ -25,6 +25,8 @@ namespace Photography.Services.Order.API.Query.ViewModels
 
         public double ClosedTime { get; set; }
 
+        public string Description { get; set; }
+
         public UserViewModel Partner { get; set; }
 
         public IEnumerable<AttachmentViewModel> Attachments { get; set; }
