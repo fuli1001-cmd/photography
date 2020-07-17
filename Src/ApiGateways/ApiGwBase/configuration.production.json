@@ -238,7 +238,9 @@
       "UpstreamPathTemplate": "/api/streaming",
       "UpstreamHttpMethod": [],
       "QoSOptions": {
-        "TimeoutValue": 3600000
+        "ExceptionsAllowedBeforeBreaking": 10000,
+        "DurationOfBreak": 1,
+        "TimeoutValue": 2400000
       }
     },
 
