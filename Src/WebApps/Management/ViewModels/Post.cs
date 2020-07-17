@@ -15,6 +15,8 @@ namespace Photography.WebApps.Management.ViewModels
 
         public Visibility Visibility { get; set; }
 
+        public PostAuthStatus PostAuthStatus { get; set; }
+
         public User User { get; set; }
     }
 
@@ -24,5 +26,12 @@ namespace Photography.WebApps.Management.ViewModels
         Friends,
         Password,
         SelectedFriends
+    }
+
+    public enum PostAuthStatus
+    {
+        Authenticating,
+        Authenticated,
+        Rejected
     }
 }

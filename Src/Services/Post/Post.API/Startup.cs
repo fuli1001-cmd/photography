@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Arise.DDD.API.Filters;
 using Arise.DDD.API.Response;
@@ -70,6 +71,11 @@ namespace Photography.Services.Post.API
                     options.Audience = Configuration.GetValue<string>("AuthSettings:Audience");
                     options.RequireHttpsMetadata = false;
                 });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy => policy.RequireClaim(ClaimTypes.Role, "admin"));
+            });
 
             services.AddHttpContextAccessor();
 

@@ -18,8 +18,8 @@ namespace Photography.WebApps.Management.Services
         private readonly ServiceSettings _serviceSettings;
         private readonly ILogger<PostHttpService> _logger;
 
-        private const string FilePrefix = "/app/";
         private const string FileThumbnailPrefix = "/appthumbnail/";
+        private const string FileVideoPrefix = "/appvideo/";
 
         public PostHttpService(HttpClient client, IOptions<ServiceSettings> serviceSettingsOptions, ILogger<PostHttpService> logger)
         {
@@ -28,6 +28,22 @@ namespace Photography.WebApps.Management.Services
             _serviceSettings = serviceSettingsOptions?.Value ?? throw new ArgumentNullException(nameof(serviceSettingsOptions));
 
             _client.BaseAddress = new Uri(_serviceSettings.PostService);
+        }
+
+        public async Task<bool> ExaminePostAsync(Post post, PostAuthStatus status)
+        {
+            var command = new { PostId = post.Id, PostAuthStatus = status };
+            HttpRequestMessage request = new HttpRequestMessage
+            {
+                Content = new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"),
+                Method = HttpMethod.Put,
+                RequestUri = new Uri(_client.BaseAddress, $"/api/posts/examine")
+            };
+
+            var response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            return JsonConvert.DeserializeObject<ResponseWrapper<bool>>(await response.Content.ReadAsStringAsync()).Data;
         }
 
         public async Task<PagedResponseWrapper<List<Post>>> GetPostsAsync(int pageNumber, int pageSize)
@@ -65,7 +81,7 @@ namespace Photography.WebApps.Management.Services
                     if (attachment.AttachmentType == AttachmentType.Image)
                         attachment.Name = _serviceSettings.FileServer + FileThumbnailPrefix + attachment.Name;
                     else
-                        attachment.Name = _serviceSettings.FileServer + FilePrefix + attachment.Name;
+                        attachment.Name = _serviceSettings.FileServer + FileVideoPrefix + attachment.Name;
                 });
             });
 

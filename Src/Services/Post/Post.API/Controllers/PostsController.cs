@@ -29,6 +29,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Photography.Services.Post.API.Application.Commands.User.UpdateUserShare;
+using Photography.Services.Post.API.Application.Commands.Post.ExaminePost;
 
 namespace Photography.Services.Post.API.Controllers
 {
@@ -311,6 +312,21 @@ namespace Photography.Services.Post.API.Controllers
         {
             var posts = await _mediator.Send(forwardPostsCommand);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
+        }
+
+        /// <summary>
+        /// 审核帖子
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("examine")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<ActionResult<bool>> ExamineAsync([FromBody] ExaminePostCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
 
         /// <summary>

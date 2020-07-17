@@ -23,43 +23,78 @@
             <tr>
                 <th style="width:8%;">文字</th>
                 <th style="width:8%;">作者</th>
-                <th style="width:80%;">图片</th>
+                @if (_type == "p")
+                {
+                    <th style="width:8%;">状态</th>
+                }
+                <th style="width:65%;">图片</th>
                 <th>操作</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var post in pagedData.Data)
             {
-                <tr>
-                    <td style="width:8%;" class="text-justify">@post.Text</td>
-                    <td style="width:8%;"><a href="./users/@post.User.Id" class="text-justify">@post.User.Nickname</a></td>
-                    <td style="width:80%;">
-                        <div class="row">
-                            @foreach (var attachment in post.PostAttachments)
-                            {
-                                <div class="col">
-                                    <div class="row">
-                                        @if (attachment.AttachmentType == ViewModels.AttachmentType.Image)
-                                        {
-                                            <img src="@attachment.Name" style="width:50px;" />
-                                        }
-                                        else if (attachment.AttachmentType == ViewModels.AttachmentType.Video)
-                                        {
-                                            <video controls style="width:100%;">
-                                                <source src="@attachment.Name" type="video/mp4" />
-                                                浏览器不支持
-                                            </video>
-                                        }
-                                    </div>
-                                    <div class="row" style="word-break:break-word;">@attachment.Text</div>
+            <tr>
+                <td style="width:8%;" class="text-justify">@post.Text</td>
+                <td style="width:8%;"><a href="./users/@post.User.Id" class="text-justify">@post.User.Nickname</a></td>
+                @if (_type == "p")
+                {
+                    @if (post.PostAuthStatus == PostAuthStatus.Authenticating)
+                    {
+                        <td style="width:8%;" class="text-justify">审核中</td>
+                    }
+                    else if (post.PostAuthStatus == PostAuthStatus.Authenticated)
+                    {
+                        <td style="width:8%;" class="text-justify">已通过</td>
+                    }
+                    else if (post.PostAuthStatus == PostAuthStatus.Rejected)
+                    {
+                        <td style="width:8%;" class="text-justify">已拒绝</td>
+                    }
+                }
+                <td style="width:60%;">
+                    <div class="row">
+                        @foreach (var attachment in post.PostAttachments)
+                        {
+                            <div class="col">
+                                <div class="row">
+                                    @if (attachment.AttachmentType == ViewModels.AttachmentType.Image)
+                                    {
+                                        <img src="@attachment.Name" style="width:50px;" />
+                                    }
+                                    else if (attachment.AttachmentType == ViewModels.AttachmentType.Video)
+                                    {
+                                        <video controls style="width:200px;">
+                                            <source src="@attachment.Name" type="video/mp4" />
+                                            浏览器不支持
+                                        </video>
+                                    }
                                 </div>
-                            }
-                        </div>
+                                <div class="row" style="word-break:break-word;">@attachment.Text</div>
+                            </div>
+                        }
+                    </div>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm" style="width: 50px" @onclick="@(async () => await DeletePostAsync(post))">删除</button>
+                    @if (_type == "p")
+                    {
+                        @if (post.PostAuthStatus == PostAuthStatus.Authenticating)
+                        {
+                            <button type="button" class="btn btn-danger btn-sm" @onclick="@(async () => await ExamineAsync(post, PostAuthStatus.Authenticated))">通过</button>
+                            <button type="button" class="btn btn-danger btn-sm" @onclick="@(async () => await ExamineAsync(post, PostAuthStatus.Rejected))">拒绝</button>
+                        }
+                        else if (post.PostAuthStatus == PostAuthStatus.Authenticated)
+                        {
+                            <button type="button" class="btn btn-danger btn-sm" @onclick="@(async () => await ExamineAsync(post, PostAuthStatus.Rejected))">拒绝</button>
+                        }
+                        else if (post.PostAuthStatus == PostAuthStatus.Rejected)
+                        {
+                            <button type="button" class="btn btn-danger btn-sm" @onclick="@(async () => await ExamineAsync(post, PostAuthStatus.Authenticated))">通过</button>
+                        }
+                    }
                     </td>
-                    <td>
-                        <button type="button" class="btn btn-danger btn-sm" style="width: 50px" @onclick="@(async () => await DeletePostAsync(post))">删除</button>
-                    </td>
-                </tr>
+            </tr>
             }
         </tbody>
     </table>
@@ -142,5 +177,11 @@
             hasNextPage = pagedData.PagingInfo.CurrentPage < pagedData.PagingInfo.TotalPages;
             hasPreviousPage = pagedData.PagingInfo.CurrentPage > 1;
         }
+    }
+
+    private async Task ExamineAsync(ViewModels.Post post, PostAuthStatus status)
+    {
+        if (await PostService.ExaminePostAsync(post, status))
+            post.PostAuthStatus = status;
     }
 }

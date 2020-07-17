@@ -214,6 +214,21 @@
             要赞的评论id
             </summary>
         </member>
+        <member name="T:Photography.Services.Post.API.Application.Commands.Post.ExaminePost.ExaminePostCommand">
+            <summary>
+            审核帖子
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Post.ExaminePost.ExaminePostCommand.PostId">
+            <summary>
+            要审核的帖子id
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Post.ExaminePost.ExaminePostCommand.PostAuthStatus">
+            <summary>
+            审核状态
+            </summary>
+        </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.Post.MarkGoodPost.MarkGoodPostCommand.PostId">
             <summary>
             帖子id
@@ -710,6 +725,13 @@
             <summary>
             转发帖子
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.ExamineAsync(Photography.Services.Post.API.Application.Commands.Post.ExaminePost.ExaminePostCommand)">
+            <summary>
+            审核帖子
+            </summary>
+            <param name="command"></param>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.Post.API.Controllers.PostsController.ShareAsync(Photography.Services.Post.API.Application.Commands.Post.Share.ShareCommand)">

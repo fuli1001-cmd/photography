@@ -99,5 +99,18 @@ namespace Photography.WebApps.Management.Data
                 return false;
             }
         }
+
+        public async Task<bool> ExaminePostAsync(Post post, PostAuthStatus status)
+        {
+            try
+            {
+                return await _postHttpService.ExaminePostAsync(post, status);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("ExaminePostAsync failed, {@Exception}", ex);
+                return false;
+            }
+        }
     }
 }

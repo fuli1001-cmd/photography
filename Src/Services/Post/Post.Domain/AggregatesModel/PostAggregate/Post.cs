@@ -345,6 +345,11 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             CircleId = null;
         }
 
+        public void Examine(PostAuthStatus status)
+        {
+            PostAuthStatus = status;
+        }
+
         private void AddDeletedPostDomainEvent()
         {
             var commentIds = _comments.Select(c => c.Id).ToList();
