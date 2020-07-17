@@ -38,6 +38,11 @@ namespace Photography.ApiGateways.ApiGwBase.Settings
         public int FileServerPort { get; set; }
 
         /// <summary>
+        /// 文件上传服务地址
+        /// </summary>
+        public string FileUploadService { get; set; }
+
+        /// <summary>
         /// 聊天文件服务器地址
         /// </summary>
         public string ChatFileServer { get; set; }
