@@ -344,7 +344,7 @@ namespace Photography.Services.Post.API.Query.EF
             IQueryable<Domain.AggregatesModel.PostAggregate.Post> queryablePosts = null;
 
             if (role == "admin")
-                queryablePosts = _postContext.Posts;
+                queryablePosts = _postContext.Posts.Where(p => p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post);
             else
                 queryablePosts = GetAvailablePosts(myId);
 
@@ -434,7 +434,8 @@ namespace Photography.Services.Post.API.Query.EF
 
         private IQueryable<Domain.AggregatesModel.PostAggregate.Post> GetAvailablePosts(Guid myId)
         {
-            var posts = _postContext.Posts.Where(p => p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post);
+            var posts = _postContext.Posts.Where(p => p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post 
+                && p.PostAuthStatus == Domain.AggregatesModel.PostAggregate.PostAuthStatus.Authenticated);
 
             // 公开、以及自己发的帖子
             var otherPosts = posts.Where(p => p.Visibility == Domain.AggregatesModel.PostAggregate.Visibility.Public 
@@ -517,6 +518,7 @@ namespace Photography.Services.Post.API.Query.EF
                        PublicTags = up.Post.PublicTags,
                        PrivateTag = up.Post.PrivateTag,
                        CircleGood = up.Post.CircleGood,
+                       PostAuthStatus = up.Post.PostAuthStatus,
                        Circle = up.Post.Circle == null ? null : new PostCircleViewModel
                        { 
                            Id = up.Post.Circle.Id, 

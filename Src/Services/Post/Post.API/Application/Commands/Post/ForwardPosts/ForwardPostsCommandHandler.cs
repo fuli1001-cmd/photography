@@ -53,7 +53,8 @@ namespace Photography.Services.Post.API.Application.Commands.Post.ForwardPosts
                 var post = Domain.AggregatesModel.PostAggregate.Post.CreatePost(request.Text, request.Commentable, request.ForwardType, request.ShareType,
                     request.Visibility, request.ViewPassword, request.PublicTags, request.PrivateTag, null, request.Latitude, request.Longitude, request.LocationName,
                     request.Address, request.CityCode, request.FriendIds, null, myId, request.ShowOriginalText);
-                post.SetForwardPostId(toBeForwardedPost.ForwardedPostId ?? toBeForwardedPost.Id);
+
+                post.SetForwardPostId(toBeForwardedPost);
                 _postRepository.Add(post);
                 posts.Add(post);
 

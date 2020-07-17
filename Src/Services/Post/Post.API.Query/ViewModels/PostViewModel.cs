@@ -42,6 +42,9 @@ namespace Photography.Services.Post.API.Query.ViewModels
         // 圈子
         public PostCircleViewModel Circle { get; set; }
 
+        // 帖子审核状态
+        public PostAuthStatus PostAuthStatus { get; set; }
+
         /// <summary>
         /// 是否是圈子里的精华帖
         /// </summary>

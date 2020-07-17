@@ -1,6 +1,7 @@
 ﻿using Arise.DDD.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Photography.Services.Post.Domain.AggregatesModel.TagAggregate;
 using System;
@@ -17,13 +18,16 @@ namespace Photography.Services.Post.API.Application.Commands.Tag.CreatePrivateTa
         private readonly ITagRepository _tagRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<CreatePrivateTagCommandHandler> _logger;
+        private readonly IConfiguration _configuration;
 
         public CreatePrivateTagCommandHandler(ITagRepository tagRepository,
             IHttpContextAccessor httpContextAccessor,
+            IConfiguration configuration,
             ILogger<CreatePrivateTagCommandHandler> logger)
         {
             _tagRepository = tagRepository ?? throw new ArgumentNullException(nameof(tagRepository));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -37,7 +41,7 @@ namespace Photography.Services.Post.API.Application.Commands.Tag.CreatePrivateTa
                 throw new ClientException("相册分类已存在");
 
             var privateTagCount = await _tagRepository.GetUserPrivateTagCount(myId);
-            if (privateTagCount >= 10)
+            if (privateTagCount >= _configuration.GetValue("MaxPrivateTagCount", 10))
                 throw new ClientException("相册分类数量已达上限");
 
             tag = new Domain.AggregatesModel.TagAggregate.Tag(request.Name, myId);

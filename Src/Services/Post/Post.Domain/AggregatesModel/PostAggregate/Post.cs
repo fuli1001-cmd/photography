@@ -20,6 +20,8 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         public double UpdatedTime { get; private set; }
         public PostType PostType { get; private set; }
 
+        // 是否已审核
+        public PostAuthStatus PostAuthStatus { get; private set; }
 
         public User User { get; private set; }
         public Guid UserId { get; private set; }
@@ -132,6 +134,8 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             _userPostRelations = friendIds?.Select(id => new UserPostRelation(id, UserPostRelationType.View)).ToList();
             PostType = PostType.Post;
             ShowOriginalText = showOriginalText;
+            // 公开帖子需要审核通过后才能显示
+            PostAuthStatus = visibility == Visibility.Public ? PostAuthStatus.Authenticating : PostAuthStatus.Authenticated;
         }
 
         // 构造约拍对象
@@ -143,6 +147,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             Price = price;
             PayerType = payerType;
             PostType = PostType.Appointment;
+            PostAuthStatus = PostAuthStatus.Authenticated;
         }
 
         // 构造约拍交易对象
@@ -155,6 +160,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             AppointmentedToPostId = appointmentedToPostId;
             PostType = PostType.AppointmentDeal;
             AppointmentDealStatus = PostAggregate.AppointmentDealStatus.Created;
+            PostAuthStatus = PostAuthStatus.Authenticated;
         }
 
         // 创建帖子对象
@@ -205,6 +211,8 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             CityCode = cityCode;
             ShowOriginalText = showOriginalText;
             UpdatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+            // 公开帖子需要审核通过后才能显示
+            PostAuthStatus = visibility == Visibility.Public ? PostAuthStatus.Authenticating : PostAuthStatus.Authenticated;
 
             var relations = friendIds?.Select(id => new UserPostRelation(id, UserPostRelationType.View)).ToList() ?? new List<UserPostRelation>();
             for (var i = 0; i < _userPostRelations.Count; i++)
@@ -239,9 +247,12 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             _postAttachments.Clear();
         }
 
-        public void SetForwardPostId(Guid forwardedPostId)
+        public void SetForwardPostId(Post forwardedPost)
         {
-            ForwardedPostId = forwardedPostId;
+            if (forwardedPost.PostAuthStatus != PostAuthStatus.Authenticated)
+                throw new ClientException("操作失败", new List<string> { $"Post {forwardedPost.Id} is not authenticated, can't forward." });
+
+            ForwardedPostId = forwardedPost.ForwardedPostId ?? forwardedPost.Id;
         }
 
         public void IncreaseForwardCount()
@@ -402,6 +413,14 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         // 已取消
         Canceled,
         // 已拒绝
+        Rejected
+    }
+
+    // 帖子审核状态
+    public enum PostAuthStatus
+    {
+        Authenticating,
+        Authenticated,
         Rejected
     }
 }
