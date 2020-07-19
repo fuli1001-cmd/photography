@@ -59,6 +59,11 @@
             文件服务器端口
             </summary>
         </member>
+        <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.FileUploadService">
+            <summary>
+            文件上传服务地址
+            </summary>
+        </member>
         <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.ChatFileServer">
             <summary>
             聊天文件服务器地址

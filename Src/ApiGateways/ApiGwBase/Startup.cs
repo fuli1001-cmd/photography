@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using Ocelot.Provider.Consul;
 using Photography.ApiGateways.ApiGwBase.Redis;
 using Photography.ApiGateways.ApiGwBase.Services;
 using Photography.ApiGateways.ApiGwBase.Settings;

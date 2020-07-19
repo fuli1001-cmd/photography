@@ -77,6 +77,8 @@ namespace Photography.Services.Post.API
                 options.AddPolicy("AdminOnly", policy => policy.RequireClaim(ClaimTypes.Role, "admin"));
             });
 
+            //services.AddConsulClient(Configuration);
+
             services.AddHttpContextAccessor();
 
             services.AddMediatR(typeof(CreateUserCommandHandler));
@@ -117,7 +119,7 @@ namespace Photography.Services.Post.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime lifetime)
         {
             if (env.IsDevelopment())
             {
@@ -154,6 +156,8 @@ namespace Photography.Services.Post.API
             {
                 endpoints.MapControllers();
             });
+
+            //app.RegisterWithConsul(lifetime);
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();

@@ -3,6 +3,7 @@
     {
       "DownstreamPathTemplate": "/api/posts",
       "DownstreamScheme": "http",
+      //"ServiceName": "postapi",
       "DownstreamHostAndPorts": [
         {
           "Host": "postapi",
@@ -295,5 +296,11 @@
     }
   ],
   "GlobalConfiguration": {
+    //"ServiceDiscoveryProvider": {
+    //  "Host": "192.168.99.105",
+    //  "Port": 8500,
+    //  "PollingInterval": 10000,
+    //  "ConfigurationKey": "photo-test"
+    //}
   }
 }
