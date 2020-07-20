@@ -62,6 +62,7 @@ namespace Photography.Services.Order.Infrastructure.Queries
             var queryableOrders = from o in _dbContext.Orders
                          where orderStatus.Contains(o.OrderStatus)
                          && (o.User1Id == userId || o.User2Id == userId)
+                         orderby o.UpdatedTime descending
                          select o;
 
             var queryableDto = GetOrderViewModels(queryableOrders, userId);

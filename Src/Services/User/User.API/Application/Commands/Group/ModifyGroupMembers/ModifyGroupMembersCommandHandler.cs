@@ -77,7 +77,7 @@ namespace Photography.Services.User.API.Application.Commands.Group.ModifyGroupMe
             if (await _groupUserRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
             {
                 // BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据
-                await UpdateRedisAsync(request, group);
+                await UpdateRedisAsync(request, group, myId);
 
                 return true;
             }
@@ -86,7 +86,7 @@ namespace Photography.Services.User.API.Application.Commands.Group.ModifyGroupMe
         }
 
         #region BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据
-        private async Task UpdateRedisAsync(ModifyGroupMembersCommand request, Domain.AggregatesModel.GroupAggregate.Group group)
+        private async Task UpdateRedisAsync(ModifyGroupMembersCommand request, Domain.AggregatesModel.GroupAggregate.Group group, Guid operatorId)
         {
             try
             {
@@ -103,7 +103,7 @@ namespace Photography.Services.User.API.Application.Commands.Group.ModifyGroupMe
                 }
 
                 // 发布系统消息
-                var operatorUser = await _userRepository.GetByIdAsync(group.OwnerId);
+                var operatorUser = await _userRepository.GetByIdAsync(operatorId);
 
                 if (request.RemovedMemberIds != null && request.RemovedMemberIds.Count > 0)
                 {

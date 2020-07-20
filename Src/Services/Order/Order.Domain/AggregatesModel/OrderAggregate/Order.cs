@@ -30,7 +30,7 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
 
         public double UpdatedTime { get; private set; }
 
-        public double ClosedTime { get; private set; }
+        public double? ClosedTime { get; private set; }
 
         // 约拍时间
         public double AppointedTime { get; private set; }
