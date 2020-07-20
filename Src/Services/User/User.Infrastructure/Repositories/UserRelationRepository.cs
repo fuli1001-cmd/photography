@@ -18,11 +18,7 @@ namespace Photography.Services.User.Infrastructure.Repositories
 
         public async Task<UserRelation> GetAsync(Guid followerId, Guid followedUserId)
         {
-            var urs = await _context.UserRelations.Where(ur => ur.FollowerId == followerId && ur.FollowedUserId == followedUserId).ToListAsync();
-            if (urs.Count > 0)
-                return urs[0];
-            else
-                return null;
+            return await _context.UserRelations.FirstOrDefaultAsync(ur => ur.FollowerId == followerId && ur.FollowedUserId == followedUserId);
         }
 
         //public async Task<IEnumerable<UserRelation>> GetFriendsAsync(Guid myId)

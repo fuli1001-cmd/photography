@@ -79,7 +79,8 @@ namespace Photography.ApiGateways.ApiGwBase.Controllers
                 var result = await _userService.LoginWithPhoneNumberAsync(loginPhoneDto.PhoneNumber, code, loginPhoneDto.ClientType, loginPhoneDto.RegistrationId);
                 
                 // 手机用户只能通过验证码登录，登录成功后将手机用户密码改为随机密码（更安全：避免通过手机号和code+验证码作为密码登录）
-                await _authService.ChangeToRandomPasswordAsync(loginPhoneDto.PhoneNumber, code, Path.GetRandomFileName().Replace(".", string.Empty));
+                // 加上a0后缀避免只生成了纯字符或纯数字的密码而无法通过密码政策验证
+                await _authService.ChangeToRandomPasswordAsync(loginPhoneDto.PhoneNumber, code, Path.GetRandomFileName().Replace(".", string.Empty) + "a0");
 
                 return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
             }

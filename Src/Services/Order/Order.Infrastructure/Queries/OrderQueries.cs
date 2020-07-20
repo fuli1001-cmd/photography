@@ -82,6 +82,7 @@ namespace Photography.Services.Order.Infrastructure.Queries
                        Price = o.Price,
                        OrderStatus = o.OrderStatus,
                        CreatedTime = o.CreatedTime,
+                       UpdatedTime = o.UpdatedTime,
                        AppointedTime = o.AppointedTime,
                        PayerId = o.PayerId,
                        Text = o.Text,

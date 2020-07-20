@@ -21,7 +21,7 @@ namespace Photography.Services.User.API.BackwardCompatibility.ChatServerRedis
 
         Task WriteGroupMessageAsync(Group group, SysMsgType msgType);
 
-        Task WriteGroupMemberMessageAsync(Group group, SysMsgType msgType, IEnumerable<Domain.AggregatesModel.UserAggregate.User> changedUsers);
+        Task WriteGroupMemberMessageAsync(Group group, SysMsgType msgType, IEnumerable<Domain.AggregatesModel.UserAggregate.User> changedUsers, Domain.AggregatesModel.UserAggregate.User operatorUser);
 
         Task WriteUserAsync(Domain.AggregatesModel.UserAggregate.User user);
 

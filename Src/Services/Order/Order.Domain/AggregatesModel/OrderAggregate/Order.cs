@@ -28,6 +28,8 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
 
         public double CreatedTime { get; private set; }
 
+        public double UpdatedTime { get; private set; }
+
         public double ClosedTime { get; private set; }
 
         // 约拍时间
@@ -53,6 +55,7 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
         public Order()
         {
             CreatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+            UpdatedTime = CreatedTime;
             OrderStatus = OrderStatus.Created;
         }
 
@@ -79,6 +82,7 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
                 throw new ClientException("操作失败", new List<string> { "Current order status is not 'Created'." });
 
             OrderStatus = OrderStatus.WaitingForShooting;
+            UpdatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
 
         public void Cancel(string description)
@@ -88,7 +92,8 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
 
             OrderStatus = OrderStatus.Canceled;
             Description = description;
-            ClosedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+            UpdatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+            ClosedTime = UpdatedTime;
         }
 
         public void Reject(string description)
@@ -98,7 +103,8 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
 
             OrderStatus = OrderStatus.Rejected;
             Description = description;
-            ClosedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+            UpdatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+            ClosedTime = UpdatedTime;
         }
 
         public void ConfirmShot()
@@ -107,6 +113,7 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
                 throw new ClientException("操作失败", new List<string> { "Current order status is not 'WaitingForShooting'." });
 
             OrderStatus = OrderStatus.WaitingForUploadOriginal;
+            UpdatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
 
         // 上传原片
@@ -118,6 +125,7 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
             UpdateOriginalAttachments(attachmentNames);
 
             OrderStatus = OrderStatus.WaitingForSelection;
+            UpdatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
 
         // 选择原片
@@ -143,6 +151,7 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
 
             // 把订单改为待上传精修片状态
             OrderStatus = OrderStatus.WaitingForUploadProcessed;
+            UpdatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
 
         // 上传精修片
@@ -150,13 +159,15 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
         {
             UpdateProcessedAttachments(attachmentNames);
             OrderStatus = OrderStatus.WaitingForCheck;
+            UpdatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
 
         // 接受精修片
         public void AcceptProcessedFiles()
         {
             OrderStatus = OrderStatus.Finished;
-            ClosedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+            UpdatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+            ClosedTime = UpdatedTime;
         }
 
         // 检查上传的原片是否已被对方选择，不能删掉

@@ -17,6 +17,8 @@ namespace Photography.Services.Order.API.Query.ViewModels
 
         public double CreatedTime { get; set; }
 
+        public double UpdatedTime { get; set; }
+
         public double AppointedTime { get; set; }
 
         public Guid? PayerId { get; set; }

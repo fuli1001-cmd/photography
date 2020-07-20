@@ -17,8 +17,8 @@ namespace Photography.Services.Notification.API.Application.Commands.Follow
         public FollowCommandHandler(IUserRelationRepository userRelationRepository,
             ILogger<FollowCommandHandler> logger)
         {
-            _userRelationRepository = userRelationRepository;
-            _logger = logger;
+            _userRelationRepository = userRelationRepository ?? throw new ArgumentNullException(nameof(userRelationRepository));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<bool> Handle(FollowCommand request, CancellationToken cancellationToken)

@@ -73,8 +73,9 @@ namespace Photography.Services.User.API.Application.Commands.Group.QuitGroup
                 await _chatServerRedisService.RemoveGroupMemberAsync(myId, group.ChatServerGroupId);
 
                 // 发布系统消息
-                var changedUsers = await _userRepository.GetUsersAsync(new List<Guid> { myId });
-                await _chatServerRedisService.WriteGroupMemberMessageAsync(group, SysMsgType.MEMBER_SECEDED, changedUsers);
+                var operatorUser = await _userRepository.GetByIdAsync(myId);
+                var changedUsers = new List<Domain.AggregatesModel.UserAggregate.User> { operatorUser };
+                await _chatServerRedisService.WriteGroupMemberMessageAsync(group, SysMsgType.MEMBER_SECEDED, changedUsers, operatorUser);
             }
             catch (Exception ex)
             {

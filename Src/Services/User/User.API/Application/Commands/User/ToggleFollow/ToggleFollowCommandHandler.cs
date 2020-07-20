@@ -61,7 +61,14 @@ namespace Photography.Services.User.API.Application.Commands.User.ToggleFollow
                     await SendUserUnFollowedEventAsync(userId, request.UserIdToFollow);
             }
 
-            return result;
+            // 返回被关注者是否关注了我
+            if (result)
+            {
+                var followedMe = await _userRelationRepository.GetAsync(request.UserIdToFollow, userId);
+                return followedMe == null ? false : true;
+            }
+            else
+                throw new ApplicationException("操作失败");
         }
 
         private async Task SendUserFollowedEventAsync(Guid followerId, Guid followedUserId)
