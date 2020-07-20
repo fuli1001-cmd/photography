@@ -105,11 +105,17 @@ namespace Photography.Services.User.API.Application.Commands.Group.ModifyGroupMe
                 // 发布系统消息
                 var operatorUser = await _userRepository.GetByIdAsync(group.OwnerId);
 
-                var removedUsers = await _userRepository.GetUsersAsync(request.RemovedMemberIds);
-                await _chatServerRedisService.WriteGroupMemberMessageAsync(group, SysMsgType.REMOVED_FROM_GROUP, removedUsers, operatorUser);
+                if (request.RemovedMemberIds != null && request.RemovedMemberIds.Count > 0)
+                {
+                    var removedUsers = await _userRepository.GetUsersAsync(request.RemovedMemberIds);
+                    await _chatServerRedisService.WriteGroupMemberMessageAsync(group, SysMsgType.REMOVED_FROM_GROUP, removedUsers, operatorUser);
+                }
 
-                var addedUsers = await _userRepository.GetUsersAsync(request.NewMemberIds);
-                await _chatServerRedisService.WriteGroupMemberMessageAsync(group, SysMsgType.NEW_MEMBER_ADDED, addedUsers, operatorUser);
+                if (request.NewMemberIds != null && request.NewMemberIds.Count > 0)
+                {
+                    var addedUsers = await _userRepository.GetUsersAsync(request.NewMemberIds);
+                    await _chatServerRedisService.WriteGroupMemberMessageAsync(group, SysMsgType.NEW_MEMBER_ADDED, addedUsers, operatorUser);
+                }
             } 
             catch (Exception ex)
             {
