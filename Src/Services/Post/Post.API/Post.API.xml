@@ -374,6 +374,11 @@
             点赞的帖子id
             </summary>
         </member>
+        <member name="T:Photography.Services.Post.API.Application.Commands.Post.ViewPost.ViewPostCommand">
+            <summary>
+            浏览帖子
+            </summary>
+        </member>
         <member name="T:Photography.Services.Post.API.Application.Commands.User.AuthRealName.AuthRealNameCommand">
             <summary>
             实名认证

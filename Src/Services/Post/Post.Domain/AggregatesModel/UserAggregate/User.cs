@@ -17,8 +17,23 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
         public string Nickname { get; private set; }
         public string Avatar { get; private set; }
         public UserType? UserType { get; private set; }
+
+        // 约拍值
         public int Score { get; private set; }
+
+        // 用户所发帖的初始积分
+        public int PostScore { get; private set; }
+
+        // 是否已实名认证
         public bool IdAuthenticated { get; private set; }
+
+        public double CreatedTime { get; private set; }
+
+        // 昵称是否已修改过
+        public bool NicknameChanged { get; private set; }
+
+        // 头像是否已修改过
+        public bool AvatarChanged { get; private set; }
 
         // 用户被禁用到的时间点，null表示未禁用
         public DateTime? DisabledTime { get; private set; }
@@ -61,14 +76,32 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
 
         public User() { }
 
-        public User(string id, string nickName)
+        public User(string id, string nickName, int initPostScore)
         {
             Id = Guid.Parse(id);
             Nickname = nickName;
+            PostScore = initPostScore; 
+            CreatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
 
-        public void Update(string nickName, string avatar, UserType? userType)
+        public void Update(string nickName, string avatar, UserType? userType, int rewardPostScore)
         {
+            // 更新帖子初始分的逻辑
+            // 此块代码只应执行一次，即用户修改了昵称和头像之后，增加他的帖子初始分
+            // 因此当NicknameChanged和AvatarChanged都为true时，代表曾经已增加了积分
+            // 其中任意一个为false时，则说明还未增加过积分
+            if (!NicknameChanged || !AvatarChanged)
+            {
+                if (!NicknameChanged)
+                    NicknameChanged = Nickname != nickName;
+
+                if (!AvatarChanged)
+                    AvatarChanged = Avatar != avatar;
+
+                if (NicknameChanged && AvatarChanged)
+                    PostScore += rewardPostScore;
+            }
+
             Nickname = nickName;
             Avatar = avatar;
             UserType = userType;

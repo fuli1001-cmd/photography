@@ -117,7 +117,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         // 构造帖子对象
         private Post(string text, bool? showOriginalText, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
             string publicTags, string privateTag, Guid? circleId, double latitude, double longitude, string locationName, string address, string cityCode, 
-            List<Guid> friendIds, List<PostAttachment> postAttachments, Guid userId)
+            List<Guid> friendIds, List<PostAttachment> postAttachments, int score, Guid userId)
             : this(text, latitude, longitude, locationName, address, cityCode, postAttachments, userId)
         {
             // 发送标签更新事件
@@ -134,6 +134,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             _userPostRelations = friendIds?.Select(id => new UserPostRelation(id, UserPostRelationType.View)).ToList();
             PostType = PostType.Post;
             ShowOriginalText = showOriginalText;
+            Score = score;
             // 公开帖子需要审核通过后才能显示
             PostAuthStatus = visibility == Visibility.Public ? PostAuthStatus.Authenticating : PostAuthStatus.Authenticated;
         }
@@ -166,10 +167,10 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         // 创建帖子对象
         public static Post CreatePost(string text, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
             string publicTags, string privateTag, Guid? circleId, double latitude, double longitude, string locationName, string address, string cityCode,
-            List<Guid> friendIds, List<PostAttachment> postAttachments, Guid userId, bool? showOriginalText = null)
+            List<Guid> friendIds, List<PostAttachment> postAttachments, int score, Guid userId, bool? showOriginalText = null)
         {
             return new Post(text, showOriginalText, commentable, forwardType, shareType, visibility, viewPassword, publicTags, privateTag, circleId, latitude, longitude,
-                locationName, address, cityCode, friendIds, postAttachments, userId);
+                locationName, address, cityCode, friendIds, postAttachments, score, userId);
         }
 
         // 创建约拍对象
@@ -255,9 +256,10 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             ForwardedPostId = forwardedPost.ForwardedPostId ?? forwardedPost.Id;
         }
 
-        public void IncreaseForwardCount()
+        public void IncreaseForwardCount(int rewardScore)
         {
             ForwardCount++;
+            Score += rewardScore;
         }
 
         public void CancelAppointmentDeal(Guid userId)
@@ -296,30 +298,37 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             AppointmentDealStatus = PostAggregate.AppointmentDealStatus.Rejected;
         }
 
-        public void Like()
+        public void Like(int rewardScore)
         {
             LikeCount++;
+            Score += rewardScore;
         }
 
-        public void UnLike()
+        public void UnLike(int rewardScore)
         {
             LikeCount = Math.Max(LikeCount - 1, 0);
+            Score -= rewardScore;
         }
 
-        public void Share(Guid sharedUserId)
+        public void Share(int rewardScore)
         {
             ShareCount++;
+            Score += rewardScore;
         }
 
-        public void IncreaseCommentCount()
+        public void IncreaseCommentCount(int rewardScore)
         {
             if (Commentable != null && Commentable.Value)
+            {
                 CommentCount++;
+                Score += rewardScore;
+            }
         }
 
-        public void DecreaseCommentCount(int count)
+        public void DecreaseCommentCount(int count, int rewardScore)
         {
             CommentCount = Math.Max(CommentCount - count, 0);
+            Score -= rewardScore * count;
         }
 
         public void RemovePrivateTag()
@@ -345,6 +354,13 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             CircleId = null;
         }
 
+        // 浏览帖子加分
+        public void View(int rewardScore)
+        {
+            Score += rewardScore;
+        }
+
+        // 审核帖子
         public void Examine(PostAuthStatus status)
         {
             PostAuthStatus = status;

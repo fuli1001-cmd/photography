@@ -1,5 +1,7 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Photography.Services.Post.API.Settings;
 using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
 using System;
 using System.Collections.Generic;
@@ -12,11 +14,15 @@ namespace Photography.Services.Post.API.Application.Commands.User.UpdateUser
     public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, bool>
     {
         private readonly IUserRepository _userRepository;
+        private readonly PostScoreRewardSettings _scoreRewardSettings;
         private readonly ILogger<UpdateUserCommandHandler> _logger;
 
-        public UpdateUserCommandHandler(IUserRepository userRepository, ILogger<UpdateUserCommandHandler> logger)
+        public UpdateUserCommandHandler(IUserRepository userRepository,
+            IOptionsSnapshot<PostScoreRewardSettings> scoreRewardOptions, 
+            ILogger<UpdateUserCommandHandler> logger)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _scoreRewardSettings = scoreRewardOptions?.Value ?? throw new ArgumentNullException(nameof(scoreRewardOptions));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -30,7 +36,7 @@ namespace Photography.Services.Post.API.Application.Commands.User.UpdateUser
                 return false;
             }
 
-            user.Update(request.NickName, request.Avatar, request.UserType);
+            user.Update(request.NickName, request.Avatar, request.UserType, _scoreRewardSettings.SetUserProperty);
 
             return await _userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
         }

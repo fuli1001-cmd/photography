@@ -77,6 +77,8 @@ namespace Photography.Services.Post.API
                 options.AddPolicy("AdminOnly", policy => policy.RequireClaim(ClaimTypes.Role, "admin"));
             });
 
+            services.Configure<PostScoreRewardSettings>(Configuration.GetSection("ScoreRewardSettings"));
+
             //services.AddConsulClient(Configuration);
 
             services.AddHttpContextAccessor();
