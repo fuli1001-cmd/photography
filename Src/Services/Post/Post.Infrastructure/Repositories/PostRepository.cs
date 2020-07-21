@@ -104,7 +104,8 @@ namespace Photography.Services.Post.Infrastructure.Repositories
 
             var commandBuilder = new StringBuilder();
             commandBuilder.Append("update Posts set Score = Score * @Percent, LastScoreRefreshedTime = @NowInSeconds ");
-            commandBuilder.Append("where (@NowInSeconds - CreatedTime) > @StartRefreshHour * 3600 ");
+            commandBuilder.Append("where PostType = 0 ");
+            commandBuilder.Append("and (@NowInSeconds - CreatedTime) > @StartRefreshHour * 3600 ");
             commandBuilder.Append("and (@NowInSeconds - LastScoreRefreshedTime) > @RefreshIntervalHour * 3600");
 
             var paramPercent = new SqlParameter("@Percent", percent);

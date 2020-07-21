@@ -45,7 +45,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         // 帖子积分
         public int Score { get; private set; }
         // 帖子积分最后更新时间
-        public double LastScoreRefreshedTime { get; private set; } 
+        public double? LastScoreRefreshedTime { get; private set; } 
         public bool? Commentable { get; private set; }
         public ForwardType ForwardType { get; private set; }
         public ShareType ShareType { get; private set; }
