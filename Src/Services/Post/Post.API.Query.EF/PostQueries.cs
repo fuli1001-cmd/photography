@@ -133,7 +133,7 @@ namespace Photography.Services.Post.API.Query.EF
 
             var queryablePosts = GetAvailablePosts(myId);
 
-            var queryableUserPosts = GetAvailableUserPosts(queryablePosts).OrderByDescending(up => up.Post.Score);
+            var queryableUserPosts = GetAvailableUserPosts(queryablePosts).OrderByDescending(up => up.Post.Score).ThenByDescending(up => up.Post.UpdatedTime);
 
             var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId);
 
@@ -425,7 +425,7 @@ namespace Photography.Services.Post.API.Query.EF
             }
 
             if (!string.IsNullOrWhiteSpace(sortBy) && sortBy.ToLower() == "score")
-                queryablePosts = queryablePosts.OrderByDescending(p => p.Score);
+                queryablePosts = queryablePosts.OrderByDescending(p => p.Score).ThenByDescending(p => p.UpdatedTime);
             else
                 queryablePosts = queryablePosts.OrderByDescending(p => p.UpdatedTime);
 
