@@ -29,6 +29,7 @@ using Newtonsoft.Json.Serialization;
 using Photography.Services.Post.API.Application.Behaviors;
 using Photography.Services.Post.API.Application.Commands.Post.PublishPost;
 using Photography.Services.Post.API.Application.Commands.User.CreateUser;
+using Photography.Services.Post.API.Application.Services;
 using Photography.Services.Post.API.Application.Validators;
 using Photography.Services.Post.API.Infrastructure.AutofacModules;
 using Photography.Services.Post.API.Query.MapperProfiles;
@@ -77,7 +78,7 @@ namespace Photography.Services.Post.API
                 options.AddPolicy("AdminOnly", policy => policy.RequireClaim(ClaimTypes.Role, "admin"));
             });
 
-            services.Configure<PostScoreRewardSettings>(Configuration.GetSection("ScoreRewardSettings"));
+            services.Configure<PostScoreRewardSettings>(Configuration.GetSection("PostScoreRewardSettings"));
 
             //services.AddConsulClient(Configuration);
 
@@ -118,6 +119,8 @@ namespace Photography.Services.Post.API
                 c.IncludeXmlComments(string.Format(@"{0}/Post.API.xml", System.AppDomain.CurrentDomain.BaseDirectory));
                 c.DescribeAllEnumsAsStrings();
             });
+
+            services.AddHostedService<RefreshPostScoreService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

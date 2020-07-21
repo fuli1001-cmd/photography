@@ -61,5 +61,7 @@ namespace Photography.Services.Post.API.Query.Interfaces
         /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
         Task<PagedList<PostViewModel>> GetCirclePostsAsync(Guid circleId, bool onlyGood, string key, string sortBy, PagingParameters pagingParameters);
+
+        Task<PagedList<Domain.AggregatesModel.PostAggregate.Post>> GetPostsAsync(PagingParameters pagingParameters);
     }
 }

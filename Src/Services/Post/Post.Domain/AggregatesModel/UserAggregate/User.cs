@@ -30,10 +30,10 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
         public double CreatedTime { get; private set; }
 
         // 昵称是否已修改过
-        public bool NicknameChanged { get; private set; }
+        public bool NicknameSet { get; private set; }
 
         // 头像是否已修改过
-        public bool AvatarChanged { get; private set; }
+        public bool AvatarSet { get; private set; }
 
         // 用户被禁用到的时间点，null表示未禁用
         public DateTime? DisabledTime { get; private set; }
@@ -90,15 +90,15 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
             // 此块代码只应执行一次，即用户修改了昵称和头像之后，增加他的帖子初始分
             // 因此当NicknameChanged和AvatarChanged都为true时，代表曾经已增加了积分
             // 其中任意一个为false时，则说明还未增加过积分
-            if (!NicknameChanged || !AvatarChanged)
+            if (!NicknameSet || !AvatarSet)
             {
-                if (!NicknameChanged)
-                    NicknameChanged = Nickname != nickName;
+                if (!NicknameSet)
+                    NicknameSet = Nickname != nickName;
 
-                if (!AvatarChanged)
-                    AvatarChanged = Avatar != avatar;
+                if (!AvatarSet)
+                    AvatarSet = Avatar != avatar;
 
-                if (NicknameChanged && AvatarChanged)
+                if (NicknameSet && AvatarSet)
                     PostScore += rewardPostScore;
             }
 

@@ -1,4 +1,5 @@
 ﻿using Arise.DDD.Infrastructure;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 using Photography.Services.Post.Infrastructure;
@@ -87,6 +88,31 @@ namespace Photography.Services.Post.Infrastructure.Repositories
         public async Task<List<Domain.AggregatesModel.PostAggregate.Post>> GetUserPostsAsync(Guid userId)
         {
             return await _context.Posts.Where(p => p.UserId == userId && p.PostType == PostType.Post).ToListAsync();
+        }
+
+        /// <summary>
+        /// 刷新帖子积分
+        /// 规则：从发布后第startRefreshHour小时起，积分每refreshIntervalHour小时衰减为现积分的percent
+        /// </summary>
+        /// <param name="startRefreshHour">自帖子发布多少小时侯开始刷新帖子积分</param>
+        /// <param name="refreshIntervalHour">每隔多少小时刷新一次</param>
+        /// <param name="percent">衰减为现积分的percent</param>
+        /// <returns></returns>
+        public async Task RefreshPostScore(int startRefreshHour, int refreshIntervalHour, double percent)
+        {
+            var nowInSeconds = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+
+            var commandBuilder = new StringBuilder();
+            commandBuilder.Append("update Posts set Score = Score * @Percent, LastScoreRefreshedTime = @NowInSeconds ");
+            commandBuilder.Append("where (@NowInSeconds - CreatedTime) > @StartRefreshHour * 3600 ");
+            commandBuilder.Append("and (@NowInSeconds - LastScoreRefreshedTime) > @RefreshIntervalHour * 3600");
+
+            var paramPercent = new SqlParameter("@Percent", percent);
+            var paramNowInSeconds = new SqlParameter("@NowInSeconds", nowInSeconds);
+            var paramStartRefreshHour = new SqlParameter("@StartRefreshHour", startRefreshHour);
+            var paramRefreshIntervalHour = new SqlParameter("@RefreshIntervalHour", refreshIntervalHour);
+
+            await _context.Database.ExecuteSqlRawAsync(commandBuilder.ToString(), paramPercent, paramNowInSeconds, paramStartRefreshHour, paramRefreshIntervalHour);
         }
     }
 }

@@ -42,8 +42,10 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         public int ShareCount { get; private set; }
         public int CommentCount { get; private set; }
         public int ForwardCount { get; private set; }
-        // for hot posts
+        // 帖子积分
         public int Score { get; private set; }
+        // 帖子积分最后更新时间
+        public double LastScoreRefreshedTime { get; private set; } 
         public bool? Commentable { get; private set; }
         public ForwardType ForwardType { get; private set; }
         public ShareType ShareType { get; private set; }
@@ -100,7 +102,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         }
 
         // constructor to set common properties
-        private Post(string text, double? latitude, double? longitude, string? locationName, string address, 
+        private Post(string text, double? latitude, double? longitude, string locationName, string address, 
             string cityCode, List<PostAttachment> postAttachments, Guid userId)
             : this()
         {
@@ -135,6 +137,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             PostType = PostType.Post;
             ShowOriginalText = showOriginalText;
             Score = score;
+            LastScoreRefreshedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
             // 公开帖子需要审核通过后才能显示
             PostAuthStatus = visibility == Visibility.Public ? PostAuthStatus.Authenticating : PostAuthStatus.Authenticated;
         }

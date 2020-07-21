@@ -13,6 +13,7 @@ using Photography.Services.User.API.Application.Commands.Group.ModifyGroupMember
 using Photography.Services.User.API.Application.Commands.Group.MuteGroup;
 using Photography.Services.User.API.Application.Commands.Group.QuitGroup;
 using Photography.Services.User.API.Application.Commands.Group.UpdateGroup;
+using Photography.Services.User.API.Application.Commands.Group.UpdateGroupAvatar;
 using Photography.Services.User.API.Query.Interfaces;
 using Photography.Services.User.API.Query.ViewModels;
 using System;
@@ -64,6 +65,23 @@ namespace Photography.Services.User.API.Controllers
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ResponseWrapper>> UpdateGroupAsync([FromBody] UpdateGroupCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 编辑群图片
+        /// 该接口用于此情况：
+        /// 群已打开允许群成员修改群成员，在群成员（非群主）修改了群成员后，客户端会根据最新成员列表更新群头像，
+        /// 此时不能调用编辑群的接口，因为那个接口检查了操作者是否是群主，并且会发通知，而本接口情况无需发送通知
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("avatar")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ResponseWrapper>> UpdateGroupAvatarAsync([FromBody] UpdateGroupAvatarCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));

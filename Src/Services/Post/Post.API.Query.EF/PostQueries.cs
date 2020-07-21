@@ -133,9 +133,9 @@ namespace Photography.Services.Post.API.Query.EF
 
             var queryablePosts = GetAvailablePosts(myId);
 
-            var queryableUserPosts = GetAvailableUserPosts(queryablePosts);
+            var queryableUserPosts = GetAvailableUserPosts(queryablePosts).OrderByDescending(up => up.Post.Score);
 
-            var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.LikeCount);
+            var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId);
 
             return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
         }
@@ -643,6 +643,11 @@ namespace Photography.Services.Post.API.Query.EF
                 foreach (var attachment in postViewModel.PostAttachments)
                     attachment.SetProperties();
             }
+        }
+
+        public async Task<PagedList<Domain.AggregatesModel.PostAggregate.Post>> GetPostsAsync(PagingParameters pagingParameters)
+        {
+            return await PagedList<Domain.AggregatesModel.PostAggregate.Post>.ToPagedListAsync(_postContext.Posts.OrderBy(p => p.Id), pagingParameters);
         }
     }
 }

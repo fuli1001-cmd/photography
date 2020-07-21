@@ -33,5 +33,14 @@ namespace Photography.Services.Post.API.Settings
 
         // 新用户时长（小时）
         public int NewUserHour { get; set; }
+
+        // 自帖子发布起多少小时后开始刷新积分
+        public int StartRefreshHour { get; set; }
+
+        // 每个多少小时刷新积分一次
+        public int RefreshIntervalHour { get; set; }
+
+        // 每次刷新后，新积分为现积分的百分比
+        public double Percent { get; set; }
     }
 }
