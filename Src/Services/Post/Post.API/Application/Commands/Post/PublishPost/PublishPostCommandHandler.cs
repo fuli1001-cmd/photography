@@ -74,6 +74,11 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
             }
 
             var score = (DateTime.Now - DateTime.UnixEpoch.AddSeconds(user.CreatedTime)).TotalHours <= _scoreRewardSettings.NewUserHour ? user.Score + _scoreRewardSettings.NewUserPost : user.Score;
+
+            _logger.LogInformation("*************************** _scoreRewardSettings: {@_scoreRewardSettings}", _scoreRewardSettings);
+            _logger.LogInformation("*************************** score: " + score);
+            _logger.LogInformation("*************************** TotalHours: " + (DateTime.Now - DateTime.UnixEpoch.AddSeconds(user.CreatedTime)).TotalHours);
+
             var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType, a.IsPrivate)).ToList();
             var post = Domain.AggregatesModel.PostAggregate.Post.CreatePost(request.Text, request.Commentable, request.ForwardType, request.ShareType,
                 request.Visibility, request.ViewPassword, request.PublicTags, request.PrivateTag, request.CircleId, request.Latitude, request.Longitude, request.LocationName,
