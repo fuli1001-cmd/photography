@@ -30,6 +30,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Photography.Services.Post.API.Application.Commands.User.UpdateUserShare;
 using Photography.Services.Post.API.Application.Commands.Post.ExaminePost;
+using Photography.Services.Post.API.Application.Commands.Post.ViewPost;
 
 namespace Photography.Services.Post.API.Controllers
 {
@@ -244,6 +245,22 @@ namespace Photography.Services.Post.API.Controllers
         {
             var post = await _postQueries.GetPostAsync(postId);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(post));
+        }
+
+        /// <summary>
+        /// 此接口用于查看帖子详情时增加帖子积分
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("view/{postId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
+        public async Task<ActionResult<PostViewModel>> ViewPostAsync(Guid postId)
+        {
+            var command = new ViewPostCommand { PostId = postId };
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
 
         /// <summary>

@@ -699,6 +699,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.ViewPostAsync(System.Guid)">
+            <summary>
+            此接口用于查看帖子详情时增加帖子积分
+            </summary>
+            <param name="postId"></param>
+            <returns></returns>
+        </member>
         <member name="M:Photography.Services.Post.API.Controllers.PostsController.PublishPostAsync(Photography.Services.Post.API.Application.Commands.Post.PublishPost.PublishPostCommand)">
             <summary>
             创建帖子

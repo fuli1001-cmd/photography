@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Arise.DDD.Domain.Exceptions;
+using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -32,7 +33,11 @@ namespace Photography.Services.Post.API.Application.Commands.Post.ViewPost
         {
             var post = await _postRepository.GetByIdAsync(request.PostId);
             post.View(_scoreRewardSettings.ViewPost);
-            return await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
+
+            if (await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
+                return true;
+
+            throw new ApplicationException("操作失败");
         }
     }
 }
