@@ -5,9 +5,11 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NServiceBus;
 using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
+using Photography.Services.Post.API.Settings;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
 using System;
@@ -26,7 +28,7 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.Publish
         private readonly IUserRepository _userRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAppointmentQueries _appointmentQueries;
-        private readonly IConfiguration _configuration;
+        private readonly AppointmentSettings _appointmentSettings;
         private readonly ILogger<PublishAppointmentCommandHandler> _logger;
         private readonly IServiceProvider _serviceProvider;
 
@@ -37,7 +39,7 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.Publish
             IServiceProvider serviceProvider, 
             IHttpContextAccessor httpContextAccessor,
             IAppointmentQueries appointmentQueries,
-            IConfiguration configuration,
+            IOptionsSnapshot<AppointmentSettings> appointmentOptions,
             ILogger<PublishAppointmentCommandHandler> logger)
         {
             _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
@@ -45,7 +47,7 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.Publish
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _appointmentQueries = appointmentQueries ?? throw new ArgumentNullException(nameof(appointmentQueries));
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _appointmentSettings = appointmentOptions?.Value ?? throw new ArgumentNullException(nameof(appointmentOptions));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
