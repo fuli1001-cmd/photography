@@ -29,7 +29,7 @@ namespace Photography.Services.Post.API.Query.EF
         // 常用公共标签
         public async Task<IEnumerable<string>> GetPopularPublicTagsAsync()
         {
-            return await _dbContext.Tags.Where(t => t.UserId == null).OrderByDescending(t => t.Count).Take(10).Select(t => t.Name).ToListAsync();
+            return await _dbContext.Tags.Where(t => t.UserId == null).OrderByDescending(t => t.Count).ThenByDescending(t => t.CreatedTime).Take(10).Select(t => t.Name).ToListAsync();
         }
 
         // 用户的私有标签（帖子类别）

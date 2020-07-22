@@ -37,5 +37,27 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         /// <param name="percent">衰减为现积分的percent</param>
         /// <returns></returns>
         Task RefreshPostScore(int startRefreshHour, int refreshIntervalHour, double percent);
+
+
+        /// <summary>
+        /// 获取用户今天已发布的约拍数量
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        Task<int> GetTodayUserAppointmentCount(Guid userId);
+
+        /// <summary>
+        /// 获取用户今天已发出的约拍交易数量
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        Task<int> GetTodayUserSentAppointmentDealCount(Guid userId);
+
+        /// <summary>
+        /// 获取用户今天已收到的约拍交易数量
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        Task<int> GetTodayUserReceivedAppointmentDealCount(Guid userId);
     }
 }

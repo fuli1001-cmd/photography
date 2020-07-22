@@ -107,6 +107,11 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
             UserType = userType;
         }
 
+        public void AddAppointmentScore(int score)
+        {
+            Score += score;
+        }
+
         public void AuthRealName(bool passed)
         {
             IdAuthenticated = passed;

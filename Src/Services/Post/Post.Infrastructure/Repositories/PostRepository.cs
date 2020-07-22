@@ -90,14 +90,6 @@ namespace Photography.Services.Post.Infrastructure.Repositories
             return await _context.Posts.Where(p => p.UserId == userId && p.PostType == PostType.Post).ToListAsync();
         }
 
-        /// <summary>
-        /// 刷新帖子积分
-        /// 规则：从发布后第startRefreshHour小时起，积分每refreshIntervalHour小时衰减为现积分的percent
-        /// </summary>
-        /// <param name="startRefreshHour">自帖子发布多少小时侯开始刷新帖子积分</param>
-        /// <param name="refreshIntervalHour">每隔多少小时刷新一次</param>
-        /// <param name="percent">衰减为现积分的percent</param>
-        /// <returns></returns>
         public async Task RefreshPostScore(int startRefreshHour, int refreshIntervalHour, double percent)
         {
             var nowInSeconds = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
@@ -114,6 +106,44 @@ namespace Photography.Services.Post.Infrastructure.Repositories
             var paramRefreshIntervalHour = new SqlParameter("@RefreshIntervalHour", refreshIntervalHour);
 
             await _context.Database.ExecuteSqlRawAsync(commandBuilder.ToString(), paramPercent, paramNowInSeconds, paramStartRefreshHour, paramRefreshIntervalHour);
+        }
+
+        public async Task<int> GetTodayUserAppointmentCount(Guid userId)
+        {
+            var startSeconds = GetTodayStartSeconds();
+            var endeconds = GetTodayEndSeconds();
+
+            return await _context.Posts.Where(p => p.PostType == PostType.Appointment && p.CreatedTime <= endeconds && p.CreatedTime >= startSeconds && p.UserId == userId).CountAsync();
+        }
+
+        public async Task<int> GetTodayUserSentAppointmentDealCount(Guid userId)
+        {
+            var startSeconds = GetTodayStartSeconds();
+            var endeconds = GetTodayEndSeconds();
+
+            return await _context.Posts.Where(p => p.PostType == PostType.AppointmentDeal && p.CreatedTime <= endeconds && p.CreatedTime >= startSeconds && p.UserId == userId).CountAsync();
+        }
+
+        public async Task<int> GetTodayUserReceivedAppointmentDealCount(Guid userId)
+        {
+            var startSeconds = GetTodayStartSeconds();
+            var endeconds = GetTodayEndSeconds();
+
+            return await _context.Posts.Where(p => p.PostType == PostType.AppointmentDeal && p.CreatedTime <= endeconds && p.CreatedTime >= startSeconds && p.AppointmentedUserId == userId).CountAsync();
+        }
+
+        // 获取今天开始时间的时间戳
+        private double GetTodayStartSeconds()
+        {
+            var startTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0);
+            return (startTime - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+        }
+
+        // 获取今天截止时间的时间戳
+        private double GetTodayEndSeconds()
+        {
+            var endtime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59);
+            return (endtime - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
     }
 }

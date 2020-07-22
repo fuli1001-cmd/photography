@@ -257,6 +257,11 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         {
             DisabledTime = null;
         }
+
+        public void AddAppointmentScore(int score)
+        {
+            Score += score;
+        }
     }
 
     public enum UserType

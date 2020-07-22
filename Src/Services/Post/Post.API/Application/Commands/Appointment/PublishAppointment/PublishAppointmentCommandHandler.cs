@@ -62,6 +62,13 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.Publish
                 throw new ClientException($"账号存在违规行为，该功能禁用{hours}小时");
             }
 
+            if ((await _postRepository.GetTodayUserAppointmentCount(userId)) >= _appointmentSettings.MaxPublishCount)
+                throw new ClientException("已达今日最大约拍发布数量");
+
+            // 增加用户的约拍值
+            user.AddAppointmentScore(_appointmentSettings.PublishScore);
+
+            // 发布约拍
             var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType)).ToList();
             var post = Domain.AggregatesModel.PostAggregate.Post.CreateAppointment(request.Text, request.AppointedTime, request.Price, request.PayerType,
                 request.Latitude, request.Longitude, request.LocationName, request.Address, request.CityCode, attachments, userId);
@@ -69,7 +76,9 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.Publish
 
             if (await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
             {
-                await SendAppointmentPublishedEventAsync(userId);
+                var eventTasks = new List<Task> { SendAppointmentPublishedEventAsync(userId), SendAppointmentScoreChangedEventAsync(userId) };
+                await Task.WhenAll(eventTasks);
+                //await SendAppointmentPublishedEventAsync(userId);
                 return await _appointmentQueries.GetAppointmentAsync(post.Id);
             }
 
@@ -83,6 +92,15 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.Publish
             await _messageSession.Publish(@event);
 
             _logger.LogInformation("----- Published AppointmentPublishedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
+        }
+
+        private async Task SendAppointmentScoreChangedEventAsync(Guid userId)
+        {
+            var @event = new AppointmentScoreChangedEvent { UserId = userId, ChangedScore = _appointmentSettings.PublishScore };
+            _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
+            await _messageSession.Publish(@event);
+
+            _logger.LogInformation("----- Published AppointmentScoreChangedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
         }
     }
 }

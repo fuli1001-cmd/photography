@@ -10,7 +10,7 @@ using Photography.Services.Post.Infrastructure;
 namespace Photography.Services.Post.API.Infrastructure.Migrations
 {
     [DbContext(typeof(PostContext))]
-    [Migration("20200715083642_Init")]
+    [Migration("20200722081738_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -147,6 +147,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<Guid?>("ForwardedPostId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<double?>("LastScoreRefreshedTime")
+                        .HasColumnType("float");
+
                     b.Property<double?>("Latitude")
                         .HasColumnType("float");
 
@@ -162,6 +165,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         .HasColumnType("float");
 
                     b.Property<int?>("PayerType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PostAuthStatus")
                         .HasColumnType("int");
 
                     b.Property<int>("PostType")
@@ -223,6 +229,8 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
 
                     b.HasIndex("ForwardedPostId");
 
+                    b.HasIndex("PostType");
+
                     b.HasIndex("UpdatedTime");
 
                     b.HasIndex("UserId");
@@ -271,6 +279,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<int>("Count")
                         .HasColumnType("int");
 
+                    b.Property<double>("CreatedTime")
+                        .HasColumnType("float");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -281,6 +292,8 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Count");
+
+                    b.HasIndex("CreatedTime");
 
                     b.HasIndex("Name");
 
@@ -298,6 +311,12 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<string>("Avatar")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("AvatarSet")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("CreatedTime")
+                        .HasColumnType("float");
+
                     b.Property<DateTime?>("DisabledTime")
                         .HasColumnType("datetime2");
 
@@ -306,6 +325,12 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
 
                     b.Property<string>("Nickname")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("NicknameSet")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("PostScore")
+                        .HasColumnType("int");
 
                     b.Property<int>("Score")
                         .ValueGeneratedOnAdd()

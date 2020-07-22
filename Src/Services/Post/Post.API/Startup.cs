@@ -79,7 +79,7 @@ namespace Photography.Services.Post.API
             });
 
             services.Configure<PostScoreRewardSettings>(Configuration.GetSection("PostScoreRewardSettings"));
-            services.Configure<PostScoreRewardSettings>(Configuration.GetSection("AppointmentSettings"));
+            services.Configure<AppointmentSettings>(Configuration.GetSection("AppointmentSettings"));
 
             //services.AddConsulClient(Configuration);
 

@@ -10,7 +10,7 @@ using Photography.Services.User.Infrastructure;
 namespace Photography.Services.User.API.Infrastructure.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20200609035054_Init")]
+    [Migration("20200722081724_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,6 +20,70 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                 .HasAnnotation("ProductVersion", "3.1.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("Photography.Services.User.Domain.AggregatesModel.AlbumAggregate.Album", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("CreatedTime")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("UpdatedTime")
+                        .HasColumnType("float");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedTime");
+
+                    b.HasIndex("UpdatedTime");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Albums");
+                });
+
+            modelBuilder.Entity("Photography.Services.User.Domain.AggregatesModel.AlbumPhotoAggregate.AlbumPhoto", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AlbumId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("CreatedTime")
+                        .HasColumnType("float");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("UpdatedTime")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AlbumId");
+
+                    b.HasIndex("CreatedTime");
+
+                    b.HasIndex("UpdatedTime");
+
+                    b.ToTable("AlbumPhotos");
+                });
 
             modelBuilder.Entity("Photography.Services.User.Domain.AggregatesModel.GroupAggregate.Group", b =>
                 {
@@ -39,9 +103,6 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                         .HasColumnType("float");
 
                     b.Property<bool>("ModifyMemberEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Muted")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
@@ -68,6 +129,9 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
 
                     b.Property<Guid?>("GroupId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Muted")
+                        .HasColumnType("bit");
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -109,9 +173,21 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                     b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ClientType")
+                        .HasColumnType("int");
+
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("CreatedTime")
+                        .HasColumnType("float");
+
+                    b.Property<int>("DisabledCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DisabledTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("FollowerCount")
                         .ValueGeneratedOnAdd()
@@ -125,6 +201,15 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
 
                     b.Property<int?>("Gender")
                         .HasColumnType("int");
+
+                    b.Property<string>("IdCardBack")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdCardFront")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdCardHold")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("LikedCount")
                         .ValueGeneratedOnAdd()
@@ -160,6 +245,9 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(0);
 
+                    b.Property<string>("RegistrationId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Score")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
@@ -168,11 +256,20 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                     b.Property<string>("Sign")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double>("UpdatedTime")
+                        .HasColumnType("float");
+
                     b.Property<string>("UserName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("UserType")
                         .HasColumnType("int");
+
+                    b.Property<bool>("ViewFollowedUsersAllowed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("ViewFollowersAllowed")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -203,6 +300,24 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                     b.HasIndex("FollowerId");
 
                     b.ToTable("UserRelations");
+                });
+
+            modelBuilder.Entity("Photography.Services.User.Domain.AggregatesModel.AlbumAggregate.Album", b =>
+                {
+                    b.HasOne("Photography.Services.User.Domain.AggregatesModel.UserAggregate.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Photography.Services.User.Domain.AggregatesModel.AlbumPhotoAggregate.AlbumPhoto", b =>
+                {
+                    b.HasOne("Photography.Services.User.Domain.AggregatesModel.AlbumAggregate.Album", "Album")
+                        .WithMany("AlbumPhotos")
+                        .HasForeignKey("AlbumId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Photography.Services.User.Domain.AggregatesModel.GroupAggregate.Group", b =>

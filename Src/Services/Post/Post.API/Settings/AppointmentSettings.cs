@@ -8,16 +8,16 @@ namespace Photography.Services.Post.API.Settings
     public class AppointmentSettings
     {
         // 发布约拍加分
-        public double PublishScore { get; set; }
+        public int PublishScore { get; set; }
         
         // 约人及约任务加分
-        public double SendDealScore { get; set; }
+        public int SendDealScore { get; set; }
 
         // 被约加分
-        public double ReceiveDealScore { get; set; }
+        public int ReceiveDealScore { get; set; }
 
         // 完成约拍订单加分
-        public double FinishDealScore { get; set; }
+        public int FinishDealScore { get; set; }
 
         // 每日最大发布约拍数
         public int MaxPublishCount { get; set; }

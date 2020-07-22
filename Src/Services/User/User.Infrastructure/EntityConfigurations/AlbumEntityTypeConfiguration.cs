@@ -13,6 +13,9 @@ namespace Photography.Services.User.Infrastructure.EntityConfigurations
         {
             builder.Ignore(e => e.DomainEvents);
             builder.Property(a => a.Name).IsRequired();
+            builder.HasIndex(a => a.UserId);
+            builder.HasIndex(a => a.CreatedTime);
+            builder.HasIndex(a => a.UpdatedTime);
 
             var albumPhotosNavigation = builder.Metadata.FindNavigation(nameof(Album.AlbumPhotos));
             albumPhotosNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);

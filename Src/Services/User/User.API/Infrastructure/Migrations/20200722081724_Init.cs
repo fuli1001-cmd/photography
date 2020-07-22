@@ -33,12 +33,44 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                     Score = table.Column<int>(nullable: false, defaultValue: 0),
                     Code = table.Column<string>(nullable: false),
                     RealNameRegistrationStatus = table.Column<int>(nullable: false, defaultValue: 0),
+                    IdCardFront = table.Column<string>(nullable: true),
+                    IdCardBack = table.Column<string>(nullable: true),
+                    IdCardHold = table.Column<string>(nullable: true),
+                    ViewFollowersAllowed = table.Column<bool>(nullable: false),
+                    ViewFollowedUsersAllowed = table.Column<bool>(nullable: false),
+                    CreatedTime = table.Column<double>(nullable: false),
+                    UpdatedTime = table.Column<double>(nullable: false),
+                    DisabledTime = table.Column<DateTime>(nullable: true),
+                    DisabledCount = table.Column<int>(nullable: false),
                     ChatServerUserId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1")
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RegistrationId = table.Column<string>(nullable: true),
+                    ClientType = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Albums",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    CreatedTime = table.Column<double>(nullable: false),
+                    UpdatedTime = table.Column<double>(nullable: false),
+                    UserId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Albums", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Albums_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -49,7 +81,6 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                     Name = table.Column<string>(nullable: true),
                     Notice = table.Column<string>(nullable: true),
                     Avatar = table.Column<string>(nullable: true),
-                    Muted = table.Column<bool>(nullable: false),
                     ModifyMemberEnabled = table.Column<bool>(nullable: false),
                     CreatedTime = table.Column<double>(nullable: false),
                     ChatServerGroupId = table.Column<int>(nullable: false)
@@ -94,12 +125,35 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AlbumPhotos",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    DisplayName = table.Column<string>(nullable: false),
+                    CreatedTime = table.Column<double>(nullable: false),
+                    UpdatedTime = table.Column<double>(nullable: false),
+                    AlbumId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AlbumPhotos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AlbumPhotos_Albums_AlbumId",
+                        column: x => x.AlbumId,
+                        principalTable: "Albums",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "GroupUsers",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     GroupId = table.Column<Guid>(nullable: true),
-                    UserId = table.Column<Guid>(nullable: true)
+                    UserId = table.Column<Guid>(nullable: true),
+                    Muted = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -117,6 +171,36 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AlbumPhotos_AlbumId",
+                table: "AlbumPhotos",
+                column: "AlbumId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AlbumPhotos_CreatedTime",
+                table: "AlbumPhotos",
+                column: "CreatedTime");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AlbumPhotos_UpdatedTime",
+                table: "AlbumPhotos",
+                column: "UpdatedTime");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Albums_CreatedTime",
+                table: "Albums",
+                column: "CreatedTime");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Albums_UpdatedTime",
+                table: "Albums",
+                column: "UpdatedTime");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Albums_UserId",
+                table: "Albums",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Groups_OwnerId",
@@ -147,10 +231,16 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AlbumPhotos");
+
+            migrationBuilder.DropTable(
                 name: "GroupUsers");
 
             migrationBuilder.DropTable(
                 name: "UserRelations");
+
+            migrationBuilder.DropTable(
+                name: "Albums");
 
             migrationBuilder.DropTable(
                 name: "Groups");

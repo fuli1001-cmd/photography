@@ -16,7 +16,11 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     Avatar = table.Column<string>(nullable: true),
                     UserType = table.Column<int>(nullable: true),
                     Score = table.Column<int>(nullable: false, defaultValue: 0),
+                    PostScore = table.Column<int>(nullable: false),
                     IdAuthenticated = table.Column<bool>(nullable: false),
+                    CreatedTime = table.Column<double>(nullable: false),
+                    NicknameSet = table.Column<bool>(nullable: false),
+                    AvatarSet = table.Column<bool>(nullable: false),
                     DisabledTime = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
@@ -54,6 +58,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(nullable: false),
                     Count = table.Column<int>(nullable: false),
+                    CreatedTime = table.Column<double>(nullable: false),
                     UserId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
@@ -122,6 +127,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     CreatedTime = table.Column<double>(nullable: false),
                     UpdatedTime = table.Column<double>(nullable: false),
                     PostType = table.Column<int>(nullable: false),
+                    PostAuthStatus = table.Column<int>(nullable: false),
                     UserId = table.Column<Guid>(nullable: false),
                     Latitude = table.Column<double>(nullable: true),
                     Longitude = table.Column<double>(nullable: true),
@@ -133,6 +139,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     CommentCount = table.Column<int>(nullable: false, defaultValue: 0),
                     ForwardCount = table.Column<int>(nullable: false),
                     Score = table.Column<int>(nullable: false, defaultValue: 0),
+                    LastScoreRefreshedTime = table.Column<double>(nullable: true),
                     Commentable = table.Column<bool>(nullable: true, defaultValue: true),
                     ForwardType = table.Column<int>(nullable: false, defaultValue: 0),
                     ShareType = table.Column<int>(nullable: false, defaultValue: 0),
@@ -379,6 +386,11 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 column: "ForwardedPostId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Posts_PostType",
+                table: "Posts",
+                column: "PostType");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Posts_UpdatedTime",
                 table: "Posts",
                 column: "UpdatedTime");
@@ -392,6 +404,11 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 name: "IX_Tags_Count",
                 table: "Tags",
                 column: "Count");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tags_CreatedTime",
+                table: "Tags",
+                column: "CreatedTime");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tags_Name",

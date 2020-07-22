@@ -14,6 +14,9 @@ namespace Photography.Services.User.Infrastructure.EntityConfigurations
             builder.Ignore(e => e.DomainEvents);
             builder.Property(a => a.Name).IsRequired();
             builder.Property(a => a.DisplayName).IsRequired();
+            builder.HasIndex(a => a.CreatedTime);
+            builder.HasIndex(a => a.UpdatedTime);
+            builder.HasIndex(a => a.AlbumId);
         }
     }
 }

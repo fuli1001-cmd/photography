@@ -13,18 +13,25 @@ namespace Photography.Services.Post.Domain.AggregatesModel.TagAggregate
         public string Name { get; private set; }
 
         // 标签使用数量
-        public int Count { get; set; }
+        public int Count { get; private set; }
+
+        public double CreatedTime { get; private set; }
 
         // 私有标签（即帖子类别）所属用户
         public User User { get; private set; }
         public Guid? UserId { get; private set; }
 
-        public Tag(string name)
+        public Tag()
+        {
+            CreatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+        }
+
+        public Tag(string name) : this()
         {
             Name = name;
         }
 
-        public Tag(string name, Guid userId)
+        public Tag(string name, Guid userId) : this()
         {
             Name = name;
             UserId = userId;
