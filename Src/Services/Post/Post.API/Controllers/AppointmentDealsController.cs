@@ -49,7 +49,7 @@ namespace Photography.Services.Post.API.Controllers
         [HttpPost]
         [Route("task")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<bool>> AppointTaskAsync([FromBody] AppointTaskCommand appointCommand)
+        public async Task<ActionResult<ResponseWrapper>> AppointTaskAsync([FromBody] AppointTaskCommand appointCommand)
         {
             var result = await _mediator.Send(appointCommand);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
@@ -63,10 +63,10 @@ namespace Photography.Services.Post.API.Controllers
         [HttpPost]
         [Route("user")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<bool>> AppointUserAsync([FromBody] AppointUserCommand appointCommand)
+        public async Task<ActionResult<ResponseWrapper>> AppointUserAsync([FromBody] AppointUserCommand appointCommand)
         {
             var result = await _mediator.Send(appointCommand);
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(true));
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
 
         /// <summary>

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NServiceBus;
+using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
 using Photography.Services.Post.API.Settings;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
@@ -23,6 +24,7 @@ namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.App
     {
         private readonly IPostRepository _postRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IAppointmentDealQueries _appointmentDealQueries;
         private readonly AppointmentSettings _appointmentSettings;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
@@ -34,6 +36,7 @@ namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.App
         public AppointUserCommandHandler(
             IPostRepository postRepository,
             IUserRepository userRepository,
+            IAppointmentDealQueries appointmentDealQueries,
             IOptionsSnapshot<AppointmentSettings> appointmentOptions, 
             IHttpContextAccessor httpContextAccessor,
             IServiceProvider serviceProvider, 
@@ -42,6 +45,7 @@ namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.App
         {
             _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _appointmentDealQueries = appointmentDealQueries ?? throw new ArgumentNullException(nameof(appointmentDealQueries));
             _appointmentSettings = appointmentOptions?.Value ?? throw new ArgumentNullException(nameof(appointmentOptions));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -86,8 +90,10 @@ namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.App
                 await Task.WhenAll(eventTasks);
             }
 
-            _postRepository.LoadUser(deal);
-            return _mapper.Map<AppointmentViewModel>(deal);
+            return await _appointmentDealQueries.GetSentAppointmentDealAsync(deal.Id);
+
+            //_postRepository.LoadUser(deal);
+            //return _mapper.Map<AppointmentViewModel>(deal);
         }
 
         private async Task SendAppointmentDealConfirmedEventAsync(Domain.AggregatesModel.PostAggregate.Post deal)
