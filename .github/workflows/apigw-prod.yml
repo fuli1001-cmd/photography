@@ -31,12 +31,12 @@ jobs:
       - name: Tags
         run: |
           docker tag photography-apigwbase ${{ secrets.DOCKER_USER }}/photography-apigwbase:${{ github.sha }}
-          docker tag photography-apigwbase ${{ secrets.DOCKER_USER }}/photography-apigwbase:linux-prod
+          docker tag photography-apigwbase ${{ secrets.DOCKER_USER }}/photography-apigwbase:latest
           
       - name: Push
         run: |
           docker push ${{ secrets.DOCKER_USER }}/photography-apigwbase:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USER }}/photography-apigwbase:linux-prod
+          docker push ${{ secrets.DOCKER_USER }}/photography-apigwbase:latest
           
       - name: Deploy
         uses: garygrossgarten/github-action-ssh@release

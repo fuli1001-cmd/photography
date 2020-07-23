@@ -6,11 +6,13 @@ on:
       - master
     paths:
       - 'Src/Services/User/**'
+      - 'Src/ApplicationMessages/**'
   pull_request:
     branches:
       - master
     paths:
       - 'Src/Services/User/**'
+      - 'Src/ApplicationMessages/**'
       
 jobs:
   cd:
@@ -28,12 +30,12 @@ jobs:
       - name: Tags
         run: |
           docker tag photography-userapi ${{ secrets.DOCKER_USER }}/photography-userapi:${{ github.sha }}
-          docker tag photography-userapi ${{ secrets.DOCKER_USER }}/photography-userapi:linux
+          docker tag photography-userapi ${{ secrets.DOCKER_USER }}/photography-userapi:latest
           
       - name: Push
         run: |
           docker push ${{ secrets.DOCKER_USER }}/photography-userapi:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USER }}/photography-userapi:linux
+          docker push ${{ secrets.DOCKER_USER }}/photography-userapi:latest
           
       - name: Deploy
         uses: garygrossgarten/github-action-ssh@release

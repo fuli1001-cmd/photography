@@ -27,8 +27,10 @@ namespace Photography.Services.User.API.Application.IntegrationEventHandlers
             {
                 _logger.LogInformation("----- Handling PostForwardedEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                var user = await _userRepository.GetByIdAsync(message.ForwardUserId);
-                user.IncreasePostCount();
+                var user = await _userRepository.GetByIdAsync(message.ForwardInfos[0].ForwardUserId);
+
+                message.ForwardInfos.ForEach(info => user.IncreasePostCount());
+                
                 await _userRepository.UnitOfWork.SaveEntitiesAsync();
             }
         }

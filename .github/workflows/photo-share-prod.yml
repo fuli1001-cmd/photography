@@ -28,12 +28,12 @@ jobs:
       - name: Tags
         run: |
           docker tag photography-photoshare ${{ secrets.DOCKER_USER }}/photography-photoshare:${{ github.sha }}
-          docker tag photography-photoshare ${{ secrets.DOCKER_USER }}/photography-photoshare:linux
+          docker tag photography-photoshare ${{ secrets.DOCKER_USER }}/photography-photoshare:latest
           
       - name: Push
         run: |
           docker push ${{ secrets.DOCKER_USER }}/photography-photoshare:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USER }}/photography-photoshare:linux
+          docker push ${{ secrets.DOCKER_USER }}/photography-photoshare:latest
           
       - name: Deploy
         uses: garygrossgarten/github-action-ssh@release

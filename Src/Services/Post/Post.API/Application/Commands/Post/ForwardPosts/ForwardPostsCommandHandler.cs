@@ -87,32 +87,36 @@ namespace Photography.Services.Post.API.Application.Commands.Post.ForwardPosts
 
             if (await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
             {
-                foreach(var post in posts)
+                var forwardInfos = new List<ForwardInfo>();
+
+                foreach (var post in posts)
                 {
                     var forwardedPost = toBeForwardedPosts.FirstOrDefault(p => p.Id == post.ForwardedPostId.Value);
 
                     if (forwardedPost == null)
                         forwardedPost = originalPosts.FirstOrDefault(p => p.Id == post.ForwardedPostId.Value);
 
-                    await SendPostForwardedEventAsync(myId, forwardedPost.UserId, post.ForwardedPostId.Value, post.Id);
+                    forwardInfos.Add(new ForwardInfo
+                    {
+                        ForwardUserId = myId,
+                        OriginalPostUserId = forwardedPost.UserId,
+                        OriginalPostId = post.ForwardedPostId.Value,
+                        NewPostId = post.Id
+                    });
                 }
+
+                await SendPostForwardedEventAsync(forwardInfos);
             }
 
             return await _postQueries.GetPostsAsync(posts.Select(p => p.Id).ToList());
         }
 
-        private async Task SendPostForwardedEventAsync(Guid forwardUserId, Guid originalPostUserId, Guid originalPostId, Guid newPostId)
+        private async Task SendPostForwardedEventAsync(List<ForwardInfo> forwardInfos)
         {
-            var @event = new PostForwardedEvent 
-            { 
-                ForwardUserId = forwardUserId, 
-                OriginalPostUserId = originalPostUserId,
-                OriginalPostId = originalPostId,
-                NewPostId = newPostId
-            };
+            var @event = new PostForwardedEvent { ForwardInfos = forwardInfos };
             _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
             await _messageSession.Publish(@event);
-            _logger.LogInformation("----- Published PostPublishedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
+            _logger.LogInformation("----- Published PostForwardedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
         }
     }
 }

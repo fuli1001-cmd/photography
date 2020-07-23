@@ -6,11 +6,13 @@ on:
       - master
     paths:
       - 'Src/Services/Notification/**'
+      - 'Src/ApplicationMessages/**'
   pull_request:
     branches:
       - master
     paths:
       - 'Src/Services/Notification/**'
+      - 'Src/ApplicationMessages/**'
       
 jobs:
   cd:
@@ -28,12 +30,12 @@ jobs:
       - name: Tags
         run: |
           docker tag photography-notificationapi ${{ secrets.DOCKER_USER }}/photography-notificationapi:${{ github.sha }}
-          docker tag photography-notificationapi ${{ secrets.DOCKER_USER }}/photography-notificationapi:linux
+          docker tag photography-notificationapi ${{ secrets.DOCKER_USER }}/photography-notificationapi:latest
           
       - name: Push
         run: |
           docker push ${{ secrets.DOCKER_USER }}/photography-notificationapi:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USER }}/photography-notificationapi:linux
+          docker push ${{ secrets.DOCKER_USER }}/photography-notificationapi:latest
           
       - name: Deploy
         uses: garygrossgarten/github-action-ssh@release

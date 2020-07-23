@@ -33,24 +33,27 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
             {
                 _logger.LogInformation("----- Handling PostForwardedEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                // 创建新帖子，由于是转发的帖子，其图片为原帖子的图片
-                var originalPost = await _postRepository.GetByIdAsync(message.OriginalPostId);
-                var createPostCommand = new CreatePostCommand
+                foreach(var info in message.ForwardInfos)
                 {
-                    PostId = message.NewPostId,
-                    Image = originalPost.Image
-                };
-                await _mediator.Send(createPostCommand);
+                    // 创建新帖子，由于是转发的帖子，其图片为原帖子的图片
+                    var originalPost = await _postRepository.GetByIdAsync(info.OriginalPostId);
+                    var createPostCommand = new CreatePostCommand
+                    {
+                        PostId = info.NewPostId,
+                        Image = originalPost.Image
+                    };
+                    await _mediator.Send(createPostCommand);
 
-                // 创建事件
-                var createEventCommand = new CreateEventCommand
-                {
-                    FromUserId = message.ForwardUserId,
-                    ToUserId = message.OriginalPostUserId,
-                    PostId = message.OriginalPostId,
-                    EventType = EventType.ForwardPost
-                };
-                await _mediator.Send(createEventCommand);
+                    // 创建事件
+                    var createEventCommand = new CreateEventCommand
+                    {
+                        FromUserId = info.ForwardUserId,
+                        ToUserId = info.OriginalPostUserId,
+                        PostId = info.OriginalPostId,
+                        EventType = EventType.ForwardPost
+                    };
+                    await _mediator.Send(createEventCommand);
+                }
             }
         }
     }
