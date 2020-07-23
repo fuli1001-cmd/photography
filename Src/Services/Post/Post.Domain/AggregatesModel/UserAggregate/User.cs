@@ -35,6 +35,9 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
         // 头像是否已修改过
         public bool AvatarSet { get; private set; }
 
+        // 今日已发约拍数量
+        public int AppointmentCount { get; set; }
+
         // 用户被禁用到的时间点，null表示未禁用
         public DateTime? DisabledTime { get; private set; }
 
@@ -110,6 +113,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
         public void AddAppointmentScore(int score)
         {
             Score += score;
+            AppointmentCount++;
         }
 
         public void AuthRealName(bool passed)

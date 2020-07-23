@@ -62,10 +62,11 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.Publish
                 throw new ClientException($"账号存在违规行为，该功能禁用{hours}小时");
             }
 
-            if ((await _postRepository.GetTodayUserAppointmentCount(userId)) >= _appointmentSettings.MaxPublishCount)
+            // 检查用户每日发布约拍数量，用户删除的约拍也统计入内
+            if ((await _postRepository.UserHasAppointmentTodayAsync(userId)) && user.AppointmentCount >= _appointmentSettings.MaxPublishCount)
                 throw new ClientException("已达今日最大约拍发布数量");
 
-            // 增加用户的约拍值
+            // 增加用户的约拍值，同时增加今日已发约拍数量
             user.AddAppointmentScore(_appointmentSettings.PublishScore);
 
             // 发布约拍

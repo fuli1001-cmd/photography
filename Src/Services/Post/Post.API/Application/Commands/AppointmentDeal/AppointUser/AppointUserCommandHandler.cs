@@ -57,10 +57,10 @@ namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.App
         {
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-            if ((await _postRepository.GetTodayUserSentAppointmentDealCount(myId)) >= _appointmentSettings.MaxSendDealCount)
+            if ((await _postRepository.GetTodayUserSentAppointmentDealCountAsync(myId)) >= _appointmentSettings.MaxSendDealCount)
                 throw new ClientException("已达今日最大约拍发起数量");
 
-            if ((await _postRepository.GetTodayUserReceivedAppointmentDealCount(request.AppointmentedUserId)) >= _appointmentSettings.MaxReceiveDealCount)
+            if ((await _postRepository.GetTodayUserReceivedAppointmentDealCountAsync(request.AppointmentedUserId)) >= _appointmentSettings.MaxReceiveDealCount)
                 throw new ClientException("对方已达今日最大被约数量");
 
             // 创建约拍交易

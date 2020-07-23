@@ -40,24 +40,19 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
 
 
         /// <summary>
-        /// 获取用户今天已发布的约拍数量
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        Task<int> GetTodayUserAppointmentCount(Guid userId);
-
-        /// <summary>
         /// 获取用户今天已发出的约拍交易数量
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        Task<int> GetTodayUserSentAppointmentDealCount(Guid userId);
+        Task<int> GetTodayUserSentAppointmentDealCountAsync(Guid userId);
 
         /// <summary>
         /// 获取用户今天已收到的约拍交易数量
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        Task<int> GetTodayUserReceivedAppointmentDealCount(Guid userId);
+        Task<int> GetTodayUserReceivedAppointmentDealCountAsync(Guid userId);
+
+        Task<bool> UserHasAppointmentTodayAsync(Guid userId);
     }
 }

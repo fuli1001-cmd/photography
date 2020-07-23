@@ -108,28 +108,28 @@ namespace Photography.Services.Post.Infrastructure.Repositories
             await _context.Database.ExecuteSqlRawAsync(commandBuilder.ToString(), paramPercent, paramNowInSeconds, paramStartRefreshHour, paramRefreshIntervalHour);
         }
 
-        public async Task<int> GetTodayUserAppointmentCount(Guid userId)
+        public async Task<int> GetTodayUserSentAppointmentDealCountAsync(Guid userId)
         {
             var startSeconds = GetTodayStartSeconds();
-            var endeconds = GetTodayEndSeconds();
+            var endSeconds = GetTodayEndSeconds();
 
-            return await _context.Posts.Where(p => p.PostType == PostType.Appointment && p.CreatedTime <= endeconds && p.CreatedTime >= startSeconds && p.UserId == userId).CountAsync();
+            return await _context.Posts.Where(p => p.PostType == PostType.AppointmentDeal && p.CreatedTime <= endSeconds && p.CreatedTime >= startSeconds && p.UserId == userId).CountAsync();
         }
 
-        public async Task<int> GetTodayUserSentAppointmentDealCount(Guid userId)
+        public async Task<int> GetTodayUserReceivedAppointmentDealCountAsync(Guid userId)
         {
             var startSeconds = GetTodayStartSeconds();
-            var endeconds = GetTodayEndSeconds();
+            var endSeconds = GetTodayEndSeconds();
 
-            return await _context.Posts.Where(p => p.PostType == PostType.AppointmentDeal && p.CreatedTime <= endeconds && p.CreatedTime >= startSeconds && p.UserId == userId).CountAsync();
+            return await _context.Posts.Where(p => p.PostType == PostType.AppointmentDeal && p.CreatedTime <= endSeconds && p.CreatedTime >= startSeconds && p.AppointmentedUserId == userId).CountAsync();
         }
 
-        public async Task<int> GetTodayUserReceivedAppointmentDealCount(Guid userId)
+        public async Task<bool> UserHasAppointmentTodayAsync(Guid userId)
         {
             var startSeconds = GetTodayStartSeconds();
-            var endeconds = GetTodayEndSeconds();
+            var endSeconds = GetTodayEndSeconds();
 
-            return await _context.Posts.Where(p => p.PostType == PostType.AppointmentDeal && p.CreatedTime <= endeconds && p.CreatedTime >= startSeconds && p.AppointmentedUserId == userId).CountAsync();
+            return await _context.Posts.AnyAsync(p => p.PostType == PostType.Appointment && p.UserId == userId && p.CreatedTime <= endSeconds && p.CreatedTime >= startSeconds);
         }
 
         // 获取今天开始时间的时间戳
