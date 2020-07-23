@@ -1,6 +1,6 @@
 {
-    "serviceBase": "http://121.196.28.120:5101/api",
     "fileServer": "http://121.196.28.120:8081",
+    "serviceBase": "http://121.196.28.120:5101/api",
     "iosUpgradeUrl": "https://apps.apple.com/cn/app/id1516790011?mt=8",
     "androidUpgradeUrl": "https://senseshare.arise-net.com/download/sense_ps_1.0.0_1_release_20200629183321.apk"
 }
