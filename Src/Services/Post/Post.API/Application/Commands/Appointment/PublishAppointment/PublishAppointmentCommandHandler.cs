@@ -68,6 +68,7 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.Publish
 
             // 增加用户的约拍值，同时增加今日已发约拍数量
             user.AddAppointmentScore(_appointmentSettings.PublishScore);
+            user.IncreaseAppointmentCount();
 
             // 发布约拍
             var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType)).ToList();

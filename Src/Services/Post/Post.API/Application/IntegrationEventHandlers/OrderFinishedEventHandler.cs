@@ -14,6 +14,7 @@ namespace Photography.Services.Post.API.Application.IntegrationEventHandlers
 {
     public class OrderFinishedEventHandler : IHandleMessages<OrderFinishedEvent>
     {
+        private readonly IUserRepository _userRepository;
         private readonly AppointmentSettings _appointmentSettings;
         private readonly ILogger<OrderFinishedEventHandler> _logger;
         private readonly IServiceProvider _serviceProvider;
@@ -21,10 +22,12 @@ namespace Photography.Services.Post.API.Application.IntegrationEventHandlers
         private IMessageSession _messageSession;
 
         public OrderFinishedEventHandler(
+            IUserRepository userRepository,
             IOptionsSnapshot<AppointmentSettings> appointmentOptions,
             IServiceProvider serviceProvider,
             ILogger<OrderFinishedEventHandler> logger)
         {
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _appointmentSettings = appointmentOptions?.Value ?? throw new ArgumentNullException(nameof(appointmentOptions));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -36,6 +39,12 @@ namespace Photography.Services.Post.API.Application.IntegrationEventHandlers
             {
                 _logger.LogInformation("----- Handling OrderFinishedEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
+                // 增加订单参与双方的约拍值
+                var users = await _userRepository.GetUsersAsync(new List<Guid> { message.User1Id, message.User2Id });
+                users.ForEach(u => u.AddAppointmentScore(_appointmentSettings.FinishDealScore));
+                await _userRepository.UnitOfWork.SaveEntitiesAsync();
+
+                // 发送用户约拍值变化事件
                 var eventTasks = new List<Task>
                 {
                     SendAppointmentScoreChangedEventAsync(message.User1Id),

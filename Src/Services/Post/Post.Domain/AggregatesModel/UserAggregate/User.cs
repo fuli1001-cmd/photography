@@ -113,6 +113,10 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
         public void AddAppointmentScore(int score)
         {
             Score += score;
+        }
+
+        public void IncreaseAppointmentCount()
+        {
             AppointmentCount++;
         }
 
