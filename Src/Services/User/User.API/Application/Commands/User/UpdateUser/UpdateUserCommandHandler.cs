@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
 using Photography.Services.User.API.BackwardCompatibility.ChatServerRedis;
-using Photography.Services.User.API.Infrastructure.Redis;
 using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
 using System;
 using System.Collections.Generic;

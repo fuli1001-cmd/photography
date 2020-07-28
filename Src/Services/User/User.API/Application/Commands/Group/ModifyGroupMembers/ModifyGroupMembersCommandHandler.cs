@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Photography.Services.User.API.BackwardCompatibility.ChatServerRedis;
 using Photography.Services.User.API.BackwardCompatibility.Models;
-using Photography.Services.User.API.Infrastructure.Redis;
 using Photography.Services.User.Domain.AggregatesModel.GroupAggregate;
 using Photography.Services.User.Domain.AggregatesModel.GroupUserAggregate;
 using Photography.Services.User.Domain.AggregatesModel.UserAggregate;

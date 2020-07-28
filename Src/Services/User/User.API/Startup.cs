@@ -20,11 +20,9 @@ using Autofac;
 using Photography.Services.User.API.Infrastructure.AutofacModules;
 using Photography.Services.User.API.Query.MapperProfiles;
 using Photography.Services.User.Infrastructure;
-using Arise.DDD.Infrastructure.Extensions;
 using Arise.DDD.API.Filters;
 using Photography.Services.User.API.Settings;
 using Photography.Services.User.API.Application.Commands.Login;
-using Photography.Services.User.API.Infrastructure.Redis;
 using Photography.Services.User.API.BackwardCompatibility.ChatServerRedis;
 using Newtonsoft.Json;
 using Arise.DDD.API.Response;
@@ -33,6 +31,8 @@ using Newtonsoft.Json.Serialization;
 using Microsoft.Net.Http.Headers;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Logging;
+using Arise.DDD.Infrastructure.Extensions;
+using Arise.DDD.Infrastructure.Redis;
 
 namespace Photography.Services.User.API
 {
@@ -103,8 +103,10 @@ namespace Photography.Services.User.API
             });
 
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
 
             services.AddSqlDataAccessServices<UserContext>(Configuration.GetConnectionString("UserConnection"), typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
+            services.AddSqlDataAccessServices<ChatContext>(Configuration.GetConnectionString("ChatConnection"), typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
 
             services.AddAutoMapper(typeof(UserViewModelProfile).Assembly);
 

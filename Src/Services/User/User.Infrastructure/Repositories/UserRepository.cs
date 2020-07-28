@@ -2,11 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Photography.Services.User.Infrastructure;
-using Arise.DDD.Infrastructure;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Arise.DDD.Infrastructure.Data;
 
 namespace Photography.Services.User.Infrastructure.Repositories
 {

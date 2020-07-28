@@ -1,9 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Arise.DDD.Infrastructure.Redis;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Photography.Services.User.API.Application.Commands.Login;
 using Photography.Services.User.API.BackwardCompatibility.Models;
-using Photography.Services.User.API.BackwardCompatibility.Utils;
-using Photography.Services.User.API.Infrastructure.Redis;
 using Photography.Services.User.Domain.AggregatesModel.GroupAggregate;
 using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
 using System;

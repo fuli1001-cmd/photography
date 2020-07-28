@@ -1,4 +1,4 @@
-﻿using Arise.DDD.Infrastructure;
+﻿using Arise.DDD.Infrastructure.Data;
 using Photography.Services.Notification.Domain.AggregatesModel.UserAggregate;
 using System;
 using System.Collections.Generic;

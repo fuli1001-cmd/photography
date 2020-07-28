@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Arise.DDD.Infrastructure.Redis;
+using Arise.DDD.Infrastructure.Sms;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -57,7 +59,6 @@ namespace Photography.ApiGateways.ApiGwBase
 
             services.AddHttpClient<AuthService>();
             services.AddHttpClient<UserService>();
-            services.AddHttpClient<NotificationService>();
 
             services.AddApiVersioning(options =>
             {

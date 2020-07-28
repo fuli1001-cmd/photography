@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Photography.ApiGateways.ApiGwBase.Sms
 {
-    public interface ISmsService
-    {
-        string SendSms(string Phonenumber);
-    }
+    //public interface ISmsService
+    //{
+    //    string SendSms(string Phonenumber);
+    //}
 }

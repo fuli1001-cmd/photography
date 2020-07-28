@@ -1,4 +1,4 @@
-﻿using Arise.DDD.Infrastructure;
+﻿using Arise.DDD.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate;
 using System;

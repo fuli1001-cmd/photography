@@ -1,4 +1,4 @@
-﻿using Arise.DDD.Infrastructure;
+﻿using Arise.DDD.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Photography.Services.Order.Domain.AggregatesModel.OrderAggregate;
 using System;

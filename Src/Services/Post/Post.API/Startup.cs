@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Arise.DDD.API.Behaviors;
 using Arise.DDD.API.Filters;
 using Arise.DDD.API.Response;
 using Arise.DDD.Infrastructure.Extensions;
@@ -26,14 +27,11 @@ using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Photography.Services.Post.API.Application.Behaviors;
-using Photography.Services.Post.API.Application.Commands.Post.PublishPost;
 using Photography.Services.Post.API.Application.Commands.User.CreateUser;
 using Photography.Services.Post.API.Application.Services;
 using Photography.Services.Post.API.Application.Validators;
 using Photography.Services.Post.API.Infrastructure.AutofacModules;
 using Photography.Services.Post.API.Query.MapperProfiles;
-using Photography.Services.Post.API.Query.ViewModels;
 using Photography.Services.Post.API.Settings;
 using Photography.Services.Post.Infrastructure;
 using Serilog;
@@ -106,7 +104,7 @@ namespace Photography.Services.Post.API
             });
 
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
-            //services.AddScoped<IPostQueries>(sp => new PostQueries(Configuration.GetConnectionString("PostConnection")));
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
 
             //var dbSettings = new DbSettings();
             //Configuration.GetSection("DbSettings").Bind(dbSettings);

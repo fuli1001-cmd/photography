@@ -1,11 +1,11 @@
-﻿using Arise.DDD.Infrastructure;
-using Photography.Services.User.Domain.AggregatesModel.AlbumAggregate;
+﻿using Photography.Services.User.Domain.AggregatesModel.AlbumAggregate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Arise.DDD.Infrastructure.Data;
 
 namespace Photography.Services.User.Infrastructure.Repositories
 {
