@@ -283,6 +283,18 @@
       "UpstreamHttpMethod": []
     },
     {
+      "DownstreamPathTemplate": "/api/events/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "notificationapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/events/{everything}",
+      "UpstreamHttpMethod": []
+    },
+    {
       "DownstreamPathTemplate": "/api/notificationusers/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
