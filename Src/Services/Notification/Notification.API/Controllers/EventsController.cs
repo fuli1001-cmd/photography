@@ -87,7 +87,8 @@ namespace Photography.Services.Notification.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<UnReadEventCountViewModel>> MarkEventCategoryReadedAsync([FromBody] ReadEventCommand command)
         {
-            var result = await _mediator.Send(command);
+            await _mediator.Send(command);
+            var result = await _eventQueries.GetUnReadEventCountAsync();
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
     }
