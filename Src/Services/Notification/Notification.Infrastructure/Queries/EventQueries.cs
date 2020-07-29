@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
-using Photography.Services.Notification.Domain.AggregatesModel.UserAggregate;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Arise.DDD.API.Paging;
+using Photography.Services.Notification.Domain.AggregatesModel.EventAggregate;
 
 namespace Photography.Services.Notification.Infrastructure.Queries
 {
@@ -61,10 +61,97 @@ namespace Photography.Services.Notification.Infrastructure.Queries
                                    CircleId = e.CircleId,
                                    CircleName = e.CircleName,
                                    OrderId = e.OrderId,
-                                   Processed = e.Processed
+                                   Processed = e.Processed,
+                                   Readed = e.Readed
                                };
 
             return await PagedList<EventViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
+        }
+
+        public async Task<PagedList<EventViewModel>> GetUserCategoryEventsAsync(EventCategory eventCategory, PagingParameters pagingParameters)
+        {
+            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            var eventTypes = EventCategoryTypeHelper.GetEventCategoryTypes(eventCategory);
+
+            var queryableDto = from e in _dbContext.Events
+                               join u in _dbContext.Users
+                               on e.FromUserId equals u.Id
+                               where e.ToUserId == myId && eventTypes.Contains(e.EventType)
+                               orderby e.CreatedTime descending
+                               select new EventViewModel
+                               {
+                                   FromUser = new UserViewModel
+                                   {
+                                       Id = u.Id,
+                                       Nickname = u.Nickname,
+                                       Avatar = u.Avatar,
+                                       Followed = (from ur in _dbContext.UserRelations
+                                                   where ur.FollowerId == myId && ur.FollowedUserId == u.Id
+                                                   select ur.Id)
+                                                  .Any()
+                                   },
+                                   EventType = e.EventType,
+                                   Image = (from p in _dbContext.Posts
+                                            where p.Id == e.PostId
+                                            select p.Image)
+                                           .SingleOrDefault(),
+                                   CreatedTime = e.CreatedTime,
+                                   PostId = e.PostId,
+                                   CommentId = e.CommentId,
+                                   CommentText = e.CommentText,
+                                   CircleId = e.CircleId,
+                                   CircleName = e.CircleName,
+                                   OrderId = e.OrderId,
+                                   Processed = e.Processed,
+                                   Readed = e.Readed
+                               };
+
+            return await PagedList<EventViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
+        }
+
+        public async Task<UnReadEventCountViewModel> GetUnReadEventCountAsync()
+        {
+            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            var sqlBuilder = new StringBuilder($"select {GetCountSql(EventCategory.Interaction)} as Interaction, ");
+            sqlBuilder.Append($"{GetCountSql(EventCategory.Appointment)} as Appointment, ");
+            sqlBuilder.Append($"{GetCountSql(EventCategory.System)} as System, ");
+            sqlBuilder.Append($"{GetCountSql(EventCategory.ReceivedAppointmentDeal)} as ReceivedAppointmentDeal, ");
+            sqlBuilder.Append($"{GetCountSql(EventCategory.SentAppointmentDeal)} as SentAppointmentDeal from Events where Readed = 0 and ToUserId = '{myId}'");
+
+            return await _dbContext.UnReadEventCounts.FromSqlRaw(sqlBuilder.ToString()).FirstOrDefaultAsync();
+        }
+
+        private string GetCountSql(EventCategory eventCategory)
+        {
+            return $"isnull(sum(case when EventType in {GetEventCategorySql(eventCategory)} then 1 else 0 end), 0)";
+        }
+
+        private string GetEventCategorySql(EventCategory eventCategory)
+        {
+            var sqlBuilder = new StringBuilder("(");
+            var i = 0;
+            var eventTypes = EventCategoryTypeHelper.GetEventCategoryTypes(eventCategory);
+
+            // 约拍类别还包含约发出的约拍和收到的约拍两种类别
+            if (eventCategory == EventCategory.Appointment)
+            {
+                eventTypes.Add(EventType.AppointmentDealSent);
+                eventTypes.Add(EventType.AppointmentDealReceived);
+            }
+
+            eventTypes.ForEach(e =>
+            {
+                sqlBuilder.Append((int)e);
+                if (i < eventTypes.Count - 1)
+                    sqlBuilder.Append(", ");
+                i++;
+            });
+
+            sqlBuilder.Append(")");
+
+            return sqlBuilder.ToString();
         }
     }
 }

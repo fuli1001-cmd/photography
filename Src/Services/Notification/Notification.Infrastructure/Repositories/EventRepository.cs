@@ -1,6 +1,7 @@
 ﻿using Arise.DDD.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Photography.Services.Notification.Domain.AggregatesModel.EventAggregate;
+using Photography.Services.Notification.Infrastructure.Queries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +17,16 @@ namespace Photography.Services.Notification.Infrastructure.Repositories
 
         }
 
-        public Task<List<Event>> GetUnProcessedEventsAsync(Guid fromUserId, Guid toUserId, EventType eventType)
+        public async Task<List<Event>> GetUnProcessedEventsAsync(Guid fromUserId, Guid toUserId, EventType eventType)
         {
-            return _context.Events.Where(e => e.FromUserId == fromUserId && e.ToUserId == toUserId && e.EventType == eventType).ToListAsync();
+            return await _context.Events.Where(e => e.FromUserId == fromUserId && e.ToUserId == toUserId && e.EventType == eventType).ToListAsync();
+        }
+
+        public async Task<List<Event>> GetUserUnReadCategoryEventsAsync(Guid toUserId, EventCategory eventCategory)
+        {
+            var eventTypes = EventCategoryTypeHelper.GetEventCategoryTypes(eventCategory);
+            
+            return await _context.Events.Where(e => e.ToUserId == toUserId && !e.Readed && eventTypes.Contains(e.EventType)).ToListAsync();
         }
     }
 }

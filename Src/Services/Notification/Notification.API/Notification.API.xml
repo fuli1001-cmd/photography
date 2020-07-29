@@ -9,11 +9,42 @@
             将事件标记为已处理的命令
             </summary>
         </member>
+        <member name="T:Photography.Services.Notification.API.Application.Commands.ReadEvent.ReadEventCommand">
+            <summary>
+            标记某类别的事件为已读
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Notification.API.Application.Commands.ReadEvent.ReadEventCommand.EventCategory">
+            <summary>
+            事件类别
+            </summary>
+        </member>
         <member name="M:Photography.Services.Notification.API.Controllers.EventsController.GetUserReceivedEventsAsync(Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             用户的事件
             </summary>
             <param name="pagingParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Notification.API.Controllers.EventsController.GetUserCategoryEventsAsync(Photography.Services.Notification.Domain.AggregatesModel.EventAggregate.EventCategory,Arise.DDD.API.Paging.PagingParameters)">
+            <summary>
+            按类别获取用户的事件
+            </summary>
+            <param name="eventCategory">事件类别</param>
+            <param name="pagingParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Notification.API.Controllers.EventsController.GetUnReadEventCountAsync">
+            <summary>
+            获取未读事件数量
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Notification.API.Controllers.EventsController.MarkEventCategoryReadedAsync(Photography.Services.Notification.API.Application.Commands.ReadEvent.ReadEventCommand)">
+            <summary>
+            标记某类别的事件为已读
+            </summary>
+            <param name="command"></param>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.Notification.API.Controllers.NotificationUsersController.ConfigurePushAsync(Photography.Services.Notification.API.Application.Commands.ConfigurePush.ConfigurePushCommand)">

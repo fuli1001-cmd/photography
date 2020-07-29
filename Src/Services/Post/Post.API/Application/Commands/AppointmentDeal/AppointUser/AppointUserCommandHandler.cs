@@ -83,7 +83,7 @@ namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.App
                 //await SendAppointmentDealConfirmedEventAsync(deal);
                 var eventTasks = new List<Task>
                 {
-                    SendAppointmentDealConfirmedEventAsync(deal),
+                    SendAppointmentDealCreatedEventAsync(deal),
                     SendAppointmentScoreChangedEventAsync(myId, _appointmentSettings.SendDealScore),
                     SendAppointmentScoreChangedEventAsync(request.AppointmentedUserId, _appointmentSettings.ReceiveDealScore)
                 };
@@ -96,7 +96,7 @@ namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.App
             //return _mapper.Map<AppointmentViewModel>(deal);
         }
 
-        private async Task SendAppointmentDealConfirmedEventAsync(Domain.AggregatesModel.PostAggregate.Post deal)
+        private async Task SendAppointmentDealCreatedEventAsync(Domain.AggregatesModel.PostAggregate.Post deal)
         {
             var @event = new AppointmentDealCreatedEvent
             {

@@ -9,5 +9,7 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
     public interface IEventRepository : IRepository<Event>
     {
         Task<List<Event>> GetUnProcessedEventsAsync(Guid fromUserId, Guid toUserId, EventType eventType);
+
+        Task<List<Event>> GetUserUnReadCategoryEventsAsync(Guid toUserId, EventCategory eventCategory);
     }
 }

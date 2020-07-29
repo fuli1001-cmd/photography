@@ -29,7 +29,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
             {
                 _logger.LogInformation("----- Handling OrderCanceledEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                // 创建用户已入圈的事件
+                // 创建订单已取消的事件
                 var createEventCommand = new CreateEventCommand
                 {
                     FromUserId = message.ProcessingUserId,

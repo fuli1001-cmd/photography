@@ -4,6 +4,7 @@ using Arise.DDD.Infrastructure.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Photography.Services.Notification.API.Query.ViewModels;
 using Photography.Services.Notification.Domain.AggregatesModel.EventAggregate;
 using Photography.Services.Notification.Domain.AggregatesModel.PostAggregate;
 using Photography.Services.Notification.Domain.AggregatesModel.UserAggregate;
@@ -28,6 +29,8 @@ namespace Photography.Services.Notification.Infrastructure
 
         public DbSet<UserRelation> UserRelations { get; set; }
 
+        public DbSet<UnReadEventCountViewModel> UnReadEventCounts { get; set; }
+
         public NotificationContext(DbContextOptions<NotificationContext> options, IMediator mediator) : base(options, mediator) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -36,6 +39,8 @@ namespace Photography.Services.Notification.Infrastructure
             modelBuilder.ApplyConfiguration(new PostEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new UserRelationEntityTypeConfiguration());
+
+            modelBuilder.Entity<UnReadEventCountViewModel>().HasNoKey();
         }
     }
 }

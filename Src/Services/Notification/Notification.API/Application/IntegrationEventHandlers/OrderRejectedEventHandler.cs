@@ -28,7 +28,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
             {
                 _logger.LogInformation("----- Handling OrderRejectedEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                // 创建用户已入圈的事件
+                // 创建订单已拒绝的事件
                 var createEventCommand = new CreateEventCommand
                 {
                     FromUserId = message.ProcessingUserId,
