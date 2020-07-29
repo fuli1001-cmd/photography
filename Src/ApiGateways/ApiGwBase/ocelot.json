@@ -201,6 +201,18 @@
       "UpstreamPathTemplate": "/api/groups/{everything}",
       "UpstreamHttpMethod": []
     },
+    {
+      "DownstreamPathTemplate": "/api/chats/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "userapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/chats/{everything}",
+      "UpstreamHttpMethod": []
+    },
 
     {
       "DownstreamPathTemplate": "/api/orders",
