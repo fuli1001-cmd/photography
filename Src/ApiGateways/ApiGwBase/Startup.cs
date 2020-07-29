@@ -16,10 +16,8 @@ using Microsoft.OpenApi.Models;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Ocelot.Provider.Consul;
-using Photography.ApiGateways.ApiGwBase.Redis;
 using Photography.ApiGateways.ApiGwBase.Services;
 using Photography.ApiGateways.ApiGwBase.Settings;
-using Photography.ApiGateways.ApiGwBase.Sms;
 
 namespace Photography.ApiGateways.ApiGwBase
 {
