@@ -117,6 +117,8 @@ namespace Photography.Services.User.Infrastructure.Queries.BackwardCompatibility
                     .ToListAsync())
                     .Distinct(new CSInstantMsgComparer());
             }
+            else
+                chatMessage.RecentMsgs = new List<CSInstantMsg>();
 
             return chatMessage;
         }

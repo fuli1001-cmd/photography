@@ -14,11 +14,22 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.UserAggregate
         public string Avatar { get; private set; }
 
         #region 推送设置
+        #region to be deleted
         public PushSetting PushLikeEvent { get; private set; }
         public PushSetting PushReplyEvent { get; private set; }
         public PushSetting PushForwardEvent { get; private set; }
         public PushSetting PushShareEvent { get; private set; }
         public PushSetting PushFollowEvent { get; private set; }
+        #endregion
+
+        // 互动通知推送设置
+        public PushSetting InteractionEvent { get; private set; }
+
+        // 约拍通知推送设置
+        public PushSetting AppointmentEvent { get; private set; }
+
+        // 系统通知推送设置
+        public PushSetting SystemEvent { get; private set; }
         #endregion
 
         private readonly List<Event> _raisedEvents = null;
@@ -44,7 +55,7 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.UserAggregate
             Avatar = avatar;
         }
 
-        public void ConfigurePush(EventType eventType, PushSetting setting)
+        public void ConfigurePushByEventType(EventType eventType, PushSetting setting)
         {
             if (eventType == EventType.Follow)
                 PushFollowEvent = setting;
@@ -56,6 +67,16 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.UserAggregate
                 PushReplyEvent = setting;
             else if (eventType == EventType.SharePost)
                 PushShareEvent = setting;
+        }
+
+        public void ConfigurePush(EventCategory eventCategory, PushSetting setting)
+        {
+            if (eventCategory == EventCategory.Appointment)
+                AppointmentEvent = setting;
+            else if (eventCategory == EventCategory.Interaction)
+                InteractionEvent = setting;
+            else if (eventCategory == EventCategory.System)
+                SystemEvent = setting;
         }
     }
 

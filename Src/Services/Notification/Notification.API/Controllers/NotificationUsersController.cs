@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Photography.Services.Notification.API.Application.Commands.ConfigurePush;
+using Photography.Services.Notification.API.Application.Commands.ConfigurePushByEventType;
 using Photography.Services.Notification.API.Query.Interfaces;
 using Photography.Services.Notification.API.Query.ViewModels;
 using System;
@@ -32,15 +33,35 @@ namespace Photography.Services.Notification.API.Controllers
         }
 
         /// <summary>
-        /// 设置是否允许查看关注我的人
+        /// 推送设置v1
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
         [HttpPut]
         [Route("pushsettings")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [Obsolete]
+        public async Task<ActionResult<bool>> ConfigurePushAsync([FromBody] ConfigurePushByEventTypeCommand command)
+        {
+            _logger.LogInformation("old api called: pushsettings");
+
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 推送设置v2
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("pushsettings")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ApiVersion("2.0")]
         public async Task<ActionResult<bool>> ConfigurePushAsync([FromBody] ConfigurePushCommand command)
         {
+            _logger.LogInformation("pushsettings v2");
+
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }

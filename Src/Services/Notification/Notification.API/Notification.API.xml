@@ -70,9 +70,16 @@
             <param name="command"></param>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.Notification.API.Controllers.NotificationUsersController.ConfigurePushAsync(Photography.Services.Notification.API.Application.Commands.ConfigurePushByEventType.ConfigurePushByEventTypeCommand)">
+            <summary>
+            推送设置v1
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
         <member name="M:Photography.Services.Notification.API.Controllers.NotificationUsersController.ConfigurePushAsync(Photography.Services.Notification.API.Application.Commands.ConfigurePush.ConfigurePushCommand)">
             <summary>
-            设置是否允许查看关注我的人
+            推送设置v2
             </summary>
             <param name="command"></param>
             <returns></returns>
