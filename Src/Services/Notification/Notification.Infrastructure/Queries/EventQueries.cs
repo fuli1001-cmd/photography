@@ -62,7 +62,8 @@ namespace Photography.Services.Notification.Infrastructure.Queries
                                    CircleName = e.CircleName,
                                    OrderId = e.OrderId,
                                    Processed = e.Processed,
-                                   Readed = e.Readed
+                                   Readed = e.Readed,
+                                   Id = e.Id
                                };
 
             return await PagedList<EventViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
@@ -104,7 +105,8 @@ namespace Photography.Services.Notification.Infrastructure.Queries
                                    CircleName = e.CircleName,
                                    OrderId = e.OrderId,
                                    Processed = e.Processed,
-                                   Readed = e.Readed
+                                   Readed = e.Readed,
+                                   Id = e.Id
                                };
 
             return await PagedList<EventViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
@@ -116,9 +118,8 @@ namespace Photography.Services.Notification.Infrastructure.Queries
 
             var sqlBuilder = new StringBuilder($"select {GetCountSql(EventCategory.Interaction)} as Interaction, ");
             sqlBuilder.Append($"{GetCountSql(EventCategory.Appointment)} as Appointment, ");
-            sqlBuilder.Append($"{GetCountSql(EventCategory.System)} as System, ");
-            sqlBuilder.Append($"{GetCountSql(EventCategory.ReceivedAppointmentDeal)} as ReceivedAppointmentDeal, ");
-            sqlBuilder.Append($"{GetCountSql(EventCategory.SentAppointmentDeal)} as SentAppointmentDeal from Events where Readed = 0 and ToUserId = '{myId}'");
+            sqlBuilder.Append($"{GetCountSql(EventCategory.System)} as System ");
+            sqlBuilder.Append($"from Events where Readed = 0 and ToUserId = '{myId}'");
 
             return await _dbContext.UnReadEventCounts.FromSqlRaw(sqlBuilder.ToString()).FirstOrDefaultAsync();
         }
@@ -133,13 +134,6 @@ namespace Photography.Services.Notification.Infrastructure.Queries
             var sqlBuilder = new StringBuilder("(");
             var i = 0;
             var eventTypes = EventCategoryTypeHelper.GetEventCategoryTypes(eventCategory);
-
-            // 约拍类别还包含约发出的约拍和收到的约拍两种类别
-            if (eventCategory == EventCategory.Appointment)
-            {
-                eventTypes.Add(EventType.AppointmentDealSent);
-                eventTypes.Add(EventType.AppointmentDealReceived);
-            }
 
             eventTypes.ForEach(e =>
             {

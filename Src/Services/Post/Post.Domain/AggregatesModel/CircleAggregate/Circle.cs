@@ -5,6 +5,7 @@ using Photography.Services.Post.Domain.AggregatesModel.UserCircleRelationAggrega
 using Photography.Services.Post.Domain.Events;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Photography.Services.Post.Domain.AggregatesModel.CircleAggregate
@@ -69,6 +70,21 @@ namespace Photography.Services.Post.Domain.AggregatesModel.CircleAggregate
             _posts.ForEach(p => p.MoveOutFromCircle());
 
             AddCircleDeletedDomainEvent();
+        }
+
+        public void SetOwner(Guid operatorId, Guid newOwnerId)
+        {
+            if (operatorId != OwnerId)
+                throw new ClientException("操作失败", new List<string> { $"Circle {Id} does not belong to user {operatorId}" });
+
+            OwnerId = newOwnerId;
+
+            // 如果新圈主不在圈子中，将其加入圈子并增加圈子用户数量
+            if (!_userCircleRelations.Any(r => r.UserId == newOwnerId))
+            {
+                _userCircleRelations.Add(new UserCircleRelation(OwnerId));
+                IncreaseUserCount();
+            }
         }
 
         public void IncreaseUserCount()

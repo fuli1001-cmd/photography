@@ -1,4 +1,4 @@
-﻿using ApplicationMessages.Events;
+﻿using ApplicationMessages.Events.Order;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using NServiceBus;

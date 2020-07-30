@@ -22,21 +22,14 @@ namespace Photography.Services.Notification.API.Application.Commands.CreateEvent
 
         public async Task<bool> Handle(CreateEventCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("****************** CreateEventCommandHandler 1");
-
             // 不记录自己给自己产生的事件
             if (request.FromUserId != request.ToUserId)
             {
-                _logger.LogInformation("****************** CreateEventCommandHandler 2");
                 var @event = new Event(request.FromUserId, request.ToUserId, request.EventType, request.PostId, 
                     request.CommentId, request.CommentText, request.CircleId, request.CircleName, request.OrderId);
-                _logger.LogInformation("****************** CreateEventCommandHandler 3");
                 _eventRepository.Add(@event);
-                _logger.LogInformation("****************** CreateEventCommandHandler 4");
                 var result = await _eventRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
-                _logger.LogInformation("****************** CreateEventCommandHandler 5 result: {result}", result);
             }
-            _logger.LogInformation("****************** CreateEventCommandHandler 6");
             return true;
         }
     }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Photography.Services.Notification.API.Application.Commands.DeleteEvents;
 using Photography.Services.Notification.API.Application.Commands.ReadEvent;
 using Photography.Services.Notification.API.Query.Interfaces;
 using Photography.Services.Notification.API.Query.ViewModels;
@@ -47,6 +48,20 @@ namespace Photography.Services.Notification.API.Controllers
         {
             var result = await _eventQueries.GetUserReceivedEventsAsync(pagingParameters);
             return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 删除通知
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<bool>> DeleteEventsAsync([FromBody] DeleteEventsCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
 
         /// <summary>

@@ -34,9 +34,9 @@ namespace Photography.Services.User.API.Controllers
         /// <param name="latestMsgId"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("offline_recent_messages/{latestMsgId}")]
+        [Route("offline_recent_messages")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<ChatMessage>> GetOfflineAndRecentMessagesAsync(string latestMsgId)
+        public async Task<ActionResult<ChatMessage>> GetOfflineAndRecentMessagesAsync([FromQuery] string latestMsgId)
         {
             var messages = await _chatQueries.GetOfflineAndRecentMessagesAsync(latestMsgId);
 

@@ -96,5 +96,18 @@ namespace Photography.Services.Post.API.Controllers
             var deals = await _appointmentDealQueries.GetReceivedAppointmentDealsAsync(pagingParameters);
             return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(deals));
         }
+
+        /// <summary>
+        /// 获取我发出的和收到的约拍交易数量
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("SentAndReceivedAppointmentDealCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<SentAndReceivedAppointmentDealCountViewModel>> GetSentAppointmentDealsCountAsync()
+        {
+            var result = await _appointmentDealQueries.GetSentAndReceivedAppointmentDealCountAsync();
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
     }
 }

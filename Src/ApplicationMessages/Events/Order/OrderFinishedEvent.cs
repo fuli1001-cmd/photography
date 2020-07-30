@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApplicationMessages.Events
+namespace ApplicationMessages.Events.Order
 {
     public class OrderFinishedEvent : BaseEvent
     {

@@ -32,6 +32,18 @@ namespace Photography.Services.Post.Infrastructure.Queries
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        public async Task<SentAndReceivedAppointmentDealCountViewModel> GetSentAndReceivedAppointmentDealCountAsync()
+        {
+            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            var sqlBuilder = new StringBuilder("select ");
+            sqlBuilder.Append($"isnull(sum(case when AppointmentedUserId = '{myId}' then 1 else 0 end), 0) as ReceivedAppointmentDeal, ");
+            sqlBuilder.Append($"isnull(sum(case when UserId = '{myId}' then 1 else 0 end), 0) as SentAppointmentDeal ");
+            sqlBuilder.Append($"from Posts where PostType = {(int)PostType.AppointmentDeal} and AppointmentDealStatus = {(int)AppointmentDealStatus.Created}");
+
+            return await _postContext.SentAndReceivedAppointmentDealCounts.FromSqlRaw(sqlBuilder.ToString()).FirstOrDefaultAsync();
+        }
+
         public async Task<PagedList<AppointmentViewModel>> GetReceivedAppointmentDealsAsync(PagingParameters pagingParameters)
         {
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);

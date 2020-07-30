@@ -89,8 +89,7 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
         RejectOrder, // 拒绝订单
         IdAuthenticated, // 实名认证通过
         IdRejected, // 实名认证被拒
-        AppointmentDealSent, // 约拍交易已发送
-        AppointmentDealReceived, // 约拍交易已收到
+        CircleOwnerChanged // 圈主改变
     }
 
     // 事件类别
@@ -98,8 +97,6 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
     {
         Interaction, // 互动
         Appointment, // 约拍
-        System, // 系统
-        SentAppointmentDeal, // 发出的约拍
-        ReceivedAppointmentDeal // 收到的约拍
+        System // 系统
     }
 }

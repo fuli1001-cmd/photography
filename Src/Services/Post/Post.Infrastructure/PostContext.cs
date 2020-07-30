@@ -23,6 +23,7 @@ using Photography.Services.Post.Domain.AggregatesModel.CircleAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserCircleRelationAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserShareAggregate;
 using Arise.DDD.Infrastructure.Data;
+using Photography.Services.Post.API.Query.ViewModels;
 
 namespace Photography.Services.Post.Infrastructure
 {
@@ -50,6 +51,8 @@ namespace Photography.Services.Post.Infrastructure
 
         public DbSet<UserShare> UserShares { get; set; }
 
+        public DbSet<SentAndReceivedAppointmentDealCountViewModel> SentAndReceivedAppointmentDealCounts { get; set; }
+
 
         public PostContext(DbContextOptions<PostContext> options, IMediator mediator) : base(options, mediator) { }
 
@@ -65,6 +68,8 @@ namespace Photography.Services.Post.Infrastructure
             modelBuilder.ApplyConfiguration(new CircleEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new UserCircleRelationEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new UserShareEntityTypeConfiguration());
+
+            modelBuilder.Entity<SentAndReceivedAppointmentDealCountViewModel>().HasNoKey();
 
             //foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
             //{

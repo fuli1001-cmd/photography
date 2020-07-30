@@ -12,6 +12,8 @@ namespace Photography.Services.Post.Domain.AggregatesModel.CircleAggregate
 
         Task<Circle> GetCircleWithPostsAsync(Guid circleId);
 
+        Task<Circle> GetCircleWithUsersAsync(Guid circleId);
+
         /// <summary>
         /// 用户的圈子数量
         /// </summary>

@@ -23,7 +23,8 @@ namespace Photography.Services.Notification.Infrastructure.Queries
                     EventType.LikeComment,
                     EventType.Follow,
                     EventType.ApplyJoinCircle,
-                    EventType.JoinCircle
+                    EventType.JoinCircle,
+                    EventType.CircleOwnerChanged
                 };
             }
             else if (eventCategory == EventCategory.Appointment)
@@ -42,14 +43,6 @@ namespace Photography.Services.Notification.Infrastructure.Queries
                     EventType.IdAuthenticated,
                     EventType.IdRejected
                 };
-            }
-            else if (eventCategory == EventCategory.SentAppointmentDeal)
-            {
-                types = new List<EventType> { EventType.AppointmentDealSent };
-            }
-            else if (eventCategory == EventCategory.ReceivedAppointmentDeal)
-            {
-                types = new List<EventType> { EventType.AppointmentDealReceived };
             }
 
             return types;

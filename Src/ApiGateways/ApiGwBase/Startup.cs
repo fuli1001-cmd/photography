@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Arise.DDD.API.Filters;
 using Arise.DDD.Infrastructure.Redis;
 using Arise.DDD.Infrastructure.Sms;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,13 +37,13 @@ namespace Photography.ApiGateways.ApiGwBase
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            //    .AddJwtBearer("Bearer", options =>
-            //    {
-            //        options.Authority = Configuration["AuthSettings:Authority"];
-            //        options.Audience = Configuration["AuthSettings:Audience"];
-            //        options.RequireHttpsMetadata = false;
-            //    });
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer("Bearer", options =>
+                {
+                    options.Authority = Configuration["AuthSettings:Authority"];
+                    options.Audience = Configuration["AuthSettings:Audience"];
+                    options.RequireHttpsMetadata = false;
+                });
 
             //services.AddOcelot().AddConsul().AddConfigStoredInConsul();
             services.AddOcelot();
@@ -53,10 +56,29 @@ namespace Photography.ApiGateways.ApiGwBase
             services.AddTransient(typeof(IRedisService), typeof(RedisService));
             services.AddTransient(typeof(ISmsService), typeof(AliSmsService));
 
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+            });
 
             services.AddHttpClient<AuthService>();
             services.AddHttpClient<UserService>();
+
+            services.AddHttpClient<NotificationService>(async (serviceProvider, client) =>
+            {
+                var httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();
+
+                var accessToken = await httpContextAccessor.HttpContext.GetTokenAsync("access_token");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            });
+
+            services.AddHttpClient<PostService>(async (serviceProvider, client) =>
+            {
+                var httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();
+
+                var accessToken = await httpContextAccessor.HttpContext.GetTokenAsync("access_token");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            });
 
             services.AddApiVersioning(options =>
             {

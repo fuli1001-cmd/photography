@@ -53,7 +53,16 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         public int LikedPostCount { get; private set; }
 
         // 进行中的订单数量（除去已完成、已拒绝和已取消外的订单数量）
-        public int OngoingOrderCount { get; set; }
+        public int OngoingOrderCount { get; private set; }
+
+        // 拍片阶段的订单数量，包含OrderStatus为WaitingForShooting，WaitingForUploadOriginal的订单
+        public int ShootingStageOrderCount { get; private set; }
+
+        // 选片阶段的订单数量，包含OrderStatus为WaitingForSelection的订单
+        public int SelectionStageOrderCount { get; private set; }
+
+        // 出片阶段的订单数量，包含OrderStatus为WaitingForUploadProcessed，WaitingForCheck的订单
+        public int ProductionStageOrderCount { get; private set; }
 
         // 约拍值
         public int Score { get; private set; }
@@ -196,14 +205,34 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
             LikedPostCount = Math.Max(0, LikedPostCount - 1);
         }
 
-        public void IncreaseOngoingOrderCount()
+        public void IncreaseShootingStageOrderCount()
         {
-            OngoingOrderCount++;
+            ShootingStageOrderCount++;
         }
 
-        public void DecreaseOngoingOrderCount()
+        public void DecreaseShootingStageOrderCount()
         {
-            OngoingOrderCount = Math.Max(0, OngoingOrderCount - 1);
+            ShootingStageOrderCount = Math.Max(0, ShootingStageOrderCount - 1);
+        }
+
+        public void IncreaseSelectionStageOrderCount()
+        {
+            SelectionStageOrderCount++;
+        }
+
+        public void DecreaseSelectionStageOrderCount()
+        {
+            SelectionStageOrderCount = Math.Max(0, SelectionStageOrderCount - 1);
+        }
+
+        public void IncreaseProductionStageOrderCount()
+        {
+            ProductionStageOrderCount++;
+        }
+
+        public void DecreaseProductionStageOrderCount()
+        {
+            ProductionStageOrderCount = Math.Max(0, ProductionStageOrderCount - 1);
         }
 
         public void SetChatServerProperties(int clientType, string registrationId)

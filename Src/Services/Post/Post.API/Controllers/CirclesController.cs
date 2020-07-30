@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Photography.Services.Post.API.Application.Commands.Circle.AddCircleMember;
+using Photography.Services.Post.API.Application.Commands.Circle.ChangeCircleOwner;
 using Photography.Services.Post.API.Application.Commands.Circle.CreateCircle;
 using Photography.Services.Post.API.Application.Commands.Circle.DeleteCircle;
 using Photography.Services.Post.API.Application.Commands.Circle.JoinCircle;
@@ -170,6 +171,19 @@ namespace Photography.Services.Post.API.Controllers
         [Route("adduser")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ResponseWrapper>> AddCircleMemberAsync([FromBody] AddCircleMemberCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 转让圈子
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("setowner")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ResponseWrapper>> UpdateCircleAsync([FromBody] ChangeCircleOwnerCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));

@@ -82,7 +82,7 @@ namespace Photography.Services.User.API.Controllers
         [HttpGet]
         [Route("me")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<MeViewModel>> GetCurrentUserAsync()
+        public async Task<ActionResult<UserViewModel>> GetCurrentUserAsync()
         {
             var user = await _userQueries.GetCurrentUserAsync();
             return Ok(ResponseWrapper.CreateOkResponseWrapper(user));

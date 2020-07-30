@@ -23,22 +23,13 @@ namespace Photography.Services.Notification.API.Application.Commands.UnFollow
 
         public async Task<bool> Handle(UnFollowCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("****************** UnFollowCommandHandler 1");
-
             var ur = await _userRelationRepository.GetUserRelationAsync(request.FollowerId, request.FollowedUserId);
-
-            _logger.LogInformation("****************** UnFollowCommandHandler 2");
 
             if (ur != null)
             {
-                _logger.LogInformation("****************** UnFollowCommandHandler 3");
                 _userRelationRepository.Remove(ur);
-                _logger.LogInformation("****************** UnFollowCommandHandler 4");
                 var result = await _userRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
-                _logger.LogInformation("****************** UnFollowCommandHandler 5 result: {result}", result);
             }
-
-            _logger.LogInformation("****************** UnFollowCommandHandler 6");
 
             return true;
         }

@@ -99,6 +99,21 @@
             <param name="cancellationToken"></param>
             <returns></returns>
         </member>
+        <member name="T:Photography.Services.Post.API.Application.Commands.Circle.ChangeCircleOwner.ChangeCircleOwnerCommand">
+            <summary>
+            设置圈主的命令
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Circle.ChangeCircleOwner.ChangeCircleOwnerCommand.CircleId">
+            <summary>
+            圈子ID
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Circle.ChangeCircleOwner.ChangeCircleOwnerCommand.UserId">
+            <summary>
+            要设置为圈主的用户id
+            </summary>
+        </member>
         <member name="T:Photography.Services.Post.API.Application.Commands.Circle.CreateCircle.CreateCircleCommand">
             <summary>
             创建圈子的命令
@@ -457,6 +472,12 @@
             <param name="pagingParameters">分页参数</param>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.Post.API.Controllers.AppointmentDealsController.GetSentAppointmentDealsCountAsync">
+            <summary>
+            获取我发出的和收到的约拍交易数量
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Photography.Services.Post.API.Controllers.AppointmentsController">
             <summary>
             约拍控制器
@@ -555,6 +576,12 @@
             圈子管理员加用户入圈
             </summary>
             <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.CirclesController.UpdateCircleAsync(Photography.Services.Post.API.Application.Commands.Circle.ChangeCircleOwner.ChangeCircleOwnerCommand)">
+            <summary>
+            转让圈子
+            </summary>
             <returns></returns>
         </member>
         <member name="T:Photography.Services.Post.API.Controllers.CommentsController">

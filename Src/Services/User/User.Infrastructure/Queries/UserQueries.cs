@@ -29,43 +29,15 @@ namespace Photography.Services.User.Infrastructure.Queries
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<MeViewModel> GetCurrentUserAsync()
+        public async Task<UserViewModel> GetCurrentUserAsync()
         {
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-            var user = await (from u in _identityContext.Users
-                              where u.Id == myId
-                              select new MeViewModel
-                              {
-                                  Id = u.Id,
-                                  Code = u.Code,
-                                  RealNameRegistrationStatus = u.RealNameRegistrationStatus,
-                                  Nickname = u.Nickname,
-                                  Avatar = u.Avatar,
-                                  BackgroundImage = u.BackgroundImage,
-                                  UserType = u.UserType,
-                                  UserName = u.UserName,
-                                  Gender = u.Gender,
-                                  Birthday = u.Birthday,
-                                  Province = u.Province,
-                                  City = u.City,
-                                  Sign = u.Sign,
-                                  OngoingOrderCount = u.OngoingOrderCount,
-                                  LikedCount = u.LikedCount,
-                                  FollowingCount = u.FollowingCount,
-                                  FollowerCount = u.FollowerCount,
-                                  AppointmentCount = u.AppointmentCount,
-                                  LikedPostCount = u.LikedPostCount,
-                                  Score = u.Score,
-                                  Phonenumber = u.Phonenumber,
-                                  PostCount = u.PostCount,
-                                  ChatServerUserId = u.ChatServerUserId,
-                                  ViewFollowedUsersAllowed = u.ViewFollowedUsersAllowed,
-                                  ViewFollowersAllowed = u.ViewFollowersAllowed,
-                                  Followed = (from ur in _identityContext.UserRelations
-                                              where ur.FollowerId == myId && ur.FollowedUserId == u.Id
-                                              select ur.Id).Count() > 0
-                              }).SingleOrDefaultAsync();
+            var queryableUsers = from u in _identityContext.Users
+                                 where u.Id == myId
+                                 select u;
+
+            var user = await GetUserViewModels(queryableUsers).FirstOrDefaultAsync();
 
             user.Age = GetAge(user.Birthday);
 
@@ -74,9 +46,6 @@ namespace Photography.Services.User.Infrastructure.Queries
 
         public async Task<UserViewModel> GetUserAsync(Guid? userId, int? oldUserId, string nickName)
         {
-            var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-            var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
-
             IQueryable<Domain.AggregatesModel.UserAggregate.User> queryableUsers = null;
 
             if (userId != null)
@@ -88,37 +57,7 @@ namespace Photography.Services.User.Infrastructure.Queries
             else
                 return null;
 
-            var user = await (from u in queryableUsers
-                        select new UserViewModel
-                        {
-                            Id = u.Id,
-                            Nickname = u.Nickname,
-                            Avatar = u.Avatar,
-                            BackgroundImage = u.BackgroundImage,
-                            UserType = u.UserType,
-                            UserName = u.UserName,
-                            Gender = u.Gender,
-                            Birthday = u.Birthday,
-                            Province = u.Province,
-                            City = u.City,
-                            Sign = u.Sign,
-                            OngoingOrderCount = u.OngoingOrderCount,
-                            LikedCount = u.LikedCount,
-                            FollowingCount = u.FollowingCount,
-                            FollowerCount = u.FollowerCount,
-                            AppointmentCount = u.AppointmentCount,
-                            LikedPostCount = u.LikedPostCount,
-                            Score = u.Score,
-                            Phonenumber = u.Phonenumber,
-                            PostCount = u.PostCount,
-                            ChatServerUserId = u.ChatServerUserId,
-                            ViewFollowedUsersAllowed = u.ViewFollowedUsersAllowed,
-                            ViewFollowersAllowed = u.ViewFollowersAllowed,
-                            RealNameRegistrationStatus = u.RealNameRegistrationStatus,
-                            Followed = (from ur in _identityContext.UserRelations
-                                        where ur.FollowerId == myId && ur.FollowedUserId == u.Id
-                                        select ur.Id).Count() > 0
-                        }).SingleOrDefaultAsync();
+            var user = await GetUserViewModels(queryableUsers).FirstOrDefaultAsync();
 
             user.Age = GetAge(user.Birthday);
 
@@ -269,6 +208,47 @@ namespace Photography.Services.User.Infrastructure.Queries
                                  };
 
             return await PagedList<ExaminingUserViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
+        }
+
+        private IQueryable<UserViewModel> GetUserViewModels(IQueryable<Domain.AggregatesModel.UserAggregate.User> queryableUsers)
+        {
+            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            return from u in queryableUsers
+                   select new UserViewModel
+                   {
+                       Id = u.Id,
+                       Code = u.Code,
+                       Nickname = u.Nickname,
+                       Avatar = u.Avatar,
+                       BackgroundImage = u.BackgroundImage,
+                       UserType = u.UserType,
+                       UserName = u.UserName,
+                       Gender = u.Gender,
+                       Birthday = u.Birthday,
+                       Province = u.Province,
+                       City = u.City,
+                       Sign = u.Sign,
+                       OngoingOrderCount = u.OngoingOrderCount,
+                       ShootingStageOrderCount = u.ShootingStageOrderCount,
+                       SelectionStageOrderCount = u.SelectionStageOrderCount,
+                       ProductionStageOrderCount = u.ProductionStageOrderCount,
+                       LikedCount = u.LikedCount,
+                       FollowingCount = u.FollowingCount,
+                       FollowerCount = u.FollowerCount,
+                       AppointmentCount = u.AppointmentCount,
+                       LikedPostCount = u.LikedPostCount,
+                       Score = u.Score,
+                       Phonenumber = u.Phonenumber,
+                       PostCount = u.PostCount,
+                       ChatServerUserId = u.ChatServerUserId,
+                       ViewFollowedUsersAllowed = u.ViewFollowedUsersAllowed,
+                       ViewFollowersAllowed = u.ViewFollowersAllowed,
+                       RealNameRegistrationStatus = u.RealNameRegistrationStatus,
+                       Followed = (from ur in _identityContext.UserRelations
+                                   where ur.FollowerId == myId && ur.FollowedUserId == u.Id
+                                   select ur.Id).Count() > 0
+                   };
         }
 
         private IQueryable<UserRelation> GetFriends(Guid userId)

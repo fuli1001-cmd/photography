@@ -2,23 +2,23 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
-using Photography.Services.Post.API.Application.Commands.AppointmentDeal.AcceptAppointmentDeal;
+using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
 using Serilog.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Photography.Services.Post.API.Application.IntegrationEventHandlers
+namespace Photography.Services.User.API.Application.IntegrationEventHandlers
 {
     public class OrderAcceptedEventHandler : IHandleMessages<OrderAcceptedEvent>
     {
-        private readonly IMediator _mediator;
+        private readonly IUserRepository _userRepository;
         private readonly ILogger<OrderAcceptedEventHandler> _logger;
 
-        public OrderAcceptedEventHandler(IMediator mediator, ILogger<OrderAcceptedEventHandler> logger)
+        public OrderAcceptedEventHandler(IUserRepository userRepository, ILogger<OrderAcceptedEventHandler> logger)
         {
-            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -28,9 +28,15 @@ namespace Photography.Services.Post.API.Application.IntegrationEventHandlers
             {
                 _logger.LogInformation("----- Handling OrderAcceptedEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                var command = new AcceptAppointmentDealCommand { UserId = message.UserId, DealId = message.DealId };
+                // 增加用户1的拍片阶段订单数量
+                var user1 = await _userRepository.GetByIdAsync(message.UserId);
+                user1.IncreaseShootingStageOrderCount();
 
-                await _mediator.Send(command);
+                // 增加用户2的拍片阶段订单数量
+                var user2 = await _userRepository.GetByIdAsync(message.AnotherUserId);
+                user2.IncreaseShootingStageOrderCount();
+
+                await _userRepository.UnitOfWork.SaveEntitiesAsync();
             }
         }
     }

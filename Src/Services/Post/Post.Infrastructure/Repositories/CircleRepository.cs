@@ -26,6 +26,11 @@ namespace Photography.Services.Post.Infrastructure.Repositories
             return await _context.Circles.Where(c => c.Id == circleId).Include(c => c.Posts).SingleOrDefaultAsync();
         }
 
+        public async Task<Circle> GetCircleWithUsersAsync(Guid circleId)
+        {
+            return await _context.Circles.Where(c => c.Id == circleId).Include(c => c.UserCircleRelations).FirstOrDefaultAsync();
+        }
+
         public async Task<int> GetUserCircleCount(Guid userId)
         {
             return await _context.Circles.Where(c => c.OwnerId == userId).CountAsync();

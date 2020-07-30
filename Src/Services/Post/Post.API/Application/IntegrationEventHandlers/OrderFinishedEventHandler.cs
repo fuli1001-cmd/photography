@@ -1,4 +1,5 @@
 ﻿using ApplicationMessages.Events;
+using ApplicationMessages.Events.Order;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NServiceBus;

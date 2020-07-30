@@ -10,30 +10,32 @@ using System.Threading.Tasks;
 
 namespace Photography.Services.User.API.Application.IntegrationEventHandlers
 {
-    public class OrderFinishedEventHandler : IHandleMessages<OrderFinishedEvent>
+    public class OriginalPhotoUploadedEventHandler : IHandleMessages<OriginalPhotoUploadedEvent>
     {
         private readonly IUserRepository _userRepository;
-        private readonly ILogger<OrderFinishedEventHandler> _logger;
+        private readonly ILogger<OriginalPhotoUploadedEventHandler> _logger;
 
-        public OrderFinishedEventHandler(IUserRepository userRepository, ILogger<OrderFinishedEventHandler> logger)
+        public OriginalPhotoUploadedEventHandler(IUserRepository userRepository, ILogger<OriginalPhotoUploadedEventHandler> logger)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Handle(OrderFinishedEvent message, IMessageHandlerContext context)
+        public async Task Handle(OriginalPhotoUploadedEvent message, IMessageHandlerContext context)
         {
             using (LogContext.PushProperty("IntegrationEventContext", $"{message.Id}-{Program.AppName}"))
             {
-                _logger.LogInformation("----- Handling OrderFinishedEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
+                _logger.LogInformation("----- Handling OriginalPhotoUploadedEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                // 减少用户1的出片阶段订单数量
+                // 减少用户1的拍片阶段订单数量，并增加他的选片阶段订单数量
                 var user1 = await _userRepository.GetByIdAsync(message.User1Id);
-                user1.DecreaseProductionStageOrderCount();
+                user1.DecreaseShootingStageOrderCount();
+                user1.IncreaseSelectionStageOrderCount();
 
-                // 减少用户2的出片阶段订单数量
+                // 减少用户2的拍片阶段订单数量，并增加他的选片阶段订单数量
                 var user2 = await _userRepository.GetByIdAsync(message.User2Id);
-                user2.DecreaseProductionStageOrderCount();
+                user2.DecreaseShootingStageOrderCount();
+                user2.IncreaseSelectionStageOrderCount();
 
                 await _userRepository.UnitOfWork.SaveEntitiesAsync();
             }
