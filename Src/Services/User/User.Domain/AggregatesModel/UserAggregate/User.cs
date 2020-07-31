@@ -161,15 +161,15 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
             PostCount = Math.Max(0, PostCount - 1);
         }
 
-        public void IncreaseAppointmentCount()
-        {
-            AppointmentCount++;
-        }
+        //public void IncreaseAppointmentCount()
+        //{
+        //    AppointmentCount++;
+        //}
 
-        public void DecreaseAppointmentCount()
-        {
-            AppointmentCount = Math.Max(0, AppointmentCount - 1);
-        }
+        //public void DecreaseAppointmentCount()
+        //{
+        //    AppointmentCount = Math.Max(0, AppointmentCount - 1);
+        //}
 
         public void IncreaseFollowerCount()
         {
@@ -201,15 +201,15 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
             LikedCount = Math.Max(0, LikedCount - 1);
         }
 
-        public void IncreaseLikedPostCount()
-        {
-            LikedPostCount++;
-        }
+        //public void IncreaseLikedPostCount()
+        //{
+        //    LikedPostCount++;
+        //}
 
-        public void DecreaseLikedPostCount()
-        {
-            LikedPostCount = Math.Max(0, LikedPostCount - 1);
-        }
+        //public void DecreaseLikedPostCount()
+        //{
+        //    LikedPostCount = Math.Max(0, LikedPostCount - 1);
+        //}
 
         public void IncreaseOngoingOrderCount()
         {

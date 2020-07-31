@@ -13,6 +13,7 @@ using Photography.Services.Post.API.Query.Extensions;
 using Arise.DDD.API.Paging;
 using Arise.DDD.Domain.Exceptions;
 using Photography.Services.Post.Infrastructure.Queries.Models;
+using System.Text;
 
 namespace Photography.Services.Post.Infrastructure.Queries
 {
@@ -639,6 +640,18 @@ namespace Photography.Services.Post.Infrastructure.Queries
         public async Task<PagedList<Domain.AggregatesModel.PostAggregate.Post>> GetPostsAsync(PagingParameters pagingParameters)
         {
             return await PagedList<Domain.AggregatesModel.PostAggregate.Post>.ToPagedListAsync(_postContext.Posts.OrderBy(p => p.Id), pagingParameters);
+        }
+
+        public async Task<PostCountViewModel> GetUserPostAndAppointmentCountAsync()
+        {
+            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            var sqlBuilder = new StringBuilder("select ");
+            sqlBuilder.Append($"(select isnull(sum(case when PostType = 0 then 1 else 0 end), 0) from Posts where UserId = '{myId}') as PostCount,");
+            sqlBuilder.Append($"(select isnull(sum(case when PostType = 1 then 1 else 0 end), 0) from Posts where UserId = '{myId}') as AppointmentCount,");
+            sqlBuilder.Append($"(select isnull(sum(case when UserPostRelationType = 1 then 1 else 0 end), 0) from UserPostRelations where UserId = '{myId}') as LikedPostCount");
+
+            return await _postContext.PostCounts.FromSqlRaw(sqlBuilder.ToString()).FirstOrDefaultAsync();
         }
     }
 }

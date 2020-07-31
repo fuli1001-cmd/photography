@@ -53,6 +53,8 @@ namespace Photography.Services.Post.Infrastructure
 
         public DbSet<SentAndReceivedAppointmentDealCountViewModel> SentAndReceivedAppointmentDealCounts { get; set; }
 
+        public DbSet<PostCountViewModel> PostCounts { get; set; }
+
 
         public PostContext(DbContextOptions<PostContext> options, IMediator mediator) : base(options, mediator) { }
 
@@ -70,6 +72,7 @@ namespace Photography.Services.Post.Infrastructure
             modelBuilder.ApplyConfiguration(new UserShareEntityTypeConfiguration());
 
             modelBuilder.Entity<SentAndReceivedAppointmentDealCountViewModel>().HasNoKey();
+            modelBuilder.Entity<PostCountViewModel>().HasNoKey();
 
             //foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
             //{

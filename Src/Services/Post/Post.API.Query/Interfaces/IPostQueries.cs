@@ -63,5 +63,11 @@ namespace Photography.Services.Post.API.Query.Interfaces
         Task<PagedList<PostViewModel>> GetCirclePostsAsync(Guid circleId, bool onlyGood, string key, string sortBy, PagingParameters pagingParameters);
 
         Task<PagedList<Domain.AggregatesModel.PostAggregate.Post>> GetPostsAsync(PagingParameters pagingParameters);
+
+        /// <summary>
+        /// 获取用户的3种帖子数量：帖子数量，约拍数量，点赞的帖子数量
+        /// </summary>
+        /// <returns></returns>
+        Task<PostCountViewModel> GetUserPostAndAppointmentCountAsync();
     }
 }
