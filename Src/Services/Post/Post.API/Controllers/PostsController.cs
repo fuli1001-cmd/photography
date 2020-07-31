@@ -149,6 +149,19 @@ namespace Photography.Services.Post.API.Controllers
         }
 
         /// <summary>
+        /// 获取用户的帖子数量，约拍数量，点赞的帖子数量
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("PostAndAppointmentCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<PostCountViewModel>> GetUserPostAndAppointmentCountAsync()
+        {
+            var posts = await _postQueries.GetUserPostAndAppointmentCountAsync();
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
+        }
+
+        /// <summary>
         /// 圈子内的帖子
         /// </summary>
         /// <param name="circleId">圈子id</param>
