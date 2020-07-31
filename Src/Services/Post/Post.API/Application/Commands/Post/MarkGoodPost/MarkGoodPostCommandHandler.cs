@@ -41,11 +41,11 @@ namespace Photography.Services.Post.API.Application.Commands.Post.MarkGoodPost
             if (post.CircleId == null)
                 throw new ClientException("操作失败", new List<string> { $"Post {request.PostId} is not in any circle." });
 
-            // 圈子主任必须是当前用户
+            // 圈子主人必须是当前用户
             var circle = await _circleRepository.GetByIdAsync(post.CircleId.Value);
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             if (circle.OwnerId != myId)
-                throw new ClientException("操作失败", new List<string> { $"User {myId} is not the owner of circle {circle.Id}" });
+                throw new ClientException("当前用户不是圈主", new List<string> { $"User {myId} is not the owner of circle {circle.Id}" });
 
             if (request.Good)
                 post.MarkCircleGood();

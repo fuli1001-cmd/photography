@@ -47,7 +47,7 @@ namespace Photography.Services.Post.API.Application.Commands.Circle.AddCircleMem
 
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             if (circle.OwnerId != myId)
-                throw new ClientException("操作失败", new List<string> { $"Circle {request.CircleId} does not belong to user {myId}" });
+                throw new ClientException("当前用户不是圈主", new List<string> { $"Circle {request.CircleId} does not belong to user {myId}" });
 
             // 添加并发送用户已入圈事件
             if (await AddCircleMemberAsync(circle.Id, request.UserId, _userCircleRelationRepository, cancellationToken))
@@ -83,7 +83,7 @@ namespace Photography.Services.Post.API.Application.Commands.Circle.AddCircleMem
                 return await userCircleRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
             }
 
-            throw new ClientException("操作失败", new List<string> { $"User {joinedUserId} is already in circle {circleId}" });
+            throw new ClientException("用户已在圈中", new List<string> { $"User {joinedUserId} is already in circle {circleId}" });
         }
 
         // 发送用户已入圈事件

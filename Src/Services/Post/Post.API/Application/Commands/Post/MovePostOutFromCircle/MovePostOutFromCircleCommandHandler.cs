@@ -45,7 +45,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.MovePostOutFro
 
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             if (circle.OwnerId != myId)
-                throw new ClientException("操作失败", new List<string> { $"User {myId} is not the owner of circle {circle.Id}" });
+                throw new ClientException("当前用户不是圈主", new List<string> { $"User {myId} is not the owner of circle {circle.Id}" });
 
             post.MoveOutFromCircle();
 
