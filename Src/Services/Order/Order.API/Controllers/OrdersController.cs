@@ -73,7 +73,7 @@ namespace Photography.Services.Order.API.Controllers
         }
 
         /// <summary>
-        /// 获取待拍片订单列表
+        /// 获取待拍片阶段订单列表
         /// </summary>
         /// <param name="pagingParameters"></param>
         /// <returns></returns>
@@ -82,12 +82,12 @@ namespace Photography.Services.Order.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<PagedResponseWrapper>> GetWaitingForShootingOrdersAsync([FromQuery] PagingParameters pagingParameters)
         {
-            var orders = await _orderQueries.GetOrdersAsync(new List<OrderStatus> { OrderStatus.WaitingForShooting }, pagingParameters);
+            var orders = await _orderQueries.GetOrdersAsync(OrderStage.Shooting, pagingParameters);
             return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(orders));
         }
 
         /// <summary>
-        /// 获取待上传原片和待选择原片订单列表
+        /// 获取待选片阶段的订单列表
         /// </summary>
         /// <param name="pagingParameters"></param>
         /// <returns></returns>
@@ -96,8 +96,7 @@ namespace Photography.Services.Order.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<PagedResponseWrapper>> GetWaitingForUploadOriginalOrdersAsync([FromQuery] PagingParameters pagingParameters)
         {
-            var status = new List<OrderStatus> { OrderStatus.WaitingForUploadOriginal, OrderStatus.WaitingForSelection };
-            var orders = await _orderQueries.GetOrdersAsync(status, pagingParameters);
+            var orders = await _orderQueries.GetOrdersAsync(OrderStage.Selection, pagingParameters);
             return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(orders));
         }
 
@@ -128,7 +127,7 @@ namespace Photography.Services.Order.API.Controllers
         //}
 
         /// <summary>
-        /// 获取待出片和待验收订单列表
+        /// 获取待出片阶段订单列表
         /// </summary>
         /// <param name="pagingParameters"></param>
         /// <returns></returns>
@@ -137,9 +136,21 @@ namespace Photography.Services.Order.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<PagedResponseWrapper>> GetWaitingForUploadProcessedOrdersAsync([FromQuery] PagingParameters pagingParameters)
         {
-            var status = new List<OrderStatus> { OrderStatus.WaitingForUploadProcessed, OrderStatus.WaitingForCheck };
-            var orders = await _orderQueries.GetOrdersAsync(status, pagingParameters);
+            var orders = await _orderQueries.GetOrdersAsync(OrderStage.Production, pagingParameters);
             return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(orders));
+        }
+
+        /// <summary>
+        /// 获取订单各阶段数量
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("StageOrderCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<StageOrderCountViewModel>> GetStageOrderCountAsync()
+        {
+            var stageOrderCount = await _orderQueries.GetStageOrderCountAsync();
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(stageOrderCount));
         }
 
         ///// <summary>
@@ -178,8 +189,7 @@ namespace Photography.Services.Order.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<PagedResponseWrapper>> GetFinishedOrdersAsync([FromQuery] PagingParameters pagingParameters)
         {
-            var status = new List<OrderStatus> { OrderStatus.Finished, OrderStatus.Canceled, OrderStatus.Rejected };
-            var orders = await _orderQueries.GetOrdersAsync(status, pagingParameters);
+            var orders = await _orderQueries.GetOrdersAsync(OrderStage.Finished, pagingParameters);
             return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(orders));
         }
 

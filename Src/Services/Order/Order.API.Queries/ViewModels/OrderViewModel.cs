@@ -45,4 +45,19 @@ namespace Photography.Services.Order.API.Query.ViewModels
         public string CityCode { get; set; }
         #endregion
     }
+
+    /// <summary>
+    /// 不同阶段的订单数量
+    /// </summary>
+    public class StageOrderCountViewModel
+    {
+        // 拍片阶段的订单数量，包含OrderStatus为WaitingForShooting的订单
+        public int ShootingStageOrderCount { get; set; }
+
+        // 选片阶段的订单数量，包含OrderStatus为WaitingForUploadOriginal、WaitingForSelection的订单
+        public int SelectionStageOrderCount { get; set; }
+
+        // 出片阶段的订单数量，包含OrderStatus为WaitingForUploadProcessed，WaitingForCheck的订单
+        public int ProductionStageOrderCount { get; set; }
+    }
 }

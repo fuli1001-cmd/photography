@@ -56,7 +56,7 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
         {
             CreatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
             UpdatedTime = CreatedTime;
-            OrderStatus = OrderStatus.Created;
+            OrderStatus = OrderStatus.WaitingForConfirm;
         }
 
         public Order(Guid user1Id, Guid user2Id, Guid dealId, Guid? payerId, decimal price, double appointedTime, 
@@ -78,7 +78,7 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
 
         public void Accept()
         {
-            if (OrderStatus != OrderStatus.Created) 
+            if (OrderStatus != OrderStatus.WaitingForConfirm) 
                 throw new ClientException("操作失败", new List<string> { "Current order status is not 'Created'." });
 
             OrderStatus = OrderStatus.WaitingForShooting;
@@ -87,7 +87,7 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
 
         public void Cancel(string description)
         {
-            if (OrderStatus != OrderStatus.Created)
+            if (OrderStatus != OrderStatus.WaitingForConfirm)
                 throw new ClientException("操作失败", new List<string> { "Current order status is not 'Created'." });
 
             OrderStatus = OrderStatus.Canceled;
@@ -98,7 +98,7 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
 
         public void Reject(string description)
         {
-            if (OrderStatus != OrderStatus.Created)
+            if (OrderStatus != OrderStatus.WaitingForConfirm)
                 throw new ClientException("操作失败", new List<string> { "Current order status is not 'Created'." });
 
             OrderStatus = OrderStatus.Rejected;
@@ -213,8 +213,8 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
     // 订单状态
     public enum OrderStatus
     {
-        // 已创建
-        Created,
+        // 待确认
+        WaitingForConfirm,
         // 待拍片
         WaitingForShooting,
         // 待上传拍摄的照片
@@ -231,5 +231,13 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
         Canceled,
         // 已拒绝
         Rejected
+    }
+
+    public enum OrderStage
+    {
+        Shooting, // 待拍片阶段
+        Selection, // 待选片阶段
+        Production, // 待出片阶段
+        Finished // 已完成阶段
     }
 }

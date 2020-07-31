@@ -55,9 +55,10 @@ namespace Photography.Services.Order.Infrastructure.Queries
             return GetFirstOrderViewModel(await queryableDto.ToListAsync());
         }
 
-        public async Task<PagedList<OrderViewModel>> GetOrdersAsync(IEnumerable<OrderStatus> orderStatus, PagingParameters pagingParameters)
+        public async Task<PagedList<OrderViewModel>> GetOrdersAsync(OrderStage orderStage, PagingParameters pagingParameters)
         {
             var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var orderStatus = GetStageOrderStatus(orderStage);
 
             var queryableOrders = from o in _dbContext.Orders
                          where orderStatus.Contains(o.OrderStatus)
@@ -122,6 +123,82 @@ namespace Photography.Services.Order.Infrastructure.Queries
             order.SetAttachmentProperties(_logger);
 
             return order;
+        }
+
+        public async Task<StageOrderCountViewModel> GetStageOrderCountAsync()
+        {
+            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            var sqlBuilder = new StringBuilder($"select {GetCountSql(OrderStage.Shooting)} as ShootingStageOrderCount, ");
+            sqlBuilder.Append($"{GetCountSql(OrderStage.Selection)} as SelectionStageOrderCount, ");
+            sqlBuilder.Append($"{GetCountSql(OrderStage.Production)} as ProductionStageOrderCount ");
+            sqlBuilder.Append($"from Orders where User1Id = '{myId}' or User2Id = '{myId}'");
+
+            return await _dbContext.StageOrderCounts.FromSqlRaw(sqlBuilder.ToString()).FirstOrDefaultAsync();
+        }
+
+        private string GetCountSql(OrderStage orderStage)
+        {
+            return $"isnull(sum(case when OrderStatus in {GetStatusSql(orderStage)} then 1 else 0 end), 0)";
+        }
+
+        private string GetStatusSql(OrderStage orderStage)
+        {
+            var sqlBuilder = new StringBuilder("(");
+            var i = 0;
+            var status = GetStageOrderStatus(orderStage);
+
+            status.ForEach(s =>
+            {
+                sqlBuilder.Append((int)s);
+                if (i < status.Count - 1)
+                    sqlBuilder.Append(", ");
+                i++;
+            });
+
+            sqlBuilder.Append(")");
+
+            return sqlBuilder.ToString();
+        }
+
+        private List<OrderStatus> GetStageOrderStatus(OrderStage orderStage)
+        {
+            var status = new List<OrderStatus>();
+
+            if (orderStage == OrderStage.Shooting)
+            {
+                status = new List<OrderStatus>
+                {
+                    OrderStatus.WaitingForShooting
+                };
+            }
+            else if (orderStage == OrderStage.Selection)
+            {
+                status = new List<OrderStatus>
+                {
+                    OrderStatus.WaitingForUploadOriginal,
+                    OrderStatus.WaitingForSelection
+                };
+            }
+            else if (orderStage == OrderStage.Production)
+            {
+                status = new List<OrderStatus>
+                {
+                    OrderStatus.WaitingForUploadProcessed,
+                    OrderStatus.WaitingForCheck
+                };
+            }
+            else if (orderStage == OrderStage.Finished)
+            {
+                status = new List<OrderStatus>
+                {
+                    OrderStatus.Finished,
+                    OrderStatus.Canceled,
+                    OrderStatus.Rejected
+                };
+            }
+
+            return status;
         }
     }
 }

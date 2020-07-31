@@ -126,10 +126,10 @@ namespace Photography.Services.Notification.Infrastructure.Queries
 
         private string GetCountSql(EventCategory eventCategory)
         {
-            return $"isnull(sum(case when EventType in {GetEventCategorySql(eventCategory)} then 1 else 0 end), 0)";
+            return $"isnull(sum(case when EventType in {GetTypesSql(eventCategory)} then 1 else 0 end), 0)";
         }
 
-        private string GetEventCategorySql(EventCategory eventCategory)
+        private string GetTypesSql(EventCategory eventCategory)
         {
             var sqlBuilder = new StringBuilder("(");
             var i = 0;

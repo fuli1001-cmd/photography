@@ -3,6 +3,7 @@ using Arise.DDD.Infrastructure.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Photography.Services.Order.API.Query.ViewModels;
 using Photography.Services.Order.Domain.AggregatesModel.OrderAggregate;
 using Photography.Services.Order.Domain.AggregatesModel.UserAggregate;
 using Photography.Services.Order.Infrastructure.EntityConfigurations;
@@ -23,6 +24,8 @@ namespace Photography.Services.Order.Infrastructure
 
         public DbSet<Attachment> Attachments { get; set; }
 
+        public DbSet<StageOrderCountViewModel> StageOrderCounts { get; set; }
+
 
         public OrderContext(DbContextOptions<OrderContext> options, IMediator mediator) : base(options, mediator) { }
 
@@ -31,6 +34,8 @@ namespace Photography.Services.Order.Infrastructure
             modelBuilder.ApplyConfiguration(new OrderEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new AttachmentEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
+
+            modelBuilder.Entity<StageOrderCountViewModel>().HasNoKey();
         }
     }
 }

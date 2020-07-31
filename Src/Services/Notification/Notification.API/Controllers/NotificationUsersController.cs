@@ -55,13 +55,10 @@ namespace Photography.Services.Notification.API.Controllers
         /// <param name="command"></param>
         /// <returns></returns>
         [HttpPut]
-        [Route("pushsettings")]
+        [Route("pushsettings2")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ApiVersion("2.0")]
         public async Task<ActionResult<bool>> ConfigurePushAsync([FromBody] ConfigurePushCommand command)
         {
-            _logger.LogInformation("pushsettings v2");
-
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }

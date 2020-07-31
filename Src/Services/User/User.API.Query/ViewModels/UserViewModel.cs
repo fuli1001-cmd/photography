@@ -25,14 +25,14 @@ namespace Photography.Services.User.API.Query.ViewModels
         // 进行中的订单数量（除去已完成、已拒绝和已取消外的订单数量）【已废弃】
         public int OngoingOrderCount { get; set; }
 
-        // 拍片阶段的订单数量，包含OrderStatus为WaitingForShooting，WaitingForUploadOriginal的订单
-        public int ShootingStageOrderCount { get; set; }
+        //// 拍片阶段的订单数量，包含OrderStatus为WaitingForShooting，WaitingForUploadOriginal的订单
+        //public int ShootingStageOrderCount { get; set; }
 
-        // 选片阶段的订单数量，包含OrderStatus为WaitingForSelection的订单
-        public int SelectionStageOrderCount { get; set; }
+        //// 选片阶段的订单数量，包含OrderStatus为WaitingForSelection的订单
+        //public int SelectionStageOrderCount { get; set; }
 
-        // 出片阶段的订单数量，包含OrderStatus为WaitingForUploadProcessed，WaitingForCheck的订单
-        public int ProductionStageOrderCount { get; set; }
+        //// 出片阶段的订单数量，包含OrderStatus为WaitingForUploadProcessed，WaitingForCheck的订单
+        //public int ProductionStageOrderCount { get; set; }
 
         // 发布的帖子数量
         public int PostCount { get; set; }
