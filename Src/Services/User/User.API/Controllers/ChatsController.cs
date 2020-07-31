@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Photography.Services.User.API.BackwardCompatibility.Utils;
 using Photography.Services.User.API.Query.BackwardCompatibility;
 using Photography.Services.User.API.Query.Interfaces.BackwardCompatibility;
+using Photography.Services.User.Domain.BackwardCompatibility.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,6 +50,21 @@ namespace Photography.Services.User.API.Controllers
                 m.content = Encryptor.DecryptDES(m.content, encryptKey);
 
             return Ok(ResponseWrapper.CreateOkResponseWrapper(messages));
+        }
+
+        /// <summary>
+        /// 获取聊天错误码
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("ErrorCodes")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
+        public async Task<ActionResult<List<PSR_ARS_ErrorCode>>> GetErrorCodesAsync()
+        {
+            var result = await _chatQueries.GetErrorCodesAsync();
+
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
     }
 }

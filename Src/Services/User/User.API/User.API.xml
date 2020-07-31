@@ -240,6 +240,12 @@
             <param name="latestMsgId"></param>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.User.API.Controllers.ChatsController.GetErrorCodesAsync">
+            <summary>
+            获取聊天错误码
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Photography.Services.User.API.Controllers.GroupsController.CreateGroupAsync(Photography.Services.User.API.Application.Commands.Group.CreateGroup.CreateGroupCommand)">
             <summary>
             建群

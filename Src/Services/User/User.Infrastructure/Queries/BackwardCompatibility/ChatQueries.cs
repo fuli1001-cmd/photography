@@ -33,6 +33,11 @@ namespace Photography.Services.User.Infrastructure.Queries.BackwardCompatibility
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        public async Task<List<PSR_ARS_ErrorCode>> GetErrorCodesAsync()
+        {
+            return await _chatContext.PSR_ARS_ErrorCode.ToListAsync();
+        }
+
         public async Task<ChatMessage> GetOfflineAndRecentMessagesAsync(string latestMsgId)
         {
             var chatMessage = new ChatMessage();

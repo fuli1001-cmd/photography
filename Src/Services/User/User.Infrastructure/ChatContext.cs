@@ -17,12 +17,15 @@ namespace Photography.Services.User.Infrastructure
 
         public DbSet<PSR_ARS_MessageOffline> PSR_ARS_MessageOffline { get; set; }
 
+        public DbSet<PSR_ARS_ErrorCode> PSR_ARS_ErrorCode { get; set; }
+
         public ChatContext(DbContextOptions<ChatContext> options, IMediator mediator) : base(options, mediator) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<PSR_ARS_Chat>().HasKey(p => p.IMARSC_Id);
             modelBuilder.Entity<PSR_ARS_MessageOffline>().HasKey(p => p.IMARSMNRR_Uid);
+            modelBuilder.Entity<PSR_ARS_ErrorCode>().HasKey(p => p.uid);
         }
     }
 }
