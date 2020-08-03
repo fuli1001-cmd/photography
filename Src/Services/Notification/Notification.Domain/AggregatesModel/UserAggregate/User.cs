@@ -13,6 +13,8 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.UserAggregate
 
         public string Avatar { get; private set; }
 
+        public string RegistrationId { get; private set; }
+
         #region 推送设置
         #region to be deleted
         public PushSetting PushLikeEvent { get; private set; }
@@ -53,6 +55,11 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.UserAggregate
         {
             Nickname = nickName;
             Avatar = avatar;
+        }
+
+        public void UpdatePushInfo(string registrationId)
+        {
+            RegistrationId = registrationId;
         }
 
         public void ConfigurePushByEventType(EventType eventType, PushSetting setting)

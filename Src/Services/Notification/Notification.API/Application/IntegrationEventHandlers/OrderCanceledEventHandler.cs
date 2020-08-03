@@ -36,7 +36,8 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                     ToUserId = message.AnotherUserId,
                     EventType = Domain.AggregatesModel.EventAggregate.EventType.CancelOrder,
                     CommentText = message.Description,
-                    OrderId = message.OrderId
+                    OrderId = message.OrderId,
+                    PushMessage = "你收到的约拍请求已被对方取消"
                 };
 
                 await _mediator.Send(createEventCommand);

@@ -35,7 +35,8 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                     ToUserId = message.AnotherUserId,
                     EventType = Domain.AggregatesModel.EventAggregate.EventType.RejectOrder,
                     CommentText = message.Description,
-                    OrderId = message.OrderId
+                    OrderId = message.OrderId,
+                    PushMessage = "你的约拍请求已被对方拒绝"
                 };
 
                 await _mediator.Send(createEventCommand);

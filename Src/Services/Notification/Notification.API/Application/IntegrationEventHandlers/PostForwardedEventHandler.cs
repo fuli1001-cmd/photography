@@ -6,6 +6,7 @@ using Photography.Services.Notification.API.Application.Commands.CreateEvent;
 using Photography.Services.Notification.API.Application.Commands.CreatePost;
 using Photography.Services.Notification.Domain.AggregatesModel.EventAggregate;
 using Photography.Services.Notification.Domain.AggregatesModel.PostAggregate;
+using Photography.Services.Notification.Domain.AggregatesModel.UserAggregate;
 using Serilog.Context;
 using System;
 using System.Collections.Generic;
@@ -17,12 +18,14 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
     public class PostForwardedEventHandler : IHandleMessages<PostForwardedEvent>
     {
         private readonly IMediator _mediator;
+        private readonly IUserRepository _userRepository;
         private readonly IPostRepository _postRepository;
         private readonly ILogger<PostForwardedEventHandler> _logger;
 
-        public PostForwardedEventHandler(IMediator mediator, IPostRepository postRepository, ILogger<PostForwardedEventHandler> logger)
+        public PostForwardedEventHandler(IMediator mediator, IUserRepository userRepository, IPostRepository postRepository, ILogger<PostForwardedEventHandler> logger)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -44,13 +47,16 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                     };
                     await _mediator.Send(createPostCommand);
 
+                    var fromUser = await _userRepository.GetByIdAsync(info.ForwardUserId);
+
                     // 创建事件
                     var createEventCommand = new CreateEventCommand
                     {
                         FromUserId = info.ForwardUserId,
                         ToUserId = info.OriginalPostUserId,
                         PostId = info.OriginalPostId,
-                        EventType = EventType.ForwardPost
+                        EventType = EventType.ForwardPost,
+                        PushMessage = $"{fromUser.Nickname}转发了你的作品"
                     };
                     await _mediator.Send(createEventCommand);
                 }
