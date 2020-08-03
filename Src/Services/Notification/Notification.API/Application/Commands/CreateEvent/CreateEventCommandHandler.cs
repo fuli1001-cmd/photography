@@ -50,7 +50,7 @@ namespace Photography.Services.Notification.API.Application.Commands.CreateEvent
                 var result = await _eventRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
                 // 推送
-                PushNotificationAsync(request.ToUserId, request.PushMessage);
+                await PushNotificationAsync(request.ToUserId, request.PushMessage);
             }
             return true;
         }
