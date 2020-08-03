@@ -80,9 +80,9 @@ namespace Photography.Services.Notification.API.Application.Commands.CreateEvent
 
                     string json = SerializeUtil.SerializeToJson(notification);
                     var bytes = SerializeUtil.SerializeStringToBytes(json, true);
-                    //json = JsonConvert.SerializeObject(bytes);
+                    json = JsonConvert.SerializeObject(bytes);
 
-                    await _redisService.PublishAsync("PUBLISH_MSG", bytes);
+                    await _redisService.PublishAsync("PUBLISH_MSG", json);
 
                     _logger.LogInformation("debug: PushNotification: {@PushNotification}", notification);
                 }
