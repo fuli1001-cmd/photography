@@ -4,6 +4,14 @@
         <name>Notification.API</name>
     </assembly>
     <members>
+        <member name="M:Photography.Services.Notification.API.Application.Commands.CreateEvent.CreateEventCommandHandler.PushNotificationAsync(System.Guid,System.String)">
+            <summary>
+            推送消息
+            </summary>
+            <param name="toUserId"></param>
+            <param name="message"></param>
+            <returns></returns>
+        </member>
         <member name="T:Photography.Services.Notification.API.Application.Commands.DeleteEvents.DeleteEventsCommand">
             <summary>
             删除通知的命令
