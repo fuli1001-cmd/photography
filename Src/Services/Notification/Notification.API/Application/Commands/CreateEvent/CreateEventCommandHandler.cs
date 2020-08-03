@@ -50,8 +50,7 @@ namespace Photography.Services.Notification.API.Application.Commands.CreateEvent
                 var result = await _eventRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
                 // 推送
-                _logger.LogInformation("push debug: start push");
-                await PushNotificationAsync(request.ToUserId, request.PushMessage);
+                PushNotificationAsync(request.ToUserId, request.PushMessage);
             }
             return true;
         }
@@ -64,13 +63,11 @@ namespace Photography.Services.Notification.API.Application.Commands.CreateEvent
         /// <returns></returns>
         private async Task PushNotificationAsync(Guid toUserId, string message)
         {
+            _logger.LogInformation($"debug: Push message {message} to user {toUserId}");
+
             try
             {
                 var user = await _userRepository.GetByIdAsync(toUserId);
-
-                _logger.LogInformation("push debug: toUserId: " + toUserId);
-                _logger.LogInformation("push debug: user: {@user}", user);
-                _logger.LogInformation("push debug: message: " + message);
 
                 if (user != null && !string.IsNullOrWhiteSpace(user.RegistrationId) && !string.IsNullOrWhiteSpace(message))
                 {
@@ -83,16 +80,16 @@ namespace Photography.Services.Notification.API.Application.Commands.CreateEvent
 
                     string json = SerializeUtil.SerializeToJson(notification);
                     var bytes = SerializeUtil.SerializeStringToBytes(json, true);
-                    json = JsonConvert.SerializeObject(bytes);
+                    //json = JsonConvert.SerializeObject(bytes);
 
-                    await _redisService.StringSetAsync("PUBLISH_MSG", json, null);
+                    await _redisService.PublishAsync("PUBLISH_MSG", bytes);
 
-                    _logger.LogInformation("PushNotification: {@PushNotification}", notification);
+                    _logger.LogInformation("debug: PushNotification: {@PushNotification}", notification);
                 }
             }
             catch(Exception ex)
             {
-                _logger.LogError("push notification error: {@PushNotificationError}", ex);
+                _logger.LogError("debug: push notification error: {@PushNotificationError}", ex);
             }
         }
     }
