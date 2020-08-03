@@ -64,28 +64,35 @@ namespace Photography.Services.Notification.API.Application.Commands.CreateEvent
         /// <returns></returns>
         private async Task PushNotificationAsync(Guid toUserId, string message)
         {
-            var user = await _userRepository.GetByIdAsync(toUserId);
-
-            _logger.LogInformation("push toUserId: " + toUserId);
-            _logger.LogInformation("push user: {@user}", user);
-            _logger.LogInformation("push message: " + message);
-
-            if (user != null && !string.IsNullOrWhiteSpace(user.RegistrationId) && !string.IsNullOrWhiteSpace(message))
+            try
             {
-                var notification = new
+                var user = await _userRepository.GetByIdAsync(toUserId);
+
+                _logger.LogInformation("push toUserId: " + toUserId);
+                _logger.LogInformation("push user: {@user}", user);
+                _logger.LogInformation("push message: " + message);
+
+                if (user != null && !string.IsNullOrWhiteSpace(user.RegistrationId) && !string.IsNullOrWhiteSpace(message))
                 {
-                    DeviceId = user.RegistrationId,
-                    Msg = message,
-                    IsDebug = _env.IsDevelopment()
-                };
+                    var notification = new
+                    {
+                        DeviceId = user.RegistrationId,
+                        Msg = message,
+                        IsDebug = _env.IsDevelopment()
+                    };
 
-                string json = SerializeUtil.SerializeToJson(notification);
-                var bytes = SerializeUtil.SerializeStringToBytes(json, true);
-                json = JsonConvert.SerializeObject(bytes);
+                    string json = SerializeUtil.SerializeToJson(notification);
+                    var bytes = SerializeUtil.SerializeStringToBytes(json, true);
+                    json = JsonConvert.SerializeObject(bytes);
 
-                await _redisService.StringSetAsync("PUBLISH_MSG", json, null);
+                    await _redisService.StringSetAsync("PUBLISH_MSG", json, null);
 
-                _logger.LogInformation("PushNotification: {@PushNotification}", notification);
+                    _logger.LogInformation("PushNotification: {@PushNotification}", notification);
+                }
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("push notification error: {@PushNotificationError}", ex);
             }
         }
     }
