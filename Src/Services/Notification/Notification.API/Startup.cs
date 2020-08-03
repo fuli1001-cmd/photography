@@ -7,6 +7,7 @@ using Arise.DDD.API.Behaviors;
 using Arise.DDD.API.Filters;
 using Arise.DDD.API.Response;
 using Arise.DDD.Infrastructure.Extensions;
+using Arise.DDD.Infrastructure.Redis;
 using Autofac;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -52,6 +53,10 @@ namespace Photography.Services.Notification.API
             services.AddHttpContextAccessor();
 
             services.AddMediatR(typeof(CreateEventCommandHandler));
+
+            services.Configure<RedisSettings>(Configuration.GetSection("RedisSettings"));
+
+            services.AddSingleton(typeof(IRedisService), typeof(RedisService));
 
             services.AddControllers(options =>
             {
