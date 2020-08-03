@@ -35,6 +35,7 @@
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.1.39" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.4.1" />
+    <PackageReference Include="zlib.net" Version="1.0.4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\ApplicationMessages\ApplicationMessages.csproj" />

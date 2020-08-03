@@ -50,7 +50,7 @@ namespace Photography.Services.Notification.API.Application.Commands.CreateEvent
                 var result = await _eventRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
                 // 推送
-                _logger.LogInformation("push start push");
+                _logger.LogInformation("push debug: start push");
                 await PushNotificationAsync(request.ToUserId, request.PushMessage);
             }
             return true;
@@ -68,9 +68,9 @@ namespace Photography.Services.Notification.API.Application.Commands.CreateEvent
             {
                 var user = await _userRepository.GetByIdAsync(toUserId);
 
-                _logger.LogInformation("push toUserId: " + toUserId);
-                _logger.LogInformation("push user: {@user}", user);
-                _logger.LogInformation("push message: " + message);
+                _logger.LogInformation("push debug: toUserId: " + toUserId);
+                _logger.LogInformation("push debug: user: {@user}", user);
+                _logger.LogInformation("push debug: message: " + message);
 
                 if (user != null && !string.IsNullOrWhiteSpace(user.RegistrationId) && !string.IsNullOrWhiteSpace(message))
                 {
