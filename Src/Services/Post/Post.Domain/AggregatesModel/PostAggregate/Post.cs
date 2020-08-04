@@ -350,11 +350,6 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             PostAuthStatus = status;
         }
 
-        public void SetPostAuthStatus(PostAuthStatus postAuthStatus)
-        {
-            PostAuthStatus = PostAuthStatus;
-        }
-
         public void SetCreatedTime(double createdTime)
         {
             CreatedTime = createdTime;

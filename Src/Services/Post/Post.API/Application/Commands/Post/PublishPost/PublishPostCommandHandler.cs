@@ -76,12 +76,12 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
             if (role == "internal")
             {
                 // 无需审核
-                post.SetPostAuthStatus(PostAuthStatus.Authenticated);
+                post.Examine(PostAuthStatus.Authenticated);
 
                 // 创建时间随机向前推1-5个月
                 var createdTime = DateTime.UnixEpoch.AddSeconds(post.CreatedTime);
                 var months = new Random().Next(1, 6);
-                createdTime.AddMonths(-months);
+                createdTime = createdTime.AddMonths(-months);
                 post.SetCreatedTime((createdTime - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds);
             }
             #endregion
