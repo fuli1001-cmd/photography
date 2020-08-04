@@ -14,13 +14,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Arise.DDD.API" Version="1.0.8" />
+    <PackageReference Include="Arise.DDD.API" Version="1.1.1" />
     <PackageReference Include="Arise.DDD.Messages" Version="1.0.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
-    <PackageReference Include="FluentValidation" Version="8.6.2" />
-    <PackageReference Include="FluentValidation.AspNetCore" Version="8.6.2" />
+    <PackageReference Include="FluentValidation" Version="9.0.1" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="9.0.1" />
     <PackageReference Include="IdentityModel" Version="4.3.0" />
     <PackageReference Include="MediatR" Version="8.0.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
@@ -46,9 +46,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\ApplicationMessages\ApplicationMessages.csproj" />
-    <ProjectReference Include="..\User.API.Query.EF\User.API.Query.EF.csproj" />
-    <ProjectReference Include="..\User.API.Query\User.API.Query.csproj" />
-    <ProjectReference Include="..\User.Domain\User.Domain.csproj" />
     <ProjectReference Include="..\User.Infrastructure\User.Infrastructure.csproj" />
   </ItemGroup>
 

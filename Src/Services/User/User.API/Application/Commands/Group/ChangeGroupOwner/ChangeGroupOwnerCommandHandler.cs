@@ -48,7 +48,7 @@ namespace Photography.Services.User.API.Application.Commands.Group.ChangeGroupOw
             if (await _groupRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
             {
                 // BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据
-                await UpdateRedisAsync(request, group);
+                await UpdateRedisAsync(request, group, myId);
 
                 return true;
             }
@@ -57,7 +57,7 @@ namespace Photography.Services.User.API.Application.Commands.Group.ChangeGroupOw
         }
 
         #region BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据
-        private async Task UpdateRedisAsync(ChangeGroupOwnerCommand request, Domain.AggregatesModel.GroupAggregate.Group group)
+        private async Task UpdateRedisAsync(ChangeGroupOwnerCommand request, Domain.AggregatesModel.GroupAggregate.Group group, Guid operatorId)
         {
             try
             {
@@ -66,7 +66,8 @@ namespace Photography.Services.User.API.Application.Commands.Group.ChangeGroupOw
 
                 // 发布系统消息
                 var changedUsers = await _userRepository.GetUsersAsync(new List<Guid> { request.NewOwnerId });
-                await _chatServerRedisService.WriteGroupMemberMessageAsync(group, SysMsgType.OWNER_CHANGED, changedUsers);
+                var operatorUser = await _userRepository.GetByIdAsync(operatorId);
+                await _chatServerRedisService.WriteGroupMemberMessageAsync(group, SysMsgType.OWNER_CHANGED, changedUsers, operatorUser);
             }
             catch (Exception ex)
             {

@@ -7,12 +7,14 @@ on:
     paths:
       - 'Src/Services/User/**'
       - '.github/workflows/user-prod.yml'
+      - 'Src/ApplicationMessages/**'
   pull_request:
     branches:
       - master
     paths:
       - 'Src/Services/User/**'
       - '.github/workflows/user-prod.yml'
+      - 'Src/ApplicationMessages/**'
       
 jobs:
   cd:

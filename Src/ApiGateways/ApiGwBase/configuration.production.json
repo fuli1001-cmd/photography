@@ -1,5 +1,5 @@
 {
-  "ReRoutes": [
+  "Routes": [
     {
       "DownstreamPathTemplate": "/api/posts",
       "DownstreamScheme": "http",
@@ -200,6 +200,18 @@
       "UpstreamPathTemplate": "/api/groups/{everything}",
       "UpstreamHttpMethod": []
     },
+    {
+      "DownstreamPathTemplate": "/api/chats/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "userapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/chats/{everything}",
+      "UpstreamHttpMethod": []
+    },
 
     {
       "DownstreamPathTemplate": "/api/orders",
@@ -274,6 +286,18 @@
         }
       ],
       "UpstreamPathTemplate": "/api/events",
+      "UpstreamHttpMethod": []
+    },
+    {
+      "DownstreamPathTemplate": "/api/events/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "notificationapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/events/{everything}",
       "UpstreamHttpMethod": []
     },
     {

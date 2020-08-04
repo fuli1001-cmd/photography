@@ -1,4 +1,4 @@
-﻿using ApplicationMessages.Events;
+﻿using ApplicationMessages.Events.Order;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
 using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
@@ -27,10 +27,14 @@ namespace Photography.Services.User.API.Application.IntegrationEventHandlers
             {
                 _logger.LogInformation("----- Handling OrderFinishedEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
+                // 减少用户1的出片阶段订单数量
                 var user1 = await _userRepository.GetByIdAsync(message.User1Id);
+                //user1.DecreaseProductionStageOrderCount();
                 user1.DecreaseOngoingOrderCount();
 
+                // 减少用户2的出片阶段订单数量
                 var user2 = await _userRepository.GetByIdAsync(message.User2Id);
+                //user2.DecreaseProductionStageOrderCount();
                 user2.DecreaseOngoingOrderCount();
 
                 await _userRepository.UnitOfWork.SaveEntitiesAsync();

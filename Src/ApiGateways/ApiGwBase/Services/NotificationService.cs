@@ -2,12 +2,10 @@
 using Newtonsoft.Json;
 using Photography.ApiGateways.ApiGwBase.Dtos;
 using Photography.ApiGateways.ApiGwBase.Settings;
-using Photography.ApiGateways.ApiGwBase.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace Photography.ApiGateways.ApiGwBase.Services
@@ -17,22 +15,24 @@ namespace Photography.ApiGateways.ApiGwBase.Services
         private readonly HttpClient _client;
         private readonly ServiceSettings _serviceSettings;
 
-        public NotificationService(HttpClient client, IOptions<ServiceSettings> serviceSettingsOptions)
+        public NotificationService(HttpClient client, IOptions<ServiceSettings> serviceOptions)
         {
-            _serviceSettings = serviceSettingsOptions.Value;
-            _client = client;
+            _serviceSettings = serviceOptions?.Value ?? throw new ArgumentNullException(nameof(serviceOptions));
+            _client = client ?? throw new ArgumentNullException(nameof(client));
             _client.BaseAddress = new Uri(_serviceSettings.NotificationService);
         }
 
-        public async Task<UserDto> GetPushSettingsAsync(string token)
+        /// <summary>
+        /// 获取我的未读事件数量
+        /// </summary>
+        /// <returns></returns>
+        public async Task<UnReadEventCountDto> GetUnReadEventCountAsync()
         {
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            var response = await _client.GetAsync("/api/users/pushsettings");
+            var response = await _client.GetAsync($"/api/events/unread-count");
 
             response.EnsureSuccessStatusCode();
 
-            return JsonConvert.DeserializeObject<ResponseWrapper<UserDto>>(await response.Content.ReadAsStringAsync()).Data;
+            return JsonConvert.DeserializeObject<ResponseWrapper<UnReadEventCountDto>>(await response.Content.ReadAsStringAsync()).Data;
         }
     }
 }

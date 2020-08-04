@@ -29,14 +29,14 @@ namespace Photography.Services.Post.API.Application.IntegrationEventHandlers
             {
                 _logger.LogInformation("----- Handling UserRegisteredEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                var createUserCommand = new CreateUserCommand { UserId = message.Id, UserName = message.UserName };
+                var createUserCommand = new CreateUserCommand { UserId = message.Id.ToString(), UserName = message.UserName };
 
                 if (await _mediator.Send(createUserCommand) && !string.IsNullOrEmpty(message.InvitingUserCode))
                 {
                     // 如果有推荐人的邀请码，则建立相互关注的关系
                     var followEachOtherCommand = new FollowEachOtherCommand
                     {
-                        UserId = message.Id,
+                        UserId = message.Id.ToString(),
                         InvitingUserCode = message.InvitingUserCode
                     };
                     await _mediator.Send(followEachOtherCommand);

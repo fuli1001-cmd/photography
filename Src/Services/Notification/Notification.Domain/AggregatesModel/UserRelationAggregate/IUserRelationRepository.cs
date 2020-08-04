@@ -8,6 +8,6 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.UserRelationA
 {
     public interface IUserRelationRepository : IRepository<UserRelation>
     {
-        Task<UserRelation> GetUserRelationAsync(Guid FollowerId, Guid FollowedUserId);
+        Task<UserRelation> GetUserRelationAsync(Guid followerId, Guid followedUserId);
     }
 }

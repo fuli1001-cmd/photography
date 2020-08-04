@@ -1,6 +1,5 @@
-﻿using ApplicationMessages.Events;
+﻿using ApplicationMessages.Events.Order;
 using Arise.DDD.Domain.Exceptions;
-using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -48,15 +47,15 @@ namespace Photography.Services.Order.API.Application.Commands.AcceptOrder
             if (await _orderRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
             {
                 var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-                await SendOrderAcceptedEventAsync(userId, request.DealId);
+                await SendOrderAcceptedEventAsync(userId, order.User1Id == userId ? order.User2Id : order.User1Id, request.DealId);
             }
 
             return await _orderQueries.GetOrderAsync(order.Id);
         }
 
-        private async Task SendOrderAcceptedEventAsync(Guid userId, Guid dealId)
+        private async Task SendOrderAcceptedEventAsync(Guid userId, Guid anotherUserId, Guid dealId)
         {
-            var @event = new OrderAcceptedEvent { UserId = userId, DealId = dealId };
+            var @event = new OrderAcceptedEvent { UserId = userId, AnotherUserId = anotherUserId, DealId = dealId };
             _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
             await _messageSession.Publish(@event);
             _logger.LogInformation("----- Published OrderAcceptedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);

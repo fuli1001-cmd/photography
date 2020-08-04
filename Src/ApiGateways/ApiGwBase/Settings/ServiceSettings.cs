@@ -12,5 +12,7 @@ namespace Photography.ApiGateways.ApiGwBase.Settings
         public string UserService { get; set; }
 
         public string NotificationService { get; set; }
+
+        public string PostService { get; set; }
     }
 }

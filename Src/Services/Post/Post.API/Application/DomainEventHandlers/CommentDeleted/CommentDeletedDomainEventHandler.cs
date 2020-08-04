@@ -1,6 +1,9 @@
 ﻿using Arise.DDD.Domain.Exceptions;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Photography.Services.Post.API.Settings;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserCommentRelationAggregate;
 using Photography.Services.Post.Domain.Events;
@@ -16,15 +19,18 @@ namespace Photography.Services.Post.API.Application.DomainEventHandlers.CommentD
     {
         private readonly IUserCommentRelationRepository _userCommentRelationRepository;
         private readonly IPostRepository _postRepository;
+        private readonly PostScoreRewardSettings _scoreRewardSettings;
         private readonly ILogger<CommentDeletedDomainEventHandler> _logger;
 
         public CommentDeletedDomainEventHandler(
             IUserCommentRelationRepository userCommentRelationRepository,
             IPostRepository postRepository,
+            IOptionsSnapshot<PostScoreRewardSettings> scoreRewardOptions,
             ILogger<CommentDeletedDomainEventHandler> logger)
         {
             _userCommentRelationRepository = userCommentRelationRepository ?? throw new ArgumentNullException(nameof(userCommentRelationRepository));
             _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
+            _scoreRewardSettings = scoreRewardOptions?.Value ?? throw new ArgumentNullException(nameof(scoreRewardOptions));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -39,7 +45,7 @@ namespace Photography.Services.Post.API.Application.DomainEventHandlers.CommentD
             // 更新帖子的评论数
             var post = await _postRepository.GetByIdAsync(notification.PostId);
             if (post != null)
-                post.DecreaseCommentCount(notification.CommentIds.Count);
+                post.DecreaseCommentCount(notification.CommentIds.Count, _scoreRewardSettings.CommentPost);
         }
     }
 }

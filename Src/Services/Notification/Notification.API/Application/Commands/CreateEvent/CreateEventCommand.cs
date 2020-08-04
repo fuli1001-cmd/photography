@@ -29,5 +29,7 @@ namespace Photography.Services.Notification.API.Application.Commands.CreateEvent
         public string CircleName { get; set; }
 
         public Guid? OrderId { get; set; }
+
+        public string PushMessage { get; set; }
     }
 }

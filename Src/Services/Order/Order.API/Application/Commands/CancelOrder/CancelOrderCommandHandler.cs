@@ -1,4 +1,4 @@
-﻿using ApplicationMessages.Events;
+﻿using ApplicationMessages.Events.Order;
 using Arise.DDD.Domain.Exceptions;
 using AutoMapper;
 using MediatR;

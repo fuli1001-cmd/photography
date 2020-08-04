@@ -80,6 +80,17 @@ namespace Photography.Services.Post.API.Query.EF
             return pagedDto;
         }
 
+        public async Task<AppointmentViewModel> GetSentAppointmentDealAsync(Guid dealId)
+        {
+            var queryableUserPosts = from p in _postContext.Posts
+                                     join u in _postContext.Users
+                                     on p.AppointmentedUserId equals u.Id
+                                     where p.Id == dealId
+                                     select new UserPost { Post = p, User = u };
+
+            return await GetQueryableAppointmentViewModels(queryableUserPosts).FirstOrDefaultAsync();
+        }
+
         private IQueryable<AppointmentViewModel> GetQueryableAppointmentViewModels(IQueryable<UserPost> queryableUserPosts)
         {
             return from up in queryableUserPosts

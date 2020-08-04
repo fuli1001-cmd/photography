@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Arise.DDD.API.Behaviors;
 using Arise.DDD.API.Filters;
 using Arise.DDD.API.Response;
 using Arise.DDD.Infrastructure.Extensions;
+using Arise.DDD.Infrastructure.Redis;
 using Autofac;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -22,7 +24,6 @@ using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Photography.Services.Notification.API.Application.Behaviors;
 using Photography.Services.Notification.API.Application.Commands.CreateEvent;
 using Photography.Services.Notification.API.Infrastructure.AutofacModules;
 using Photography.Services.Notification.Infrastructure;
@@ -53,6 +54,10 @@ namespace Photography.Services.Notification.API
 
             services.AddMediatR(typeof(CreateEventCommandHandler));
 
+            services.Configure<RedisSettings>(Configuration.GetSection("RedisSettings"));
+
+            services.AddSingleton(typeof(IRedisService), typeof(RedisService));
+
             services.AddControllers(options =>
             {
                 options.Filters.Add(typeof(HttpGlobalExceptionFilter));
@@ -71,6 +76,7 @@ namespace Photography.Services.Notification.API
             });
 
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
 
             services.AddSqlDataAccessServices<NotificationContext>(Configuration.GetConnectionString("NotificationConnection"), typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
 

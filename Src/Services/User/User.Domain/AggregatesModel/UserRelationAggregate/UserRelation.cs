@@ -6,58 +6,60 @@ using Photography.Services.User.Domain.Events;
 
 namespace Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate
 {
+    /// <summary>
+    /// 用户之间的关系（关注，静音），关系从FromUser指向ToUser
+    /// </summary>
     public class UserRelation : Entity, IAggregateRoot
     {
-        // 关注者
-        public Guid FollowerId { get; private set; }
-        public Domain.AggregatesModel.UserAggregate.User Follower { get; private set; }
+        public Guid FromUserId { get; private set; }
+        //public UserAggregate.User FromUser { get; private set; }
 
-        // 被关注者
-        public Guid FollowedUserId { get; private set; }
-        public Domain.AggregatesModel.UserAggregate.User FollowedUser { get; private set; }
+        public Guid ToUserId { get; private set; }
+        //public UserAggregate.User ToUser { get; private set; }
 
-        public bool MutedFollowedUser { get; private set; }
+        // FromUser是否静音了ToUser
+        public bool Muted { get; private set; }
 
-        public UserRelation()
+        // FromUser是否关注了ToUser
+        public bool Followed { get; private set; }
+
+        public UserRelation(Guid fromUserId, Guid toUserId)
         {
-            MutedFollowedUser = false;
+            FromUserId = fromUserId;
+            ToUserId = toUserId;
         }
 
-        public UserRelation(Guid followerId, Guid followedUserId) : this()
+        public void Mute()
         {
-            FollowerId = followerId;
-            FollowedUserId = followedUserId;
+            Muted = true;
         }
 
-        public void MuteFollowedUser()
+        public void UnMute()
         {
-            MutedFollowedUser = true;
-        }
-
-        public void UnMuteFollowedUser()
-        {
-            MutedFollowedUser = false;
+            Muted = false;
         }
 
         public void Follow()
         {
+            Followed = true;
             AddFollowedUserDomainEvent();
         }
 
         public void UnFollow()
         {
+            Followed = false;
             AddUnFollowedUserDomainEvent();
         }
 
         private void AddFollowedUserDomainEvent()
         {
-            var followedUserDomainEvent = new FollowedUserDomainEvent(FollowerId, FollowedUserId);
+            var followedUserDomainEvent = new FollowedUserDomainEvent(FromUserId, ToUserId);
             AddDomainEvent(followedUserDomainEvent);
         }
 
         private void AddUnFollowedUserDomainEvent()
         {
-            var unFollowedUserDomainEvent = new UnFollowedUserDomainEvent(FollowerId, FollowedUserId);
+            var unFollowedUserDomainEvent = new UnFollowedUserDomainEvent(FromUserId, ToUserId);
             AddDomainEvent(unFollowedUserDomainEvent);
         }
     }

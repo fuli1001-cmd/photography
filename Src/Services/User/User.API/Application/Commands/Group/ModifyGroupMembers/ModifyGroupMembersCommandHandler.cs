@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Photography.Services.User.API.BackwardCompatibility.ChatServerRedis;
 using Photography.Services.User.API.BackwardCompatibility.Models;
-using Photography.Services.User.API.Infrastructure.Redis;
 using Photography.Services.User.Domain.AggregatesModel.GroupAggregate;
 using Photography.Services.User.Domain.AggregatesModel.GroupUserAggregate;
 using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
@@ -77,7 +76,7 @@ namespace Photography.Services.User.API.Application.Commands.Group.ModifyGroupMe
             if (await _groupUserRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
             {
                 // BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据
-                await UpdateRedisAsync(request, group);
+                await UpdateRedisAsync(request, group, myId);
 
                 return true;
             }
@@ -86,7 +85,7 @@ namespace Photography.Services.User.API.Application.Commands.Group.ModifyGroupMe
         }
 
         #region BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据
-        private async Task UpdateRedisAsync(ModifyGroupMembersCommand request, Domain.AggregatesModel.GroupAggregate.Group group)
+        private async Task UpdateRedisAsync(ModifyGroupMembersCommand request, Domain.AggregatesModel.GroupAggregate.Group group, Guid operatorId)
         {
             try
             {
@@ -103,11 +102,19 @@ namespace Photography.Services.User.API.Application.Commands.Group.ModifyGroupMe
                 }
 
                 // 发布系统消息
-                var removedUsers = await _userRepository.GetUsersAsync(request.RemovedMemberIds);
-                await _chatServerRedisService.WriteGroupMemberMessageAsync(group, SysMsgType.REMOVED_FROM_GROUP, removedUsers);
+                var operatorUser = await _userRepository.GetByIdAsync(operatorId);
 
-                var addedUsers = await _userRepository.GetUsersAsync(request.NewMemberIds);
-                await _chatServerRedisService.WriteGroupMemberMessageAsync(group, SysMsgType.NEW_MEMBER_ADDED, removedUsers);
+                if (request.RemovedMemberIds != null && request.RemovedMemberIds.Count > 0)
+                {
+                    var removedUsers = await _userRepository.GetUsersAsync(request.RemovedMemberIds);
+                    await _chatServerRedisService.WriteGroupMemberMessageAsync(group, SysMsgType.REMOVED_FROM_GROUP, removedUsers, operatorUser);
+                }
+
+                if (request.NewMemberIds != null && request.NewMemberIds.Count > 0)
+                {
+                    var addedUsers = await _userRepository.GetUsersAsync(request.NewMemberIds);
+                    await _chatServerRedisService.WriteGroupMemberMessageAsync(group, SysMsgType.NEW_MEMBER_ADDED, addedUsers, operatorUser);
+                }
             } 
             catch (Exception ex)
             {

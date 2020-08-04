@@ -18,10 +18,12 @@
     <None Remove="Application\Queries\**" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Arise.DDD.API" Version="1.1.1" />
     <PackageReference Include="Arise.DDD.Messages" Version="1.0.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
-    <PackageReference Include="FluentValidation.AspNetCore" Version="8.6.2" />
+    <PackageReference Include="Consul" Version="1.6.1.1" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="9.0.1" />
     <PackageReference Include="MediatR" Version="8.0.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.4" />
@@ -45,9 +47,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\ApplicationMessages\ApplicationMessages.csproj" />
-    <ProjectReference Include="..\Post.API.Query.EF\Post.API.Query.EF.csproj" />
-    <ProjectReference Include="..\Post.API.Query\Post.API.Query.csproj" />
-    <ProjectReference Include="..\Post.Domain\Post.Domain.csproj" />
     <ProjectReference Include="..\Post.Infrastructure\Post.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>

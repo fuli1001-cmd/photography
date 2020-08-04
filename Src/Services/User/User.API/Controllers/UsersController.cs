@@ -14,6 +14,7 @@ using Photography.Services.User.API.Application.Commands.User.AllowViewFollowers
 using Photography.Services.User.API.Application.Commands.User.AuthRealName;
 using Photography.Services.User.API.Application.Commands.User.DisableUser;
 using Photography.Services.User.API.Application.Commands.User.MuteUser;
+using Photography.Services.User.API.Application.Commands.User.ReportIllegal;
 using Photography.Services.User.API.Application.Commands.User.ToggleFollow;
 using Photography.Services.User.API.Application.Commands.User.UpdateBackground;
 using Photography.Services.User.API.Application.Commands.User.UpdateUser;
@@ -82,7 +83,7 @@ namespace Photography.Services.User.API.Controllers
         [HttpGet]
         [Route("me")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<MeViewModel>> GetCurrentUserAsync()
+        public async Task<ActionResult<UserViewModel>> GetCurrentUserAsync()
         {
             var user = await _userQueries.GetCurrentUserAsync();
             return Ok(ResponseWrapper.CreateOkResponseWrapper(user));
@@ -297,6 +298,19 @@ namespace Photography.Services.User.API.Controllers
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 举报用户
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("IllegalReport")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<bool> ReportIllegalUserAsync([FromBody] ReportIllegalCommand command)
+        {
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(true));
         }
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using NServiceBus;
 using Photography.Services.Notification.API.Application.Commands.CreateEvent;
 using Photography.Services.Notification.API.Application.Commands.ProcessEvent;
+using Photography.Services.Notification.Domain.AggregatesModel.UserAggregate;
 using Serilog.Context;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,13 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
 {
     public class JoinedCircleEventHandler : IHandleMessages<JoinedCircleEvent>
     {
+        private readonly IUserRepository _userRepository;
         private readonly IMediator _mediator;
         private readonly ILogger<JoinedCircleEventHandler> _logger;
 
-        public JoinedCircleEventHandler(IMediator mediator, ILogger<JoinedCircleEventHandler> logger)
+        public JoinedCircleEventHandler(IUserRepository userRepository, IMediator mediator, ILogger<JoinedCircleEventHandler> logger)
         {
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -29,6 +32,8 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
             {
                 _logger.LogInformation("----- Handling JoinedCircleEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
+                var fromUser = await _userRepository.GetByIdAsync(message.JoinedUserId);
+
                 // 创建用户已入圈的事件
                 var createEventCommand = new CreateEventCommand
                 {
@@ -36,7 +41,8 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                     ToUserId = message.CircleOwnerId,
                     CircleId = message.CircleId,
                     CircleName = message.CircleName,
-                    EventType = Domain.AggregatesModel.EventAggregate.EventType.JoinCircle
+                    EventType = Domain.AggregatesModel.EventAggregate.EventType.JoinCircle,
+                    PushMessage = $"{fromUser.Nickname}加入了圈子{message.CircleName}"
                 };
 
                 await _mediator.Send(createEventCommand);

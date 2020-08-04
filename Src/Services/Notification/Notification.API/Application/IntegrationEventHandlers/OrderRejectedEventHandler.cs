@@ -1,4 +1,4 @@
-﻿using ApplicationMessages.Events;
+﻿using ApplicationMessages.Events.Order;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
@@ -28,14 +28,15 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
             {
                 _logger.LogInformation("----- Handling OrderRejectedEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                // 创建用户已入圈的事件
+                // 创建订单已拒绝的事件
                 var createEventCommand = new CreateEventCommand
                 {
                     FromUserId = message.ProcessingUserId,
                     ToUserId = message.AnotherUserId,
                     EventType = Domain.AggregatesModel.EventAggregate.EventType.RejectOrder,
                     CommentText = message.Description,
-                    OrderId = message.OrderId
+                    OrderId = message.OrderId,
+                    PushMessage = "你的约拍请求已被对方拒绝"
                 };
 
                 await _mediator.Send(createEventCommand);

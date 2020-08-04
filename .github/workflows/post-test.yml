@@ -6,11 +6,13 @@ on:
       - test
     paths:
       - 'Src/Services/Post/**'
+      - 'Src/ApplicationMessages/**'
   pull_request:
     branches:
       - test
     paths:
       - 'Src/Services/Post/**'
+      - 'Src/ApplicationMessages/**'
       
 jobs:
   cd:
@@ -27,13 +29,11 @@ jobs:
         
       - name: Tags
         run: |
-          docker tag photography-postapi ${{ secrets.DOCKER_USER }}/photography-postapi:${{ github.sha }}
-          docker tag photography-postapi ${{ secrets.DOCKER_USER }}/photography-postapi:linux
+          docker tag photography-postapi ${{ secrets.DOCKER_USER }}/photography-postapi:test
           
       - name: Push
         run: |
-          docker push ${{ secrets.DOCKER_USER }}/photography-postapi:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USER }}/photography-postapi:linux
+          docker push ${{ secrets.DOCKER_USER }}/photography-postapi:test
           
       - name: Deploy
         uses: garygrossgarten/github-action-ssh@release

@@ -1,4 +1,4 @@
-﻿using Arise.DDD.Infrastructure;
+﻿using Arise.DDD.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate;
 using System;
@@ -16,13 +16,9 @@ namespace Photography.Services.User.Infrastructure.Repositories
 
         }
 
-        public async Task<UserRelation> GetAsync(Guid followerId, Guid followedUserId)
+        public async Task<UserRelation> GetAsync(Guid fromUserId, Guid toUserId)
         {
-            var urs = await _context.UserRelations.Where(ur => ur.FollowerId == followerId && ur.FollowedUserId == followedUserId).ToListAsync();
-            if (urs.Count > 0)
-                return urs[0];
-            else
-                return null;
+            return await _context.UserRelations.FirstOrDefaultAsync(ur => ur.FromUserId == fromUserId && ur.ToUserId == toUserId);
         }
 
         //public async Task<IEnumerable<UserRelation>> GetFriendsAsync(Guid myId)

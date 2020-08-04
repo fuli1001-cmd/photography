@@ -1,8 +1,9 @@
 {
-  "ReRoutes": [
+  "Routes": [
     {
       "DownstreamPathTemplate": "/api/posts",
       "DownstreamScheme": "http",
+      //"ServiceName": "postapi",
       "DownstreamHostAndPorts": [
         {
           "Host": "postapi",
@@ -200,6 +201,18 @@
       "UpstreamPathTemplate": "/api/groups/{everything}",
       "UpstreamHttpMethod": []
     },
+    {
+      "DownstreamPathTemplate": "/api/chats/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "userapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/chats/{everything}",
+      "UpstreamHttpMethod": []
+    },
 
     {
       "DownstreamPathTemplate": "/api/orders",
@@ -282,6 +295,18 @@
       "UpstreamHttpMethod": []
     },
     {
+      "DownstreamPathTemplate": "/api/events/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "notificationapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/events/{everything}",
+      "UpstreamHttpMethod": []
+    },
+    {
       "DownstreamPathTemplate": "/api/notificationusers/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -295,5 +320,11 @@
     }
   ],
   "GlobalConfiguration": {
+    //"ServiceDiscoveryProvider": {
+    //  "Host": "192.168.99.105",
+    //  "Port": 8500,
+    //  "PollingInterval": 10000,
+    //  "ConfigurationKey": "photo-test"
+    //}
   }
 }

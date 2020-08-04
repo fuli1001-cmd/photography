@@ -55,6 +55,21 @@
             false：接收消息
             </summary>
         </member>
+        <member name="T:Photography.Services.User.API.Application.Commands.Group.UpdateGroupAvatar.UpdateGroupAvatarCommand">
+            <summary>
+            群内成员更改群头像
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.Group.UpdateGroupAvatar.UpdateGroupAvatarCommand.GroupId">
+            <summary>
+            要更新群头像的群id
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.Group.UpdateGroupAvatar.UpdateGroupAvatarCommand.Avatar">
+            <summary>
+            群头像
+            </summary>
+        </member>
         <member name="T:Photography.Services.User.API.Application.Commands.User.AuthRealName.AuthRealNameCommand">
             <summary>
             实名认证
@@ -94,6 +109,21 @@
             <summary>
             true：不接收消息（免打扰）
             false：接收消息
+            </summary>
+        </member>
+        <member name="T:Photography.Services.User.API.Application.Commands.User.ReportIllegal.ReportIllegalCommand">
+            <summary>
+            举报用户命令
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.User.ReportIllegal.ReportIllegalCommand.UserId">
+            <summary>
+            被举报用户id
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.User.ReportIllegal.ReportIllegalCommand.Description">
+            <summary>
+            举报内容
             </summary>
         </member>
         <member name="P:Photography.Services.User.API.Application.Commands.User.ToggleFollow.ToggleFollowCommand.UserIdToFollow">
@@ -218,6 +248,19 @@
             <param name="command"></param>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.User.API.Controllers.ChatsController.GetOfflineAndRecentMessagesAsync(System.String)">
+            <summary>
+            获取离线和近期消息
+            </summary>
+            <param name="latestMsgId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.ChatsController.GetErrorCodesAsync">
+            <summary>
+            获取聊天错误码
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Photography.Services.User.API.Controllers.GroupsController.CreateGroupAsync(Photography.Services.User.API.Application.Commands.Group.CreateGroup.CreateGroupCommand)">
             <summary>
             建群
@@ -228,6 +271,16 @@
         <member name="M:Photography.Services.User.API.Controllers.GroupsController.UpdateGroupAsync(Photography.Services.User.API.Application.Commands.Group.UpdateGroup.UpdateGroupCommand)">
             <summary>
             编辑群
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.GroupsController.UpdateGroupAvatarAsync(Photography.Services.User.API.Application.Commands.Group.UpdateGroupAvatar.UpdateGroupAvatarCommand)">
+            <summary>
+            编辑群图片
+            该接口用于此情况：
+            群已打开允许群成员修改群成员，在群成员（非群主）修改了群成员后，客户端会根据最新成员列表更新群头像，
+            此时不能调用编辑群的接口，因为那个接口检查了操作者是否是群主，并且会发通知，而本接口情况无需发送通知
             </summary>
             <param name="command"></param>
             <returns></returns>
@@ -403,6 +456,13 @@
         <member name="M:Photography.Services.User.API.Controllers.UsersController.DisableUserAsync(Photography.Services.User.API.Application.Commands.User.DisableUser.DisableUserCommand)">
             <summary>
             禁用用户发布贴子、更新帖子、发布约拍的功能
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.UsersController.ReportIllegalUserAsync(Photography.Services.User.API.Application.Commands.User.ReportIllegal.ReportIllegalCommand)">
+            <summary>
+            举报用户
             </summary>
             <param name="command"></param>
             <returns></returns>

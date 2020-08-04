@@ -27,11 +27,13 @@ namespace Photography.Services.User.API.Application.IntegrationEventHandlers
             {
                 _logger.LogInformation("----- Handling AppointmentDealCreatedEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
+                // 增加用户1待确认订单数量
                 var user1 = await _userRepository.GetByIdAsync(message.User1Id);
-                user1.IncreaseOngoingOrderCount();
+                user1.IncreaseWaitingForConfirmOrderCount();
 
+                // 增加用户2待确认订单数量
                 var user2 = await _userRepository.GetByIdAsync(message.User2Id);
-                user2.IncreaseOngoingOrderCount();
+                user2.IncreaseWaitingForConfirmOrderCount();
 
                 await _userRepository.UnitOfWork.SaveEntitiesAsync();
             }

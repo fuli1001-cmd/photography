@@ -52,8 +52,19 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         // 赞过的帖子数量
         public int LikedPostCount { get; private set; }
 
-        // 进行中的订单数量（除去已完成、已拒绝和已取消外的订单数量）
-        public int OngoingOrderCount { get; set; }
+        // 进行中的订单数量（除去待确认、已完成、已拒绝和已取消外的订单数量）
+        public int OngoingOrderCount { get; private set; }
+
+        public int WaitingForConfirmOrderCount { get; private set; }
+
+        //// 拍片阶段的订单数量，包含OrderStatus为WaitingForShooting，WaitingForUploadOriginal的订单
+        //public int ShootingStageOrderCount { get; private set; }
+
+        //// 选片阶段的订单数量，包含OrderStatus为WaitingForSelection的订单
+        //public int SelectionStageOrderCount { get; private set; }
+
+        //// 出片阶段的订单数量，包含OrderStatus为WaitingForUploadProcessed，WaitingForCheck的订单
+        //public int ProductionStageOrderCount { get; private set; }
 
         // 约拍值
         public int Score { get; private set; }
@@ -90,8 +101,11 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         public int ClientType { get; set; }
         #endregion
 
-        public List<UserRelation> Followers { get; private set; }
-        public List<UserRelation> FollowedUsers { get; private set; }
+        //private readonly List<UserRelation> _fromUserRelations = null;
+        //public IReadOnlyCollection<UserRelation> FromUserRelations => _fromUserRelations;
+
+        //private readonly List<UserRelation> _toUserRelations = null;
+        //public IReadOnlyCollection<UserRelation> ToUserRelations => _toUserRelations;
 
         // 用户作为群主的群
         private readonly List<Group> _groups = null;
@@ -121,6 +135,10 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         public void Update(string nickname, Gender? gender, double? birthday, UserType? userType, 
             string province, string city, string sign, string avatar)
         {
+            // 更改用户类型需确保没有未完成订单
+            if (UserType != null && userType != null && UserType != userType && (OngoingOrderCount > 0 || WaitingForConfirmOrderCount > 0))
+                throw new ClientException("尚有未处理的约拍订单，请处理后再更换身份");
+
             Nickname = nickname;
             Gender = gender;
             Birthday = birthday;
@@ -146,15 +164,15 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
             PostCount = Math.Max(0, PostCount - 1);
         }
 
-        public void IncreaseAppointmentCount()
-        {
-            AppointmentCount++;
-        }
+        //public void IncreaseAppointmentCount()
+        //{
+        //    AppointmentCount++;
+        //}
 
-        public void DecreaseAppointmentCount()
-        {
-            AppointmentCount = Math.Max(0, AppointmentCount - 1);
-        }
+        //public void DecreaseAppointmentCount()
+        //{
+        //    AppointmentCount = Math.Max(0, AppointmentCount - 1);
+        //}
 
         public void IncreaseFollowerCount()
         {
@@ -186,15 +204,15 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
             LikedCount = Math.Max(0, LikedCount - 1);
         }
 
-        public void IncreaseLikedPostCount()
-        {
-            LikedPostCount++;
-        }
+        //public void IncreaseLikedPostCount()
+        //{
+        //    LikedPostCount++;
+        //}
 
-        public void DecreaseLikedPostCount()
-        {
-            LikedPostCount = Math.Max(0, LikedPostCount - 1);
-        }
+        //public void DecreaseLikedPostCount()
+        //{
+        //    LikedPostCount = Math.Max(0, LikedPostCount - 1);
+        //}
 
         public void IncreaseOngoingOrderCount()
         {
@@ -205,6 +223,46 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         {
             OngoingOrderCount = Math.Max(0, OngoingOrderCount - 1);
         }
+
+        public void IncreaseWaitingForConfirmOrderCount()
+        {
+            WaitingForConfirmOrderCount++;
+        }
+
+        public void DecreaseWaitingForConfirmOrderCount()
+        {
+            WaitingForConfirmOrderCount = Math.Max(0, WaitingForConfirmOrderCount - 1);
+        }
+
+        //public void IncreaseShootingStageOrderCount()
+        //{
+        //    ShootingStageOrderCount++;
+        //}
+
+        //public void DecreaseShootingStageOrderCount()
+        //{
+        //    ShootingStageOrderCount = Math.Max(0, ShootingStageOrderCount - 1);
+        //}
+
+        //public void IncreaseSelectionStageOrderCount()
+        //{
+        //    SelectionStageOrderCount++;
+        //}
+
+        //public void DecreaseSelectionStageOrderCount()
+        //{
+        //    SelectionStageOrderCount = Math.Max(0, SelectionStageOrderCount - 1);
+        //}
+
+        //public void IncreaseProductionStageOrderCount()
+        //{
+        //    ProductionStageOrderCount++;
+        //}
+
+        //public void DecreaseProductionStageOrderCount()
+        //{
+        //    ProductionStageOrderCount = Math.Max(0, ProductionStageOrderCount - 1);
+        //}
 
         public void SetChatServerProperties(int clientType, string registrationId)
         {
@@ -256,6 +314,11 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         public void Enable()
         {
             DisabledTime = null;
+        }
+
+        public void AddAppointmentScore(int score)
+        {
+            Score += score;
         }
     }
 

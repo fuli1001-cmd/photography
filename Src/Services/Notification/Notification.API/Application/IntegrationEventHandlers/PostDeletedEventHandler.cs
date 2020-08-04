@@ -33,7 +33,8 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                 {
                     FromUserId = message.OperatorId,
                     ToUserId = message.UserId,
-                    EventType = EventType.DeletePost
+                    EventType = EventType.DeletePost,
+                    PushMessage = "你发布的内容因违反平台规则，已被删除，请发布合规内容"
                 };
 
                 await _mediator.Send(command);

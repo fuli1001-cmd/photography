@@ -1,9 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Arise.DDD.Infrastructure.Redis;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Photography.Services.User.API.Application.Commands.Login;
 using Photography.Services.User.API.BackwardCompatibility.Models;
-using Photography.Services.User.API.BackwardCompatibility.Utils;
-using Photography.Services.User.API.Infrastructure.Redis;
 using Photography.Services.User.Domain.AggregatesModel.GroupAggregate;
 using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
 using System;
@@ -106,28 +104,28 @@ namespace Photography.Services.User.API.BackwardCompatibility.ChatServerRedis
             await WriteMessageAsync(msg);
         }
 
-        public async Task WriteGroupMemberMessageAsync(Group group, SysMsgType msgType, IEnumerable<Domain.AggregatesModel.UserAggregate.User> changedUsers)
+        public async Task WriteGroupMemberMessageAsync(Group group, SysMsgType msgType, IEnumerable<Domain.AggregatesModel.UserAggregate.User> changedUsers, Domain.AggregatesModel.UserAggregate.User operatorUser)
         {
-            var owner = await _userRepository.GetByIdAsync(group.OwnerId);
-
             var receivers = await _userRepository.GetUsersAsync(group.GroupUsers.Select(gu => gu.UserId.Value));
             var receiverIds = receivers.Select(u => u.ChatServerUserId).ToArray();
 
             var changedIds = changedUsers.Select(u => u.ChatServerUserId).ToArray();
             var changedNicknames = changedUsers.Select(u => u.Nickname).ToArray();
 
-            var removedMsg = new SysMsgGroupChangedVo
+            var msg = new SysMsgGroupChangedVo
             {
                 type = (int)msgType,
                 receiverIds = receiverIds,
                 changedMemberIds = changedIds,
                 changedMemberNames = changedNicknames,
                 groupId = group.ChatServerGroupId,
-                operatorName = owner.Nickname,
-                operatorId = owner.ChatServerUserId
+                operatorName = operatorUser.Nickname,
+                operatorId = operatorUser.ChatServerUserId
             };
 
-            await WriteMessageAsync(removedMsg);
+            _logger.LogInformation("group memeber message: {@msg}", msg);
+
+            await WriteMessageAsync(msg);
         }
 
         private async Task WriteMessageAsync(SysMsgGroupChangedVo msg)

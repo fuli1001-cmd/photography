@@ -28,7 +28,7 @@ namespace Photography.Services.Notification.API.Application.Commands.ConfigurePu
         {
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var user = await _userRepository.GetByIdAsync(myId);
-            user.ConfigurePush(request.EventType, request.PushSetting);
+            user.ConfigurePush(request.EventCategory, request.PushSetting);
             return await _userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
         }
     }

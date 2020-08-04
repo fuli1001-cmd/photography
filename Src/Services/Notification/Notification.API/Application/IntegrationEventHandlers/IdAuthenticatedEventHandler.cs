@@ -28,12 +28,13 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
             {
                 _logger.LogInformation("----- Handling IdAuthenticatedEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                // 创建用户已入圈的事件
+                // 创建实名认证结果的事件
                 var createEventCommand = new CreateEventCommand
                 {
                     FromUserId = message.OperatorId,
                     ToUserId = message.UserId,
-                    EventType = message.Passed ? Domain.AggregatesModel.EventAggregate.EventType.IdAuthenticated : Domain.AggregatesModel.EventAggregate.EventType.IdRejected
+                    EventType = message.Passed ? Domain.AggregatesModel.EventAggregate.EventType.IdAuthenticated : Domain.AggregatesModel.EventAggregate.EventType.IdRejected,
+                    PushMessage = message.Passed ? "你已实名认证成功" : "你的实名认证未通过"
                 };
 
                 await _mediator.Send(createEventCommand);

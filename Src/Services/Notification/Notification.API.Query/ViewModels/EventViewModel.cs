@@ -7,6 +7,8 @@ namespace Photography.Services.Notification.API.Query.ViewModels
 {
     public class EventViewModel
     {
+        public Guid Id { get; set; }
+
         // 事件发起人
         public UserViewModel FromUser { get; set; }
 
@@ -35,5 +37,31 @@ namespace Photography.Services.Notification.API.Query.ViewModels
         /// 事件是否已处理
         /// </summary>
         public bool Processed { get; set; }
+
+        /// <summary>
+        /// 事件是否已读
+        /// </summary>
+        public bool Readed { get; set; }
+    }
+
+    /// <summary>
+    /// 未读事件及其数量
+    /// </summary>
+    public class UnReadEventCountViewModel
+    {
+        /// <summary>
+        /// 互动事件未读数量
+        /// </summary>
+        public int Interaction { get; set; }
+
+        /// <summary>
+        /// 约拍事件未读数量
+        /// </summary>
+        public int Appointment { get; set; }
+
+        /// <summary>
+        /// 系统事件未读数量
+        /// </summary>
+        public int System { get; set; }
     }
 }

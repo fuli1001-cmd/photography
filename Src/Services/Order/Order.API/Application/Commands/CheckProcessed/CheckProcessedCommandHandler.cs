@@ -1,5 +1,4 @@
-﻿using ApplicationMessages.Events;
-using Arise.DDD.Domain.Exceptions;
+﻿using ApplicationMessages.Events.Order;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;

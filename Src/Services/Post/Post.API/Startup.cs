@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Arise.DDD.API.Behaviors;
 using Arise.DDD.API.Filters;
 using Arise.DDD.API.Response;
 using Arise.DDD.Infrastructure.Extensions;
@@ -26,13 +27,11 @@ using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Photography.Services.Post.API.Application.Behaviors;
-using Photography.Services.Post.API.Application.Commands.Post.PublishPost;
 using Photography.Services.Post.API.Application.Commands.User.CreateUser;
+using Photography.Services.Post.API.Application.Services;
 using Photography.Services.Post.API.Application.Validators;
 using Photography.Services.Post.API.Infrastructure.AutofacModules;
 using Photography.Services.Post.API.Query.MapperProfiles;
-using Photography.Services.Post.API.Query.ViewModels;
 using Photography.Services.Post.API.Settings;
 using Photography.Services.Post.Infrastructure;
 using Serilog;
@@ -77,6 +76,11 @@ namespace Photography.Services.Post.API
                 options.AddPolicy("AdminOnly", policy => policy.RequireClaim(ClaimTypes.Role, "admin"));
             });
 
+            services.Configure<PostScoreRewardSettings>(Configuration.GetSection("PostScoreRewardSettings"));
+            services.Configure<AppointmentSettings>(Configuration.GetSection("AppointmentSettings"));
+
+            //services.AddConsulClient(Configuration);
+
             services.AddHttpContextAccessor();
 
             services.AddMediatR(typeof(CreateUserCommandHandler));
@@ -100,7 +104,7 @@ namespace Photography.Services.Post.API
             });
 
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
-            //services.AddScoped<IPostQueries>(sp => new PostQueries(Configuration.GetConnectionString("PostConnection")));
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
 
             //var dbSettings = new DbSettings();
             //Configuration.GetSection("DbSettings").Bind(dbSettings);
@@ -114,10 +118,12 @@ namespace Photography.Services.Post.API
                 c.IncludeXmlComments(string.Format(@"{0}/Post.API.xml", System.AppDomain.CurrentDomain.BaseDirectory));
                 c.DescribeAllEnumsAsStrings();
             });
+
+            services.AddHostedService<RefreshPostScoreService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime lifetime)
         {
             if (env.IsDevelopment())
             {
@@ -154,6 +160,8 @@ namespace Photography.Services.Post.API
             {
                 endpoints.MapControllers();
             });
+
+            //app.RegisterWithConsul(lifetime);
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();

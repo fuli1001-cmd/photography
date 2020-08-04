@@ -1,5 +1,8 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Photography.Services.Post.API.Settings;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 using Photography.Services.Post.Domain.Events;
 using System;
@@ -13,13 +16,16 @@ namespace Photography.Services.Post.API.Application.DomainEventHandlers.UserUnLi
     public class UserUnLikedPostDomainEventHandler : INotificationHandler<UserUnLikedPostDomainEvent>
     {
         private readonly IPostRepository _postRepository;
+        private readonly PostScoreRewardSettings _scoreRewardSettings;
         private readonly ILogger<UserUnLikedPostDomainEventHandler> _logger;
 
         public UserUnLikedPostDomainEventHandler(
             IPostRepository postRepository,
+            IOptionsSnapshot<PostScoreRewardSettings> scoreRewardOptions,
             ILogger<UserUnLikedPostDomainEventHandler> logger)
         {
             _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
+            _scoreRewardSettings = scoreRewardOptions?.Value ?? throw new ArgumentNullException(nameof(scoreRewardOptions));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -28,7 +34,7 @@ namespace Photography.Services.Post.API.Application.DomainEventHandlers.UserUnLi
             _logger.LogInformation("----- Handling UserUnLikedPostDomainEvent: at {AppName} - ({@DomainEvent})", Program.AppName, notification);
 
             var post = await _postRepository.GetByIdAsync(notification.PostId);
-            post.UnLike();
+            post.UnLike(_scoreRewardSettings.LikePost);
         }
     }
 }

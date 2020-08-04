@@ -99,6 +99,21 @@
             <param name="cancellationToken"></param>
             <returns></returns>
         </member>
+        <member name="T:Photography.Services.Post.API.Application.Commands.Circle.ChangeCircleOwner.ChangeCircleOwnerCommand">
+            <summary>
+            设置圈主的命令
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Circle.ChangeCircleOwner.ChangeCircleOwnerCommand.CircleId">
+            <summary>
+            圈子ID
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Circle.ChangeCircleOwner.ChangeCircleOwnerCommand.UserId">
+            <summary>
+            要设置为圈主的用户id
+            </summary>
+        </member>
         <member name="T:Photography.Services.Post.API.Application.Commands.Circle.CreateCircle.CreateCircleCommand">
             <summary>
             创建圈子的命令
@@ -374,6 +389,11 @@
             点赞的帖子id
             </summary>
         </member>
+        <member name="T:Photography.Services.Post.API.Application.Commands.Post.ViewPost.ViewPostCommand">
+            <summary>
+            浏览帖子
+            </summary>
+        </member>
         <member name="T:Photography.Services.Post.API.Application.Commands.User.AuthRealName.AuthRealNameCommand">
             <summary>
             实名认证
@@ -450,6 +470,12 @@
             获取我收到的约拍交易
             </summary>
             <param name="pagingParameters">分页参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.AppointmentDealsController.GetSentAppointmentDealsCountAsync">
+            <summary>
+            获取我发出的和收到的约拍交易数量
+            </summary>
             <returns></returns>
         </member>
         <member name="T:Photography.Services.Post.API.Controllers.AppointmentsController">
@@ -552,6 +578,12 @@
             <param name="command"></param>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.Post.API.Controllers.CirclesController.UpdateCircleAsync(Photography.Services.Post.API.Application.Commands.Circle.ChangeCircleOwner.ChangeCircleOwnerCommand)">
+            <summary>
+            转让圈子
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Photography.Services.Post.API.Controllers.CommentsController">
             <summary>
             帖子控制器
@@ -649,6 +681,12 @@
             <param name="pagingParameters">分页参数</param>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetUserPostAndAppointmentCountAsync">
+            <summary>
+            获取用户的帖子数量，约拍数量，点赞的帖子数量
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetCirclePostsAsync(System.Guid,System.String,System.String,Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             圈子内的帖子
@@ -692,6 +730,13 @@
             <summary>
             获取帖子详情
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.ViewPostAsync(System.Guid)">
+            <summary>
+            此接口用于查看帖子详情时增加帖子积分
+            </summary>
+            <param name="postId"></param>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.Post.API.Controllers.PostsController.PublishPostAsync(Photography.Services.Post.API.Application.Commands.Post.PublishPost.PublishPostCommand)">

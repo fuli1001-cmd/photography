@@ -1,4 +1,4 @@
-﻿using Arise.DDD.Infrastructure;
+﻿using Arise.DDD.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Photography.Services.Post.Domain.AggregatesModel.CircleAggregate;
 using System;
@@ -24,6 +24,11 @@ namespace Photography.Services.Post.Infrastructure.Repositories
         public async Task<Circle> GetCircleWithPostsAsync(Guid circleId)
         {
             return await _context.Circles.Where(c => c.Id == circleId).Include(c => c.Posts).SingleOrDefaultAsync();
+        }
+
+        public async Task<Circle> GetCircleWithUsersAsync(Guid circleId)
+        {
+            return await _context.Circles.Where(c => c.Id == circleId).Include(c => c.UserCircleRelations).FirstOrDefaultAsync();
         }
 
         public async Task<int> GetUserCircleCount(Guid userId)

@@ -4,9 +4,13 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NServiceBus;
+using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
+using Photography.Services.Post.API.Settings;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
+using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +23,9 @@ namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.App
     public class AppointUserCommandHandler : IRequestHandler<AppointUserCommand, AppointmentViewModel>
     {
         private readonly IPostRepository _postRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IAppointmentDealQueries _appointmentDealQueries;
+        private readonly AppointmentSettings _appointmentSettings;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
         private readonly ILogger<AppointUserCommandHandler> _logger;
@@ -26,10 +33,20 @@ namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.App
 
         private IMessageSession _messageSession;
 
-        public AppointUserCommandHandler(IPostRepository postRepository, IHttpContextAccessor httpContextAccessor,
-            IServiceProvider serviceProvider, IMapper mapper, ILogger<AppointUserCommandHandler> logger)
+        public AppointUserCommandHandler(
+            IPostRepository postRepository,
+            IUserRepository userRepository,
+            IAppointmentDealQueries appointmentDealQueries,
+            IOptionsSnapshot<AppointmentSettings> appointmentOptions, 
+            IHttpContextAccessor httpContextAccessor,
+            IServiceProvider serviceProvider, 
+            IMapper mapper, 
+            ILogger<AppointUserCommandHandler> logger)
         {
             _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _appointmentDealQueries = appointmentDealQueries ?? throw new ArgumentNullException(nameof(appointmentDealQueries));
+            _appointmentSettings = appointmentOptions?.Value ?? throw new ArgumentNullException(nameof(appointmentOptions));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
@@ -38,23 +55,48 @@ namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.App
 
         public async Task<AppointmentViewModel> Handle(AppointUserCommand request, CancellationToken cancellationToken)
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            if ((await _postRepository.GetTodayUserSentAppointmentDealCountAsync(myId)) >= _appointmentSettings.MaxSendDealCount)
+                throw new ClientException("已达今日最大约拍发起数量");
+
+            if ((await _postRepository.GetTodayUserReceivedAppointmentDealCountAsync(request.AppointmentedUserId)) >= _appointmentSettings.MaxReceiveDealCount)
+                throw new ClientException("对方已达今日最大被约数量");
+
+            // 创建约拍交易
             var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType)).ToList();
 
             var deal = Domain.AggregatesModel.PostAggregate.Post.CreateAppointmentDeal(
                 request.Text, request.AppointedTime, request.Price, request.PayerType, request.Latitude, 
                 request.Longitude, request.LocationName, request.Address, request.CityCode, attachments, 
-                Guid.Parse(userId), request.AppointmentedUserId, null);
+                myId, request.AppointmentedUserId, null);
             _postRepository.Add(deal);
 
-            if (await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
-                await SendAppointmentDealConfirmedEventAsync(deal);
+            // 增加约拍发起人和被约拍人的约拍值
+            var users = await _userRepository.GetUsersAsync(new List<Guid> { myId, request.AppointmentedUserId });
+            users.FirstOrDefault(u => u.Id == myId)?.AddAppointmentScore(_appointmentSettings.SendDealScore);
+            users.FirstOrDefault(u => u.Id == request.AppointmentedUserId)?.AddAppointmentScore(_appointmentSettings.ReceiveDealScore);
 
-            _postRepository.LoadUser(deal);
-            return _mapper.Map<AppointmentViewModel>(deal);
+            // 发布事件
+            if (await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
+            {
+                //await SendAppointmentDealConfirmedEventAsync(deal);
+                var eventTasks = new List<Task>
+                {
+                    SendAppointmentDealCreatedEventAsync(deal),
+                    SendAppointmentScoreChangedEventAsync(myId, _appointmentSettings.SendDealScore),
+                    SendAppointmentScoreChangedEventAsync(request.AppointmentedUserId, _appointmentSettings.ReceiveDealScore)
+                };
+                await Task.WhenAll(eventTasks);
+            }
+
+            return await _appointmentDealQueries.GetSentAppointmentDealAsync(deal.Id);
+
+            //_postRepository.LoadUser(deal);
+            //return _mapper.Map<AppointmentViewModel>(deal);
         }
 
-        private async Task SendAppointmentDealConfirmedEventAsync(Domain.AggregatesModel.PostAggregate.Post deal)
+        private async Task SendAppointmentDealCreatedEventAsync(Domain.AggregatesModel.PostAggregate.Post deal)
         {
             var @event = new AppointmentDealCreatedEvent
             {
@@ -73,6 +115,15 @@ namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.App
             _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
             await _messageSession.Publish(@event);
             _logger.LogInformation("----- Published AppointmentDealCreatedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
+        }
+
+        private async Task SendAppointmentScoreChangedEventAsync(Guid userId, int score)
+        {
+            var @event = new AppointmentScoreChangedEvent { UserId = userId, ChangedScore = score };
+            _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
+            await _messageSession.Publish(@event);
+
+            _logger.LogInformation("----- Published AppointmentScoreChangedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
         }
     }
 }

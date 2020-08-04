@@ -1,4 +1,5 @@
-﻿using Arise.DDD.Infrastructure;
+﻿using Arise.DDD.Infrastructure.Data;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 using Photography.Services.Post.Infrastructure;
@@ -87,6 +88,62 @@ namespace Photography.Services.Post.Infrastructure.Repositories
         public async Task<List<Domain.AggregatesModel.PostAggregate.Post>> GetUserPostsAsync(Guid userId)
         {
             return await _context.Posts.Where(p => p.UserId == userId && p.PostType == PostType.Post).ToListAsync();
+        }
+
+        public async Task RefreshPostScore(int startRefreshHour, int refreshIntervalHour, double percent)
+        {
+            var nowInSeconds = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+
+            var commandBuilder = new StringBuilder();
+            commandBuilder.Append("update Posts set Score = Score * @Percent, LastScoreRefreshedTime = @NowInSeconds ");
+            commandBuilder.Append("where PostType = 0 ");
+            commandBuilder.Append("and (@NowInSeconds - CreatedTime) > @StartRefreshHour * 3600 ");
+            commandBuilder.Append("and (@NowInSeconds - LastScoreRefreshedTime) > @RefreshIntervalHour * 3600");
+
+            var paramPercent = new SqlParameter("@Percent", percent);
+            var paramNowInSeconds = new SqlParameter("@NowInSeconds", nowInSeconds);
+            var paramStartRefreshHour = new SqlParameter("@StartRefreshHour", startRefreshHour);
+            var paramRefreshIntervalHour = new SqlParameter("@RefreshIntervalHour", refreshIntervalHour);
+
+            await _context.Database.ExecuteSqlRawAsync(commandBuilder.ToString(), paramPercent, paramNowInSeconds, paramStartRefreshHour, paramRefreshIntervalHour);
+        }
+
+        public async Task<int> GetTodayUserSentAppointmentDealCountAsync(Guid userId)
+        {
+            var startSeconds = GetTodayStartSeconds();
+            var endSeconds = GetTodayEndSeconds();
+
+            return await _context.Posts.Where(p => p.PostType == PostType.AppointmentDeal && p.CreatedTime <= endSeconds && p.CreatedTime >= startSeconds && p.UserId == userId).CountAsync();
+        }
+
+        public async Task<int> GetTodayUserReceivedAppointmentDealCountAsync(Guid userId)
+        {
+            var startSeconds = GetTodayStartSeconds();
+            var endSeconds = GetTodayEndSeconds();
+
+            return await _context.Posts.Where(p => p.PostType == PostType.AppointmentDeal && p.CreatedTime <= endSeconds && p.CreatedTime >= startSeconds && p.AppointmentedUserId == userId).CountAsync();
+        }
+
+        public async Task<bool> UserHasAppointmentTodayAsync(Guid userId)
+        {
+            var startSeconds = GetTodayStartSeconds();
+            var endSeconds = GetTodayEndSeconds();
+
+            return await _context.Posts.AnyAsync(p => p.PostType == PostType.Appointment && p.UserId == userId && p.CreatedTime <= endSeconds && p.CreatedTime >= startSeconds);
+        }
+
+        // 获取今天开始时间的时间戳
+        private double GetTodayStartSeconds()
+        {
+            var startTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0);
+            return (startTime - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+        }
+
+        // 获取今天截止时间的时间戳
+        private double GetTodayEndSeconds()
+        {
+            var endtime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59);
+            return (endtime - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
     }
 }

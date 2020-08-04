@@ -1,14 +1,14 @@
-﻿using Arise.DDD.Domain.Exceptions;
+﻿using ApplicationMessages.Events.User;
+using Arise.DDD.Domain.Exceptions;
 using IdentityModel.Client;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using NServiceBus;
 using Photography.Services.User.API.BackwardCompatibility.ChatServerRedis;
-using Photography.Services.User.API.BackwardCompatibility.Models;
 using Photography.Services.User.API.BackwardCompatibility.Utils;
 using Photography.Services.User.API.BackwardCompatibility.ViewModels;
-using Photography.Services.User.API.Infrastructure.Redis;
 using Photography.Services.User.API.Settings;
 using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
 using System;
@@ -27,16 +27,21 @@ namespace Photography.Services.User.API.Application.Commands.Login
         private readonly IOptionsSnapshot<AuthSettings> _authSettings;
         private readonly IChatServerRedis _chatServerRedisService;
         private readonly IUserRepository _userRepository;
+        private readonly IServiceProvider _serviceProvider;
+
+        private IMessageSession _messageSession;
 
         public LoginCommandHandler(
             IChatServerRedis chatServerRedisService,
             IUserRepository userRepository,
             IOptionsSnapshot<AuthSettings> authSettings,
+            IServiceProvider serviceProvider,
             ILogger<LoginCommandHandler> logger)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _authSettings = authSettings ?? throw new ArgumentNullException(nameof(authSettings));
             _chatServerRedisService = chatServerRedisService ?? throw new ArgumentNullException(nameof(chatServerRedisService));
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -49,6 +54,10 @@ namespace Photography.Services.User.API.Application.Commands.Login
             var user = await _userRepository.GetByUserNameAsync(request.UserName);
             if (user != null)
             {
+                // 发送用户推送信息改变的事件
+                if (user.RegistrationId != request.RegistrationId)
+                    await SendUserPushInfoChangedEventAsync(user.Id, request.RegistrationId);
+
                 // 更新本次登录的客户端类型和推送id
                 user.SetChatServerProperties(request.ClientType, request.RegistrationId);
                 await _userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
@@ -93,6 +102,14 @@ namespace Photography.Services.User.API.Application.Commands.Login
                 throw new ClientException("用户名或密码错误", new List<string> { tokenResponse.Error, tokenResponse.ErrorDescription });
 
             return tokenResponse.AccessToken;
+        }
+
+        private async Task SendUserPushInfoChangedEventAsync(Guid userId, string registrationId)
+        {
+            var @event = new UserPushInfoChangedEvent { UserId = userId, RegistrationId = registrationId };
+            _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
+            await _messageSession.Publish(@event);
+            _logger.LogInformation("----- Published UserPushInfoChangedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
         }
 
         #region BackwardCompatibility: 为了兼容以前的聊天服务，需要向redis写入相关数据

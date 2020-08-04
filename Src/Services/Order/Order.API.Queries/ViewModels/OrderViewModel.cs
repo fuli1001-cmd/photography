@@ -17,13 +17,15 @@ namespace Photography.Services.Order.API.Query.ViewModels
 
         public double CreatedTime { get; set; }
 
+        public double UpdatedTime { get; set; }
+
         public double AppointedTime { get; set; }
 
         public Guid? PayerId { get; set; }
 
         public string Text { get; set; }
 
-        public double ClosedTime { get; set; }
+        public double? ClosedTime { get; set; }
 
         public string Description { get; set; }
 
@@ -42,5 +44,20 @@ namespace Photography.Services.Order.API.Query.ViewModels
 
         public string CityCode { get; set; }
         #endregion
+    }
+
+    /// <summary>
+    /// 不同阶段的订单数量
+    /// </summary>
+    public class StageOrderCountViewModel
+    {
+        // 拍片阶段的订单数量，包含OrderStatus为WaitingForShooting的订单
+        public int ShootingStageOrderCount { get; set; }
+
+        // 选片阶段的订单数量，包含OrderStatus为WaitingForUploadOriginal、WaitingForSelection的订单
+        public int SelectionStageOrderCount { get; set; }
+
+        // 出片阶段的订单数量，包含OrderStatus为WaitingForUploadProcessed，WaitingForCheck的订单
+        public int ProductionStageOrderCount { get; set; }
     }
 }

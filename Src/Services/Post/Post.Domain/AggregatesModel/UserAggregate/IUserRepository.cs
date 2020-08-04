@@ -8,6 +8,6 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
 {
     public interface IUserRepository : IRepository<User>
     {
-        //Task<Guid?> GetUserIdByCodeAsync(string code);
+        Task<List<User>> GetUsersAsync(List<Guid> userIds);
     }
 }

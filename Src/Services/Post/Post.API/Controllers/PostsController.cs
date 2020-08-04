@@ -30,6 +30,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Photography.Services.Post.API.Application.Commands.User.UpdateUserShare;
 using Photography.Services.Post.API.Application.Commands.Post.ExaminePost;
+using Photography.Services.Post.API.Application.Commands.Post.ViewPost;
 
 namespace Photography.Services.Post.API.Controllers
 {
@@ -148,6 +149,19 @@ namespace Photography.Services.Post.API.Controllers
         }
 
         /// <summary>
+        /// 获取用户的帖子数量，约拍数量，点赞的帖子数量
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("PostAndAppointmentCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<PostCountViewModel>> GetUserPostAndAppointmentCountAsync()
+        {
+            var posts = await _postQueries.GetUserPostAndAppointmentCountAsync();
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(posts));
+        }
+
+        /// <summary>
         /// 圈子内的帖子
         /// </summary>
         /// <param name="circleId">圈子id</param>
@@ -244,6 +258,22 @@ namespace Photography.Services.Post.API.Controllers
         {
             var post = await _postQueries.GetPostAsync(postId);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(post));
+        }
+
+        /// <summary>
+        /// 此接口用于查看帖子详情时增加帖子积分
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("view/{postId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
+        public async Task<ActionResult<PostViewModel>> ViewPostAsync(Guid postId)
+        {
+            var command = new ViewPostCommand { PostId = postId };
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
 
         /// <summary>

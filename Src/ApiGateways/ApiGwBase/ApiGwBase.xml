@@ -18,6 +18,15 @@
             <param name="loginPhoneDto"></param>
             <returns></returns>
         </member>
+        <member name="M:Photography.ApiGateways.ApiGwBase.Controllers.NotificationsController.GetUnReadEventCountAsync">
+            <summary>
+            获取未读事件数量
+            由两部分构成：
+            1. 通知服务中的未读通知数量
+            2. 帖子服务中的发出和收到的约拍任务数量
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Photography.ApiGateways.ApiGwBase.Controllers.SettingsController">
             <summary>
             设置控制器
@@ -26,6 +35,48 @@
         <member name="M:Photography.ApiGateways.ApiGwBase.Controllers.SettingsController.GetServerSettings">
             <summary>
             获取配置信息
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Photography.ApiGateways.ApiGwBase.Dtos.UnReadEventCountDto">
+            <summary>
+            未读事件及其数量
+            </summary>
+        </member>
+        <member name="P:Photography.ApiGateways.ApiGwBase.Dtos.UnReadEventCountDto.Interaction">
+            <summary>
+            互动事件未读数量
+            </summary>
+        </member>
+        <member name="P:Photography.ApiGateways.ApiGwBase.Dtos.UnReadEventCountDto.Appointment">
+            <summary>
+            约拍事件未读数量
+            </summary>
+        </member>
+        <member name="P:Photography.ApiGateways.ApiGwBase.Dtos.UnReadEventCountDto.System">
+            <summary>
+            系统事件未读数量
+            </summary>
+        </member>
+        <member name="P:Photography.ApiGateways.ApiGwBase.Dtos.UnReadEventCountDto.ReceivedAppointmentDeal">
+            <summary>
+            收到的约拍数量
+            </summary>
+        </member>
+        <member name="P:Photography.ApiGateways.ApiGwBase.Dtos.UnReadEventCountDto.SentAppointmentDeal">
+            <summary>
+            发出的约拍数量
+            </summary>
+        </member>
+        <member name="M:Photography.ApiGateways.ApiGwBase.Services.NotificationService.GetUnReadEventCountAsync">
+            <summary>
+            获取我的未读事件数量
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.ApiGateways.ApiGwBase.Services.PostService.GetSentAndReceivedAppointmentDealCountAsync">
+            <summary>
+            获取我发出的约拍交易数量
             </summary>
             <returns></returns>
         </member>
@@ -57,6 +108,11 @@
         <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.FileServerPort">
             <summary>
             文件服务器端口
+            </summary>
+        </member>
+        <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.FileUploadService">
+            <summary>
+            文件上传服务地址
             </summary>
         </member>
         <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.ChatFileServer">

@@ -49,7 +49,7 @@ namespace Photography.Services.Post.API.Controllers
         [HttpPost]
         [Route("task")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<bool>> AppointTaskAsync([FromBody] AppointTaskCommand appointCommand)
+        public async Task<ActionResult<ResponseWrapper>> AppointTaskAsync([FromBody] AppointTaskCommand appointCommand)
         {
             var result = await _mediator.Send(appointCommand);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
@@ -63,10 +63,10 @@ namespace Photography.Services.Post.API.Controllers
         [HttpPost]
         [Route("user")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<bool>> AppointUserAsync([FromBody] AppointUserCommand appointCommand)
+        public async Task<ActionResult<ResponseWrapper>> AppointUserAsync([FromBody] AppointUserCommand appointCommand)
         {
             var result = await _mediator.Send(appointCommand);
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(true));
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
 
         /// <summary>
@@ -95,6 +95,19 @@ namespace Photography.Services.Post.API.Controllers
         {
             var deals = await _appointmentDealQueries.GetReceivedAppointmentDealsAsync(pagingParameters);
             return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(deals));
+        }
+
+        /// <summary>
+        /// 获取我发出的和收到的约拍交易数量
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("SentAndReceivedAppointmentDealCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<SentAndReceivedAppointmentDealCountViewModel>> GetSentAppointmentDealsCountAsync()
+        {
+            var result = await _appointmentDealQueries.GetSentAndReceivedAppointmentDealCountAsync();
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
     }
 }

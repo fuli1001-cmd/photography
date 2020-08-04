@@ -7,11 +7,13 @@ on:
     paths:
       - 'Src/Services/Notification/**'
       - '.github/workflows/notification-prod.yml'
+      - 'Src/ApplicationMessages/**'
   pull_request:
     branches:
       - master
     paths:
       - 'Src/Services/Notification/**'
+      - 'Src/ApplicationMessages/**'
       
 jobs:
   cd:

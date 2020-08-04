@@ -37,7 +37,10 @@ namespace Photography.Services.Notification.Infrastructure.Queries
                               PushReplyEvent = u.PushReplyEvent,
                               PushForwardEvent = u.PushForwardEvent,
                               PushShareEvent = u.PushShareEvent,
-                              PushFollowEvent = u.PushFollowEvent
+                              PushFollowEvent = u.PushFollowEvent,
+                              AppointmentEvent = u.AppointmentEvent,
+                              InteractionEvent = u.InteractionEvent,
+                              SystemEvent = u.SystemEvent
                           })
                           .SingleOrDefaultAsync();
         }

@@ -5,6 +5,7 @@ using NServiceBus;
 using Photography.Services.Notification.API.Application.Commands.CreateEvent;
 using Photography.Services.Notification.API.Application.Commands.Follow;
 using Photography.Services.Notification.Domain.AggregatesModel.EventAggregate;
+using Photography.Services.Notification.Domain.AggregatesModel.UserAggregate;
 using Serilog.Context;
 using System;
 using System.Collections.Generic;
@@ -15,11 +16,13 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
 {
     public class UserFollowedEventHandler : IHandleMessages<UserFollowedEvent>
     {
+        private readonly IUserRepository _userRepository;
         private readonly IMediator _mediator;
         private readonly ILogger<UserFollowedEventHandler> _logger;
 
-        public UserFollowedEventHandler(IMediator mediator, ILogger<UserFollowedEventHandler> logger)
+        public UserFollowedEventHandler(IUserRepository userRepository, IMediator mediator, ILogger<UserFollowedEventHandler> logger)
         {
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -33,17 +36,16 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                 var followCommand = new FollowCommand { FollowerId = message.FollowerId, FollowedUserId = message.FollowedUserId };
                 await _mediator.Send(followCommand);
 
-                _logger.LogInformation("****************** UserFollowedEvent 1");
+                var fromUser = await _userRepository.GetByIdAsync(message.FollowerId);
 
                 var eventCommand = new CreateEventCommand
                 {
                     FromUserId = message.FollowerId,
                     ToUserId = message.FollowedUserId,
-                    EventType = EventType.Follow
+                    EventType = EventType.Follow,
+                    PushMessage = $"{fromUser.Nickname}开始关注你"
                 };
                 await _mediator.Send(eventCommand);
-
-                _logger.LogInformation("****************** UserFollowedEvent 2");
             }
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Arise.DDD.API.Behaviors;
 using Arise.DDD.API.Filters;
 using Arise.DDD.API.Response;
 using Arise.DDD.Infrastructure.Extensions;
@@ -23,7 +24,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Photography.Services.Order.API.Application.Behaviors;
 using Photography.Services.Order.API.Application.Commands.ConfirmShot;
 using Photography.Services.Order.API.Application.Validators;
 using Photography.Services.Order.API.Infrastructure.AutofacModules;
@@ -78,6 +78,7 @@ namespace Photography.Services.Order.API
             });
 
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
 
             services.AddSqlDataAccessServices<OrderContext>(Configuration.GetConnectionString("OrderConnection"), typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
 

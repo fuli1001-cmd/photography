@@ -41,6 +41,8 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
 
         public bool Processed { get; private set; }
 
+        public bool Readed { get; private set; }
+
         public Event()
         {
             CreatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
@@ -64,6 +66,11 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
         {
             Processed = true;
         }
+
+        public void MarkAsReaded()
+        {
+            Readed = true;
+        }
     }
 
     public enum EventType
@@ -81,6 +88,15 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
         CancelOrder, // 取消订单
         RejectOrder, // 拒绝订单
         IdAuthenticated, // 实名认证通过
-        IdRejected // 实名认证被拒
+        IdRejected, // 实名认证被拒
+        CircleOwnerChanged // 圈主改变
+    }
+
+    // 事件类别
+    public enum EventCategory
+    {
+        Interaction, // 互动
+        Appointment, // 约拍
+        System // 系统
     }
 }

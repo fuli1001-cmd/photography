@@ -30,8 +30,8 @@ namespace Photography.Services.User.API.Application.IntegrationEventHandlers
                 var postUser = await _userRepository.GetByIdAsync(message.PostUserId);
                 postUser.IncreaseLikedCount();
 
-                var likingUser = await _userRepository.GetByIdAsync(message.LikingUserId);
-                likingUser.IncreaseLikedPostCount();
+                //var likingUser = await _userRepository.GetByIdAsync(message.LikingUserId);
+                //likingUser.IncreaseLikedPostCount();
 
                 await _userRepository.UnitOfWork.SaveEntitiesAsync();
             }

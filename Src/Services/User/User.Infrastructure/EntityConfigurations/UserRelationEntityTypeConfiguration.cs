@@ -13,7 +13,6 @@ namespace Photography.Services.User.Infrastructure.EntityConfigurations
         public void Configure(EntityTypeBuilder<UserRelation> builder)
         {
             builder.Ignore(e => e.DomainEvents);
-            builder.Property(ur => ur.MutedFollowedUser).HasDefaultValue(false);
         }
     }
 }

@@ -4,9 +4,11 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NServiceBus;
 using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
+using Photography.Services.Post.API.Settings;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.TagAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserAggregate;
@@ -26,22 +28,28 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
         private readonly IUserRepository _userRepository;
         private readonly ITagRepository _tagRepository;
         private readonly IPostQueries _postQueries;
-        private readonly IConfiguration _configuration;
+        private readonly PostScoreRewardSettings _scoreRewardSettings;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<PublishPostCommandHandler> _logger;
         private readonly IServiceProvider _serviceProvider;
 
         private IMessageSession _messageSession;
 
-        public PublishPostCommandHandler(IPostRepository postRepository, IUserRepository userRepository, ITagRepository tagRepository, IHttpContextAccessor httpContextAccessor,
-            IPostQueries postQueries, IConfiguration configuration, IServiceProvider serviceProvider, ILogger<PublishPostCommandHandler> logger)
+        public PublishPostCommandHandler(IPostRepository postRepository, 
+            IUserRepository userRepository, 
+            ITagRepository tagRepository,
+            IPostQueries postQueries,
+            IOptionsSnapshot<PostScoreRewardSettings> scoreRewardOptions,
+            IHttpContextAccessor httpContextAccessor,
+            IServiceProvider serviceProvider, 
+            ILogger<PublishPostCommandHandler> logger)
         {
             _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _tagRepository = tagRepository ?? throw new ArgumentNullException(nameof(tagRepository));
             _postQueries = postQueries ?? throw new ArgumentNullException(nameof(postQueries));
+            _scoreRewardSettings = scoreRewardOptions?.Value ?? throw new ArgumentNullException(nameof(scoreRewardOptions));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -65,10 +73,12 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
                     throw new ClientException("操作失败", new List<string> { $"Tag {request.PrivateTag} does not exist."});
             }
 
+            var score = (DateTime.Now - DateTime.UnixEpoch.AddSeconds(user.CreatedTime)).TotalHours <= _scoreRewardSettings.NewUserHour ? user.PostScore + _scoreRewardSettings.NewUserPost : user.PostScore;
             var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType, a.IsPrivate)).ToList();
             var post = Domain.AggregatesModel.PostAggregate.Post.CreatePost(request.Text, request.Commentable, request.ForwardType, request.ShareType,
                 request.Visibility, request.ViewPassword, request.PublicTags, request.PrivateTag, request.CircleId, request.Latitude, request.Longitude, request.LocationName,
-                request.Address, request.CityCode, request.FriendIds, attachments, userId);
+                request.Address, request.CityCode, request.FriendIds, attachments, score, userId);
+
             _postRepository.Add(post);
 
             #region arise内部用户发帖：1. 创建时间随机向前推1-5个月，2. 无需审核

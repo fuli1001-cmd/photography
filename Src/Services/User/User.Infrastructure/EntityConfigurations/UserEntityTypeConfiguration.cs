@@ -21,12 +21,11 @@ namespace Photography.Services.User.Infrastructure.EntityConfigurations
             builder.Property(u => u.PostCount).HasDefaultValue(0);
             builder.Property(u => u.AppointmentCount).HasDefaultValue(0);
             builder.Property(u => u.LikedPostCount).HasDefaultValue(0);
-            builder.Property(u => u.OngoingOrderCount).HasDefaultValue(0);
             builder.Property(u => u.ChatServerUserId).ValueGeneratedOnAdd();
             builder.Property(u => u.ChatServerUserId).Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
 
-            builder.HasMany(u => u.FollowedUsers).WithOne(ur => ur.FollowedUser).HasForeignKey(ur => ur.FollowedUserId).OnDelete(DeleteBehavior.Restrict);
-            builder.HasMany(u => u.Followers).WithOne(ur => ur.Follower).HasForeignKey(ur => ur.FollowerId).OnDelete(DeleteBehavior.Restrict);
+            //builder.HasMany(u => u.ToUserRelations).WithOne(ur => ur.ToUser).HasForeignKey(ur => ur.ToUserId).OnDelete(DeleteBehavior.Restrict);
+            //builder.HasMany(u => u.FromUserRelations).WithOne(ur => ur.FromUser).HasForeignKey(ur => ur.FromUserId).OnDelete(DeleteBehavior.Restrict);
 
             builder.HasMany(u => u.GroupUsers).WithOne(gu => gu.User).HasForeignKey(gu => gu.UserId).IsRequired(false).OnDelete(DeleteBehavior.Restrict);
 

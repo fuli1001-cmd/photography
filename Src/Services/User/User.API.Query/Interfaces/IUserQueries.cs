@@ -13,7 +13,7 @@ namespace Photography.Services.User.API.Query.Interfaces
         /// 获取当前用户详情
         /// </summary>
         /// <returns></returns>
-        Task<MeViewModel> GetCurrentUserAsync();
+        Task<UserViewModel> GetCurrentUserAsync();
 
         /// <summary>
         /// 根据用户id、老系统的用户id、昵称三者之一获取用户详情

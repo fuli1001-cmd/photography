@@ -10,7 +10,7 @@ namespace Photography.Services.Notification.API.Application.Commands.ConfigurePu
 {
     public class ConfigurePushCommand : IRequest<bool>
     {
-        public EventType EventType { get; set; }
+        public EventCategory EventCategory { get; set; }
 
         public PushSetting PushSetting { get; set; }
     }

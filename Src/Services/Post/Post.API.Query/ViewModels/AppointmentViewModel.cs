@@ -18,4 +18,20 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public string Address { get; set; }
         public AppointmentUserViewModel User { get; set; }
     }
+
+    /// <summary>
+    /// 发出和收到的约拍交易数量
+    /// </summary>
+    public class SentAndReceivedAppointmentDealCountViewModel
+    {
+        /// <summary>
+        /// 收到的约拍数量
+        /// </summary>
+        public int ReceivedAppointmentDeal { get; set; }
+
+        /// <summary>
+        /// 发出的约拍数量
+        /// </summary>
+        public int SentAppointmentDeal { get; set; }
+    }
 }

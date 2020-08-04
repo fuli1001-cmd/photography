@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
 using Photography.Services.User.API.BackwardCompatibility.ChatServerRedis;
-using Photography.Services.User.API.Infrastructure.Redis;
 using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
 using System;
 using System.Collections.Generic;
@@ -41,6 +40,8 @@ namespace Photography.Services.User.API.Application.Commands.User.UpdateUser
 
         public async Task<bool> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
+            var user = await _userRepository.GetByIdAsync(request.UserId);
+
             // 管理员无需以下检查
             var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
             if (role != "admin")
@@ -49,14 +50,16 @@ namespace Photography.Services.User.API.Application.Commands.User.UpdateUser
                 var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 if (myId != request.UserId)
                     throw new ClientException("操作失败", new List<string> { $"Current user is not {request.UserId}." });
+            }
 
-                // 检查昵称是否已被别人占用
+            // 检查昵称是否已被别人占用
+            if (string.Compare(user.Nickname, request.Nickname, StringComparison.OrdinalIgnoreCase) != 0)
+            {
                 var nicknameUser = await _userRepository.GetByNicknameAsync(request.Nickname);
-                if (nicknameUser != null && nicknameUser.Id != myId)
+                if (nicknameUser != null && nicknameUser.Id != user.Id)
                     throw new ClientException("昵称已存在");
             }
 
-            var user = await _userRepository.GetByIdAsync(request.UserId);
             user.Update(request.Nickname, request.Gender, request.Birthday, request.UserType, 
                 request.Province, request.City, request.Sign, request.Avatar);
 

@@ -35,9 +35,17 @@ namespace Photography.Services.User.API.Application.Commands.User.MuteUser
             var userRelation = await _userRelationRepository.GetAsync(myId, request.UserId);
 
             if (request.Muted)
-                userRelation.MuteFollowedUser();
-            else
-                userRelation.UnMuteFollowedUser();
+            {
+                if (userRelation == null)
+                {
+                    userRelation = new UserRelation(myId, request.UserId);
+                    _userRelationRepository.Add(userRelation);
+                }
+
+                userRelation.Mute();
+            }
+            else if (userRelation != null)
+                userRelation.UnMute();
 
             return await _userRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
         }

@@ -15,6 +15,7 @@ namespace Photography.Services.Post.Infrastructure.EntityConfigurations
             builder.Property(t => t.Name).IsRequired();
             builder.HasIndex(t => t.Name);
             builder.HasIndex(t => t.Count);
+            builder.HasIndex(t => t.CreatedTime);
         }
     }
 }

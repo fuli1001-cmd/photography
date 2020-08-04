@@ -1,4 +1,4 @@
-﻿using ApplicationMessages.Events;
+﻿using ApplicationMessages.Events.Order;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
 using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
@@ -27,11 +27,13 @@ namespace Photography.Services.User.API.Application.IntegrationEventHandlers
             {
                 _logger.LogInformation("----- Handling OrderCanceledEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                var processingUser = await _userRepository.GetByIdAsync(message.ProcessingUserId);
-                processingUser.DecreaseOngoingOrderCount();
+                // 减少用户1待确认订单数量
+                var user1 = await _userRepository.GetByIdAsync(message.ProcessingUserId);
+                user1.DecreaseWaitingForConfirmOrderCount();
 
-                var anotherUser = await _userRepository.GetByIdAsync(message.AnotherUserId);
-                anotherUser.DecreaseOngoingOrderCount();
+                // 减少用户2待确认订单数量
+                var user2 = await _userRepository.GetByIdAsync(message.AnotherUserId);
+                user2.DecreaseWaitingForConfirmOrderCount();
 
                 await _userRepository.UnitOfWork.SaveEntitiesAsync();
             }
