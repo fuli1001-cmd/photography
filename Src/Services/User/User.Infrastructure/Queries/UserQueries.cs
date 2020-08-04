@@ -210,7 +210,10 @@ namespace Photography.Services.User.Infrastructure.Queries
 
         private IQueryable<UserViewModel> GetUserViewModels(IQueryable<Domain.AggregatesModel.UserAggregate.User> queryableUsers)
         {
-            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var myId = Guid.Empty;
+            var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            if (claim != null)
+                myId = Guid.Parse(claim.Value);
 
             return from u in queryableUsers
                    select new UserViewModel
@@ -240,7 +243,7 @@ namespace Photography.Services.User.Infrastructure.Queries
                        ViewFollowedUsersAllowed = u.ViewFollowedUsersAllowed,
                        ViewFollowersAllowed = u.ViewFollowersAllowed,
                        RealNameRegistrationStatus = u.RealNameRegistrationStatus,
-                       Followed = _identityContext.UserRelations.Any(ur => ur.FromUserId == myId && ur.ToUserId == u.Id && ur.Followed)
+                       Followed = myId == Guid.Empty ? false : _identityContext.UserRelations.Any(ur => ur.FromUserId == myId && ur.ToUserId == u.Id && ur.Followed)
                    };
         }
 
