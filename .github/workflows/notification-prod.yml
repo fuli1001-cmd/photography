@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - 'Src/Services/Notification/**'
+      - '.github/workflows/notification-prod.yml'
   pull_request:
     branches:
       - master
@@ -28,12 +29,12 @@ jobs:
       - name: Tags
         run: |
           docker tag photography-notificationapi ${{ secrets.DOCKER_USER }}/photography-notificationapi:${{ github.sha }}
-          docker tag photography-notificationapi ${{ secrets.DOCKER_USER }}/photography-notificationapi:linux
+          docker tag photography-notificationapi ${{ secrets.DOCKER_USER }}/photography-notificationapi:latest
           
       - name: Push
         run: |
           docker push ${{ secrets.DOCKER_USER }}/photography-notificationapi:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USER }}/photography-notificationapi:linux
+          docker push ${{ secrets.DOCKER_USER }}/photography-notificationapi:latest
           
       - name: Deploy
         uses: garygrossgarten/github-action-ssh@release

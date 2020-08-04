@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - 'Src/WebApps/Management/**'
+      - '.github/workflows/manager-prod.yml'
   pull_request:
     branches:
       - master
@@ -28,12 +29,12 @@ jobs:
       - name: Tags
         run: |
           docker tag photography-manager ${{ secrets.DOCKER_USER }}/photography-manager:${{ github.sha }}
-          docker tag photography-manager ${{ secrets.DOCKER_USER }}/photography-manager:linux
+          docker tag photography-manager ${{ secrets.DOCKER_USER }}/photography-manager:latest
           
       - name: Push
         run: |
           docker push ${{ secrets.DOCKER_USER }}/photography-manager:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USER }}/photography-manager:linux
+          docker push ${{ secrets.DOCKER_USER }}/photography-manager:latest
           
       - name: Deploy
         uses: garygrossgarten/github-action-ssh@release

@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - 'Src/Services/Post/**'
+      - '.github/workflows/post-prod.yml'
   pull_request:
     branches:
       - master
@@ -28,12 +29,12 @@ jobs:
       - name: Tags
         run: |
           docker tag photography-postapi ${{ secrets.DOCKER_USER }}/photography-postapi:${{ github.sha }}
-          docker tag photography-postapi ${{ secrets.DOCKER_USER }}/photography-postapi:linux
+          docker tag photography-postapi ${{ secrets.DOCKER_USER }}/photography-postapi:latest
           
       - name: Push
         run: |
           docker push ${{ secrets.DOCKER_USER }}/photography-postapi:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USER }}/photography-postapi:linux
+          docker push ${{ secrets.DOCKER_USER }}/photography-postapi:latest
           
       - name: Deploy
         uses: garygrossgarten/github-action-ssh@release

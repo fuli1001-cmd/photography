@@ -6,11 +6,13 @@ on:
       - master
     paths:
       - 'Src/Services/User/**'
+      - '.github/workflows/user-prod.yml'
   pull_request:
     branches:
       - master
     paths:
       - 'Src/Services/User/**'
+      - '.github/workflows/user-prod.yml'
       
 jobs:
   cd:
@@ -28,12 +30,12 @@ jobs:
       - name: Tags
         run: |
           docker tag photography-userapi ${{ secrets.DOCKER_USER }}/photography-userapi:${{ github.sha }}
-          docker tag photography-userapi ${{ secrets.DOCKER_USER }}/photography-userapi:linux
+          docker tag photography-userapi ${{ secrets.DOCKER_USER }}/photography-userapi:latest
           
       - name: Push
         run: |
           docker push ${{ secrets.DOCKER_USER }}/photography-userapi:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USER }}/photography-userapi:linux
+          docker push ${{ secrets.DOCKER_USER }}/photography-userapi:latest
           
       - name: Deploy
         uses: garygrossgarten/github-action-ssh@release
