@@ -63,6 +63,12 @@ namespace Photography.Services.Post.API.Application.Commands.Post.UpdatePost
                 request.ViewPassword, request.PublicTags, request.PrivateTag, request.CircleId, request.Latitude, request.Longitude, request.LocationName, request.Address,
                 request.CityCode, request.FriendIds, attachments, request.ShowOriginalText);
 
+            #region arise内部用户更新帖子：无需审核
+            var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+            if (role == "internal")
+                post.SetPostAuthStatus(PostAuthStatus.Authenticated);
+            #endregion
+
             _postRepository.Update(post);
 
             if (await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))

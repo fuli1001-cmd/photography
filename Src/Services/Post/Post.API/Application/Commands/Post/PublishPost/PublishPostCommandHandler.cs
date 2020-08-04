@@ -71,6 +71,21 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
                 request.Address, request.CityCode, request.FriendIds, attachments, userId);
             _postRepository.Add(post);
 
+            #region arise内部用户发帖：1. 创建时间随机向前推1-5个月，2. 无需审核
+            var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+            if (role == "internal")
+            {
+                // 无需审核
+                post.SetPostAuthStatus(PostAuthStatus.Authenticated);
+
+                // 创建时间随机向前推1-5个月
+                var createdTime = DateTime.UnixEpoch.AddSeconds(post.CreatedTime);
+                var months = new Random().Next(1, 6);
+                createdTime.AddMonths(-months);
+                post.SetCreatedTime((createdTime - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds);
+            }
+            #endregion
+
             if (await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
             {
                 // 取得附件中的第一张图片，然后发出“帖子已发布事件”
