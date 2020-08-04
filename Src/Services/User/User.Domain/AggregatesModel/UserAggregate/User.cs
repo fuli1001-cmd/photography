@@ -101,8 +101,11 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         public int ClientType { get; set; }
         #endregion
 
-        public List<UserRelation> Followers { get; private set; }
-        public List<UserRelation> FollowedUsers { get; private set; }
+        //private readonly List<UserRelation> _fromUserRelations = null;
+        //public IReadOnlyCollection<UserRelation> FromUserRelations => _fromUserRelations;
+
+        //private readonly List<UserRelation> _toUserRelations = null;
+        //public IReadOnlyCollection<UserRelation> ToUserRelations => _toUserRelations;
 
         // 用户作为群主的群
         private readonly List<Group> _groups = null;
