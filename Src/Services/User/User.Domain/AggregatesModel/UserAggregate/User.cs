@@ -135,6 +135,9 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         public void Update(string nickname, Gender? gender, double? birthday, UserType? userType, 
             string province, string city, string sign, string avatar)
         {
+            if (!string.IsNullOrEmpty(nickname) && nickname.Contains(" "))
+                throw new ClientException("昵称不能包含空格");
+
             // 更改用户类型需确保没有未完成订单
             if (UserType != null && userType != null && UserType != userType && (OngoingOrderCount > 0 || WaitingForConfirmOrderCount > 0))
                 throw new ClientException("尚有未处理的约拍订单，请处理后再更换身份");

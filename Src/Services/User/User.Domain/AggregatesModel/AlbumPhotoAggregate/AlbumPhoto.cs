@@ -39,7 +39,7 @@ namespace Photography.Services.User.Domain.AggregatesModel.AlbumPhotoAggregate
             albumPhoto.DisplayName = DisplayName;
             albumPhoto.AlbumId = albumId;
             albumPhoto.CreatedTime = CreatedTime;
-            albumPhoto.UpdatedTime = UpdatedTime;
+            albumPhoto.UpdatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
 
             return albumPhoto;
         }
@@ -47,6 +47,7 @@ namespace Photography.Services.User.Domain.AggregatesModel.AlbumPhotoAggregate
         public void UpdateDisplayName(string displayName)
         {
             DisplayName = displayName;
+            UpdatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
     }
 }
