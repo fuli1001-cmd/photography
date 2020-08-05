@@ -31,6 +31,7 @@ using Newtonsoft.Json;
 using Photography.Services.Post.API.Application.Commands.User.UpdateUserShare;
 using Photography.Services.Post.API.Application.Commands.Post.ExaminePost;
 using Photography.Services.Post.API.Application.Commands.Post.ViewPost;
+using Photography.Services.Post.API.Application.Commands.Post.UsersLikePost;
 
 namespace Photography.Services.Post.API.Controllers
 {
@@ -345,21 +346,6 @@ namespace Photography.Services.Post.API.Controllers
         }
 
         /// <summary>
-        /// 审核帖子
-        /// </summary>
-        /// <param name="command"></param>
-        /// <returns></returns>
-        [HttpPut]
-        [Route("examine")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [Authorize(Policy = "AdminOnly")]
-        public async Task<ActionResult<bool>> ExamineAsync([FromBody] ExaminePostCommand command)
-        {
-            var result = await _mediator.Send(command);
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
-        }
-
-        /// <summary>
         /// 分享帖子
         /// </summary>
         /// <param name="sharePostCommand"></param>
@@ -462,6 +448,37 @@ namespace Photography.Services.Post.API.Controllers
             var curSeconds = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
             return createdSeconds + validSeconds >= curSeconds;
         }
+
+        #region AdminOnly
+        /// <summary>
+        /// 审核帖子
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("examine")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<ActionResult<bool>> ExamineAsync([FromBody] ExaminePostCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 指定用户赞一个帖子
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("userlike")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<ActionResult<bool>> UserLikePostAsync([FromBody] UserLikePostCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+        #endregion
     }
 
     public class ShareInfo

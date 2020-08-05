@@ -389,6 +389,21 @@
             点赞的帖子id
             </summary>
         </member>
+        <member name="T:Photography.Services.Post.API.Application.Commands.Post.UsersLikePost.UserLikePostCommand">
+            <summary>
+            指定用户赞某个帖子
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Post.UsersLikePost.UserLikePostCommand.UserId">
+            <summary>
+            要点赞帖子的用户id数组
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Post.UsersLikePost.UserLikePostCommand.PostId">
+            <summary>
+            要被赞的帖子id
+            </summary>
+        </member>
         <member name="T:Photography.Services.Post.API.Application.Commands.Post.ViewPost.ViewPostCommand">
             <summary>
             浏览帖子
@@ -772,13 +787,6 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.ExamineAsync(Photography.Services.Post.API.Application.Commands.Post.ExaminePost.ExaminePostCommand)">
-            <summary>
-            审核帖子
-            </summary>
-            <param name="command"></param>
-            <returns></returns>
-        </member>
         <member name="M:Photography.Services.Post.API.Controllers.PostsController.ShareAsync(Photography.Services.Post.API.Application.Commands.Post.Share.ShareCommand)">
             <summary>
             分享帖子
@@ -795,6 +803,19 @@
             <param name="k">搜索关键字</param>
             <param name="c">是否统计访问次数</param>
             <param name="pagingParameters">分页参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.ExamineAsync(Photography.Services.Post.API.Application.Commands.Post.ExaminePost.ExaminePostCommand)">
+            <summary>
+            审核帖子
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.UserLikePostAsync(Photography.Services.Post.API.Application.Commands.Post.UsersLikePost.UserLikePostCommand)">
+            <summary>
+            指定用户赞一个帖子
+            </summary>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.Post.API.Controllers.TagsController.GetPopularPublicTagsAsync">

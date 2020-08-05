@@ -41,7 +41,7 @@ namespace Photography.Services.User.API.Controllers
         {
             var messages = await _chatQueries.GetOfflineAndRecentMessagesAsync(latestMsgId);
 
-            var encryptKey = "Ars!1&90";
+            var encryptKey = "PsR!1&90";
 
             foreach (var m in messages.OfflineMsgs)
                 m.content = Encryptor.DecryptDES(m.content, encryptKey);
