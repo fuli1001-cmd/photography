@@ -23,9 +23,9 @@ namespace Photography.Services.User.API.BackwardCompatibility.Models
 
     public class ConnectionInfo
     {
-        public string ServerName;
-        public string SessionId;
-        public int ClientType;
+        public string ServerName { get; set; }
+        public string SessionId { get; set; }
+        public int ClientType { get; set; }
     }
 
     public class Token

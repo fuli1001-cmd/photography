@@ -139,7 +139,9 @@ namespace Photography.Services.User.API.BackwardCompatibility.ChatServerRedis
 
         public async Task WriteUserAsync(Domain.AggregatesModel.UserAggregate.User user)
         {
-            var chatServerUser = new UserInfoLite
+            var storedUserInfoLite = await GetUserInfoLiteAsync(user.ChatServerUserId);
+
+            var userInfoLite = new UserInfoLite
             {
                 userId = user.ChatServerUserId,
                 username = user.UserName,
@@ -148,21 +150,36 @@ namespace Photography.Services.User.API.BackwardCompatibility.ChatServerRedis
                 avatar = user.Avatar,
                 tel = user.Phonenumber,
                 registrationId = user.RegistrationId,
-                connectionInfos = await GetUserConnectionInfoAsync(user.ChatServerUserId)
+                connectionInfos = storedUserInfoLite?.connectionInfos ?? null
             };
-            
-            string json = SerializeUtil.SerializeToJson(chatServerUser);
+
+            await SaveUserInfoLiteToRedis(user.ChatServerUserId.ToString(), userInfoLite);
+        }
+
+        public async Task RemoveUserAsync(int chatServerUserId, int clientType)
+        {
+            var storedUserInfoLite = await GetUserInfoLiteAsync(chatServerUserId);
+
+            if (storedUserInfoLite == null)
+            {
+                await _redisService.KeyDeleteAsync(chatServerUserId.ToString());
+            }
+            else
+            {
+                storedUserInfoLite.connectionInfos = storedUserInfoLite.connectionInfos.Where(c => c.ClientType != clientType).ToList();
+                await SaveUserInfoLiteToRedis(chatServerUserId.ToString(), storedUserInfoLite);
+            }
+        }
+
+        private async Task SaveUserInfoLiteToRedis(string key, UserInfoLite userInfoLite)
+        {
+            string json = SerializeUtil.SerializeToJson(userInfoLite);
             var bytes = SerializeUtil.SerializeStringToBytes(json, true);
             json = JsonConvert.SerializeObject(bytes);
 
-            await _redisService.StringSetAsync(user.ChatServerUserId.ToString(), json, null);
+            await _redisService.StringSetAsync(key, json, null);
 
-            _logger.LogInformation("Redis User: {@RedisUser}", chatServerUser);
-        }
-
-        public async Task<bool> RemoveUserAsync(int chatServerUserId)
-        {
-            return await _redisService.KeyDeleteAsync(chatServerUserId.ToString());
+            _logger.LogInformation("Redis User: {@RedisUser}", userInfoLite);
         }
 
         public async Task WriteTokenUserAsync(Domain.AggregatesModel.UserAggregate.User user, string oldToken)
@@ -184,20 +201,35 @@ namespace Photography.Services.User.API.BackwardCompatibility.ChatServerRedis
             _logger.LogInformation("Redis TokenUser: {@RedisTokenUser}", tokenUser);
         }
 
-        private async Task<List<ConnectionInfo>> GetUserConnectionInfoAsync(int chatServerUserId)
+        private async Task<UserInfoLite> GetUserInfoLiteAsync(int chatServerUserId)
         {
             try
             {
                 var bytesJson = await _redisService.StringGetAsync(chatServerUserId.ToString());
                 var bytes = JsonConvert.DeserializeObject<byte[]>(bytesJson);
                 var objJson = SerializeUtil.DeserializeBytesToString(bytes, true);
-                var userInfoLite = SerializeUtil.DeserializeJsonToObject<UserInfoLite>(objJson);
-                return userInfoLite.connectionInfos;
+                return SerializeUtil.DeserializeJsonToObject<UserInfoLite>(objJson);
             }
             catch
             {
                 return null;
             }
         }
+
+        //private async Task<List<ConnectionInfo>> GetUserConnectionInfoAsync(int chatServerUserId)
+        //{
+        //    try
+        //    {
+        //        var bytesJson = await _redisService.StringGetAsync(chatServerUserId.ToString());
+        //        var bytes = JsonConvert.DeserializeObject<byte[]>(bytesJson);
+        //        var objJson = SerializeUtil.DeserializeBytesToString(bytes, true);
+        //        var userInfoLite = SerializeUtil.DeserializeJsonToObject<UserInfoLite>(objJson);
+        //        return userInfoLite.connectionInfos;
+        //    }
+        //    catch
+        //    {
+        //        return null;
+        //    }
+        //}
     }
 }

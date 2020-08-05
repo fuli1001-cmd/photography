@@ -35,7 +35,8 @@ namespace Photography.Services.User.API.Application.Commands.Logout
         {
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var user = await _userRepository.GetByIdAsync(myId);
-            return await _chatServerRedisService.RemoveUserAsync(user.ChatServerUserId);
+            await _chatServerRedisService.RemoveUserAsync(user.ChatServerUserId, user.ClientType);
+            return true;
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Photography.Services.User.API.BackwardCompatibility.ChatServerRedis
 
         Task WriteUserAsync(Domain.AggregatesModel.UserAggregate.User user);
 
-        Task<bool> RemoveUserAsync(int chatServerUserId);
+        Task RemoveUserAsync(int chatServerUserId, int clientType);
 
         Task WriteTokenUserAsync(Domain.AggregatesModel.UserAggregate.User user, string oldToken);
     }
