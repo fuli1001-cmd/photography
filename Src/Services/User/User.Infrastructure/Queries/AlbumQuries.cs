@@ -91,9 +91,9 @@ namespace Photography.Services.User.Infrastructure.Queries
                                   select ap;
 
             if (string.Compare(orderBy, "CreatedTime", true) == 0)
-                queryablePhotos = asc ? queryablePhotos.OrderBy(ap => ap.CreatedTime) : queryablePhotos.OrderByDescending(ap => ap.CreatedTime);
+                queryablePhotos = asc ? queryablePhotos.OrderBy(ap => ap.CreatedTime).ThenBy(ap => ap.DisplayName) : queryablePhotos.OrderByDescending(ap => ap.CreatedTime).ThenBy(ap => ap.DisplayName);
             else
-                queryablePhotos = asc ? queryablePhotos.OrderBy(ap => ap.UpdatedTime) : queryablePhotos.OrderByDescending(ap => ap.UpdatedTime);
+                queryablePhotos = asc ? queryablePhotos.OrderBy(ap => ap.UpdatedTime).ThenBy(ap => ap.DisplayName) : queryablePhotos.OrderByDescending(ap => ap.UpdatedTime).ThenBy(ap => ap.DisplayName);
 
             var queryablePhotoViewModels = queryablePhotos.Select(ap => new AlbumPhotoViewModel 
             {

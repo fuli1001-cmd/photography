@@ -472,7 +472,7 @@ namespace Photography.Services.Post.API.Controllers
         [HttpPost]
         [Route("userlike")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [Authorize(Policy = "AdminOnly")]
+        //[Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<bool>> UserLikePostAsync([FromBody] UserLikePostCommand command)
         {
             var result = await _mediator.Send(command);
