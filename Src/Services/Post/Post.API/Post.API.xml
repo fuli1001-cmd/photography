@@ -389,19 +389,14 @@
             点赞的帖子id
             </summary>
         </member>
-        <member name="T:Photography.Services.Post.API.Application.Commands.Post.UsersLikePost.UserLikePostCommand">
+        <member name="T:Photography.Services.Post.API.Application.Commands.Post.ToggleUserLikePost.ToggleUserLikePostCommand">
             <summary>
             指定用户赞某个帖子
             </summary>
         </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.Post.UsersLikePost.UserLikePostCommand.UserId">
+        <member name="P:Photography.Services.Post.API.Application.Commands.Post.ToggleUserLikePost.ToggleUserLikePostCommand.UserId">
             <summary>
             要点赞帖子的用户id数组
-            </summary>
-        </member>
-        <member name="P:Photography.Services.Post.API.Application.Commands.Post.UsersLikePost.UserLikePostCommand.PostId">
-            <summary>
-            要被赞的帖子id
             </summary>
         </member>
         <member name="T:Photography.Services.Post.API.Application.Commands.Post.ViewPost.ViewPostCommand">
@@ -650,6 +645,13 @@
             <param name="command"></param>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.Post.API.Controllers.CommentsController.UserReplyPostAsync(Photography.Services.Post.API.Application.Commands.Comment.UserReplyPost.UserReplyPostCommand)">
+            <summary>
+            指定用户回复帖子
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
         <member name="T:Photography.Services.Post.API.Controllers.PostsController">
             <summary>
             帖子控制器
@@ -812,7 +814,7 @@
             <param name="command"></param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.UserLikePostAsync(Photography.Services.Post.API.Application.Commands.Post.UsersLikePost.UserLikePostCommand)">
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.UserLikePostAsync(Photography.Services.Post.API.Application.Commands.Post.ToggleUserLikePost.ToggleUserLikePostCommand)">
             <summary>
             指定用户赞一个帖子
             </summary>

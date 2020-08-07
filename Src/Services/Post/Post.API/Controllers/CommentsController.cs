@@ -11,6 +11,7 @@ using Photography.Services.Post.API.Application.Commands.Comment.DeleteComment;
 using Photography.Services.Post.API.Application.Commands.Comment.ReplyComment;
 using Photography.Services.Post.API.Application.Commands.Comment.ReplyPost;
 using Photography.Services.Post.API.Application.Commands.Comment.ToggleLikeComment;
+using Photography.Services.Post.API.Application.Commands.Comment.UserReplyPost;
 using Photography.Services.Post.API.Query;
 using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
@@ -131,5 +132,22 @@ namespace Photography.Services.Post.API.Controllers
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
+
+        #region AdminOnly
+        /// <summary>
+        /// 指定用户回复帖子
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("post/userreply")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        //[Authorize(Policy = "AdminOnly")]
+        public async Task<ActionResult<int>> UserReplyPostAsync([FromBody] UserReplyPostCommand command)
+        {
+            var commentCount = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(commentCount));
+        }
+        #endregion
     }
 }

@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
+using Photography.Services.User.API.Application.Commands.User.ToggleUserFollow;
 using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
 using Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate;
 using System;
@@ -16,78 +17,21 @@ namespace Photography.Services.User.API.Application.Commands.User.ToggleFollow
 {
     public class ToggleFollowCommandHandler : IRequestHandler<ToggleFollowCommand, bool>
     {
-        private readonly IUserRelationRepository _userRelationRepository;
+        private readonly IMediator _mediator;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ILogger<ToggleFollowCommandHandler> _logger;
-        private readonly IServiceProvider _serviceProvider;
 
-        private IMessageSession _messageSession;
-
-        public ToggleFollowCommandHandler(IUserRelationRepository userRelationRepository,
-            IServiceProvider serviceProvider,
-            IHttpContextAccessor httpContextAccessor, 
-            ILogger<ToggleFollowCommandHandler> logger)
+        public ToggleFollowCommandHandler(IMediator mediator, 
+            IHttpContextAccessor httpContextAccessor)
         {
-            _userRelationRepository = userRelationRepository ?? throw new ArgumentNullException(nameof(userRelationRepository));
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
-            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<bool> Handle(ToggleFollowCommand request, CancellationToken cancellationToken)
         {
-            bool result = false;
-
             var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            var ur = await _userRelationRepository.GetAsync(userId, request.UserIdToFollow);
-
-            if (ur == null)
-            {
-                ur = new UserRelation(userId, request.UserIdToFollow);
-                ur.Follow();
-                _userRelationRepository.Add(ur);
-                result = await _userRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
-                
-                if (result)
-                    await SendUserFollowedEventAsync(userId, request.UserIdToFollow);
-            }
-            else
-            {
-                ur.UnFollow();
-                _userRelationRepository.Remove(ur);
-                result = await _userRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
-
-                if (result)
-                    await SendUserUnFollowedEventAsync(userId, request.UserIdToFollow);
-            }
-
-            // 返回被关注者是否关注了我
-            if (result)
-            {
-                var followedMe = await _userRelationRepository.GetAsync(request.UserIdToFollow, userId);
-                return followedMe == null ? false : true;
-            }
-            else
-                throw new ApplicationException("操作失败");
-        }
-
-        private async Task SendUserFollowedEventAsync(Guid followerId, Guid followedUserId)
-        {
-            var @event = new UserFollowedEvent { FollowerId = followerId, FollowedUserId = followedUserId };
-            await SendEvent(@event);
-        }
-
-        private async Task SendUserUnFollowedEventAsync(Guid followerId, Guid followedUserId)
-        {
-            var @event = new UserUnFollowedEvent { FollowerId = followerId, FollowedUserId = followedUserId };
-            await SendEvent(@event);
-        }
-
-        private async Task SendEvent(BaseEvent @event)
-        {
-            _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
-            await _messageSession.Publish(@event);
-            _logger.LogInformation("----- Published {IntegrationEventName}: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.GetType().Name, @event.Id, Program.AppName, @event);
+            var command = new ToggleUserFollowCommand { FollowerId = userId, UserIdToFollow = request.UserIdToFollow };
+            return await _mediator.Send(command);
         }
     }
 }

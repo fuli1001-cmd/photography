@@ -131,6 +131,11 @@
             要follow的用户id
             </summary>
         </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.User.ToggleUserFollow.ToggleUserFollowCommand.FollowerId">
+            <summary>
+            粉丝id
+            </summary>
+        </member>
         <member name="T:Photography.Services.User.API.Application.Commands.User.UploadIdCard.UploadIdCardCommand">
             <summary>
             上传身份证

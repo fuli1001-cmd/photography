@@ -31,7 +31,7 @@ using Newtonsoft.Json;
 using Photography.Services.Post.API.Application.Commands.User.UpdateUserShare;
 using Photography.Services.Post.API.Application.Commands.Post.ExaminePost;
 using Photography.Services.Post.API.Application.Commands.Post.ViewPost;
-using Photography.Services.Post.API.Application.Commands.Post.UsersLikePost;
+using Photography.Services.Post.API.Application.Commands.Post.ToggleUserLikePost;
 
 namespace Photography.Services.Post.API.Controllers
 {
@@ -470,10 +470,10 @@ namespace Photography.Services.Post.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [Route("userlike")]
+        [Route("toggleuserlike")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         //[Authorize(Policy = "AdminOnly")]
-        public async Task<ActionResult<bool>> UserLikePostAsync([FromBody] UserLikePostCommand command)
+        public async Task<ActionResult<bool>> UserLikePostAsync([FromBody] ToggleUserLikePostCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
