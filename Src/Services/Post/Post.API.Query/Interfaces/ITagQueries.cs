@@ -13,5 +13,8 @@ namespace Photography.Services.Post.API.Query.Interfaces
 
         // 我的私有标签（帖子类别）
         Task<IEnumerable<string>> GetUserPrivateTagsAsync(Guid userId);
+
+        // 系统标签
+        Task<IEnumerable<string>> GetSystemTagsAsync();
     }
 }

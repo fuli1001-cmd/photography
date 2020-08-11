@@ -67,7 +67,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.ForwardPosts
                 // 创建新帖子
                 var score = (DateTime.Now - DateTime.UnixEpoch.AddSeconds(me.CreatedTime)).TotalHours <= _scoreRewardSettings.NewUserHour ? me.PostScore + _scoreRewardSettings.NewUserPost : me.PostScore;
                 var post = Domain.AggregatesModel.PostAggregate.Post.CreatePost(request.Text, request.Commentable, request.ForwardType, request.ShareType,
-                    request.Visibility, request.ViewPassword, request.PublicTags, request.PrivateTag, null, request.Latitude, request.Longitude, request.LocationName,
+                    request.Visibility, request.ViewPassword, request.SystemTag, request.PublicTags, request.PrivateTag, null, request.Latitude, request.Longitude, request.LocationName,
                     request.Address, request.CityCode, request.FriendIds, null, score, myId, request.ShowOriginalText);
 
                 post.SetForwardPostId(toBeForwardedPost);

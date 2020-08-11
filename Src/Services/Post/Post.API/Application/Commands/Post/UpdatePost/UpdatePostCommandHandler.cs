@@ -60,7 +60,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.UpdatePost
             var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType, a.IsPrivate)).ToList();
 
             post.Update(request.Text, request.Commentable, request.ForwardType, request.ShareType, request.Visibility,
-                request.ViewPassword, request.PublicTags, request.PrivateTag, request.CircleId, request.Latitude, request.Longitude, request.LocationName, request.Address,
+                request.ViewPassword, request.SystemTag, request.PublicTags, request.PrivateTag, request.CircleId, request.Latitude, request.Longitude, request.LocationName, request.Address,
                 request.CityCode, request.FriendIds, attachments, request.ShowOriginalText);
 
             #region arise内部用户更新帖子：无需审核

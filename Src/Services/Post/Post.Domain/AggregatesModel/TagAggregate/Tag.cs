@@ -12,8 +12,14 @@ namespace Photography.Services.Post.Domain.AggregatesModel.TagAggregate
         // 标签名
         public string Name { get; private set; }
 
-        // 标签使用数量
+        // 标签类别
+        public TagType TagType { get; set; }
+
+        // 公共标签使用数量
         public int Count { get; private set; }
+
+        // 标签顺序（目前仅系统标签用到）
+        public int Index { get; set; }
 
         public double CreatedTime { get; private set; }
 
@@ -57,5 +63,12 @@ namespace Photography.Services.Post.Domain.AggregatesModel.TagAggregate
             var tagDeletedDomainEvent = new PrivateTagDeletedDomainEvent(UserId.Value, Name);
             AddDomainEvent(tagDeletedDomainEvent);
         }
+    }
+
+    public enum TagType
+    {
+        System, // 系统类别
+        Public, // 公共类别，即帖子标签
+        Private // 私有类别，即帖子专辑
     }
 }

@@ -110,6 +110,11 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
         public List<Guid> FriendIds { get; set; }
 
         /// <summary>
+        /// 系统标签
+        /// </summary>
+        public string SystemTag { get; set; }
+
+        /// <summary>
         /// 标签
         /// </summary>
         public string PublicTags { get; set; }

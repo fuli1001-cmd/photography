@@ -511,6 +511,7 @@ namespace Photography.Services.Post.Infrastructure.Queries
                        Address = up.Post.Address,
                        CityCode = up.Post.CityCode,
                        Visibility = up.Post.Visibility,
+                       SystemTag = up.Post.SystemTag,
                        PublicTags = up.Post.PublicTags,
                        PrivateTag = up.Post.PrivateTag,
                        CircleGood = up.Post.CircleGood,

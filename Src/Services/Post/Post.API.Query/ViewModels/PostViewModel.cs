@@ -35,9 +35,11 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public Visibility Visibility { get; set; }
         public string CityCode { get; set; }
         public IEnumerable<Guid> FriendIds { get; set; }
-        // 帖子标签
+        // 系统标签
+        public string SystemTag { get; set; }
+        // 公共标签
         public string PublicTags { get; set; }
-        // 帖子类别
+        // 私有标签
         public string PrivateTag { get; set; }
         // 圈子
         public PostCircleViewModel Circle { get; set; }

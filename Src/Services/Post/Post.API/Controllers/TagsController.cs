@@ -32,6 +32,19 @@ namespace Photography.Services.Post.API.Controllers
         }
 
         /// <summary>
+        /// 系统标签
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("system")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ResponseWrapper>> GetSystemTagsAsync()
+        {
+            var tags = await _tagQueries.GetSystemTagsAsync();
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(tags));
+        }
+
+        /// <summary>
         /// 推荐标签
         /// </summary>
         /// <returns></returns>

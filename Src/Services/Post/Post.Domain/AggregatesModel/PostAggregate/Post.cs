@@ -53,7 +53,10 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         public string ViewPassword { get; private set; }
         public bool? ShowOriginalText { get; private set; }
 
-        // 帖子标签
+        // 系统标签
+        public string SystemTag { get; private set; }
+
+        // 公共标签
         public string PublicTags { get; private set; }
 
         // 帖子类别
@@ -118,7 +121,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
 
         // 构造帖子对象
         private Post(string text, bool? showOriginalText, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
-            string publicTags, string privateTag, Guid? circleId, double latitude, double longitude, string locationName, string address, string cityCode, 
+            string systemTag, string publicTags, string privateTag, Guid? circleId, double latitude, double longitude, string locationName, string address, string cityCode, 
             List<Guid> friendIds, List<PostAttachment> postAttachments, int score, Guid userId)
             : this(text, latitude, longitude, locationName, address, cityCode, postAttachments, userId)
         {
@@ -130,6 +133,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             ShareType = shareType;
             Visibility = visibility;
             ViewPassword = viewPassword;
+            SystemTag = systemTag;
             PublicTags = publicTags;
             PrivateTag = privateTag;
             CircleId = circleId;
@@ -169,10 +173,10 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
 
         // 创建帖子对象
         public static Post CreatePost(string text, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
-            string publicTags, string privateTag, Guid? circleId, double latitude, double longitude, string locationName, string address, string cityCode,
+            string systemTag, string publicTags, string privateTag, Guid? circleId, double latitude, double longitude, string locationName, string address, string cityCode,
             List<Guid> friendIds, List<PostAttachment> postAttachments, int score, Guid userId, bool? showOriginalText = null)
         {
-            return new Post(text, showOriginalText, commentable, forwardType, shareType, visibility, viewPassword, publicTags, privateTag, circleId, latitude, longitude,
+            return new Post(text, showOriginalText, commentable, forwardType, shareType, visibility, viewPassword, systemTag, publicTags, privateTag, circleId, latitude, longitude,
                 locationName, address, cityCode, friendIds, postAttachments, score, userId);
         }
 
@@ -192,7 +196,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
 
         // 更新帖子对象
         public void Update(string text, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
-            string publicTags, string privateTag, Guid? circleId, double latitude, double longitude, string locationName, string address, string cityCode,
+            string systemTag, string publicTags, string privateTag, Guid? circleId, double latitude, double longitude, string locationName, string address, string cityCode,
             List<Guid> friendIds, List<PostAttachment> postAttachments, bool? showOriginalText = null)
         {
             // 发送标签更新事件
@@ -204,6 +208,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             ShareType = shareType;
             Visibility = visibility;
             ViewPassword = viewPassword;
+            SystemTag = systemTag;
             PublicTags = publicTags;
             PrivateTag = privateTag;
             CircleId = circleId;
