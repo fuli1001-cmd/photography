@@ -103,7 +103,7 @@
 
     private void SetProperties()
     {
-        hasNextPage = pagedData.PagingInfo.CurrentPage < pagedData.PagingInfo.PageSize;
+        hasNextPage = pagedData.PagingInfo.CurrentPage < pagedData.PagingInfo.TotalPages;
         hasPreviousPage = pagedData.PagingInfo.CurrentPage > 1;
     }
 

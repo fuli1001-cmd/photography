@@ -81,7 +81,7 @@
                     {
                         @if (post.PostAuthStatus == PostAuthStatus.Authenticating)
                         {
-                            <button type="button" class="btn btn-danger btn-sm" @onclick="@(async () => await ExamineAsync(post, PostAuthStatus.Authenticated))">通过</button>
+                            <button type="button" class="btn btn-success btn-sm" @onclick="@(async () => await ExamineAsync(post, PostAuthStatus.Authenticated))">通过</button>
                             <button type="button" class="btn btn-danger btn-sm" @onclick="@(async () => await ExamineAsync(post, PostAuthStatus.Rejected))">拒绝</button>
                         }
                         else if (post.PostAuthStatus == PostAuthStatus.Authenticated)
@@ -90,7 +90,7 @@
                         }
                         else if (post.PostAuthStatus == PostAuthStatus.Rejected)
                         {
-                            <button type="button" class="btn btn-danger btn-sm" @onclick="@(async () => await ExamineAsync(post, PostAuthStatus.Authenticated))">通过</button>
+                            <button type="button" class="btn btn-success btn-sm" @onclick="@(async () => await ExamineAsync(post, PostAuthStatus.Authenticated))">通过</button>
                         }
                     }
                     </td>
