@@ -111,6 +111,8 @@ namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.App
                 User1Id = deal.UserId,
                 User2Id = deal.AppointmentedUserId.Value,
                 DealId = deal.Id,
+                AppointmentedUserType = (int)deal.AppointmentedUserType,
+                PayerType = (int)deal.PayerType,
                 Price = deal.Price ?? 0,
                 AppointedTime = deal.AppointedTime.Value,
                 PayerId = deal.PayerType == PayerType.Free ? null : (deal.PayerType == PayerType.Me ? deal.UserId : deal.AppointmentedUserId),

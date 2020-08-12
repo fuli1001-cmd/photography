@@ -12,6 +12,10 @@ namespace Photography.Services.Order.Domain.AggregatesModel.UserAggregate
         public UserType? UserType { get; private set; }
         public bool IdAuthenticated { get; private set; }
 
+        #region BackwardCompatibility: ChatServer needed Property
+        public int ChatServerUserId { get; private set; }
+        #endregion
+
         private readonly List<OrderAggregate.Order> _user1Orders = null;
         public IReadOnlyCollection<OrderAggregate.Order> User1Orders => _user1Orders;
 

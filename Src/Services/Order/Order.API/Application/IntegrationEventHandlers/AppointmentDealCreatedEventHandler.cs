@@ -35,6 +35,8 @@ namespace Photography.Services.Order.API.Application.IntegrationEventHandlers
                     User1Id = message.User1Id,
                     User2Id = message.User2Id,
                     DealId = message.DealId,
+                    AppointmentedUserType = message.AppointmentedUserType,
+                    PayerType = message.PayerType,
                     Price = message.Price,
                     AppointedTime = message.AppointedTime,
                     PayerId = message.PayerId,

@@ -15,6 +15,10 @@ namespace ApplicationMessages.Events
         public Guid? PayerId { get; set; }
         public string Text { get; set; }
 
+        public int AppointmentedUserType { get; set; }
+
+        public int PayerType { get; set; }
+
         #region location properties
         public double Latitude { get; set; }
 

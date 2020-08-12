@@ -22,8 +22,8 @@ namespace Photography.Services.Order.API.Application.Commands.CreateOrder
 
         public async Task<bool> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
-            var order = new Domain.AggregatesModel.OrderAggregate.Order(request.User1Id, request.User2Id,
-                request.DealId, request.PayerId, request.Price, request.AppointedTime, request.Text, 
+            var order = new Domain.AggregatesModel.OrderAggregate.Order(request.User1Id, request.User2Id, request.DealId, 
+                request.AppointmentedUserType, request.PayerType, request.PayerId, request.Price, request.AppointedTime, request.Text, 
                 request.Latitude, request.Longitude, request.LocationName, request.Address);
             _orderRepository.Add(order);
             return await _orderRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
