@@ -395,18 +395,20 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.User.API.Controllers.UsersController.GetFollowersAsync(System.Guid)">
+        <member name="M:Photography.Services.User.API.Controllers.UsersController.GetFollowersAsync(System.Guid,Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             获取用户的关注者
             </summary>
             <param name="userId"></param>
+            <param name="pagingParameters"></param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.User.API.Controllers.UsersController.GetFollowedUsersAsync(System.Guid)">
+        <member name="M:Photography.Services.User.API.Controllers.UsersController.GetFollowedUsersAsync(System.Guid,Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             获取用户关注的人
             </summary>
             <param name="userId"></param>
+            <param name="pagingParameters"></param>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.User.API.Controllers.UsersController.GetUserAsync(System.String)">

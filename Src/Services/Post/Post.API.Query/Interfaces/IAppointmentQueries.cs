@@ -11,7 +11,7 @@ namespace Photography.Services.Post.API.Query.Interfaces
     public interface IAppointmentQueries
     {
         // 获取约拍广场的约拍列表
-        Task<PagedList<AppointmentViewModel>> GetAppointmentsAsync(PayerType? payerType, double? appointmentSeconds, PagingParameters pagingParameters);
+        Task<PagedList<AppointmentViewModel>> GetAppointmentsAsync(PayerType? payerType, AppointmentedUserType? appointmentedUserType, double? appointmentSeconds, PagingParameters pagingParameters);
 
         // 获取我发布的约拍
         Task<PagedList<AppointmentViewModel>> GetMyAppointmentsAsync(PagingParameters pagingParameters);

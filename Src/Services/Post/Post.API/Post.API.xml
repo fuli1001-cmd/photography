@@ -44,6 +44,11 @@
             付费方类型
             </summary>
         </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.Appointment.PublishAppointment.PublishAppointmentCommand.AppointmentedUserType">
+            <summary>
+            约拍对象类型
+            </summary>
+        </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.Appointment.PublishAppointment.PublishAppointmentCommand.Attachments">
             <summary>
             附件数组
@@ -512,11 +517,12 @@
             <param name="command"></param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.AppointmentsController.GetAppointmentsAsync(System.Nullable{Photography.Services.Post.Domain.AggregatesModel.PostAggregate.PayerType},System.Nullable{System.Double},Arise.DDD.API.Paging.PagingParameters)">
+        <member name="M:Photography.Services.Post.API.Controllers.AppointmentsController.GetAppointmentsAsync(System.Nullable{Photography.Services.Post.Domain.AggregatesModel.PostAggregate.PayerType},System.Nullable{Photography.Services.Post.Domain.AggregatesModel.PostAggregate.AppointmentedUserType},System.Nullable{System.Double},Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             获取约拍广场的约拍列表
             </summary>
-            <param name="payerType">付款方类型</param>
+            <param name="payerType">付款方类型：0 - 互勉，1 - 发布方付费，2 - 约拍方付费，3 - 协商</param>
+            <param name="appointmentedUserType">约拍对象类型：0 - 摄影师，1 - 模特</param>
             <param name="appointmentSeconds">约拍日期时间戳（距unix epoch的秒数）</param>
             <param name="pagingParameters">分页参数</param>
             <returns></returns>

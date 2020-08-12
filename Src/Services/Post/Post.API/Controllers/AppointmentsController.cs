@@ -70,16 +70,21 @@ namespace Photography.Services.Post.API.Controllers
         /// <summary>
         /// 获取约拍广场的约拍列表
         /// </summary>
-        /// <param name="payerType">付款方类型</param>
+        /// <param name="payerType">付款方类型：0 - 互勉，1 - 发布方付费，2 - 约拍方付费，3 - 协商</param>
+        /// <param name="appointmentedUserType">约拍对象类型：0 - 摄影师，1 - 模特</param>
         /// <param name="appointmentSeconds">约拍日期时间戳（距unix epoch的秒数）</param>
         /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
         [HttpGet]
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<PagedResponseWrapper>> GetAppointmentsAsync([FromQuery(Name = "payertype")] PayerType? payerType, [FromQuery(Name = "appointmentseconds")] double? appointmentSeconds, [FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<PagedResponseWrapper>> GetAppointmentsAsync(
+            [FromQuery(Name = "payertype")] PayerType? payerType, 
+            [FromQuery(Name = "appointmentedUserType")] AppointmentedUserType? appointmentedUserType, 
+            [FromQuery(Name = "appointmentseconds")] double? appointmentSeconds, 
+            [FromQuery] PagingParameters pagingParameters)
         {
-            var appointments = await _appointmentQueries.GetAppointmentsAsync(payerType, appointmentSeconds, pagingParameters);
+            var appointments = await _appointmentQueries.GetAppointmentsAsync(payerType, appointmentedUserType, appointmentSeconds, pagingParameters);
             return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(appointments));
         }
 

@@ -18,6 +18,9 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
         public User User2 { get; private set; }
         public Guid User2Id { get; private set; }
 
+        // 交易参与方二的类型
+        public UserType? User2Type { get; private set; }
+
         public Guid DealId { get; private set; }
 
         // 交易付款方（交易参与方之一）

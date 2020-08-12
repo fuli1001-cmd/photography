@@ -86,6 +86,9 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         public double? AppointedTime { get; private set; }
         public decimal? Price { get; private set; }
         public PayerType? PayerType { get; private set; }
+
+        public AppointmentedUserType? AppointmentedUserType { get; private set; }
+
         public AppointmentDealStatus? AppointmentDealStatus { get; private set; }
 
         public User AppointmentedUser { get; private set; }
@@ -147,22 +150,23 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         }
 
         // 构造约拍对象
-        private Post(string text, double? appointedTime, decimal? price, PayerType? payerType, double? latitude, double? longitude, 
-            string locationName, string address, string cityCode, List<PostAttachment> postAttachments, Guid userId)
+        private Post(string text, double? appointedTime, decimal? price, PayerType? payerType, AppointmentedUserType appointmentedUserType, 
+            double? latitude, double? longitude, string locationName, string address, string cityCode, List<PostAttachment> postAttachments, Guid userId)
             : this(text, latitude, longitude, locationName, address, cityCode, postAttachments, userId)
         {
             AppointedTime = appointedTime;
             Price = price;
             PayerType = payerType;
+            AppointmentedUserType = appointmentedUserType;
             PostType = PostType.Appointment;
             PostAuthStatus = PostAuthStatus.Authenticated;
         }
 
         // 构造约拍交易对象
-        private Post(string text, double? appointedTime, decimal? price, PayerType? payerType, double? latitude, double? longitude,
-            string locationName, string address, string cityCode, List<PostAttachment> postAttachments, Guid userId, 
+        private Post(string text, double? appointedTime, decimal? price, PayerType? payerType, AppointmentedUserType appointmentedUserType, 
+            double? latitude, double? longitude, string locationName, string address, string cityCode, List<PostAttachment> postAttachments, Guid userId, 
             Guid appointmentedUserId, Guid? appointmentedToPostId)
-            : this(text, appointedTime, price, payerType, latitude, longitude, locationName, address, cityCode, postAttachments, userId)
+            : this(text, appointedTime, price, payerType, appointmentedUserType, latitude, longitude, locationName, address, cityCode, postAttachments, userId)
         {
             AppointmentedUserId = appointmentedUserId;
             AppointmentedToPostId = appointmentedToPostId;
@@ -181,17 +185,17 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         }
 
         // 创建约拍对象
-        public static Post CreateAppointment(string text, double? appointedTime, decimal? price, PayerType payerType, double? latitude, double? longitude,
-            string locationName, string address, string cityCode, List<PostAttachment> postAttachments, Guid userId)
+        public static Post CreateAppointment(string text, double? appointedTime, decimal? price, PayerType payerType, AppointmentedUserType appointmentedUserType, 
+            double? latitude, double? longitude, string locationName, string address, string cityCode, List<PostAttachment> postAttachments, Guid userId)
         {
-            return new Post(text, appointedTime, price, payerType, latitude, longitude, locationName, address, cityCode, postAttachments, userId);
+            return new Post(text, appointedTime, price, payerType, appointmentedUserType, latitude, longitude, locationName, address, cityCode, postAttachments, userId);
         }
 
         // 创建约拍交易对象
-        public static Post CreateAppointmentDeal(string text, double? appointedTime, decimal? price, PayerType? payerType, double? latitude, double? longitude,
-            string locationName, string address, string cityCode, List<PostAttachment> postAttachments, Guid userId, Guid appointmentedUserId, Guid? appointmentedToPostId)
+        public static Post CreateAppointmentDeal(string text, double? appointedTime, decimal? price, PayerType? payerType, AppointmentedUserType appointmentedUserType, 
+            double? latitude, double? longitude, string locationName, string address, string cityCode, List<PostAttachment> postAttachments, Guid userId, Guid appointmentedUserId, Guid? appointmentedToPostId)
         {
-            return new Post(text, appointedTime, price, payerType, latitude, longitude, locationName, address, cityCode, postAttachments, userId, appointmentedUserId, appointmentedToPostId);
+            return new Post(text, appointedTime, price, payerType, appointmentedUserType, latitude, longitude, locationName, address, cityCode, postAttachments, userId, appointmentedUserId, appointmentedToPostId);
         }
 
         // 更新帖子对象
@@ -435,7 +439,8 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
     {
         Free,
         Me,
-        You
+        You,
+        Negotiation
     }
 
     // 约拍生命流程状态
@@ -457,5 +462,14 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         Authenticating,
         Authenticated,
         Rejected
+    }
+
+    /// <summary>
+    /// 约拍对象类型
+    /// </summary>
+    public enum AppointmentedUserType
+    {
+        Photographer,
+        Model
     }
 }

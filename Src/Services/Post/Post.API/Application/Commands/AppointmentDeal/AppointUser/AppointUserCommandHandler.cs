@@ -67,8 +67,8 @@ namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.App
             var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType)).ToList();
 
             var deal = Domain.AggregatesModel.PostAggregate.Post.CreateAppointmentDeal(
-                request.Text, request.AppointedTime, request.Price, request.PayerType, request.Latitude, 
-                request.Longitude, request.LocationName, request.Address, request.CityCode, attachments, 
+                request.Text, request.AppointedTime, request.Price, request.PayerType, request.AppointmentedUserType, 
+                request.Latitude, request.Longitude, request.LocationName, request.Address, request.CityCode, attachments, 
                 myId, request.AppointmentedUserId, null);
             _postRepository.Add(deal);
 

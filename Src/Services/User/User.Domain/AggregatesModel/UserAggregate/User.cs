@@ -328,7 +328,9 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
     public enum UserType
     {
         Photographer,
-        Model
+        Model,
+        AmateurModel,
+        Other
     }
 
     public enum Gender

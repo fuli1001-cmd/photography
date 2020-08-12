@@ -73,7 +73,7 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.Publish
             // 发布约拍
             var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType)).ToList();
             var post = Domain.AggregatesModel.PostAggregate.Post.CreateAppointment(request.Text, request.AppointedTime, request.Price, request.PayerType,
-                request.Latitude, request.Longitude, request.LocationName, request.Address, request.CityCode, attachments, userId);
+                request.AppointmentedUserType, request.Latitude, request.Longitude, request.LocationName, request.Address, request.CityCode, attachments, userId);
             _postRepository.Add(post);
 
             if (await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))

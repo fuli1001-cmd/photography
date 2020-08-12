@@ -89,63 +89,56 @@ namespace Photography.Services.User.Infrastructure.Queries
         /// 获取关注指定用户的人
         /// </summary>
         /// <param name="userId"></param>
+        /// <param name="pagingParameters"></param>
         /// <returns></returns>
-        public async Task<List<FollowerViewModel>> GetFollowersAsync(Guid userId)
+        public async Task<PagedList<FollowerViewModel>> GetFollowersAsync(Guid userId, PagingParameters pagingParameters)
         {
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-            var followers = await (from u in _identityContext.Users
-                             join ur in _identityContext.UserRelations
-                             on new { FollowerId = u.Id, FollowedUserId = userId } equals new { FollowerId = ur.FromUserId, FollowedUserId = ur.ToUserId }
-                             where ur.Followed
-                             select new FollowerViewModel
-                             {
-                                 Id = u.Id,
-                                 Nickname = u.Nickname,
-                                 Avatar = u.Avatar,
-                                 FollowersCount = u.FollowerCount,
-                                 PostCount = u.PostCount,
-                                 Followed = _identityContext.UserRelations.Any(ur2 => ur2.FromUserId == myId && ur2.ToUserId == u.Id && ur2.Followed)
-                             }).ToListAsync();
+            var queryableDto = from u in _identityContext.Users
+                               join ur in _identityContext.UserRelations
+                               on new { FollowerId = u.Id, FollowedUserId = userId } equals new { FollowerId = ur.FromUserId, FollowedUserId = ur.ToUserId }
+                               where ur.Followed
+                               orderby u.Nickname
+                               select new FollowerViewModel
+                               {
+                                   Id = u.Id,
+                                   Nickname = u.Nickname,
+                                   Avatar = u.Avatar,
+                                   FollowersCount = u.FollowerCount,
+                                   PostCount = u.PostCount,
+                                   Followed = _identityContext.UserRelations.Any(ur2 => ur2.FromUserId == myId && ur2.ToUserId == u.Id && ur2.Followed)
+                               };
 
-            //var MyFollowedUserIds = await _identityContext.UserRelations.Where(r => r.FollowerId == myId).Select(r => r.FollowedUserId).ToListAsync();
-
-            //followers.ForEach(f => f.Followed = MyFollowedUserIds.Contains(f.Id));
-
-            return followers;
+            return await PagedList<FollowerViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
         }
 
         /// <summary>
         /// 获取用户关注的人
         /// </summary>
         /// <param name="userId"></param>
+        /// <param name="pagingParameters"></param>
         /// <returns></returns>
-        public async Task<List<FollowerViewModel>> GetFollowedUsersAsync(Guid userId)
+        public async Task<PagedList<FollowerViewModel>> GetFollowedUsersAsync(Guid userId, PagingParameters pagingParameters)
         {
             var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-            var followedUsers = await (from u in _identityContext.Users
-                                       join ur in _identityContext.UserRelations
-                                       on new { FollowerId = userId, FollowedUserId = u.Id } equals new { FollowerId = ur.FromUserId, FollowedUserId = ur.ToUserId }
-                                       where ur.Followed
-                                       select new FollowerViewModel
-                                       {
-                                           Id = u.Id,
-                                           Nickname = u.Nickname,
-                                           Avatar = u.Avatar,
-                                           FollowersCount = u.FollowerCount,
-                                           PostCount = u.PostCount,
-                                           Followed = myId == userId ? true : _identityContext.UserRelations.Any(ur2 => ur2.FromUserId == myId && ur2.ToUserId == u.Id && ur2.Followed),
-                                       }).ToListAsync();
+            var queryableDto = from u in _identityContext.Users
+                               join ur in _identityContext.UserRelations
+                               on new { FollowerId = userId, FollowedUserId = u.Id } equals new { FollowerId = ur.FromUserId, FollowedUserId = ur.ToUserId }
+                               where ur.Followed
+                               orderby u.Nickname
+                               select new FollowerViewModel
+                               {
+                                   Id = u.Id,
+                                   Nickname = u.Nickname,
+                                   Avatar = u.Avatar,
+                                   FollowersCount = u.FollowerCount,
+                                   PostCount = u.PostCount,
+                                   Followed = myId == userId ? true : _identityContext.UserRelations.Any(ur2 => ur2.FromUserId == myId && ur2.ToUserId == u.Id && ur2.Followed),
+                               };
 
-            //if (myId != userId)
-            //{
-            //    var MyFollowedUserIds = await _identityContext.UserRelations.Where(r => r.FollowerId == myId).Select(r => r.FollowedUserId).ToListAsync();
-
-            //    followedUsers.ForEach(f => f.Followed = MyFollowedUserIds.Contains(f.Id));
-            //}
-
-            return followedUsers;
+            return await PagedList<FollowerViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
         }
 
         public async Task<List<UserSearchResult>> SearchUsersAsync(string key)

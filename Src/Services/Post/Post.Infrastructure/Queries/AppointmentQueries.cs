@@ -36,36 +36,40 @@ namespace Photography.Services.Post.Infrastructure.Queries
         // 获取约拍广场的约拍列表
         // 返回与当前用户不同类型的用户发的约拍
         // 以及当前用户发的约拍
-        public async Task<PagedList<AppointmentViewModel>> GetAppointmentsAsync(PayerType? payerType, double? appointmentSeconds, PagingParameters pagingParameters)
+        public async Task<PagedList<AppointmentViewModel>> GetAppointmentsAsync(PayerType? payerType, AppointmentedUserType? appointmentedUserType, double? appointmentSeconds, PagingParameters pagingParameters)
         {
             IQueryable<UserPost> queryableUserPosts;
 
-            var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
-            if (role != "admin")
-            {
-                var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            //var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+            ////if (role != "admin")
+            ////{
+            ////    var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-                var curUserType = _postContext.Users.SingleOrDefault(u => u.Id == myId)?.UserType ?? throw new ClientException("操作失败", new List<string> { $"The type of user {myId} is not set." });
+            ////    var curUserType = _postContext.Users.SingleOrDefault(u => u.Id == myId)?.UserType ?? throw new ClientException("操作失败", new List<string> { $"The type of user {myId} is not set." });
 
-                // 与当前用户不同类型的用户所发的约拍及当前用户发的约拍
-                queryableUserPosts = from p in _postContext.Posts
-                                     join u in _postContext.Users on p.UserId equals u.Id
-                                     where p.PostType == PostType.Appointment && (u.UserType != curUserType || p.UserId == myId)
-                                     orderby p.CreatedTime descending
-                                     select new UserPost { Post = p, User = u };
-            }
-            else
-            {
+            ////    // 与当前用户不同类型的用户所发的约拍及当前用户发的约拍
+            ////    queryableUserPosts = from p in _postContext.Posts
+            ////                         join u in _postContext.Users on p.UserId equals u.Id
+            ////                         where p.PostType == PostType.Appointment && (u.UserType != curUserType || p.UserId == myId)
+            ////                         orderby p.CreatedTime descending
+            ////                         select new UserPost { Post = p, User = u };
+            ////}
+            ////else
+            //{
                 queryableUserPosts = from p in _postContext.Posts
                                      join u in _postContext.Users on p.UserId equals u.Id
                                      where p.PostType == PostType.Appointment
                                      orderby p.CreatedTime descending
                                      select new UserPost { Post = p, User = u };
-            }
+            //}
 
             // 筛选支付方类型
             if (payerType != null)
                 queryableUserPosts = queryableUserPosts.Where(up => up.Post.PayerType == payerType);
+
+            // 筛选约拍对象类型
+            if (appointmentedUserType != null)
+                queryableUserPosts = queryableUserPosts.Where(up => up.Post.AppointmentedUserType == appointmentedUserType);
 
             // 筛选指定日期当天的约拍
             if (appointmentSeconds != null)
@@ -120,6 +124,7 @@ namespace Photography.Services.Post.Infrastructure.Queries
                        AppointedTime = up.Post.AppointedTime.Value,
                        Price = up.Post.Price ?? 0,
                        PayerType = up.Post.PayerType.Value,
+                       AppointmentedUserType = up.Post.AppointmentedUserType.Value,
                        CityCode = up.Post.CityCode,
                        Latitude = up.Post.Latitude.Value,
                        Longitude = up.Post.Longitude.Value,

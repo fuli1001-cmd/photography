@@ -42,6 +42,11 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.Publish
         public PayerType PayerType { get; set; }
 
         /// <summary>
+        /// 约拍对象类型
+        /// </summary>
+        public AppointmentedUserType AppointmentedUserType { get; set; }
+
+        /// <summary>
         /// 附件数组
         /// </summary>
         [DataMember]

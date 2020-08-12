@@ -161,13 +161,14 @@ namespace Photography.Services.User.API.Controllers
         /// 获取用户的关注者
         /// </summary>
         /// <param name="userId"></param>
+        /// <param name="pagingParameters"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("followers/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<ResponseWrapper>> GetFollowersAsync(Guid userId)
+        public async Task<ActionResult<ResponseWrapper>> GetFollowersAsync(Guid userId, PagingParameters pagingParameters)
         {
-            var followers = await _userQueries.GetFollowersAsync(userId);
+            var followers = await _userQueries.GetFollowersAsync(userId, pagingParameters);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(followers));
         }
 
@@ -175,13 +176,14 @@ namespace Photography.Services.User.API.Controllers
         /// 获取用户关注的人
         /// </summary>
         /// <param name="userId"></param>
+        /// <param name="pagingParameters"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("followedUsers/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<ResponseWrapper>> GetFollowedUsersAsync(Guid userId)
+        public async Task<ActionResult<ResponseWrapper>> GetFollowedUsersAsync(Guid userId, PagingParameters pagingParameters)
         {
-            var followedUsers = await _userQueries.GetFollowedUsersAsync(userId);
+            var followedUsers = await _userQueries.GetFollowedUsersAsync(userId, pagingParameters);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(followedUsers));
         }
 

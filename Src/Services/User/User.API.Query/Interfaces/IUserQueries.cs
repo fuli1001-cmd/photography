@@ -34,13 +34,13 @@ namespace Photography.Services.User.API.Query.Interfaces
         /// 获取当前用户的关注者
         /// </summary>
         /// <returns></returns>
-        Task<List<FollowerViewModel>> GetFollowersAsync(Guid userId);
+        Task<PagedList<FollowerViewModel>> GetFollowersAsync(Guid userId, PagingParameters pagingParameters);
 
         /// <summary>
         /// 获取关注当前用户的人
         /// </summary>
         /// <returns></returns>
-        Task<List<FollowerViewModel>> GetFollowedUsersAsync(Guid userId);
+        Task<PagedList<FollowerViewModel>> GetFollowedUsersAsync(Guid userId, PagingParameters pagingParameters);
 
         /// <summary>
         /// 搜索用户

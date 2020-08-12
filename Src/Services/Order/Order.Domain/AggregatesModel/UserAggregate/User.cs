@@ -48,6 +48,8 @@ namespace Photography.Services.Order.Domain.AggregatesModel.UserAggregate
     public enum UserType
     {
         Photographer,
-        Model
+        Model,
+        AmateurModel,
+        Other
     }
 }
