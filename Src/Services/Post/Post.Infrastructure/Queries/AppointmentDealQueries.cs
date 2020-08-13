@@ -112,6 +112,7 @@ namespace Photography.Services.Post.Infrastructure.Queries
                        AppointedTime = up.Post.AppointedTime.Value,
                        Price = up.Post.Price ?? 0,
                        PayerType = up.Post.PayerType.Value,
+                       AppointmentedToPostId = up.Post.AppointmentedToPostId,
                        AppointmentedUserType = up.Post.AppointmentedUserType.Value,
                        CityCode = up.Post.CityCode,
                        Latitude = up.Post.Latitude.Value,
