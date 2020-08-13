@@ -22,8 +22,7 @@ namespace Photography.Services.Order.API.Application.Commands.CreateUser
 
         public async Task<bool> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            var nickName = "用户" + request.UserName;
-            var user = new Domain.AggregatesModel.UserAggregate.User(request.Id, nickName);
+            var user = new Domain.AggregatesModel.UserAggregate.User(request.UserId, request.NickName, request.ChatServerUserId);
             _userRepository.Add(user);
             return await _userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
         }

@@ -29,6 +29,12 @@ namespace Photography.Services.Order.API.Query.ViewModels
 
         public string Description { get; set; }
 
+        // 约拍对象（交易参与方二）类型
+        public int AppointmentedUserType { get; set; }
+
+        // 支付类型
+        public int PayerType { get; set; }
+
         public UserViewModel Partner { get; set; }
 
         public IEnumerable<AttachmentViewModel> Attachments { get; set; }

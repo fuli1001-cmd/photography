@@ -8,7 +8,10 @@ namespace Photography.Services.Order.API.Application.Commands.CreateUser
 {
     public class CreateUserCommand : IRequest<bool>
     {
-        public string Id { get; set; }
-        public string UserName { get; set; }
+        public Guid UserId { get; set; }
+
+        public string NickName { get; set; }
+
+        public int ChatServerUserId { get; set; }
     }
 }

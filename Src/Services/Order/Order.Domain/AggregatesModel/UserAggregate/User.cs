@@ -30,10 +30,11 @@ namespace Photography.Services.Order.Domain.AggregatesModel.UserAggregate
             
         }
 
-        public User(string id, string nickName)
+        public User(Guid id, string nickName, int chatServerUserId)
         {
-            Id = Guid.Parse(id);
+            Id = id;
             Nickname = nickName;
+            ChatServerUserId = chatServerUserId;
         }
 
         public void Update(string nickName, string avatar, UserType? userType)

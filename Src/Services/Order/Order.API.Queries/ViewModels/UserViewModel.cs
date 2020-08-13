@@ -12,6 +12,7 @@ namespace Photography.Services.Order.API.Query.ViewModels
         public string Avatar { get; set; }
         public UserType? UserType { get; set; }
         public IdAuthStatus RealNameRegistrationStatus { get; set; }
+        public int ChatServerUserId { get; set; }
     }
 
     public enum IdAuthStatus

@@ -94,6 +94,8 @@ namespace Photography.Services.Order.Infrastructure.Queries
                        Address = o.Address,
                        ClosedTime = o.ClosedTime,
                        Description = o.Description,
+                       PayerType = o.PayerType,
+                       AppointmentedUserType = o.AppointmentedUserType,
                        Attachments = from a in o.Attachments
                                      select new AttachmentViewModel
                                      {
@@ -109,6 +111,7 @@ namespace Photography.Services.Order.Infrastructure.Queries
                                       Nickname = u.Nickname,
                                       Avatar = u.Avatar,
                                       UserType = u.UserType,
+                                      ChatServerUserId = u.ChatServerUserId,
                                       RealNameRegistrationStatus = u.IdAuthenticated ? IdAuthStatus.Authenticated : IdAuthStatus.NotAuthenticated
                                   }).SingleOrDefault()
                    };
