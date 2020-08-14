@@ -57,15 +57,6 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
 
         public int WaitingForConfirmOrderCount { get; private set; }
 
-        //// 拍片阶段的订单数量，包含OrderStatus为WaitingForShooting，WaitingForUploadOriginal的订单
-        //public int ShootingStageOrderCount { get; private set; }
-
-        //// 选片阶段的订单数量，包含OrderStatus为WaitingForSelection的订单
-        //public int SelectionStageOrderCount { get; private set; }
-
-        //// 出片阶段的订单数量，包含OrderStatus为WaitingForUploadProcessed，WaitingForCheck的订单
-        //public int ProductionStageOrderCount { get; private set; }
-
         // 约拍值
         public int Score { get; private set; }
 
@@ -94,6 +85,32 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
 
         // 被禁次数
         public int DisabledCount { get; private set; }
+
+        #region
+        // 社团类型
+        public int? OrgType { get; private set; }
+
+        // 社团所在高校名称
+        public string OrgSchoolName { get; private set; }
+
+        // 社团名称
+        public string OrgName { get; private set; }
+
+        // 认证信息（社团介绍）
+        public string OrgDesc { get; private set; }
+
+        // 社团运营者新名
+        public string OrgOperatorName { get; private set; }
+
+        // 社团运营者手机号
+        public string OrgOperatorPhoneNumber { get; private set; }
+
+        // 社团照片
+        public string OrgImage { get; private set; }
+
+        // 社团认证状态
+        public IdAuthStatus OrgAuthStatus { get; private set; }
+        #endregion
 
         #region BackwardCompatibility: ChatServer needed Property
         public int ChatServerUserId { get; private set; }
