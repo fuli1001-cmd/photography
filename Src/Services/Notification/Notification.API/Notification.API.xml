@@ -43,6 +43,21 @@
             事件类别
             </summary>
         </member>
+        <member name="T:Photography.Services.Notification.API.Application.Commands.User.SetOrgAuthStatus.SetOrgAuthStatusCommand">
+            <summary>
+            设置团体认证状态
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Notification.API.Application.Commands.User.SetOrgAuthStatus.SetOrgAuthStatusCommand.UserId">
+            <summary>
+            要设置的用户id
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Notification.API.Application.Commands.User.SetOrgAuthStatus.SetOrgAuthStatusCommand.Status">
+            <summary>
+            要设置成的认证状态
+            </summary>
+        </member>
         <member name="M:Photography.Services.Notification.API.Controllers.EventsController.GetUserReceivedEventsAsync(Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             用户的事件

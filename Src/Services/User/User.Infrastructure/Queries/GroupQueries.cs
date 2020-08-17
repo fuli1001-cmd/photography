@@ -84,7 +84,8 @@ namespace Photography.Services.User.Infrastructure.Queries
                                      Id = u.Id,
                                      Nickname = u.Nickname,
                                      Avatar = u.Avatar,
-                                     ChatServerUserId = u.ChatServerUserId
+                                     ChatServerUserId = u.ChatServerUserId,
+                                     OrgAuthStatus = u.OrgAuthStatus,
                                  }
                    };
         }

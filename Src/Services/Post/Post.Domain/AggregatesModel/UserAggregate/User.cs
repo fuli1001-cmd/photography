@@ -41,6 +41,9 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
         // 用户被禁用到的时间点，null表示未禁用
         public DateTime? DisabledTime { get; private set; }
 
+        // 社团认证状态
+        public AuthStatus OrgAuthStatus { get; private set; }
+
         private readonly List<PostAggregate.Post> _posts = null;
         public IReadOnlyCollection<PostAggregate.Post> Posts => _posts;
 
@@ -83,7 +86,8 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
         {
             Id = Guid.Parse(id);
             Nickname = nickName;
-            PostScore = initPostScore; 
+            PostScore = initPostScore;
+            OrgAuthStatus = AuthStatus.NotStarted;
             CreatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
 
@@ -139,11 +143,25 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
         {
             return DisabledTime == null ? false : DateTime.UtcNow <= DisabledTime.Value;
         }
+
+        // 设置用户团体认证状态
+        public void SetOrgAuthStatus(AuthStatus status)
+        {
+            OrgAuthStatus = status;
+        }
     }
 
     public enum UserType
     {
         Photographer,
         Model
+    }
+
+    public enum AuthStatus
+    {
+        NotStarted,
+        Authenticating,
+        Authenticated,
+        Rejected
     }
 }

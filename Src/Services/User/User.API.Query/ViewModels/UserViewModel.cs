@@ -56,8 +56,8 @@ namespace Photography.Services.User.API.Query.ViewModels
 
         public IdAuthStatus RealNameRegistrationStatus { get; set; }
 
-        // 社团认证状态
-        public IdAuthStatus OrgAuthStatus { get; set; }
+        // 社团名称
+        public string OrgDesc { get; set; }
 
         public string Code { get; set; }
     }
@@ -121,14 +121,15 @@ namespace Photography.Services.User.API.Query.ViewModels
         public bool Disabled { get; set; }
 
         public IdAuthStatus RealNameRegistrationStatus { get; set; }
-
-        // 社团认证状态
-        public IdAuthStatus OrgAuthStatus { get; set; }
     }
 
     public class BaseUserViewModel
     {
         public Guid Id { get; set; }
+
         public string Nickname { get; set; }
+
+        // 社团认证状态
+        public IdAuthStatus OrgAuthStatus { get; set; }
     }
 }

@@ -1,7 +1,9 @@
-﻿using Arise.DDD.Domain.Exceptions;
+﻿using ApplicationMessages.Events.User;
+using Arise.DDD.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using NServiceBus;
 using Photography.Services.User.API.Query.Interfaces;
 using Photography.Services.User.API.Query.ViewModels;
 using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
@@ -20,12 +22,16 @@ namespace Photography.Services.User.API.Application.Commands.User.SetOrgAuthStat
         private readonly IUserQueries _userQueries;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<SetOrgAuthStatusCommandHandler> _logger;
+        private readonly IServiceProvider _serviceProvider;
 
-        public SetOrgAuthStatusCommandHandler(IUserRepository userRepository, IUserQueries userQueries, 
-            IHttpContextAccessor httpContextAccessor, ILogger<SetOrgAuthStatusCommandHandler> logger)
+        private IMessageSession _messageSession;
+
+        public SetOrgAuthStatusCommandHandler(IUserRepository userRepository, IUserQueries userQueries,
+            IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor, ILogger<SetOrgAuthStatusCommandHandler> logger)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _userQueries = userQueries ?? throw new ArgumentNullException(nameof(userQueries));
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -53,9 +59,18 @@ namespace Photography.Services.User.API.Application.Commands.User.SetOrgAuthStat
             var user = await _userRepository.GetByIdAsync(userId);
             user.SetOrgAuthStatus(request.Status);
 
-            await _userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
+            if (await _userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
+                await SendUserOrgAuthStatusChangedEventAsync(userId, request.Status);
 
             return await _userQueries.GetUserOrgAuthInfoAsync(userId);
+        }
+
+        private async Task SendUserOrgAuthStatusChangedEventAsync(Guid userId, IdAuthStatus status)
+        {
+            var @event = new UserOrgAuthStatusChangedEvent { UserId = userId, Status = (int)status };
+            _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
+            await _messageSession.Publish(@event);
+            _logger.LogInformation("----- Published UserOrgAuthStatusChangedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
         }
     }
 }

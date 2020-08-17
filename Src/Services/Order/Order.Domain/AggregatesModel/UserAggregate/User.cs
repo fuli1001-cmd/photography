@@ -12,6 +12,9 @@ namespace Photography.Services.Order.Domain.AggregatesModel.UserAggregate
         public UserType? UserType { get; private set; }
         public bool IdAuthenticated { get; private set; }
 
+        // 社团认证状态
+        public AuthStatus OrgAuthStatus { get; private set; }
+
         #region BackwardCompatibility: ChatServer needed Property
         public int ChatServerUserId { get; private set; }
         #endregion
@@ -48,6 +51,12 @@ namespace Photography.Services.Order.Domain.AggregatesModel.UserAggregate
         {
             IdAuthenticated = passed;
         }
+
+        // 设置用户团体认证状态
+        public void SetOrgAuthStatus(AuthStatus status)
+        {
+            OrgAuthStatus = status;
+        }
     }
 
     public enum UserType
@@ -56,5 +65,13 @@ namespace Photography.Services.Order.Domain.AggregatesModel.UserAggregate
         Model,
         AmateurModel,
         Other
+    }
+
+    public enum AuthStatus
+    {
+        NotAuthenticated,
+        Authenticating,
+        Authenticated,
+        Rejected
     }
 }

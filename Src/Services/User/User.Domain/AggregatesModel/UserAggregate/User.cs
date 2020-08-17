@@ -352,8 +352,10 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
             OrgOperatorName = orgOperatorName;
             OrgOperatorPhoneNumber = orgOperatorPhoneNumber;
             OrgImage = orgImage;
+            SetOrgAuthStatus(IdAuthStatus.Authenticating);
         }
 
+        // 设置用户团体认证状态
         public void SetOrgAuthStatus(IdAuthStatus status)
         {
             OrgAuthStatus = status;

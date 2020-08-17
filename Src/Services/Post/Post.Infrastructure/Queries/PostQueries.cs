@@ -548,6 +548,7 @@ namespace Photography.Services.Post.Infrastructure.Queries
                            Nickname = up.User.Nickname,
                            Avatar = up.User.Avatar,
                            UserType = up.User.UserType,
+                           OrgAuthStatus = up.User.OrgAuthStatus,
                            RealNameRegistrationStatus = up.User.IdAuthenticated ? IdAuthStatus.Authenticated : IdAuthStatus.NotAuthenticated,
                            Followed = (from ur in _postContext.UserRelations
                                        where ur.FollowerId == myId && ur.FollowedUserId == up.User.Id

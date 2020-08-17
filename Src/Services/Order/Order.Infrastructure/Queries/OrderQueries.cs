@@ -7,6 +7,7 @@ using Photography.Services.Order.API.Query.Extensions;
 using Photography.Services.Order.API.Query.Interfaces;
 using Photography.Services.Order.API.Query.ViewModels;
 using Photography.Services.Order.Domain.AggregatesModel.OrderAggregate;
+using Photography.Services.Order.Domain.AggregatesModel.UserAggregate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -112,7 +113,8 @@ namespace Photography.Services.Order.Infrastructure.Queries
                                       Avatar = u.Avatar,
                                       UserType = u.UserType,
                                       ChatServerUserId = u.ChatServerUserId,
-                                      RealNameRegistrationStatus = u.IdAuthenticated ? IdAuthStatus.Authenticated : IdAuthStatus.NotAuthenticated
+                                      OrgAuthStatus = u.OrgAuthStatus,
+                                      RealNameRegistrationStatus = u.IdAuthenticated ? AuthStatus.Authenticated : AuthStatus.NotAuthenticated
                                   }).SingleOrDefault()
                    };
         }

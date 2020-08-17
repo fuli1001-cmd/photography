@@ -11,13 +11,10 @@ namespace Photography.Services.Order.API.Query.ViewModels
         public string Nickname { get; set; }
         public string Avatar { get; set; }
         public UserType? UserType { get; set; }
-        public IdAuthStatus RealNameRegistrationStatus { get; set; }
+        public AuthStatus RealNameRegistrationStatus { get; set; }
         public int ChatServerUserId { get; set; }
-    }
 
-    public enum IdAuthStatus
-    {
-        NotAuthenticated = 0,
-        Authenticated = 2 // 值设为2以便客户端使用
+        // 社团认证状态
+        public AuthStatus OrgAuthStatus { get; set; }
     }
 }

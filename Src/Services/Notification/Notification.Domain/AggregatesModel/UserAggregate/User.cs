@@ -15,6 +15,9 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.UserAggregate
 
         public string RegistrationId { get; private set; }
 
+        // 社团认证状态
+        public AuthStatus OrgAuthStatus { get; private set; }
+
         #region 推送设置
         #region to be deleted
         public PushSetting PushLikeEvent { get; private set; }
@@ -85,6 +88,12 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.UserAggregate
             else if (eventCategory == EventCategory.System)
                 SystemEvent = setting;
         }
+
+        // 设置用户团体认证状态
+        public void SetOrgAuthStatus(AuthStatus status)
+        {
+            OrgAuthStatus = status;
+        }
     }
 
     public enum PushSetting
@@ -92,5 +101,13 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.UserAggregate
         Open, // 开启
         FollowedOnly, // 只接收我关注的人
         Closed // 关闭
+    }
+
+    public enum AuthStatus
+    {
+        NotAuthenticated,
+        Authenticating,
+        Authenticated,
+        Rejected
     }
 }

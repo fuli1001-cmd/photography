@@ -11,6 +11,7 @@ namespace Photography.Services.Post.API.Query.ViewModels
         public Guid Id { get; set; }
         public string Nickname { get; set; }
         public IdAuthStatus RealNameRegistrationStatus { get; set; }
+        public AuthStatus OrgAuthStatus { get; set; }
     }
 
     public class PostUserViewModel : BaseUserViewModel

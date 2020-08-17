@@ -76,12 +76,12 @@ namespace Photography.Services.Post.Infrastructure.Queries
                                           Id = sc.Id,
                                           Text = sc.Text,
                                           CreatedTime = sc.CreatedTime,
-                                          User = new CommentUserViewModel { Id = sc.User.Id, Nickname = sc.User.Nickname, Avatar = sc.User.Avatar }
+                                          User = new CommentUserViewModel { Id = sc.User.Id, Nickname = sc.User.Nickname, Avatar = sc.User.Avatar, OrgAuthStatus = sc.User.OrgAuthStatus }
                                       }).Take(maxSubCommentsCount),
                        Liked = (from ucr in _postContext.UserCommentRelations
                                 where ucr.UserId == myId && ucr.CommentId == c.Id
                                 select ucr.Id).Count() > 0,
-                       User = new CommentUserViewModel { Id = c.User.Id, Nickname = c.User.Nickname, Avatar = c.User.Avatar }
+                       User = new CommentUserViewModel { Id = c.User.Id, Nickname = c.User.Nickname, Avatar = c.User.Avatar, OrgAuthStatus = c.User.OrgAuthStatus }
                    };
         }
     }

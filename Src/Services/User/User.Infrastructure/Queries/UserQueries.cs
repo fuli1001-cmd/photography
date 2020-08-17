@@ -107,6 +107,7 @@ namespace Photography.Services.User.Infrastructure.Queries
                                    Avatar = u.Avatar,
                                    FollowersCount = u.FollowerCount,
                                    PostCount = u.PostCount,
+                                   OrgAuthStatus = u.OrgAuthStatus,
                                    Followed = _identityContext.UserRelations.Any(ur2 => ur2.FromUserId == myId && ur2.ToUserId == u.Id && ur2.Followed)
                                };
 
@@ -135,6 +136,7 @@ namespace Photography.Services.User.Infrastructure.Queries
                                    Avatar = u.Avatar,
                                    FollowersCount = u.FollowerCount,
                                    PostCount = u.PostCount,
+                                   OrgAuthStatus = u.OrgAuthStatus,
                                    Followed = myId == userId ? true : _identityContext.UserRelations.Any(ur2 => ur2.FromUserId == myId && ur2.ToUserId == u.Id && ur2.Followed),
                                };
 
@@ -156,6 +158,7 @@ namespace Photography.Services.User.Infrastructure.Queries
                     Avatar = u.Avatar,
                     PostCount = u.PostCount,
                     FollowerCount = u.FollowerCount,
+                    OrgAuthStatus = u.OrgAuthStatus,
                     Followed = _identityContext.UserRelations.Any(ur => ur.FromUserId == myId && ur.ToUserId == u.Id && ur.Followed)
                 }).ToListAsync();
 
@@ -237,6 +240,7 @@ namespace Photography.Services.User.Infrastructure.Queries
                        ViewFollowedUsersAllowed = u.ViewFollowedUsersAllowed,
                        ViewFollowersAllowed = u.ViewFollowersAllowed,
                        RealNameRegistrationStatus = u.RealNameRegistrationStatus,
+                       OrgDesc = u.OrgDesc,
                        OrgAuthStatus = u.OrgAuthStatus,
                        Followed = myId == Guid.Empty ? false : _identityContext.UserRelations.Any(ur => ur.FromUserId == myId && ur.ToUserId == u.Id && ur.Followed)
                    };

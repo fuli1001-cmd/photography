@@ -44,6 +44,7 @@ namespace Photography.Services.Notification.Infrastructure.Queries
                                        Id = u.Id,
                                        Nickname = u.Nickname,
                                        Avatar = u.Avatar,
+                                       OrgAuthStatus = u.OrgAuthStatus,
                                        Followed = (from ur in _dbContext.UserRelations
                                                    where ur.FollowerId == myId && ur.FollowedUserId == u.Id
                                                    select ur.Id)
@@ -87,6 +88,7 @@ namespace Photography.Services.Notification.Infrastructure.Queries
                                        Id = u.Id,
                                        Nickname = u.Nickname,
                                        Avatar = u.Avatar,
+                                       OrgAuthStatus = u.OrgAuthStatus,
                                        Followed = (from ur in _dbContext.UserRelations
                                                    where ur.FollowerId == myId && ur.FollowedUserId == u.Id
                                                    select ur.Id)

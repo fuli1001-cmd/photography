@@ -444,6 +444,21 @@
             被禁用到的时间点
             </summary>
         </member>
+        <member name="T:Photography.Services.Post.API.Application.Commands.User.SetOrgAuthStatus.SetOrgAuthStatusCommand">
+            <summary>
+            设置团体认证状态
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.User.SetOrgAuthStatus.SetOrgAuthStatusCommand.UserId">
+            <summary>
+            要设置的用户id
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Post.API.Application.Commands.User.SetOrgAuthStatus.SetOrgAuthStatusCommand.Status">
+            <summary>
+            要设置成的认证状态
+            </summary>
+        </member>
         <member name="P:Photography.Services.Post.API.Application.Commands.User.UpdateUserShare.UpdateUserShareCommand.SharerId">
             <summary>
             分享者id

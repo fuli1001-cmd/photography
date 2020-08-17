@@ -19,6 +19,21 @@
             是否通过审核
             </summary>
         </member>
+        <member name="T:Photography.Services.Order.API.Application.Commands.User.SetOrgAuthStatus.SetOrgAuthStatusCommand">
+            <summary>
+            设置团体认证状态
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Order.API.Application.Commands.User.SetOrgAuthStatus.SetOrgAuthStatusCommand.UserId">
+            <summary>
+            要设置的用户id
+            </summary>
+        </member>
+        <member name="P:Photography.Services.Order.API.Application.Commands.User.SetOrgAuthStatus.SetOrgAuthStatusCommand.Status">
+            <summary>
+            要设置成的认证状态
+            </summary>
+        </member>
         <member name="P:Photography.Services.Order.API.Application.Commands.CancelOrder.CancelOrderCommand.DealId">
             <summary>
             要取消的订单所对应的约拍交易id
