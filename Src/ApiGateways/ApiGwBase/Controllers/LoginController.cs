@@ -82,6 +82,10 @@ namespace Photography.ApiGateways.ApiGwBase.Controllers
                 // 加上a0后缀避免只生成了纯字符或纯数字的密码而无法通过密码政策验证
                 await _authService.ChangeToRandomPasswordAsync(loginPhoneDto.PhoneNumber, code, Path.GetRandomFileName().Replace(".", string.Empty) + "a0");
 
+                // 登录成功，清除redis数据
+                // 此处不等待，在后台删除redis数据即可
+                _redisService.KeyDeleteAsync(loginPhoneDto.PhoneNumber);
+
                 return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
             }
 

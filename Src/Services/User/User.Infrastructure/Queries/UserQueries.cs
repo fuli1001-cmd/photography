@@ -195,7 +195,8 @@ namespace Photography.Services.User.Infrastructure.Queries
                                      IdCardFront = u.IdCardFront,
                                      IdCardHold = u.IdCardHold,
                                      Disabled = u.DisabledTime == null ? false : DateTime.UtcNow < u.DisabledTime.Value,
-                                     RealNameRegistrationStatus = u.RealNameRegistrationStatus
+                                     RealNameRegistrationStatus = u.RealNameRegistrationStatus,
+                                     OrgAuthStatus = u.OrgAuthStatus
                                  };
 
             return await PagedList<ExaminingUserViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
@@ -236,6 +237,7 @@ namespace Photography.Services.User.Infrastructure.Queries
                        ViewFollowedUsersAllowed = u.ViewFollowedUsersAllowed,
                        ViewFollowersAllowed = u.ViewFollowersAllowed,
                        RealNameRegistrationStatus = u.RealNameRegistrationStatus,
+                       OrgAuthStatus = u.OrgAuthStatus,
                        Followed = myId == Guid.Empty ? false : _identityContext.UserRelations.Any(ur => ur.FromUserId == myId && ur.ToUserId == u.Id && ur.Followed)
                    };
         }
@@ -270,6 +272,24 @@ namespace Photography.Services.User.Infrastructure.Queries
 
             // 其它情况为当年已过生，年龄为年份差值
             return Math.Max(DateTime.Now.Year - birthday.Year, 0);
+        }
+
+        public async Task<UserOrgAuthInfo> GetUserOrgAuthInfoAsync(Guid userId)
+        {
+            return await (from u in _identityContext.Users
+                          where u.Id == userId
+                          select new UserOrgAuthInfo
+                          {
+                              OrgType = u.OrgType,
+                              OrgSchoolName = u.OrgSchoolName,
+                              OrgName = u.OrgName,
+                              OrgDesc = u.OrgDesc,
+                              OrgOperatorName = u.OrgOperatorName,
+                              OrgOperatorPhoneNumber = u.OrgOperatorPhoneNumber,
+                              OrgImage = u.OrgImage,
+                              OrgAuthStatus = u.OrgAuthStatus
+                          })
+                          .FirstOrDefaultAsync();
         }
     }
 }

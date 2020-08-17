@@ -11,10 +11,12 @@ using Photography.Services.User.API.Application.Commands.Login;
 using Photography.Services.User.API.Application.Commands.Logout;
 using Photography.Services.User.API.Application.Commands.User.AllowViewFollowedUsers;
 using Photography.Services.User.API.Application.Commands.User.AllowViewFollowers;
+using Photography.Services.User.API.Application.Commands.User.AuthOrg;
 using Photography.Services.User.API.Application.Commands.User.AuthRealName;
 using Photography.Services.User.API.Application.Commands.User.DisableUser;
 using Photography.Services.User.API.Application.Commands.User.MuteUser;
 using Photography.Services.User.API.Application.Commands.User.ReportIllegal;
+using Photography.Services.User.API.Application.Commands.User.SetOrgAuthStatus;
 using Photography.Services.User.API.Application.Commands.User.ToggleFollow;
 using Photography.Services.User.API.Application.Commands.User.UpdateBackground;
 using Photography.Services.User.API.Application.Commands.User.UpdateUser;
@@ -313,6 +315,34 @@ namespace Photography.Services.User.API.Controllers
         public ActionResult<bool> ReportIllegalUserAsync([FromBody] ReportIllegalCommand command)
         {
             return Ok(ResponseWrapper.CreateOkResponseWrapper(true));
+        }
+
+        /// <summary>
+        /// 团队认证
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("authorg")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<bool>> AuthOrgAsync([FromBody] AuthOrgCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 设置用户的团体认证状态，并返回他的团队认证信息
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("setorgauthstatus")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ResponseWrapper>> SetOrgAuthStatusAsync([FromBody] SetOrgAuthStatusCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
     }
 }

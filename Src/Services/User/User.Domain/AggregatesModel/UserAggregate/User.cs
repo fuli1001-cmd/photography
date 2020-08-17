@@ -86,7 +86,7 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         // 被禁次数
         public int DisabledCount { get; private set; }
 
-        #region
+        #region 团体认证
         // 社团类型
         public int? OrgType { get; private set; }
 
@@ -99,7 +99,7 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         // 认证信息（社团介绍）
         public string OrgDesc { get; private set; }
 
-        // 社团运营者新名
+        // 社团运营者姓名
         public string OrgOperatorName { get; private set; }
 
         // 社团运营者手机号
@@ -138,6 +138,7 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
             UpdatedTime = CreatedTime;
             ViewFollowedUsersAllowed = true;
             ViewFollowersAllowed = true;
+            OrgAuthStatus = IdAuthStatus.NoIdCard;
         }
 
         public User(string id, string userName, string phonenumber, string code, string nickName) : this()
@@ -339,6 +340,23 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         public void AddAppointmentScore(int score)
         {
             Score += score;
+        }
+
+        // 设置团体认证信息
+        public void SetOrgAuthInfo(int orgType, string orgSchoolName, string orgName, string orgDesc, string orgOperatorName, string orgOperatorPhoneNumber, string orgImage)
+        {
+            OrgType = orgType;
+            OrgSchoolName = orgSchoolName;
+            OrgName = orgName;
+            OrgDesc = orgDesc;
+            OrgOperatorName = orgOperatorName;
+            OrgOperatorPhoneNumber = orgOperatorPhoneNumber;
+            OrgImage = orgImage;
+        }
+
+        public void SetOrgAuthStatus(IdAuthStatus status)
+        {
+            OrgAuthStatus = status;
         }
     }
 

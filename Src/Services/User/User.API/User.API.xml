@@ -70,6 +70,51 @@
             群头像
             </summary>
         </member>
+        <member name="T:Photography.Services.User.API.Application.Commands.User.AuthOrg.AuthOrgCommand">
+            <summary>
+            团体认证命令
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.User.AuthOrg.AuthOrgCommand.OrgType">
+            <summary>
+            社团类型
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.User.AuthOrg.AuthOrgCommand.OrgSchoolName">
+            <summary>
+            社团所在高校名称
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.User.AuthOrg.AuthOrgCommand.OrgName">
+            <summary>
+            社团名称
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.User.AuthOrg.AuthOrgCommand.OrgDesc">
+            <summary>
+            认证信息
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.User.AuthOrg.AuthOrgCommand.OrgOperatorName">
+            <summary>
+            社团运营者姓名
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.User.AuthOrg.AuthOrgCommand.OrgOperatorPhoneNumber">
+            <summary>
+            社团运营者手机号
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.User.AuthOrg.AuthOrgCommand.OrgImage">
+            <summary>
+            社团照片
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.User.AuthOrg.AuthOrgCommand.Code">
+            <summary>
+            短信验证码
+            </summary>
+        </member>
         <member name="T:Photography.Services.User.API.Application.Commands.User.AuthRealName.AuthRealNameCommand">
             <summary>
             实名认证
@@ -124,6 +169,21 @@
         <member name="P:Photography.Services.User.API.Application.Commands.User.ReportIllegal.ReportIllegalCommand.Description">
             <summary>
             举报内容
+            </summary>
+        </member>
+        <member name="T:Photography.Services.User.API.Application.Commands.User.SetOrgAuthStatus.SetOrgAuthStatusCommand">
+            <summary>
+            设置团体认证状态
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.User.SetOrgAuthStatus.SetOrgAuthStatusCommand.UserId">
+            <summary>
+            要设置的用户id
+            </summary>
+        </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.User.SetOrgAuthStatus.SetOrgAuthStatusCommand.Status">
+            <summary>
+            要设置成的认证状态
             </summary>
         </member>
         <member name="P:Photography.Services.User.API.Application.Commands.User.ToggleFollow.ToggleFollowCommand.UserIdToFollow">
@@ -470,6 +530,20 @@
         <member name="M:Photography.Services.User.API.Controllers.UsersController.ReportIllegalUserAsync(Photography.Services.User.API.Application.Commands.User.ReportIllegal.ReportIllegalCommand)">
             <summary>
             举报用户
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.UsersController.AuthOrgAsync(Photography.Services.User.API.Application.Commands.User.AuthOrg.AuthOrgCommand)">
+            <summary>
+            团队认证
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.Services.User.API.Controllers.UsersController.SetOrgAuthStatusAsync(Photography.Services.User.API.Application.Commands.User.SetOrgAuthStatus.SetOrgAuthStatusCommand)">
+            <summary>
+            设置用户的团体认证状态，并返回他的团队认证信息
             </summary>
             <param name="command"></param>
             <returns></returns>
