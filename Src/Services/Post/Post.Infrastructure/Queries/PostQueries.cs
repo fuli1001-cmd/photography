@@ -175,6 +175,19 @@ namespace Photography.Services.Post.Infrastructure.Queries
             return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
         }
 
+        // 获取系统标签下的帖子
+        public async Task<PagedList<PostViewModel>> GetPostsBySystemTag(string systemTag, PagingParameters pagingParameters)
+        {
+            var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
+
+            var queryablePosts = GetAvailablePosts(myId).Where(p => p.SystemTag == systemTag);
+            var queryableUserPosts = GetAvailableUserPosts(queryablePosts);
+            var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.UpdatedTime);
+
+            return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
+        }
+
         /// <summary>
         /// 获取指定id列表的帖子
         /// </summary>

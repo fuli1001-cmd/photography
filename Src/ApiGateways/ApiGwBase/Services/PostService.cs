@@ -34,5 +34,18 @@ namespace Photography.ApiGateways.ApiGwBase.Services
 
             return JsonConvert.DeserializeObject<ResponseWrapper<UnReadEventCountDto>>(await response.Content.ReadAsStringAsync()).Data;
         }
+
+        /// <summary>
+        /// 获取系统帖子标签
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<string>> GetSystemTagsAsync()
+        {
+            var response = await _client.GetAsync($"/api/tags/system");
+
+            response.EnsureSuccessStatusCode();
+
+            return JsonConvert.DeserializeObject<ResponseWrapper<IEnumerable<string>>>(await response.Content.ReadAsStringAsync()).Data;
+        }
     }
 }

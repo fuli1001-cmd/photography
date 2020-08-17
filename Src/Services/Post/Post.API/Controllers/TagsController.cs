@@ -38,6 +38,7 @@ namespace Photography.Services.Post.API.Controllers
         [HttpGet]
         [Route("system")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
         public async Task<ActionResult<ResponseWrapper>> GetSystemTagsAsync()
         {
             var tags = await _tagQueries.GetSystemTagsAsync();

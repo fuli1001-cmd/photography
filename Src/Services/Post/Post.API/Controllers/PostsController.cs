@@ -132,6 +132,23 @@ namespace Photography.Services.Post.API.Controllers
         }
 
         /// <summary>
+        /// 获取系统标签下的帖子
+        /// </summary>
+        /// <param name="systemTag">系统标签</param>
+        /// <param name="pagingParameters">分页参数</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("systemtag/{systemTag}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
+        public async Task<ActionResult<PagedResponseWrapper>> GetPostsBySystemTag(string systemTag, [FromQuery] PagingParameters pagingParameters)
+        {
+            var posts = await _postQueries.GetPostsBySystemTag(systemTag, pagingParameters);
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
+        }
+
+
+        /// <summary>
         /// 用户的帖子
         /// </summary>
         /// <param name="userId">用户id</param>

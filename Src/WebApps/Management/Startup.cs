@@ -40,9 +40,6 @@ namespace Photography.WebApps.Management
 
             services.AddHttpContextAccessor();
 
-            services.AddHttpClient<PostHttpService>();
-            services.AddHttpClient<UserHttpService>();
-
             services.AddHttpClient<UserHttpService>(async (serviceProvider, client) =>
             {
                 var httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();

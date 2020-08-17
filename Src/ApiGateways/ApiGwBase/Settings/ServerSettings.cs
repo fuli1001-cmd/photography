@@ -76,6 +76,11 @@ namespace Photography.ApiGateways.ApiGwBase.Settings
         /// 分享贴子的地址
         /// </summary>
         public string PostShareServer { get; set; }
+
+        /// <summary>
+        /// 系统帖子类别
+        /// </summary>
+        public IEnumerable<string> SystemPostTags { get; set; }
     }
 
     public class Version

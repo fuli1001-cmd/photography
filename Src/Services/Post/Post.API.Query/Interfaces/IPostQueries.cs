@@ -30,6 +30,9 @@ namespace Photography.Services.Post.API.Query.Interfaces
         // 同城的帖子
         Task<PagedList<PostViewModel>> GetSameCityPostsAsync(string cityCode, PagingParameters pagingParameters);
 
+        // 获取系统标签下的帖子
+        Task<PagedList<PostViewModel>> GetPostsBySystemTag(string systemTag, PagingParameters pagingParameters);
+
         // 获取指定id列表的帖子
         Task<List<PostViewModel>> GetPostsAsync(List<Guid> postIds);
 

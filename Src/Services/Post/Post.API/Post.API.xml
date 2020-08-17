@@ -699,6 +699,14 @@
             <param name="pagingParameters">分页参数</param>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetPostsBySystemTag(System.String,Arise.DDD.API.Paging.PagingParameters)">
+            <summary>
+            获取系统标签下的帖子
+            </summary>
+            <param name="systemTag">系统标签</param>
+            <param name="pagingParameters">分页参数</param>
+            <returns></returns>
+        </member>
         <member name="M:Photography.Services.Post.API.Controllers.PostsController.GetMyPostsAsync(System.Guid,System.String,System.String,Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             用户的帖子

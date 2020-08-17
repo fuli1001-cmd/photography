@@ -32,7 +32,7 @@
             设置控制器
             </summary>
         </member>
-        <member name="M:Photography.ApiGateways.ApiGwBase.Controllers.SettingsController.GetServerSettings">
+        <member name="M:Photography.ApiGateways.ApiGwBase.Controllers.SettingsController.GetServerSettingsAsync">
             <summary>
             获取配置信息
             </summary>
@@ -77,6 +77,12 @@
         <member name="M:Photography.ApiGateways.ApiGwBase.Services.PostService.GetSentAndReceivedAppointmentDealCountAsync">
             <summary>
             获取我发出的约拍交易数量
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Photography.ApiGateways.ApiGwBase.Services.PostService.GetSystemTagsAsync">
+            <summary>
+            获取系统帖子标签
             </summary>
             <returns></returns>
         </member>
@@ -148,6 +154,11 @@
         <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.PostShareServer">
             <summary>
             分享贴子的地址
+            </summary>
+        </member>
+        <member name="P:Photography.ApiGateways.ApiGwBase.Settings.ServerSettings.SystemPostTags">
+            <summary>
+            系统帖子类别
             </summary>
         </member>
     </members>

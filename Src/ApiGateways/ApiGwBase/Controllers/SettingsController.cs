@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Photography.ApiGateways.ApiGwBase.Services;
 using Photography.ApiGateways.ApiGwBase.Settings;
 using System;
 using System.Collections.Generic;
@@ -21,12 +22,15 @@ namespace Photography.ApiGateways.ApiGwBase.Controllers
     [ApiVersion("1.0")]
     public class SettingsController : ControllerBase
     {
+        private readonly PostService _postService;
         private readonly ILogger<SettingsController> _logger;
         private readonly IOptionsSnapshot<ServerSettings> _serverSettings;
 
-        public SettingsController(IOptionsSnapshot<ServerSettings> serverSettings, 
+        public SettingsController(PostService postService, 
+            IOptionsSnapshot<ServerSettings> serverSettings, 
             ILogger<SettingsController> logger)
         {
+            _postService = postService ?? throw new ArgumentNullException(nameof(postService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _serverSettings = serverSettings ?? throw new ArgumentNullException(nameof(serverSettings));
         }
@@ -38,9 +42,11 @@ namespace Photography.ApiGateways.ApiGwBase.Controllers
         [HttpGet]
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<ServerSettings> GetServerSettings()
+        public async Task<ActionResult<ServerSettings>> GetServerSettingsAsync()
         {
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(_serverSettings.Value));
+            var settings = _serverSettings.Value;
+            settings.SystemPostTags = await _postService.GetSystemTagsAsync();
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(settings));
         }
     }
 }
