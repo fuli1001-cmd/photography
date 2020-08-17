@@ -52,7 +52,7 @@ namespace Photography.Services.Post.Infrastructure.Queries
                                      join u in _postContext.Users 
                                      on p.UserId equals u.Id
                                      where p.AppointmentedUserId == myId && p.PostType == PostType.AppointmentDeal && p.AppointmentDealStatus == AppointmentDealStatus.Created
-                                     orderby p.AppointedTime
+                                     orderby p.CreatedTime descending
                                      select new UserPost { Post = p, User = u };
 
             var queryableDto = GetQueryableAppointmentViewModels(queryableUserPosts);
@@ -80,7 +80,7 @@ namespace Photography.Services.Post.Infrastructure.Queries
                                      join u in _postContext.Users
                                      on p.AppointmentedUserId equals u.Id
                                      where p.UserId == myId && p.PostType == PostType.AppointmentDeal && p.AppointmentDealStatus == AppointmentDealStatus.Created
-                                     orderby p.AppointedTime
+                                     orderby p.CreatedTime descending
                                      select new UserPost { Post = p, User = u };
 
             var queryableDto = GetQueryableAppointmentViewModels(queryableUserPosts);

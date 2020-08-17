@@ -168,7 +168,7 @@ namespace Photography.Services.User.API.Controllers
         [HttpGet]
         [Route("followers/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<ResponseWrapper>> GetFollowersAsync(Guid userId, PagingParameters pagingParameters)
+        public async Task<ActionResult<ResponseWrapper>> GetFollowersAsync(Guid userId, [FromQuery] PagingParameters pagingParameters)
         {
             var followers = await _userQueries.GetFollowersAsync(userId, pagingParameters);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(followers));
@@ -183,7 +183,7 @@ namespace Photography.Services.User.API.Controllers
         [HttpGet]
         [Route("followedUsers/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<ResponseWrapper>> GetFollowedUsersAsync(Guid userId, PagingParameters pagingParameters)
+        public async Task<ActionResult<ResponseWrapper>> GetFollowedUsersAsync(Guid userId, [FromQuery] PagingParameters pagingParameters)
         {
             var followedUsers = await _userQueries.GetFollowedUsersAsync(userId, pagingParameters);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(followedUsers));
