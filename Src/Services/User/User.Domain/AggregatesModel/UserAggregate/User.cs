@@ -1,5 +1,6 @@
 ﻿using Arise.DDD.Domain.Exceptions;
 using Arise.DDD.Domain.SeedWork;
+using Photography.Services.User.Domain.AggregatesModel.FeedbackAggregate;
 using Photography.Services.User.Domain.AggregatesModel.GroupAggregate;
 using Photography.Services.User.Domain.AggregatesModel.GroupUserAggregate;
 using Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate;
@@ -131,6 +132,10 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
         // 与group的多对多关系
         private readonly List<GroupUser> _groupUsers = null;
         public IReadOnlyCollection<GroupUser> GroupUsers => _groupUsers;
+
+        // 用户的反馈信息
+        private readonly List<Feedback> _feedbacks = null;
+        public IReadOnlyCollection<Feedback> Feedbacks => _feedbacks;
 
         public User()
         {

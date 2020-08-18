@@ -182,8 +182,8 @@ namespace Photography.Services.Post.Infrastructure.Queries
             var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
 
             var queryablePosts = GetAvailablePosts(myId).Where(p => p.SystemTag == systemTag);
-            var queryableUserPosts = GetAvailableUserPosts(queryablePosts);
-            var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId).OrderByDescending(dto => dto.UpdatedTime);
+            var queryableUserPosts = GetAvailableUserPosts(queryablePosts).OrderByDescending(up => up.Post.Score).ThenByDescending(up => up.Post.UpdatedTime);
+            var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId);
 
             return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
         }

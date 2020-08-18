@@ -10,7 +10,7 @@ using Photography.Services.User.Infrastructure;
 namespace Photography.Services.User.API.Infrastructure.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20200722081724_Init")]
+    [Migration("20200818054018_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -83,6 +83,37 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                     b.HasIndex("UpdatedTime");
 
                     b.ToTable("AlbumPhotos");
+                });
+
+            modelBuilder.Entity("Photography.Services.User.Domain.AggregatesModel.FeedbackAggregate.Feedback", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("CreatedTime")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Image1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image3")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Feedbacks");
                 });
 
             modelBuilder.Entity("Photography.Services.User.Domain.AggregatesModel.GroupAggregate.Group", b =>
@@ -225,9 +256,31 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("OngoingOrderCount")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrgAuthStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OrgDesc")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrgImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrgName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrgOperatorName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrgOperatorPhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrgSchoolName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("OrgType")
+                        .HasColumnType("int");
 
                     b.Property<string>("Phonenumber")
                         .HasColumnType("nvarchar(max)");
@@ -271,6 +324,9 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                     b.Property<bool>("ViewFollowersAllowed")
                         .HasColumnType("bit");
 
+                    b.Property<int>("WaitingForConfirmOrderCount")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Users");
@@ -282,22 +338,19 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("FollowedUserId")
+                    b.Property<bool>("Followed")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("FromUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("FollowerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<bool>("Muted")
+                        .HasColumnType("bit");
 
-                    b.Property<bool>("MutedFollowedUser")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                    b.Property<Guid>("ToUserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FollowedUserId");
-
-                    b.HasIndex("FollowerId");
 
                     b.ToTable("UserRelations");
                 });
@@ -316,6 +369,15 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                     b.HasOne("Photography.Services.User.Domain.AggregatesModel.AlbumAggregate.Album", "Album")
                         .WithMany("AlbumPhotos")
                         .HasForeignKey("AlbumId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Photography.Services.User.Domain.AggregatesModel.FeedbackAggregate.Feedback", b =>
+                {
+                    b.HasOne("Photography.Services.User.Domain.AggregatesModel.UserAggregate.User", "User")
+                        .WithMany("Feedbacks")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -340,21 +402,6 @@ namespace Photography.Services.User.API.Infrastructure.Migrations
                         .WithMany("GroupUsers")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict);
-                });
-
-            modelBuilder.Entity("Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate.UserRelation", b =>
-                {
-                    b.HasOne("Photography.Services.User.Domain.AggregatesModel.UserAggregate.User", "FollowedUser")
-                        .WithMany("FollowedUsers")
-                        .HasForeignKey("FollowedUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Photography.Services.User.Domain.AggregatesModel.UserAggregate.User", "Follower")
-                        .WithMany("Followers")
-                        .HasForeignKey("FollowerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

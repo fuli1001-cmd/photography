@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -98,7 +99,8 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
 
             if (await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
             {
-                // 取得附件中的第一张图片，然后发出“帖子已发布事件”
+                #region 发布“帖子已发布事件”
+                //取得附件中的第一张图片
                 string image = null;
                 var first = request.Attachments[0];
                 if (first.AttachmentType == AttachmentType.Image)
@@ -106,7 +108,14 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
                 else if (first.AttachmentType == AttachmentType.Video)
                     image = first.Name.Substring(0, first.Name.LastIndexOf('.')) + ".jpg";
 
-                await SendPostPublishedEventAsync(userId, post.Id, image);
+                // 取得帖子中@的用户id
+                var matches = Regex.Matches(post.Text, @"@(.*?) ");
+                // 过滤掉空的昵称（匹配的字符串至少包括一个@和一个空格符号）
+                var atUserNickNames = matches.Where(m => !string.IsNullOrEmpty(m.Value) && m.Value.Length > 2).Select(m => m.Value.Substring(1, m.Value.Length - 2)).ToList();
+                var atUserIds = await _userRepository.GetUserIdsByNicknameAsync(atUserNickNames);
+
+                await SendPostPublishedEventAsync(user.Id, user.Nickname, post.Id, image, atUserIds);
+                #endregion
 
                 return await _postQueries.GetPostAsync(post.Id);
             }
@@ -114,9 +123,9 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
             throw new ApplicationException("操作失败");
         }
 
-        private async Task SendPostPublishedEventAsync(Guid userId, Guid postId, string image)
+        private async Task SendPostPublishedEventAsync(Guid userId, string nickname, Guid postId, string image, List<Guid> atUserIds)
         {
-            var @event = new PostPublishedEvent { UserId = userId, PostId = postId, Image = image };
+            var @event = new PostPublishedEvent { UserId = userId, Nickname = nickname, PostId = postId, Image = image, AtUserIds = atUserIds };
             _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
             await _messageSession.Publish(@event);
             _logger.LogInformation("----- Published PostPublishedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);

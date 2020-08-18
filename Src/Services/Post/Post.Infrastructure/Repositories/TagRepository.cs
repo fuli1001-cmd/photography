@@ -19,7 +19,7 @@ namespace Photography.Services.Post.Infrastructure.Repositories
         public async Task<List<Tag>> GetPublicTagsByNames(List<string> names)
         {
             names = names.Select(n => n.ToLower()).ToList();
-            return await _context.Tags.Where(t => t.UserId == null && names.Contains(t.Name.ToLower())).ToListAsync();
+            return await _context.Tags.Where(t => t.TagType == TagType.Public && names.Contains(t.Name.ToLower())).ToListAsync();
         }
 
         public async Task<Tag> GetUserPrivateTagByName(Guid userId, string name)

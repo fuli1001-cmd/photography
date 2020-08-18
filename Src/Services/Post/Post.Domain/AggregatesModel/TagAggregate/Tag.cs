@@ -35,12 +35,14 @@ namespace Photography.Services.Post.Domain.AggregatesModel.TagAggregate
         public Tag(string name) : this()
         {
             Name = name;
+            TagType = TagType.Public;
         }
 
         public Tag(string name, Guid userId) : this()
         {
             Name = name;
             UserId = userId;
+            TagType = TagType.Private;
         }
 
         public void IncreaseCount()

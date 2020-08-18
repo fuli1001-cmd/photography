@@ -13,6 +13,7 @@ using Photography.Services.User.API.Application.Commands.User.AllowViewFollowedU
 using Photography.Services.User.API.Application.Commands.User.AllowViewFollowers;
 using Photography.Services.User.API.Application.Commands.User.AuthOrg;
 using Photography.Services.User.API.Application.Commands.User.AuthRealName;
+using Photography.Services.User.API.Application.Commands.User.CreateFeedback;
 using Photography.Services.User.API.Application.Commands.User.DisableUser;
 using Photography.Services.User.API.Application.Commands.User.MuteUser;
 using Photography.Services.User.API.Application.Commands.User.ReportIllegal;
@@ -340,6 +341,20 @@ namespace Photography.Services.User.API.Controllers
         [Route("setorgauthstatus")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ResponseWrapper>> SetOrgAuthStatusAsync([FromBody] SetOrgAuthStatusCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 创建用户反馈
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("feedback")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ResponseWrapper>> CreateFeedbackAsync([FromBody] CreateFeedbackCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));

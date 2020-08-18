@@ -19,6 +19,31 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("Photography.Services.Post.API.Query.ViewModels.PostCountViewModel", b =>
+                {
+                    b.Property<int>("AppointmentCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LikedPostCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PostCount")
+                        .HasColumnType("int");
+
+                    b.ToTable("PostCounts");
+                });
+
+            modelBuilder.Entity("Photography.Services.Post.API.Query.ViewModels.SentAndReceivedAppointmentDealCountViewModel", b =>
+                {
+                    b.Property<int>("ReceivedAppointmentDeal")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SentAppointmentDeal")
+                        .HasColumnType("int");
+
+                    b.ToTable("SentAndReceivedAppointmentDealCounts");
+                });
+
             modelBuilder.Entity("Photography.Services.Post.Domain.AggregatesModel.CircleAggregate.Circle", b =>
                 {
                     b.Property<Guid>("Id")
@@ -112,6 +137,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<Guid?>("AppointmentedUserId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int?>("AppointmentedUserType")
+                        .HasColumnType("int");
+
                     b.Property<bool>("CircleGood")
                         .HasColumnType("bit");
 
@@ -200,6 +228,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<string>("SystemTag")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
 
@@ -280,9 +311,15 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     b.Property<double>("CreatedTime")
                         .HasColumnType("float");
 
+                    b.Property<int>("Index")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("TagType")
+                        .HasColumnType("int");
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -306,6 +343,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("AppointmentCount")
+                        .HasColumnType("int");
+
                     b.Property<string>("Avatar")
                         .HasColumnType("nvarchar(max)");
 
@@ -326,6 +366,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
 
                     b.Property<bool>("NicknameSet")
                         .HasColumnType("bit");
+
+                    b.Property<int>("OrgAuthStatus")
+                        .HasColumnType("int");
 
                     b.Property<int>("PostScore")
                         .HasColumnType("int");

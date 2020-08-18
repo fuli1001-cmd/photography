@@ -10,7 +10,7 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
     public class Event : Entity, IAggregateRoot
     {
         // 事件发起人
-        public Guid FromUserId { get; private set; }
+        public Guid? FromUserId { get; private set; }
         public User FromUser { get; private set; }
 
         // 事件接收人
@@ -48,7 +48,7 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
             CreatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
 
-        public Event(Guid fromUserId, Guid toUserId, EventType eventType, Guid? postId, Guid? commentId, string commentText, Guid? circleId, string circleName, Guid? orderId)
+        public Event(Guid? fromUserId, Guid toUserId, EventType eventType, Guid? postId, Guid? commentId, string commentText, Guid? circleId, string circleName, Guid? orderId)
             : this()
         {
             FromUserId = fromUserId;
@@ -89,7 +89,9 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
         RejectOrder, // 拒绝订单
         IdAuthenticated, // 实名认证通过
         IdRejected, // 实名认证被拒
-        CircleOwnerChanged // 圈主改变
+        CircleOwnerChanged, // 圈主改变
+        AtUserInPost, // 在帖子中at了用户
+        FeedbackCreated // 用户反馈
     }
 
     // 事件类别

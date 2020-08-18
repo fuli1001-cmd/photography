@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Photography.Services.User.Domain.AggregatesModel.AlbumAggregate;
 using Photography.Services.User.Domain.AggregatesModel.AlbumPhotoAggregate;
+using Photography.Services.User.Domain.AggregatesModel.FeedbackAggregate;
 using Photography.Services.User.Domain.AggregatesModel.GroupAggregate;
 using Photography.Services.User.Domain.AggregatesModel.GroupUserAggregate;
 using Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate;
@@ -30,6 +31,8 @@ namespace Photography.Services.User.Infrastructure
 
         public DbSet<AlbumPhoto> AlbumPhotos { get; set; }
 
+        public DbSet<Feedback> Feedbacks { get; set; }
+
         public UserContext(DbContextOptions<UserContext> options, IMediator mediator) : base(options, mediator) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -40,6 +43,7 @@ namespace Photography.Services.User.Infrastructure
             modelBuilder.ApplyConfiguration(new GroupUserEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new AlbumEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new AlbumPhotoEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new FeedbackEntityTypeConfiguration());
         }
     }
 }

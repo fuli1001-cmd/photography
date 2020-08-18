@@ -8,6 +8,29 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "PostCounts",
+                columns: table => new
+                {
+                    PostCount = table.Column<int>(nullable: false),
+                    AppointmentCount = table.Column<int>(nullable: false),
+                    LikedPostCount = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SentAndReceivedAppointmentDealCounts",
+                columns: table => new
+                {
+                    ReceivedAppointmentDeal = table.Column<int>(nullable: false),
+                    SentAppointmentDeal = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -21,7 +44,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     CreatedTime = table.Column<double>(nullable: false),
                     NicknameSet = table.Column<bool>(nullable: false),
                     AvatarSet = table.Column<bool>(nullable: false),
-                    DisabledTime = table.Column<DateTime>(nullable: true)
+                    AppointmentCount = table.Column<int>(nullable: false),
+                    DisabledTime = table.Column<DateTime>(nullable: true),
+                    OrgAuthStatus = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -57,7 +82,9 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(nullable: false),
+                    TagType = table.Column<int>(nullable: false),
                     Count = table.Column<int>(nullable: false),
+                    Index = table.Column<int>(nullable: false),
                     CreatedTime = table.Column<double>(nullable: false),
                     UserId = table.Column<Guid>(nullable: true)
                 },
@@ -146,6 +173,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     Visibility = table.Column<int>(nullable: false, defaultValue: 0),
                     ViewPassword = table.Column<string>(nullable: true),
                     ShowOriginalText = table.Column<bool>(nullable: true, defaultValue: true),
+                    SystemTag = table.Column<string>(nullable: true),
                     PublicTags = table.Column<string>(nullable: true),
                     PrivateTag = table.Column<string>(nullable: true),
                     CircleGood = table.Column<bool>(nullable: false),
@@ -154,6 +182,7 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
                     AppointedTime = table.Column<double>(nullable: true),
                     Price = table.Column<decimal>(nullable: true),
                     PayerType = table.Column<int>(nullable: true),
+                    AppointmentedUserType = table.Column<int>(nullable: true),
                     AppointmentDealStatus = table.Column<int>(nullable: true),
                     AppointmentedUserId = table.Column<Guid>(nullable: true),
                     AppointmentedToPostId = table.Column<Guid>(nullable: true)
@@ -485,6 +514,12 @@ namespace Photography.Services.Post.API.Infrastructure.Migrations
         {
             migrationBuilder.DropTable(
                 name: "PostAttachments");
+
+            migrationBuilder.DropTable(
+                name: "PostCounts");
+
+            migrationBuilder.DropTable(
+                name: "SentAndReceivedAppointmentDealCounts");
 
             migrationBuilder.DropTable(
                 name: "Tags");

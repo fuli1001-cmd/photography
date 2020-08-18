@@ -34,6 +34,9 @@ namespace Photography.Services.User.Infrastructure.EntityConfigurations
 
             var groupsNavigation = builder.Metadata.FindNavigation(nameof(Domain.AggregatesModel.UserAggregate.User.Groups));
             groupsNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            var feedbacksNavigation = builder.Metadata.FindNavigation(nameof(Domain.AggregatesModel.UserAggregate.User.Feedbacks));
+            feedbacksNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
         }
     }
 }
