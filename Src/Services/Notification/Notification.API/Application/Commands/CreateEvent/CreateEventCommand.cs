@@ -10,7 +10,7 @@ namespace Photography.Services.Notification.API.Application.Commands.CreateEvent
     public class CreateEventCommand : IRequest<bool>
     {
         // 事件发起人id
-        public Guid? FromUserId { get; set; }
+        public Guid FromUserId { get; set; }
 
         // 事件接收人id
         public Guid ToUserId { get; set; }

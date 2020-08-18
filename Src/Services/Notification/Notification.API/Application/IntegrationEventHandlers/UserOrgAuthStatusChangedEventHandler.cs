@@ -41,6 +41,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                 {
                     var eventCommand = new CreateEventCommand
                     {
+                        FromUserId = message.UserId, // 注：本事件无FromUserId，此处设置FromUserId为接收通知用户的id是因为FromUserId不能为空
                         ToUserId = message.UserId,
                         EventType = message.Status == 2 ? EventType.UserOrgAuthSuccess : EventType.UserOrgAuthFailed,
                         PushMessage = message.Status == 2 ? "团体认证成功" : "团体认证未通过"

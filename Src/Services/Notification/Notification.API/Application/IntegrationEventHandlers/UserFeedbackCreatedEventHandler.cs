@@ -31,6 +31,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
 
                 var command = new CreateEventCommand
                 {
+                    FromUserId = message.UserId, // 注：本事件无FromUserId，此处设置FromUserId为接收通知用户的id是因为FromUserId不能为空
                     ToUserId = message.UserId,
                     EventType = EventType.FeedbackCreated,
                     PushMessage = "已收到您的意见反馈，我们将尽快处理，感谢您对我们的支持。"
