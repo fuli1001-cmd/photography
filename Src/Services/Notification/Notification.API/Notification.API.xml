@@ -58,13 +58,6 @@
             要设置成的认证状态
             </summary>
         </member>
-        <member name="M:Photography.Services.Notification.API.Controllers.EventsController.GetUserReceivedEventsAsync(Arise.DDD.API.Paging.PagingParameters)">
-            <summary>
-            用户的事件
-            </summary>
-            <param name="pagingParameters"></param>
-            <returns></returns>
-        </member>
         <member name="M:Photography.Services.Notification.API.Controllers.EventsController.DeleteEventsAsync(Photography.Services.Notification.API.Application.Commands.DeleteEvents.DeleteEventsCommand)">
             <summary>
             删除通知

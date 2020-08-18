@@ -10,12 +10,12 @@ namespace Photography.Services.Notification.API.Query.Interfaces
 {
     public interface IEventQueries
     {
-        /// <summary>
-        /// 获取用户所有事件
-        /// </summary>
-        /// <param name="pagingParameters"></param>
-        /// <returns></returns>
-        Task<PagedList<EventViewModel>> GetUserReceivedEventsAsync(PagingParameters pagingParameters);
+        ///// <summary>
+        ///// 获取用户所有事件
+        ///// </summary>
+        ///// <param name="pagingParameters"></param>
+        ///// <returns></returns>
+        //Task<PagedList<EventViewModel>> GetUserReceivedEventsAsync(PagingParameters pagingParameters);
 
         /// <summary>
         /// 按类别获取用户的事件

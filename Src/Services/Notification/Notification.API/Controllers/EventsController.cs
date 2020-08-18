@@ -35,20 +35,20 @@ namespace Photography.Services.Notification.API.Controllers
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        /// <summary>
-        /// 用户的事件
-        /// </summary>
-        /// <param name="pagingParameters"></param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [Obsolete]
-        public async Task<ActionResult<PagedResponseWrapper>> GetUserReceivedEventsAsync([FromQuery] PagingParameters pagingParameters)
-        {
-            var result = await _eventQueries.GetUserReceivedEventsAsync(pagingParameters);
-            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(result));
-        }
+        ///// <summary>
+        ///// 用户的事件
+        ///// </summary>
+        ///// <param name="pagingParameters"></param>
+        ///// <returns></returns>
+        //[HttpGet]
+        //[Route("")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[Obsolete]
+        //public async Task<ActionResult<PagedResponseWrapper>> GetUserReceivedEventsAsync([FromQuery] PagingParameters pagingParameters)
+        //{
+        //    var result = await _eventQueries.GetUserReceivedEventsAsync(pagingParameters);
+        //    return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(result));
+        //}
 
         /// <summary>
         /// 删除通知

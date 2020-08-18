@@ -27,48 +27,48 @@ namespace Photography.Services.Notification.Infrastructure.Queries
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<PagedList<EventViewModel>> GetUserReceivedEventsAsync(PagingParameters pagingParameters)
-        {
-            var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-            var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
+        //public async Task<PagedList<EventViewModel>> GetUserReceivedEventsAsync(PagingParameters pagingParameters)
+        //{
+        //    var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+        //    var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
 
-            var queryableDto = from e in _dbContext.Events
-                               join u in _dbContext.Users
-                               on e.FromUserId equals u.Id
-                               where e.ToUserId == myId
-                               orderby e.CreatedTime descending
-                               select new EventViewModel
-                               {
-                                   FromUser = new UserViewModel
-                                   {
-                                       Id = u.Id,
-                                       Nickname = u.Nickname,
-                                       Avatar = u.Avatar,
-                                       OrgAuthStatus = u.OrgAuthStatus,
-                                       Followed = (from ur in _dbContext.UserRelations
-                                                   where ur.FollowerId == myId && ur.FollowedUserId == u.Id
-                                                   select ur.Id)
-                                                  .Any()
-                                   },
-                                   EventType = e.EventType,
-                                   Image = (from p in _dbContext.Posts
-                                            where p.Id == e.PostId
-                                            select p.Image)
-                                           .SingleOrDefault(),
-                                   CreatedTime = e.CreatedTime,
-                                   PostId = e.PostId,
-                                   CommentId = e.CommentId,
-                                   CommentText = e.CommentText,
-                                   CircleId = e.CircleId,
-                                   CircleName = e.CircleName,
-                                   OrderId = e.OrderId,
-                                   Processed = e.Processed,
-                                   Readed = e.Readed,
-                                   Id = e.Id
-                               };
+        //    var queryableDto = from e in _dbContext.Events
+        //                       join u in _dbContext.Users
+        //                       on e.FromUserId equals u.Id
+        //                       where e.ToUserId == myId
+        //                       orderby e.CreatedTime descending
+        //                       select new EventViewModel
+        //                       {
+        //                           FromUser = new UserViewModel
+        //                           {
+        //                               Id = u.Id,
+        //                               Nickname = u.Nickname,
+        //                               Avatar = u.Avatar,
+        //                               OrgAuthStatus = u.OrgAuthStatus,
+        //                               Followed = (from ur in _dbContext.UserRelations
+        //                                           where ur.FollowerId == myId && ur.FollowedUserId == u.Id
+        //                                           select ur.Id)
+        //                                          .Any()
+        //                           },
+        //                           EventType = e.EventType,
+        //                           Image = (from p in _dbContext.Posts
+        //                                    where p.Id == e.PostId
+        //                                    select p.Image)
+        //                                   .SingleOrDefault(),
+        //                           CreatedTime = e.CreatedTime,
+        //                           PostId = e.PostId,
+        //                           CommentId = e.CommentId,
+        //                           CommentText = e.CommentText,
+        //                           CircleId = e.CircleId,
+        //                           CircleName = e.CircleName,
+        //                           OrderId = e.OrderId,
+        //                           Processed = e.Processed,
+        //                           Readed = e.Readed,
+        //                           Id = e.Id
+        //                       };
 
-            return await PagedList<EventViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
-        }
+        //    return await PagedList<EventViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
+        //}
 
         public async Task<PagedList<EventViewModel>> GetUserCategoryEventsAsync(EventCategory eventCategory, PagingParameters pagingParameters)
         {
@@ -77,20 +77,18 @@ namespace Photography.Services.Notification.Infrastructure.Queries
             var eventTypes = EventCategoryTypeHelper.GetEventCategoryTypes(eventCategory);
 
             var queryableDto = from e in _dbContext.Events
-                               join u in _dbContext.Users
-                               on e.FromUserId equals u.Id
                                where e.ToUserId == myId && eventTypes.Contains(e.EventType)
                                orderby e.CreatedTime descending
                                select new EventViewModel
                                {
-                                   FromUser = new UserViewModel
+                                   FromUser = e.FromUser == null ? null : new UserViewModel
                                    {
-                                       Id = u.Id,
-                                       Nickname = u.Nickname,
-                                       Avatar = u.Avatar,
-                                       OrgAuthStatus = u.OrgAuthStatus,
+                                       Id = e.FromUser.Id,
+                                       Nickname = e.FromUser.Nickname,
+                                       Avatar = e.FromUser.Avatar,
+                                       OrgAuthStatus = e.FromUser.OrgAuthStatus,
                                        Followed = (from ur in _dbContext.UserRelations
-                                                   where ur.FollowerId == myId && ur.FollowedUserId == u.Id
+                                                   where ur.FollowerId == myId && ur.FollowedUserId == e.FromUser.Id
                                                    select ur.Id)
                                                   .Any()
                                    },
@@ -110,6 +108,41 @@ namespace Photography.Services.Notification.Infrastructure.Queries
                                    Readed = e.Readed,
                                    Id = e.Id
                                };
+
+            //var queryableDto2 = from e in _dbContext.Events
+            //                   join u in _dbContext.Users
+            //                   on e.FromUserId equals u.Id
+            //                   where e.ToUserId == myId && eventTypes.Contains(e.EventType)
+            //                   orderby e.CreatedTime descending
+            //                   select new EventViewModel
+            //                   {
+            //                       FromUser = new UserViewModel
+            //                       {
+            //                           Id = u.Id,
+            //                           Nickname = u.Nickname,
+            //                           Avatar = u.Avatar,
+            //                           OrgAuthStatus = u.OrgAuthStatus,
+            //                           Followed = (from ur in _dbContext.UserRelations
+            //                                       where ur.FollowerId == myId && ur.FollowedUserId == u.Id
+            //                                       select ur.Id)
+            //                                      .Any()
+            //                       },
+            //                       EventType = e.EventType,
+            //                       Image = (from p in _dbContext.Posts
+            //                                where p.Id == e.PostId
+            //                                select p.Image)
+            //                               .SingleOrDefault(),
+            //                       CreatedTime = e.CreatedTime,
+            //                       PostId = e.PostId,
+            //                       CommentId = e.CommentId,
+            //                       CommentText = e.CommentText,
+            //                       CircleId = e.CircleId,
+            //                       CircleName = e.CircleName,
+            //                       OrderId = e.OrderId,
+            //                       Processed = e.Processed,
+            //                       Readed = e.Readed,
+            //                       Id = e.Id
+            //                   };
 
             return await PagedList<EventViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
         }
