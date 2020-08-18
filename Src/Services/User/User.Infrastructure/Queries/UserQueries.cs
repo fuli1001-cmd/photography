@@ -278,10 +278,12 @@ namespace Photography.Services.User.Infrastructure.Queries
             return Math.Max(DateTime.Now.Year - birthday.Year, 0);
         }
 
-        public async Task<UserOrgAuthInfo> GetUserOrgAuthInfoAsync(Guid userId)
+        public async Task<UserOrgAuthInfo> GetUserOrgAuthInfoAsync()
         {
+            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
             return await (from u in _identityContext.Users
-                          where u.Id == userId
+                          where u.Id == myId
                           select new UserOrgAuthInfo
                           {
                               OrgType = u.OrgType,
@@ -291,7 +293,8 @@ namespace Photography.Services.User.Infrastructure.Queries
                               OrgOperatorName = u.OrgOperatorName,
                               OrgOperatorPhoneNumber = u.OrgOperatorPhoneNumber,
                               OrgImage = u.OrgImage,
-                              OrgAuthStatus = u.OrgAuthStatus
+                              OrgAuthStatus = u.OrgAuthStatus,
+                              OrgAuthMessage = u.OrgAuthMessage
                           })
                           .FirstOrDefaultAsync();
         }

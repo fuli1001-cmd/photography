@@ -24,7 +24,8 @@ namespace Photography.Services.Notification.Infrastructure.Queries
                     EventType.Follow,
                     EventType.ApplyJoinCircle,
                     EventType.JoinCircle,
-                    EventType.CircleOwnerChanged
+                    EventType.CircleOwnerChanged,
+                    EventType.AtUserInPost
                 };
             }
             else if (eventCategory == EventCategory.Appointment)
@@ -41,7 +42,10 @@ namespace Photography.Services.Notification.Infrastructure.Queries
                 {
                     EventType.DeletePost,
                     EventType.IdAuthenticated,
-                    EventType.IdRejected
+                    EventType.IdRejected,
+                    EventType.UserOrgAuthFailed,
+                    EventType.UserOrgAuthSuccess,
+                    EventType.FeedbackCreated
                 };
             }
 

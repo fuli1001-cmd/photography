@@ -326,19 +326,32 @@ namespace Photography.Services.User.API.Controllers
         [HttpPut]
         [Route("authorg")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<bool>> AuthOrgAsync([FromBody] AuthOrgCommand command)
+        public async Task<ActionResult<bool>> CreateOrgAuthInfoAsync([FromBody] AuthOrgCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
 
         /// <summary>
-        /// 设置用户的团体认证状态，并返回他的团队认证信息
+        /// 获取团队认证信息
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("authorg")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ResponseWrapper>> GetOrgAuthInfoAsync()
+        {
+            var result = await _userQueries.GetUserOrgAuthInfoAsync();
+            return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
+        }
+
+        /// <summary>
+        /// 设置用户的团体认证状态
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
         [HttpPut]
-        [Route("setorgauthstatus")]
+        [Route("authorg/status")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ResponseWrapper>> SetOrgAuthStatusAsync([FromBody] SetOrgAuthStatusCommand command)
         {

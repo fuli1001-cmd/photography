@@ -186,6 +186,11 @@
             要设置成的认证状态
             </summary>
         </member>
+        <member name="P:Photography.Services.User.API.Application.Commands.User.SetOrgAuthStatus.SetOrgAuthStatusCommand.Message">
+            <summary>
+            认证失败原因
+            </summary>
+        </member>
         <member name="P:Photography.Services.User.API.Application.Commands.User.ToggleFollow.ToggleFollowCommand.UserIdToFollow">
             <summary>
             要follow的用户id
@@ -534,16 +539,22 @@
             <param name="command"></param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.User.API.Controllers.UsersController.AuthOrgAsync(Photography.Services.User.API.Application.Commands.User.AuthOrg.AuthOrgCommand)">
+        <member name="M:Photography.Services.User.API.Controllers.UsersController.CreateOrgAuthInfoAsync(Photography.Services.User.API.Application.Commands.User.AuthOrg.AuthOrgCommand)">
             <summary>
             团队认证
             </summary>
             <param name="command"></param>
             <returns></returns>
         </member>
+        <member name="M:Photography.Services.User.API.Controllers.UsersController.GetOrgAuthInfoAsync">
+            <summary>
+            获取团队认证信息
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Photography.Services.User.API.Controllers.UsersController.SetOrgAuthStatusAsync(Photography.Services.User.API.Application.Commands.User.SetOrgAuthStatus.SetOrgAuthStatusCommand)">
             <summary>
-            设置用户的团体认证状态，并返回他的团队认证信息
+            设置用户的团体认证状态
             </summary>
             <param name="command"></param>
             <returns></returns>

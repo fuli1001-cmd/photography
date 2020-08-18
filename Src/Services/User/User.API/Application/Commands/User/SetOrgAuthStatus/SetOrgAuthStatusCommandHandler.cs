@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Photography.Services.User.API.Application.Commands.User.SetOrgAuthStatus
 {
-    public class SetOrgAuthStatusCommandHandler : IRequestHandler<SetOrgAuthStatusCommand, UserOrgAuthInfo>
+    public class SetOrgAuthStatusCommandHandler : IRequestHandler<SetOrgAuthStatusCommand, bool>
     {
         private readonly IUserRepository _userRepository;
         private readonly IUserQueries _userQueries;
@@ -36,7 +36,7 @@ namespace Photography.Services.User.API.Application.Commands.User.SetOrgAuthStat
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<UserOrgAuthInfo> Handle(SetOrgAuthStatusCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(SetOrgAuthStatusCommand request, CancellationToken cancellationToken)
         {
             Guid userId;
 
@@ -57,12 +57,15 @@ namespace Photography.Services.User.API.Application.Commands.User.SetOrgAuthStat
             }
 
             var user = await _userRepository.GetByIdAsync(userId);
-            user.SetOrgAuthStatus(request.Status);
+            user.SetOrgAuthStatus(request.Status, request.Message);
 
             if (await _userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
+            {
                 await SendUserOrgAuthStatusChangedEventAsync(userId, request.Status);
+                return true;
+            }
 
-            return await _userQueries.GetUserOrgAuthInfoAsync(userId);
+            throw new ApplicationException("操作失败");
         }
 
         private async Task SendUserOrgAuthStatusChangedEventAsync(Guid userId, IdAuthStatus status)

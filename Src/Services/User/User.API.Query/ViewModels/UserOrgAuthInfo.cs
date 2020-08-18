@@ -29,5 +29,8 @@ namespace Photography.Services.User.API.Query.ViewModels
 
         // 社团认证状态
         public IdAuthStatus OrgAuthStatus { get; set; }
+
+        // 社团认证失败原因
+        public string OrgAuthMessage { get; set; }
     }
 }

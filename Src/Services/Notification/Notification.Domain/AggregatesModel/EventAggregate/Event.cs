@@ -91,7 +91,9 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
         IdRejected, // 实名认证被拒
         CircleOwnerChanged, // 圈主改变
         AtUserInPost, // 在帖子中at了用户
-        FeedbackCreated // 用户反馈
+        FeedbackCreated, // 用户反馈
+        UserOrgAuthSuccess, // 用户团体认证成功
+        UserOrgAuthFailed // 用户团体认证失败
     }
 
     // 事件类别

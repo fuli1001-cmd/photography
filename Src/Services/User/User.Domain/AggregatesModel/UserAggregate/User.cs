@@ -111,6 +111,9 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
 
         // 社团认证状态
         public IdAuthStatus OrgAuthStatus { get; private set; }
+
+        // 社团认证失败原因
+        public string OrgAuthMessage { get; private set; }
         #endregion
 
         #region BackwardCompatibility: ChatServer needed Property
@@ -357,13 +360,16 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
             OrgOperatorName = orgOperatorName;
             OrgOperatorPhoneNumber = orgOperatorPhoneNumber;
             OrgImage = orgImage;
-            SetOrgAuthStatus(IdAuthStatus.Authenticating);
+            SetOrgAuthStatus(IdAuthStatus.Authenticating, null);
         }
 
         // 设置用户团体认证状态
-        public void SetOrgAuthStatus(IdAuthStatus status)
+        public void SetOrgAuthStatus(IdAuthStatus status, string message)
         {
             OrgAuthStatus = status;
+
+            if (status == IdAuthStatus.Rejected)
+                OrgAuthMessage = message;
         }
     }
 

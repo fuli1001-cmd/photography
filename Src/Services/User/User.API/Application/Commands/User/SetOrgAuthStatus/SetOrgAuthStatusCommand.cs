@@ -11,7 +11,7 @@ namespace Photography.Services.User.API.Application.Commands.User.SetOrgAuthStat
     /// <summary>
     /// 设置团体认证状态
     /// </summary>
-    public class SetOrgAuthStatusCommand : IRequest<UserOrgAuthInfo>
+    public class SetOrgAuthStatusCommand : IRequest<bool>
     {
         /// <summary>
         /// 要设置的用户id
@@ -22,5 +22,10 @@ namespace Photography.Services.User.API.Application.Commands.User.SetOrgAuthStat
         /// 要设置成的认证状态
         /// </summary>
         public IdAuthStatus Status { get; set; }
+
+        /// <summary>
+        /// 认证失败原因
+        /// </summary>
+        public string Message { get; set; }
     }
 }

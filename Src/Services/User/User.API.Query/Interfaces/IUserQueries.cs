@@ -52,6 +52,6 @@ namespace Photography.Services.User.API.Query.Interfaces
         Task<PagedList<ExaminingUserViewModel>> GetExaminingUsersAsync(PagingParameters pagingParameters);
 
         // 获取用户的团体认证信息
-        Task<UserOrgAuthInfo> GetUserOrgAuthInfoAsync(Guid userId);
+        Task<UserOrgAuthInfo> GetUserOrgAuthInfoAsync();
     }
 }
