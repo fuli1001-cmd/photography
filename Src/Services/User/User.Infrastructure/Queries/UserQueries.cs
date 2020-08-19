@@ -39,7 +39,8 @@ namespace Photography.Services.User.Infrastructure.Queries
 
             var user = await GetUserViewModels(queryableUsers).FirstOrDefaultAsync();
 
-            user.Age = GetAge(user.Birthday);
+            if (user != null)
+                user.Age = GetAge(user.Birthday);
 
             return user;
         }
@@ -59,7 +60,8 @@ namespace Photography.Services.User.Infrastructure.Queries
 
             var user = await GetUserViewModels(queryableUsers).FirstOrDefaultAsync();
 
-            user.Age = GetAge(user.Birthday);
+            if (user != null)
+                user.Age = GetAge(user.Birthday);
 
             return user;
         }

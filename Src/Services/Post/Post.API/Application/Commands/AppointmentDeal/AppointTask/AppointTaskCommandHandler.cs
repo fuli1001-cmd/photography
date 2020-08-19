@@ -111,7 +111,8 @@ namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.App
                 User1Id = deal.UserId,
                 User2Id = deal.AppointmentedUserId.Value,
                 DealId = deal.Id,
-                AppointmentedUserType = (int)deal.AppointmentedUserType,
+                // 这里的AppointmentedUserType是对应于User2的，任务中的AppointmentedUserType是针对user1来说的，这里应将AppointmentedUserType反转
+                AppointmentedUserType = (int)(deal.AppointmentedUserType == AppointmentedUserType.Photographer ? AppointmentedUserType.Model : AppointmentedUserType.Photographer),
                 PayerType = (int)deal.PayerType,
                 Price = deal.Price ?? 0,
                 AppointedTime = deal.AppointedTime.Value,
