@@ -2,7 +2,6 @@
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NServiceBus;
@@ -96,12 +95,18 @@ namespace Photography.Services.Post.API.Application.Commands.Post.ForwardPosts
                     if (forwardedPost == null)
                         forwardedPost = originalPosts.FirstOrDefault(p => p.Id == post.ForwardedPostId.Value);
 
+                    // 如果帖子为审核通过，取得新帖和被转发帖中被@的用户id以便发送被@通知
+                    IEnumerable<Guid> atUserIds = new List<Guid>();
+                    if (post.PostAuthStatus == PostAuthStatus.Authenticated)
+                        atUserIds = await _postQueries.GetAtUserIdsAsync(post);
+
                     forwardInfos.Add(new ForwardInfo
                     {
                         ForwardUserId = myId,
                         OriginalPostUserId = forwardedPost.UserId,
                         OriginalPostId = post.ForwardedPostId.Value,
-                        NewPostId = post.Id
+                        NewPostId = post.Id,
+                        AtUserIds = atUserIds
                     });
                 }
 

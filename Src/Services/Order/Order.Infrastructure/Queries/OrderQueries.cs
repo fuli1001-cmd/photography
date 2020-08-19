@@ -97,6 +97,7 @@ namespace Photography.Services.Order.Infrastructure.Queries
                        Description = o.Description,
                        PayerType = o.PayerType,
                        AppointmentedUserType = o.AppointmentedUserType,
+                       MyUserType = o.User2Id == userId ? o.AppointmentedUserType : (o.AppointmentedUserType == UserType.Photographer ? UserType.Model : UserType.Photographer),
                        Attachments = from a in o.Attachments
                                      select new AttachmentViewModel
                                      {

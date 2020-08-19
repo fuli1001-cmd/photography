@@ -19,6 +19,6 @@ namespace ApplicationMessages.Events
         public string Image { get; set; }
 
         // 帖子中@的用户id
-        public List<Guid> AtUserIds { get; set; }
+        public IEnumerable<Guid> AtUserIds { get; set; }
     }
 }

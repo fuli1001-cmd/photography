@@ -29,10 +29,13 @@ namespace Photography.Services.Order.API.Query.ViewModels
 
         public string Description { get; set; }
 
-        // 约拍对象（交易参与方二）类型
-        public int AppointmentedUserType { get; set; }
+        // 当前用户在该笔订单中的类型
+        public UserType MyUserType { get; set; }
 
-        // 支付类型
+        // 被约对象（User2）类型
+        public UserType AppointmentedUserType { get; set; }
+
+        // 支付类型（User1的视角）
         public int PayerType { get; set; }
 
         public UserViewModel Partner { get; set; }

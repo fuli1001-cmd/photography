@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Photography.Services.Order.Domain.AggregatesModel.OrderAggregate;
+using Photography.Services.Order.Domain.AggregatesModel.UserAggregate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace Photography.Services.Order.API.Application.Commands.CreateOrder
     {
         public Guid User1Id { get; set; }
         public Guid User2Id { get; set; }
-        public int AppointmentedUserType { get; set; }
+        public UserType AppointmentedUserType { get; set; }
         public int PayerType { get; set; }
         public Guid DealId { get; set; }
         public decimal Price { get; set; }

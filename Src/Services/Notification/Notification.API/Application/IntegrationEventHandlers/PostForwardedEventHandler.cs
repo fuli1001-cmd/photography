@@ -38,7 +38,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
 
                 foreach(var info in message.ForwardInfos)
                 {
-                    // 创建新帖子，由于是转发的帖子，其图片为原帖子的图片
+                    #region 创建新帖子，由于是转发的帖子，其图片为原帖子的图片
                     var originalPost = await _postRepository.GetByIdAsync(info.OriginalPostId);
                     var createPostCommand = new CreatePostCommand
                     {
@@ -46,10 +46,11 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                         Image = originalPost.Image
                     };
                     await _mediator.Send(createPostCommand);
+                    #endregion
 
                     var fromUser = await _userRepository.GetByIdAsync(info.ForwardUserId);
 
-                    // 创建事件
+                    #region 发布转发通知
                     var createEventCommand = new CreateEventCommand
                     {
                         FromUserId = info.ForwardUserId,
@@ -59,6 +60,23 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                         PushMessage = $"{fromUser.Nickname}转发了你的作品"
                     };
                     await _mediator.Send(createEventCommand);
+                    #endregion
+
+                    #region 发布@用户通知
+                    foreach (var atUserId in info.AtUserIds)
+                    {
+                        var eventCommand = new CreateEventCommand
+                        {
+                            FromUserId = info.ForwardUserId,
+                            ToUserId = atUserId,
+                            PostId = info.OriginalPostId,
+                            EventType = EventType.AtUserInPost,
+                            PushMessage = $"{fromUser.Nickname}在作品中@了你"
+                        };
+
+                        await _mediator.Send(eventCommand);
+                    }
+                    #endregion
                 }
             }
         }

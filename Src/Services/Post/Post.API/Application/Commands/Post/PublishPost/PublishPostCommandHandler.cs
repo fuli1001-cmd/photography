@@ -108,11 +108,10 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
                 else if (first.AttachmentType == AttachmentType.Video)
                     image = first.Name.Substring(0, first.Name.LastIndexOf('.')) + ".jpg";
 
-                // 取得帖子中@的用户id
-                var matches = Regex.Matches(post.Text, @"@(.*?) ");
-                // 过滤掉空的昵称（匹配的字符串至少包括一个@和一个空格符号）
-                var atUserNickNames = matches.Where(m => !string.IsNullOrEmpty(m.Value) && m.Value.Length > 2).Select(m => m.Value.Substring(1, m.Value.Length - 2)).ToList();
-                var atUserIds = await _userRepository.GetUserIdsByNicknameAsync(atUserNickNames);
+                // 如果帖子是审核通过状态的，取得帖子中被@的用户以便发送被@通知给他们
+                IEnumerable<Guid> atUserIds = new List<Guid>();
+                if (post.PostAuthStatus == PostAuthStatus.Authenticated)
+                    atUserIds = await _postQueries.GetAtUserIdsAsync(post);
 
                 await SendPostPublishedEventAsync(user.Id, user.Nickname, post.Id, image, atUserIds);
                 #endregion
@@ -123,7 +122,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
             throw new ApplicationException("操作失败");
         }
 
-        private async Task SendPostPublishedEventAsync(Guid userId, string nickname, Guid postId, string image, List<Guid> atUserIds)
+        private async Task SendPostPublishedEventAsync(Guid userId, string nickname, Guid postId, string image, IEnumerable<Guid> atUserIds)
         {
             var @event = new PostPublishedEvent { UserId = userId, Nickname = nickname, PostId = postId, Image = image, AtUserIds = atUserIds };
             _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));

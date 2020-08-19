@@ -18,9 +18,9 @@ namespace Photography.Services.Post.Infrastructure.Repositories
             
         }
 
-        public void LoadUser(Domain.AggregatesModel.PostAggregate.Post post)
+        public async Task LoadUserAsync(Domain.AggregatesModel.PostAggregate.Post post)
         {
-            _context.Entry(post).Reference(p => p.User).Load();
+            await _context.Entry(post).Reference(p => p.User).LoadAsync();
         }
 
         public async Task<Domain.AggregatesModel.PostAggregate.Post> GetPostWithAppointmentedUserById(Guid postId)

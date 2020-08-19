@@ -22,5 +22,8 @@ namespace ApplicationMessages.Events
 
         // 转发产生的新帖子的id
         public Guid NewPostId { get; set; }
+
+        // 被@的用户id
+        public IEnumerable<Guid> AtUserIds { get; set; }
     }
 }

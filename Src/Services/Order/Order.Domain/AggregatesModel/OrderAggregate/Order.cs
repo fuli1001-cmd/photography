@@ -20,10 +20,10 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
 
         public Guid DealId { get; private set; }
 
-        // 约拍对象（交易参与方二）类型
-        public int AppointmentedUserType { get; private set; }
+        // 约拍对象（User2）类型
+        public UserType AppointmentedUserType { get; private set; }
 
-        // 支付类型
+        // 支付类型（User1的视角）
         public int PayerType { get; private set; }
 
         // 交易付款方（交易参与方之一）
@@ -65,7 +65,7 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
             OrderStatus = OrderStatus.WaitingForConfirm;
         }
 
-        public Order(Guid user1Id, Guid user2Id, Guid dealId, int appointmentedUserType, int payerType, Guid? payerId, 
+        public Order(Guid user1Id, Guid user2Id, Guid dealId, UserType appointmentedUserType, int payerType, Guid? payerId, 
             decimal price, double appointedTime, string text, double latitude, double longitude, string locationName, string address)
             : this()
         {

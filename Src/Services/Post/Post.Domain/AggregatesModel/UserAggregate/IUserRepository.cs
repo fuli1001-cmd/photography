@@ -15,6 +15,6 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
         /// </summary>
         /// <param name="nicknames"></param>
         /// <returns></returns>
-        Task<List<Guid>> GetUserIdsByNicknameAsync(IEnumerable<string> nicknames);
+        Task<List<Guid>> GetUserIdsByNicknameAsync(List<string> nicknames);
     }
 }

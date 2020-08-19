@@ -18,9 +18,9 @@ namespace Photography.Services.Post.Infrastructure.Repositories
             return await _context.Users.Where(u => userIds.Contains(u.Id)).ToListAsync();
         }
 
-        public async Task<List<Guid>> GetUserIdsByNicknameAsync(IEnumerable<string> nicknames)
+        public async Task<List<Guid>> GetUserIdsByNicknameAsync(List<string> nicknames)
         {
-            if (nicknames == null)
+            if (nicknames == null || nicknames.Count == 0)
                 return new List<Guid>();
 
             return await _context.Users.Where(u => nicknames.Contains(u.Nickname)).Select(u => u.Id).ToListAsync();

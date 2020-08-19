@@ -14,6 +14,8 @@ using Arise.DDD.API.Paging;
 using Arise.DDD.Domain.Exceptions;
 using Photography.Services.Post.Infrastructure.Queries.Models;
 using System.Text;
+using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
+using System.Text.RegularExpressions;
 
 namespace Photography.Services.Post.Infrastructure.Queries
 {
@@ -441,24 +443,65 @@ namespace Photography.Services.Post.Infrastructure.Queries
             return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
         }
 
+        public async Task<List<Guid>> GetAtUserIdsAsync(Domain.AggregatesModel.PostAggregate.Post post)
+        {
+            var atNicknames = await GetAtNicknamesAsync(post);
+            var atUserIds = _postContext.Users.Where(u => atNicknames.Contains(u.Nickname)).Select(u => u.Id);
+
+            if (post.Visibility == Visibility.Friends || post.Visibility == Visibility.Password)
+            {
+                var friendIds = GetFriendsIds(post.UserId);
+                atUserIds = atUserIds.Intersect(friendIds);
+            }
+            else if (post.Visibility == Visibility.SelectedFriends)
+            {
+                atUserIds = from id in atUserIds
+                            join upr in _postContext.UserPostRelations
+                            on id equals upr.UserId
+                            where upr.PostId == post.Id && upr.UserPostRelationType == UserPostRelationType.View
+                            select id;
+            }
+
+            return await atUserIds.ToListAsync();
+        }
+
+        private async Task<IEnumerable<string>> GetAtNicknamesAsync(Domain.AggregatesModel.PostAggregate.Post post)
+        {
+            var nicknames = GetAtNicknames(post.Text);
+
+            if (post.ForwardedPostId != null)
+            {
+                var forwardedPost = await _postContext.Posts.FirstOrDefaultAsync(p => p.Id == post.ForwardedPostId.Value);
+                nicknames.Union(GetAtNicknames(forwardedPost.Text));
+            }
+
+            return nicknames;
+        }
+
+        private static IEnumerable<string> GetAtNicknames(string text)
+        {
+            var matches = Regex.Matches(text, @"@(.*?) ");
+            // 过滤掉空的昵称（匹配的字符串至少包括一个@和一个空格符号）
+            return matches.Where(m => !string.IsNullOrEmpty(m.Value) && m.Value.Length > 2).Select(m => m.Value.Substring(1, m.Value.Length - 2).ToLower()).ToList();
+        }
+
         private IQueryable<Domain.AggregatesModel.PostAggregate.Post> GetAvailablePosts(Guid myId)
         {
-            var posts = _postContext.Posts.Where(p => p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post 
-                && p.PostAuthStatus == Domain.AggregatesModel.PostAggregate.PostAuthStatus.Authenticated);
+            var posts = _postContext.Posts.Where(p => p.PostType == PostType.Post && p.PostAuthStatus == PostAuthStatus.Authenticated);
 
             // 公开、以及自己发的帖子
-            var otherPosts = posts.Where(p => p.Visibility == Domain.AggregatesModel.PostAggregate.Visibility.Public 
+            var otherPosts = posts.Where(p => p.Visibility == Visibility.Public 
                 || (myId != Guid.Empty && p.UserId == myId));
 
             if (myId != Guid.Empty)
             {
                 // 朋友可见的帖子
                 // 密码可见的帖子默认只能朋友看
-                var friendsOrPasswordViewPosts = posts.Where(p => p.Visibility == Domain.AggregatesModel.PostAggregate.Visibility.Friends || p.Visibility == Domain.AggregatesModel.PostAggregate.Visibility.Password);
+                var friendsOrPasswordViewPosts = posts.Where(p => p.Visibility == Visibility.Friends || p.Visibility == Visibility.Password);
                 friendsOrPasswordViewPosts = friendsOrPasswordViewPosts.Where(p => GetFriendsIds(myId).Contains(p.UserId));
 
                 // 指定朋友可见的帖子
-                var selectedFriendsViewPosts = posts.Where(p => p.Visibility == Domain.AggregatesModel.PostAggregate.Visibility.SelectedFriends);
+                var selectedFriendsViewPosts = posts.Where(p => p.Visibility == Visibility.SelectedFriends);
                 selectedFriendsViewPosts = from p in selectedFriendsViewPosts
                                            join upr in _postContext.UserPostRelations
                                            on p.Id equals upr.PostId

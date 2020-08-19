@@ -72,5 +72,12 @@ namespace Photography.Services.Post.API.Query.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<PostCountViewModel> GetUserPostAndAppointmentCountAsync();
+
+        /// <summary>
+        /// 根据帖子的可见性返回帖子中被@的用户id，包括其转发的帖子中@的用户id
+        /// </summary>
+        /// <param name="post"></param>
+        /// <returns></returns>
+        Task<List<Guid>> GetAtUserIdsAsync(Domain.AggregatesModel.PostAggregate.Post post);
     }
 }

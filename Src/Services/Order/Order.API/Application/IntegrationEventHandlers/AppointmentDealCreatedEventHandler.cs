@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NServiceBus;
 using Photography.Services.Order.API.Application.Commands.CreateOrder;
+using Photography.Services.Order.Domain.AggregatesModel.UserAggregate;
 using Serilog.Context;
 using System;
 using System.Collections.Generic;
@@ -35,7 +36,7 @@ namespace Photography.Services.Order.API.Application.IntegrationEventHandlers
                     User1Id = message.User1Id,
                     User2Id = message.User2Id,
                     DealId = message.DealId,
-                    AppointmentedUserType = message.AppointmentedUserType,
+                    AppointmentedUserType = (UserType)message.AppointmentedUserType,
                     PayerType = message.PayerType,
                     Price = message.Price,
                     AppointedTime = message.AppointedTime,

@@ -1,9 +1,11 @@
-﻿using Arise.DDD.Domain.Exceptions;
+﻿using ApplicationMessages.Events.Post;
+using Arise.DDD.Domain.Exceptions;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using NServiceBus;
 using Photography.Services.Post.API.Query.Interfaces;
 using Photography.Services.Post.API.Query.ViewModels;
 using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
@@ -26,15 +28,19 @@ namespace Photography.Services.Post.API.Application.Commands.Post.UpdatePost
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<UpdatePostCommandHandler> _logger;
+        private readonly IServiceProvider _serviceProvider;
+
+        private IMessageSession _messageSession;
 
         public UpdatePostCommandHandler(IPostRepository postRepository, IUserRepository userRepository, IHttpContextAccessor httpContextAccessor,
-            IPostQueries postQueries, IConfiguration configuration, ILogger<UpdatePostCommandHandler> logger)
+            IPostQueries postQueries, IConfiguration configuration, IServiceProvider serviceProvider, ILogger<UpdatePostCommandHandler> logger)
         {
             _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _postQueries = postQueries ?? throw new ArgumentNullException(nameof(postQueries));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -72,9 +78,29 @@ namespace Photography.Services.Post.API.Application.Commands.Post.UpdatePost
             _postRepository.Update(post);
 
             if (await _postRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
+            {
+                // 如果审核通过，给帖子中被@的用户发送被@通知
+                if (post.PostAuthStatus == PostAuthStatus.Authenticated)
+                {
+                    var atUserIds = await _postQueries.GetAtUserIdsAsync(post);
+                    await SendUserAtedEventAsync(post.UserId, post.Id, atUserIds);
+                }
+
                 return await _postQueries.GetPostAsync(post.Id);
+            }
 
             throw new ApplicationException("操作失败");
+        }
+
+        private async Task SendUserAtedEventAsync(Guid postUserId, Guid postId, IEnumerable<Guid> atUserIds)
+        {
+            if (atUserIds.Count() > 0)
+            {
+                var @event = new UserAtedEvent { PostUserId = postUserId, PostId = postId, AtUserIds = atUserIds };
+                _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
+                await _messageSession.Publish(@event);
+                _logger.LogInformation("----- Published PostPublishedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
+            }
         }
     }
 }
