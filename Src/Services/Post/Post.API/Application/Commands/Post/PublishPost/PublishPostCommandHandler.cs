@@ -98,11 +98,11 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
                 #region 发布“帖子已发布事件”
                 //取得附件中的第一张图片
                 string image = null;
-                var first = request.Attachments[0];
+                var first = request.Attachments.Where(a => !a.IsPrivate).FirstOrDefault();
                 if (first.AttachmentType == AttachmentType.Image)
                     image = first.Name;
                 else if (first.AttachmentType == AttachmentType.Video)
-                    image = first.Name.Substring(0, first.Name.LastIndexOf('.')) + ".jpg";
+                    image = first.Name?.Substring(0, first.Name.LastIndexOf('.')) + ".jpg";
 
                 // 如果帖子是审核通过状态的，取得帖子中被@的用户以便发送被@通知给他们
                 IEnumerable<Guid> atUserIds = new List<Guid>();
