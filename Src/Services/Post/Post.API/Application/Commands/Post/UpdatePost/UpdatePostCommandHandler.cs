@@ -49,11 +49,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.UpdatePost
             var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var user = await _userRepository.GetByIdAsync(userId);
 
-            if (user.IsDisabled())
-            {
-                var hours = (int)Math.Ceiling((user.DisabledTime.Value - DateTime.UtcNow).TotalHours);
-                throw new ClientException($"账号存在违规行为，该功能禁用{hours}小时");
-            }
+            user.CheckDisabled();
 
             var post = await _postRepository.GetPostWithAttachmentsById(request.PostId);
 

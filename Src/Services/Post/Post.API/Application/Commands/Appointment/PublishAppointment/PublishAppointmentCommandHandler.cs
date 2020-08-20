@@ -56,20 +56,8 @@ namespace Photography.Services.Post.API.Application.Commands.Appointment.Publish
             var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var user = await _userRepository.GetByIdAsync(userId);
 
-            if (user.IsDisabled())
-            {
-                var hours = (int)Math.Ceiling((user.DisabledTime.Value - DateTime.UtcNow).TotalHours);
-                throw new ClientException($"账号存在违规行为，该功能禁用{hours}小时");
-            }
-
-            // 检查用户每日发布约拍数量，用户删除的约拍也统计入内
-            if ((await _postRepository.UserHasAppointmentTodayAsync(userId)) && user.AppointmentCount >= _appointmentSettings.MaxPublishCount)
-                throw new ClientException("已达今日最大约拍发布数量");
-
-            // 增加用户的约拍值，同时增加今日已发约拍数量
-            user.AddAppointmentScore(_appointmentSettings.PublishScore);
-            user.IncreaseAppointmentCount();
-
+            user.PublishAppointment(_appointmentSettings.MaxPublishCount, _appointmentSettings.PublishScore);
+            
             // 发布约拍
             var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType)).ToList();
             var post = Domain.AggregatesModel.PostAggregate.Post.CreateAppointment(request.Text, request.AppointedTime, request.Price, request.PayerType,

@@ -1,4 +1,5 @@
-﻿using Arise.DDD.Domain.SeedWork;
+﻿using Arise.DDD.Domain.Exceptions;
+using Arise.DDD.Domain.SeedWork;
 using Photography.Services.Post.Domain.AggregatesModel.CircleAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.CommentAggregate;
 using Photography.Services.Post.Domain.AggregatesModel.UserCircleRelationAggregate;
@@ -35,8 +36,11 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
         // 头像是否已修改过
         public bool AvatarSet { get; private set; }
 
-        // 今日已发约拍数量
+        // 今日已发约拍数量（包括已删约拍）
         public int AppointmentCount { get; set; }
+
+        // 最新一个约拍发布日期（包括已删约拍）
+        public DateTime? LastAppointmentPubDate { get; set; }
 
         // 用户被禁用到的时间点，null表示未禁用
         public DateTime? DisabledTime { get; private set; }
@@ -119,9 +123,52 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
             Score += score;
         }
 
-        public void IncreaseAppointmentCount()
+        public void PublishAppointment(int maxAppointmentPubCount, int score)
         {
-            AppointmentCount++;
+            // 检查用用户是否已被禁用
+            CheckDisabled();
+
+            // 检查约拍发布数量限制，及更新今日发布约拍数量和最后发布日期
+            CheckAppointmentPubCount(maxAppointmentPubCount);
+
+            // 增加用户约拍值
+            AddAppointmentScore(score);
+        }
+
+        private void CheckAppointmentPubCount(int maxAppointmentPubCount)
+        {
+            if (maxAppointmentPubCount <= 0)
+                throw new ClientException("已达今日最大约拍发布数量");
+
+            // LastAppointmentPubDate为空表示从未发过约拍
+            if (LastAppointmentPubDate == null)
+            {
+                // 今日新发帖
+                AppointmentCount = 1;
+                LastAppointmentPubDate = DateTime.Today;
+                return;
+            }
+
+            // LastAppointmentPubDate小于今日，表示今日还未发布约拍
+            var today = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0, 0);
+            var lastAppointmentPubDate = LastAppointmentPubDate.Value;
+            lastAppointmentPubDate = new DateTime(lastAppointmentPubDate.Year, lastAppointmentPubDate.Month, lastAppointmentPubDate.Day, 0, 0, 0, 0);
+            if (lastAppointmentPubDate < today)
+            {
+                // 今日新发帖
+                AppointmentCount = 1;
+                LastAppointmentPubDate = DateTime.Today;
+                return;
+            }
+
+            // 今日已发过约拍，检查是否达到最大数量限制
+            if (AppointmentCount < maxAppointmentPubCount)
+            {
+                AppointmentCount++;
+                return;
+            }
+
+            throw new ClientException("已达今日最大约拍发布数量");
         }
 
         public void AuthRealName(bool passed)
@@ -139,9 +186,13 @@ namespace Photography.Services.Post.Domain.AggregatesModel.UserAggregate
         /// </summary>
         /// <param name="disableHours">禁用小时数</param>
         /// <returns></returns>
-        public bool IsDisabled()
+        public void CheckDisabled()
         {
-            return DisabledTime == null ? false : DateTime.UtcNow <= DisabledTime.Value;
+            if (DisabledTime == null ? false : DateTime.UtcNow <= DisabledTime.Value)
+            {
+                var hours = (int)Math.Ceiling((DisabledTime.Value - DateTime.UtcNow).TotalHours);
+                throw new ClientException($"账号存在违规行为，该功能禁用{hours}小时");
+            }
         }
 
         // 设置用户团体认证状态

@@ -52,7 +52,5 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         /// <param name="userId"></param>
         /// <returns></returns>
         Task<int> GetTodayUserReceivedAppointmentDealCountAsync(Guid userId);
-
-        Task<bool> UserHasAppointmentTodayAsync(Guid userId);
     }
 }

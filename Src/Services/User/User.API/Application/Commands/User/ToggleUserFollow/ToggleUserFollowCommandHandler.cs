@@ -30,8 +30,7 @@ namespace Photography.Services.User.API.Application.Commands.User.ToggleUserFoll
 
         public async Task<bool> Handle(ToggleUserFollowCommand request, CancellationToken cancellationToken)
         {
-            bool result = false;
-
+            var isFollow = false;
             var ur = await _userRelationRepository.GetAsync(request.FollowerId, request.UserIdToFollow);
 
             if (ur == null)
@@ -39,32 +38,34 @@ namespace Photography.Services.User.API.Application.Commands.User.ToggleUserFoll
                 ur = new UserRelation(request.FollowerId, request.UserIdToFollow);
                 ur.Follow();
                 _userRelationRepository.Add(ur);
-                result = await _userRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
-
-                if (result)
-                    await SendUserFollowedEventAsync(request.FollowerId, request.UserIdToFollow);
+                isFollow = true;
             }
             else
             {
                 if (ur.Followed)
                     ur.UnFollow();
                 else
+                {
+                    isFollow = true;
                     ur.Follow();
-
-                result = await _userRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
-
-                if (result)
-                    await SendUserUnFollowedEventAsync(request.FollowerId, request.UserIdToFollow);
+                }
             }
 
-            // 返回被关注者是否关注了我
+            var result = await _userRelationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
+
             if (result)
             {
+                if (isFollow)
+                    await SendUserFollowedEventAsync(request.FollowerId, request.UserIdToFollow);
+                else
+                    await SendUserUnFollowedEventAsync(request.FollowerId, request.UserIdToFollow);
+
+                // 返回被关注者是否关注了我
                 ur = await _userRelationRepository.GetAsync(request.UserIdToFollow, request.FollowerId);
                 return ur?.Followed ?? false;
             }
-            else
-                throw new ApplicationException("操作失败");
+
+            throw new ApplicationException("操作失败");
         }
 
         private async Task SendUserFollowedEventAsync(Guid followerId, Guid followedUserId)

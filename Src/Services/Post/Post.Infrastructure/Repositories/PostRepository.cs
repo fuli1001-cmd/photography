@@ -124,14 +124,6 @@ namespace Photography.Services.Post.Infrastructure.Repositories
             return await _context.Posts.Where(p => p.PostType == PostType.AppointmentDeal && p.CreatedTime <= endSeconds && p.CreatedTime >= startSeconds && p.AppointmentedUserId == userId).CountAsync();
         }
 
-        public async Task<bool> UserHasAppointmentTodayAsync(Guid userId)
-        {
-            var startSeconds = GetTodayStartSeconds();
-            var endSeconds = GetTodayEndSeconds();
-
-            return await _context.Posts.AnyAsync(p => p.PostType == PostType.Appointment && p.UserId == userId && p.CreatedTime <= endSeconds && p.CreatedTime >= startSeconds);
-        }
-
         // 获取今天开始时间的时间戳
         private double GetTodayStartSeconds()
         {

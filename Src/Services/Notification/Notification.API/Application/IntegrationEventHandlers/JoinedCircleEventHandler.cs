@@ -34,7 +34,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
 
                 var fromUser = await _userRepository.GetByIdAsync(message.JoinedUserId);
 
-                // 创建用户已入圈的事件
+                #region 给圈主发通知
                 var createEventCommand = new CreateEventCommand
                 {
                     FromUserId = message.JoinedUserId,
@@ -42,12 +42,27 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                     CircleId = message.CircleId,
                     CircleName = message.CircleName,
                     EventType = Domain.AggregatesModel.EventAggregate.EventType.JoinCircle,
-                    PushMessage = $"{fromUser.Nickname}加入了圈子{message.CircleName}"
+                    PushMessage = $"{fromUser.Nickname}加入{message.CircleName}"
                 };
 
                 await _mediator.Send(createEventCommand);
+                #endregion
 
-                // 将申请入圈事件标记为已处理
+                #region 给申请入圈用户发通知
+                var userEnteredCircleEvent = new CreateEventCommand
+                {
+                    FromUserId = message.CircleOwnerId,
+                    ToUserId = message.JoinedUserId,
+                    CircleId = message.CircleId,
+                    CircleName = message.CircleName,
+                    EventType = Domain.AggregatesModel.EventAggregate.EventType.JoinCircle,
+                    PushMessage = $"申请通过，已加入{message.CircleName}"
+                };
+
+                await _mediator.Send(createEventCommand);
+                #endregion
+
+                #region 将申请入圈事件标记为已处理
                 var processEventCommand = new ProcessEventCommand
                 {
                     FromUserId = message.JoinedUserId,
@@ -56,6 +71,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                 };
 
                 await _mediator.Send(processEventCommand);
+                #endregion
             }
         }
     }
