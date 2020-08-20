@@ -25,7 +25,8 @@ namespace Photography.Services.Notification.Infrastructure.Queries
                     EventType.ApplyJoinCircle,
                     EventType.JoinCircle,
                     EventType.CircleOwnerChanged,
-                    EventType.AtUserInPost
+                    EventType.AtUserInPost,
+                    EventType.ApplyJoinCircleAccepted
                 };
             }
             else if (eventCategory == EventCategory.Appointment)

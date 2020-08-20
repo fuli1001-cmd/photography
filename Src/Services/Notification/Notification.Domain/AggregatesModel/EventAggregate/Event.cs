@@ -93,7 +93,8 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
         AtUserInPost, // 在帖子中at了用户
         FeedbackCreated, // 用户反馈
         UserOrgAuthSuccess, // 用户团体认证成功
-        UserOrgAuthFailed // 用户团体认证失败
+        UserOrgAuthFailed, // 用户团体认证失败
+        ApplyJoinCircleAccepted // 用户申请入圈被批准
     }
 
     // 事件类别

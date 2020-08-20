@@ -55,7 +55,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                     ToUserId = message.JoinedUserId,
                     CircleId = message.CircleId,
                     CircleName = message.CircleName,
-                    EventType = Domain.AggregatesModel.EventAggregate.EventType.JoinCircle,
+                    EventType = Domain.AggregatesModel.EventAggregate.EventType.ApplyJoinCircleAccepted,
                     PushMessage = $"申请通过，已加入{message.CircleName}"
                 };
 
