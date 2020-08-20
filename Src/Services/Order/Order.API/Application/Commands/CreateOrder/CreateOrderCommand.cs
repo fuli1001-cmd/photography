@@ -13,6 +13,8 @@ namespace Photography.Services.Order.API.Application.Commands.CreateOrder
     {
         public Guid User1Id { get; set; }
         public Guid User2Id { get; set; }
+        public UserType User1Type { get; set; }
+        public UserType User2Type { get; set; }
         public UserType AppointmentedUserType { get; set; }
         public int PayerType { get; set; }
         public Guid DealId { get; set; }

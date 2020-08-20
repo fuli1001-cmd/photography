@@ -7,12 +7,22 @@ namespace ApplicationMessages.Events
     public class AppointmentDealCreatedEvent : BaseEvent
     {
         public Guid User1Id { get; set; }
-        public Guid User2Id { get; set; }        
+
+        public Guid User2Id { get; set; }       
+        
+        public int User1Type { get; set; }
+
+        public int User2Type { get; set; }
+
         // 该笔交易的id
         public Guid DealId { get; set; }
+
         public decimal Price { get; set; }
+
         public double AppointedTime { get; set; }
+
         public Guid? PayerId { get; set; }
+
         public string Text { get; set; }
 
         public int AppointmentedUserType { get; set; }

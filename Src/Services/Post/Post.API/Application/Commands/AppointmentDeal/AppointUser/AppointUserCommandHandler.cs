@@ -102,6 +102,10 @@ namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.App
             {
                 User1Id = deal.UserId,
                 User2Id = deal.AppointmentedUserId.Value,
+                // user1是约拍发出方，他的角色应该和约拍时希望约的角色相反
+                User1Type = (int)(deal.AppointmentedUserType == AppointmentedUserType.Model ? AppointmentedUserType.Photographer : AppointmentedUserType.Model),
+                // user2是约拍接收方，他的角色就是约拍时希望约的角色
+                User2Type = (int)deal.AppointmentedUserType,
                 DealId = deal.Id,
                 AppointmentedUserType = (int)deal.AppointmentedUserType,
                 PayerType = (int)deal.PayerType,

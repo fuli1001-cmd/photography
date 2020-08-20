@@ -75,6 +75,7 @@ namespace Photography.Services.User.Infrastructure.Queries
             return await (from u in _identityContext.Users
                           join ur in friendRelations
                           on u.Id equals ur.ToUserId
+                          orderby u.Nickname
                           select new FriendViewModel
                           {
                               Id = u.Id,
@@ -101,7 +102,7 @@ namespace Photography.Services.User.Infrastructure.Queries
                                join ur in _identityContext.UserRelations
                                on new { FollowerId = u.Id, FollowedUserId = userId } equals new { FollowerId = ur.FromUserId, FollowedUserId = ur.ToUserId }
                                where ur.Followed
-                               orderby u.Nickname
+                               orderby ur.FollowTime descending
                                select new FollowerViewModel
                                {
                                    Id = u.Id,
@@ -130,7 +131,7 @@ namespace Photography.Services.User.Infrastructure.Queries
                                join ur in _identityContext.UserRelations
                                on new { FollowerId = userId, FollowedUserId = u.Id } equals new { FollowerId = ur.FromUserId, FollowedUserId = ur.ToUserId }
                                where ur.Followed
-                               orderby u.Nickname
+                               orderby ur.FollowTime descending
                                select new FollowerViewModel
                                {
                                    Id = u.Id,

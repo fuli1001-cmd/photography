@@ -23,6 +23,9 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate
         // FromUser是否关注了ToUser
         public bool Followed { get; private set; }
 
+        // 关注时间
+        public DateTime? FollowTime { get; private set; }
+
         public UserRelation(Guid fromUserId, Guid toUserId)
         {
             FromUserId = fromUserId;
@@ -42,12 +45,14 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserRelationAggregate
         public void Follow()
         {
             Followed = true;
+            FollowTime = DateTime.UtcNow;
             AddFollowedUserDomainEvent();
         }
 
         public void UnFollow()
         {
             Followed = false;
+            FollowTime = null;
             AddUnFollowedUserDomainEvent();
         }
 

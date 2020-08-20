@@ -13,10 +13,12 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
         // 交易参与方一
         public User User1 { get; private set; }
         public Guid User1Id { get; private set; }
+        public UserType User1Type { get; set; }
 
         // 交易参与方二
         public User User2 { get; private set; }
         public Guid User2Id { get; private set; }
+        public UserType User2Type { get; set; }
 
         public Guid DealId { get; private set; }
 
@@ -65,12 +67,14 @@ namespace Photography.Services.Order.Domain.AggregatesModel.OrderAggregate
             OrderStatus = OrderStatus.WaitingForConfirm;
         }
 
-        public Order(Guid user1Id, Guid user2Id, Guid dealId, UserType appointmentedUserType, int payerType, Guid? payerId, 
-            decimal price, double appointedTime, string text, double latitude, double longitude, string locationName, string address)
+        public Order(Guid user1Id, Guid user2Id, UserType user1Type, UserType user2Type, Guid dealId, UserType appointmentedUserType, int payerType, 
+            Guid? payerId, decimal price, double appointedTime, string text, double latitude, double longitude, string locationName, string address)
             : this()
         {
             User1Id = user1Id;
             User2Id = user2Id;
+            User1Type = user1Type;
+            User2Type = user2Type;
             DealId = dealId;
             AppointmentedUserType = appointmentedUserType;
             PayerType = payerType; 
