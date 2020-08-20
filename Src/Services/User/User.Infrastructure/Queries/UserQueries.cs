@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Arise.DDD.API.Paging;
 using Microsoft.AspNetCore.Http;
+using Arise.DDD.Domain.Exceptions;
 
 namespace Photography.Services.User.Infrastructure.Queries
 {
@@ -281,13 +282,22 @@ namespace Photography.Services.User.Infrastructure.Queries
             return Math.Max(DateTime.Now.Year - birthday.Year, 0);
         }
 
-        public async Task<UserOrgAuthInfo> GetUserOrgAuthInfoAsync()
+        public async Task<UserOrgAuthInfoViewModel> GetUserOrgAuthInfoAsync(Guid? userId = null)
         {
-            var myId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+            if (role == "admin")
+            {
+                if (userId == null)
+                    throw new ClientException("操作失败", new List<string> { "Need user Id." });
+            }
+            else
+            {
+                userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            }
 
-            return await (from u in _identityContext.Users
-                          where u.Id == myId
-                          select new UserOrgAuthInfo
+            var result = await (from u in _identityContext.Users
+                          where u.Id == userId
+                          select new UserOrgAuthInfoViewModel
                           {
                               OrgType = u.OrgType,
                               OrgSchoolName = u.OrgSchoolName,
@@ -300,6 +310,8 @@ namespace Photography.Services.User.Infrastructure.Queries
                               OrgAuthMessage = u.OrgAuthMessage
                           })
                           .FirstOrDefaultAsync();
+
+            return result;
         }
     }
 }

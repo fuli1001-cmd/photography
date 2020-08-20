@@ -335,13 +335,14 @@ namespace Photography.Services.User.API.Controllers
         /// <summary>
         /// 获取团队认证信息
         /// </summary>
+        /// <param name="userId">要获取信息的用户id，只有管理员需要传，其它用户传无效</param>
         /// <returns></returns>
         [HttpGet]
         [Route("authorg")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<ResponseWrapper>> GetOrgAuthInfoAsync()
+        public async Task<ActionResult<ResponseWrapper>> GetOrgAuthInfoAsync([FromQuery] Guid userId)
         {
-            var result = await _userQueries.GetUserOrgAuthInfoAsync();
+            var result = await _userQueries.GetUserOrgAuthInfoAsync(userId);
             return Ok(ResponseWrapper.CreateOkResponseWrapper(result));
         }
 

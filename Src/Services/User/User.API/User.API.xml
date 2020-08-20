@@ -546,10 +546,11 @@
             <param name="command"></param>
             <returns></returns>
         </member>
-        <member name="M:Photography.Services.User.API.Controllers.UsersController.GetOrgAuthInfoAsync">
+        <member name="M:Photography.Services.User.API.Controllers.UsersController.GetOrgAuthInfoAsync(System.Guid)">
             <summary>
             获取团队认证信息
             </summary>
+            <param name="userId">要获取信息的用户id，只有管理员需要传，其它用户传无效</param>
             <returns></returns>
         </member>
         <member name="M:Photography.Services.User.API.Controllers.UsersController.SetOrgAuthStatusAsync(Photography.Services.User.API.Application.Commands.User.SetOrgAuthStatus.SetOrgAuthStatusCommand)">

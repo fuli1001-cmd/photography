@@ -1,6 +1,7 @@
 ﻿@page "/users/{userId}"
 
 @using Photography.WebApps.Management.Data
+@using Photography.WebApps.Management.ViewModels
 @inject UserService userService
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
 
@@ -72,15 +73,15 @@
         <div class="mt-5 mb-5" style="width:100%; height:1px; background-color:lightgray;"></div>
         <div>
             <span>实名认证</span>
-            @if (user.RealNameRegistrationStatus == ViewModels.IdAuthStatus.Authenticated)
+            @if (user.RealNameRegistrationStatus == AuthStatus.Authenticated)
             {
                 <span>（已通过）</span>
             }
-            else @if (user.RealNameRegistrationStatus == ViewModels.IdAuthStatus.Rejected)
+            else @if (user.RealNameRegistrationStatus == AuthStatus.Rejected)
             {
                 <span>（已拒绝）</span>
             }
-            else @if (user.RealNameRegistrationStatus == ViewModels.IdAuthStatus.Authenticating)
+            else @if (user.RealNameRegistrationStatus == AuthStatus.Authenticating)
             {
                 <span>（未审核）</span>
             }
@@ -147,7 +148,7 @@
     {
         saveResult = await userService.AuthRealNameAsync(user, passed);
         if (saveResult.Value)
-            user.RealNameRegistrationStatus = passed ? ViewModels.IdAuthStatus.Authenticated : ViewModels.IdAuthStatus.Rejected;
+            user.RealNameRegistrationStatus = passed ? AuthStatus.Authenticated : AuthStatus.Rejected;
     }
 
     private void Back()

@@ -125,5 +125,38 @@ namespace Photography.WebApps.Management.Services
 
             return JsonConvert.DeserializeObject<PagedResponseWrapper<bool>>(await response.Content.ReadAsStringAsync()).Data;
         }
+
+        public async Task<UserOrgAuthViewModel> GetUserOrgAuthViewModelAsync(string userId)
+        {
+            var response = await _client.GetAsync($"/api/users/authorg?userId={userId}");
+            response.EnsureSuccessStatusCode();
+            var result = JsonConvert.DeserializeObject<PagedResponseWrapper<UserOrgAuthViewModel>>(await response.Content.ReadAsStringAsync());
+
+            if (result.Code != StatusCode.OK)
+                throw new ApplicationException(result.Message);
+
+            if (!string.IsNullOrWhiteSpace(result.Data.OrgImage))
+                result.Data.OrgImage = _serviceSettings.FileServer + FileThumbnailPrefix + result.Data.OrgImage;
+
+            return result.Data;
+        }
+
+        public async Task SetOrgAuthStatusAsync(string userId, AuthStatus authStatus, string message)
+        {
+            var command = new
+            {
+                UserId = userId,
+                Status = authStatus,
+                Message = message
+            };
+            var httpContent = new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json");
+
+            var response = await _client.PutAsync("/api/users/authorg/status", httpContent);
+            response.EnsureSuccessStatusCode();
+            var result = JsonConvert.DeserializeObject<PagedResponseWrapper<bool?>>(await response.Content.ReadAsStringAsync());
+
+            if (result.Code != StatusCode.OK)
+                throw new ApplicationException(result.Message);
+        }
     }
 }

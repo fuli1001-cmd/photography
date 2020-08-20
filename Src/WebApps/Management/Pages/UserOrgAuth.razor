@@ -1,5 +1,10 @@
 ﻿@page "/users/{userId}/orgauth"
 
+@using Photography.WebApps.Management.ViewModels
+@using Photography.WebApps.Management.Services;
+@inject UserHttpService userService
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+
 @if (!string.IsNullOrWhiteSpace(error))
 {
     <div class="alert alert-danger" role="alert">@error</div>
@@ -7,11 +12,72 @@
 
 <h3>团体认证</h3>
 
+@if (vm != null)
+{
+    <div>
+        团体类型：
+        @if (vm.OrgType == 0)
+        {
+            <span>高校社团</span>
+        }
+        else
+        {
+            <span>民间组织</span>
+        }
+    </div>
+    <div>高校名称：@vm.OrgSchoolName</div>
+    <div>社团名称：@vm.OrgName</div>
+    <div>认证信息：@vm.OrgDesc</div>
+    <div>运营者新名：@vm.OrgOperatorName</div>
+    <div>运营者手机号：@vm.OrgOperatorPhoneNumber</div>
+    <img src="@vm.OrgImage">
+
+    <div class="row mt-4 mb-4">
+        <span>拒绝理由</span>
+        <input type="text" class="form-control" @bind="@vm.OrgAuthMessage" />
+    </div>
+}
+
 <div class="row">
-    <div class="col"></div>
+    <button type="button" class="btn btn-primary mr-2" @onclick="@(async () => await SetOrgAuthStatusAsync(AuthStatus.Authenticated))">通过</button>
+    <button type="button" class="btn btn-danger mr-2" @onclick="@(async () => await SetOrgAuthStatusAsync(AuthStatus.Rejected))">拒绝</button>
+    <button type="button" class="btn btn-secondary" @onclick="Back">返回</button>
 </div>
 
 @code {
     private string error;
+    private UserOrgAuthViewModel vm;
 
+    [Parameter]
+    public string UserId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            vm = await userService.GetUserOrgAuthViewModelAsync(UserId);
+        }
+        catch(Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+
+    private async Task SetOrgAuthStatusAsync(AuthStatus authStatus)
+    {
+        try
+        {
+            await userService.SetOrgAuthStatusAsync(UserId, authStatus, vm.OrgAuthMessage);
+            Back();
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+
+    private void Back()
+    {
+        navigationManager.NavigateTo("users");
+    }
 }

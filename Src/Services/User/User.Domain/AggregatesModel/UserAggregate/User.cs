@@ -366,6 +366,8 @@ namespace Photography.Services.User.Domain.AggregatesModel.UserAggregate
 
             if (status == IdAuthStatus.Rejected)
                 OrgAuthMessage = message;
+            else
+                OrgAuthMessage = null;
         }
     }
 

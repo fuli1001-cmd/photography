@@ -35,12 +35,15 @@ namespace Photography.WebApps.Management.ViewModels
 
         public bool Disabled { get; set; }
 
-        public IdAuthStatus RealNameRegistrationStatus { get; set; }
+        public AuthStatus RealNameRegistrationStatus { get; set; }
+
+        // 社团认证状态
+        public AuthStatus OrgAuthStatus { get; set; }
     }
 
-    public enum IdAuthStatus
+    public enum AuthStatus
     {
-        NoIdCard,
+        NotAuthenticated,
         Authenticating,
         Authenticated,
         Rejected

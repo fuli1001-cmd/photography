@@ -1,13 +1,13 @@
-﻿using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Photography.Services.User.API.Query.ViewModels
+namespace Photography.WebApps.Management.ViewModels
 {
-    public class UserOrgAuthInfo
+    public class UserOrgAuthViewModel
     {
-        public int? OrgType { get; set; }
+        public int OrgType { get; set; }
 
         // 社团所在高校名称
         public string OrgSchoolName { get; set; }
@@ -28,7 +28,7 @@ namespace Photography.Services.User.API.Query.ViewModels
         public string OrgImage { get; set; }
 
         // 社团认证状态
-        public IdAuthStatus OrgAuthStatus { get; set; }
+        public AuthStatus OrgAuthStatus { get; set; }
 
         // 社团认证失败原因
         public string OrgAuthMessage { get; set; }
