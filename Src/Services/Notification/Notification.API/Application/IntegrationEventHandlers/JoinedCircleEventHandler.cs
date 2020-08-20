@@ -49,7 +49,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                 #endregion
 
                 #region 给申请入圈用户发通知
-                var userEnteredCircleEvent = new CreateEventCommand
+                var joinCircleAcceptedCommand = new CreateEventCommand
                 {
                     FromUserId = message.CircleOwnerId,
                     ToUserId = message.JoinedUserId,
@@ -59,7 +59,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                     PushMessage = $"申请通过，已加入{message.CircleName}"
                 };
 
-                await _mediator.Send(createEventCommand);
+                await _mediator.Send(joinCircleAcceptedCommand);
                 #endregion
 
                 #region 将申请入圈事件标记为已处理
