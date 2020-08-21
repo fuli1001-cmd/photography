@@ -184,7 +184,14 @@ namespace Photography.Services.Post.Infrastructure.Queries
             var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
 
             var queryablePosts = GetAvailablePosts(myId).Where(p => p.SystemTag == systemTag);
-            var queryableUserPosts = GetAvailableUserPosts(queryablePosts).OrderByDescending(up => up.Post.Score).ThenByDescending(up => up.Post.UpdatedTime);
+
+            var queryableUserPosts = GetAvailableUserPosts(queryablePosts);
+            if (systemTag == "百团创拍")
+                queryableUserPosts = queryableUserPosts.OrderByDescending(up => up.Post.LikeCount);
+            else
+                queryableUserPosts = queryableUserPosts.OrderByDescending(up => up.Post.Score);
+            queryableUserPosts = queryableUserPosts.OrderByDescending(up => up.Post.UpdatedTime);
+
             var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId);
 
             return await GetPagedPostViewModelsAsync(queryableDto, pagingParameters);
