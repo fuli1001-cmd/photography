@@ -2,5 +2,5 @@
     "serviceBase": "https://senseapi.ars-sense.com:5101/api",
     "fileServer": "https://down.ars-sense.com:4432",
     "iosUpgradeUrl": "https://apps.apple.com/cn/app/id1516790011?mt=8",
-    "androidUpgradeUrl": "http://duopai.arise-net.com/apps/duopai_official_1.1.0_3_release_20200821154832.apk"
+    "androidUpgradeUrl": "http://duopai.arise-net.com/apps/duopai.apk"
 }
