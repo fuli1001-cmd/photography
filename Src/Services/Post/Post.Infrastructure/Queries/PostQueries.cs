@@ -469,10 +469,10 @@ namespace Photography.Services.Post.Infrastructure.Queries
         {
             var nicknames = GetAtNicknames(post.Text);
 
-            if (post.ForwardedPostId != null)
+            if (post.ForwardedPostId != null && (post.ShowOriginalText ?? false))
             {
                 var forwardedPost = await _postContext.Posts.FirstOrDefaultAsync(p => p.Id == post.ForwardedPostId.Value);
-                nicknames.Union(GetAtNicknames(forwardedPost.Text));
+                nicknames = nicknames.Union(GetAtNicknames(forwardedPost.Text));
             }
 
             return nicknames;
