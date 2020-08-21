@@ -95,7 +95,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.UpdatePost
                 var @event = new UserAtedEvent { PostUserId = postUserId, PostId = postId, AtUserIds = atUserIds };
                 _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
                 await _messageSession.Publish(@event);
-                _logger.LogInformation("----- Published PostPublishedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
+                _logger.LogInformation("----- Published UserAtedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
             }
         }
     }

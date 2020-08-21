@@ -112,6 +112,7 @@ namespace Photography.Services.User.Infrastructure.Queries
                                    FollowersCount = u.FollowerCount,
                                    PostCount = u.PostCount,
                                    OrgAuthStatus = u.OrgAuthStatus,
+                                   UserType = u.UserType,
                                    Followed = _identityContext.UserRelations.Any(ur2 => ur2.FromUserId == myId && ur2.ToUserId == u.Id && ur2.Followed)
                                };
 
@@ -141,6 +142,7 @@ namespace Photography.Services.User.Infrastructure.Queries
                                    FollowersCount = u.FollowerCount,
                                    PostCount = u.PostCount,
                                    OrgAuthStatus = u.OrgAuthStatus,
+                                   UserType = u.UserType,
                                    Followed = myId == userId ? true : _identityContext.UserRelations.Any(ur2 => ur2.FromUserId == myId && ur2.ToUserId == u.Id && ur2.Followed),
                                };
 
@@ -163,6 +165,7 @@ namespace Photography.Services.User.Infrastructure.Queries
                     PostCount = u.PostCount,
                     FollowerCount = u.FollowerCount,
                     OrgAuthStatus = u.OrgAuthStatus,
+                    UserType = u.UserType,
                     Followed = _identityContext.UserRelations.Any(ur => ur.FromUserId == myId && ur.ToUserId == u.Id && ur.Followed)
                 }).ToListAsync();
 

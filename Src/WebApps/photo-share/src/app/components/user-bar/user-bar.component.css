@@ -43,5 +43,8 @@
 
 .btn-follow {
     font-size: 3vw;
-    border-radius: 20px;
+	border-radius: 20px;
+	border-color: #FFCC00;
+    color: #333333;
+    background-color: #FFCC00;
 }

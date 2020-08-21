@@ -30,9 +30,10 @@
 
 .btn-download {
     width: 100%;
-	background-color: #60acff;
+    background-color: #FFCC00;
+    color: #333333;
+    border-color: #FFCC00;
     border-radius: 8px;
-    color: white;
     margin-top: 20%;
 }
 

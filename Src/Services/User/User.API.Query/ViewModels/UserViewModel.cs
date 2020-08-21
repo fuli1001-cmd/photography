@@ -80,6 +80,8 @@ namespace Photography.Services.User.API.Query.ViewModels
         /// 贴子数量
         /// </summary>
         public int PostCount { get; set; }
+
+        public UserType? UserType { get; set; }
     }
 
     public class UserSearchResult : FollowerViewModel
