@@ -32,6 +32,7 @@ using Photography.Services.Post.API.Application.Commands.User.UpdateUserShare;
 using Photography.Services.Post.API.Application.Commands.Post.ExaminePost;
 using Photography.Services.Post.API.Application.Commands.Post.ViewPost;
 using Photography.Services.Post.API.Application.Commands.Post.ToggleUserLikePost;
+using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 
 namespace Photography.Services.Post.API.Controllers
 {
@@ -62,6 +63,7 @@ namespace Photography.Services.Post.API.Controllers
         /// <summary>
         /// 帖子列表
         /// </summary>
+        /// <param name="visibility">可见性筛选</param>
         /// <param name="key">搜索的关键字，根据用户昵称和帖子文本内容搜索帖子</param>
         /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
@@ -69,9 +71,9 @@ namespace Photography.Services.Post.API.Controllers
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [AllowAnonymous]
-        public async Task<ActionResult<PagedResponseWrapper>> SearchPostsAsync([FromQuery(Name = "key")] string key, [FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<PagedResponseWrapper>> SearchPostsAsync([FromQuery] Visibility? visibility, [FromQuery(Name = "key")] string key, [FromQuery] PagingParameters pagingParameters)
         {
-            var posts = await _postQueries.SearchPosts(key, null, pagingParameters);
+            var posts = await _postQueries.SearchPosts(visibility, key, null, pagingParameters);
             return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
         }
 
@@ -126,7 +128,7 @@ namespace Photography.Services.Post.API.Controllers
             if (string.IsNullOrWhiteSpace(key))
                 posts = await _postQueries.GetSameCityPostsAsync(cityCode, pagingParameters);
             else
-                posts = await _postQueries.SearchPosts(key, cityCode, pagingParameters);
+                posts = await _postQueries.SearchPosts(null, key, cityCode, pagingParameters);
 
             return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(posts));
         }

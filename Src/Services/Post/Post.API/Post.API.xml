@@ -683,10 +683,11 @@
             帖子控制器
             </summary>
         </member>
-        <member name="M:Photography.Services.Post.API.Controllers.PostsController.SearchPostsAsync(System.String,Arise.DDD.API.Paging.PagingParameters)">
+        <member name="M:Photography.Services.Post.API.Controllers.PostsController.SearchPostsAsync(System.Nullable{Photography.Services.Post.Domain.AggregatesModel.PostAggregate.Visibility},System.String,Arise.DDD.API.Paging.PagingParameters)">
             <summary>
             帖子列表
             </summary>
+            <param name="visibility">可见性筛选</param>
             <param name="key">搜索的关键字，根据用户昵称和帖子文本内容搜索帖子</param>
             <param name="pagingParameters">分页参数</param>
             <returns></returns>

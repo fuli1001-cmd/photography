@@ -68,7 +68,7 @@ namespace Photography.WebApps.Management.Services
 
         private async Task<PagedResponseWrapper<List<Post>>> DoGetPostsAsync(string type, int pageNumber, int pageSize)
         {
-            var response = await _client.GetAsync($"/api/{type}?PageNumber={pageNumber}&PageSize={pageSize}");
+            var response = await _client.GetAsync($"/api/{type}?visibility=0&PageNumber={pageNumber}&PageSize={pageSize}");
 
             response.EnsureSuccessStatusCode();
 

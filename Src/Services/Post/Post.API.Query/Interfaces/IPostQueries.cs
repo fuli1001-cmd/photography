@@ -1,5 +1,6 @@
 ﻿using Arise.DDD.API.Paging;
 using Photography.Services.Post.API.Query.ViewModels;
+using Photography.Services.Post.Domain.AggregatesModel.PostAggregate;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -49,7 +50,7 @@ namespace Photography.Services.Post.API.Query.Interfaces
         Task<PagedList<PostViewModel>> GetSharedPostsAsync(Guid sharedUserId, string key, PagingParameters pagingParameters);
 
         // 搜索帖子
-        Task<PagedList<PostViewModel>> SearchPosts(string key, string cityCode, PagingParameters pagingParameters);
+        Task<PagedList<PostViewModel>> SearchPosts(Visibility? visibility, string key, string cityCode, PagingParameters pagingParameters);
 
         // 按公有标签获取帖子
         Task<PagedList<PostViewModel>> GetPostsByPublicTagAsync(string tag, PagingParameters pagingParameters);

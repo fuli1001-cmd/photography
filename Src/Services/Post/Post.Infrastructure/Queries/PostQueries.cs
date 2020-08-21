@@ -348,11 +348,12 @@ namespace Photography.Services.Post.Infrastructure.Queries
         /// <summary>
         /// 搜索发帖者昵称、帖子文案、帖子标签包含关键字的帖子
         /// </summary>
+        /// <param name="visibility">可见性筛选</param>
         /// <param name="key">搜索关键字</param>
         /// <param name="cityCode">城市代码，若指定了城市代码，则只在属于该城市的帖子中搜索</param>
         /// <param name="pagingParameters">分页参数</param>
         /// <returns></returns>
-        public async Task<PagedList<PostViewModel>> SearchPosts(string key, string cityCode, PagingParameters pagingParameters)
+        public async Task<PagedList<PostViewModel>> SearchPosts(Visibility? visibility, string key, string cityCode, PagingParameters pagingParameters)
         {
             var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             var myId = claim == null ? Guid.Empty : Guid.Parse(claim.Value);
@@ -361,7 +362,7 @@ namespace Photography.Services.Post.Infrastructure.Queries
             IQueryable<Domain.AggregatesModel.PostAggregate.Post> queryablePosts = null;
 
             if (role == "admin")
-                queryablePosts = _postContext.Posts.Where(p => p.PostType == Domain.AggregatesModel.PostAggregate.PostType.Post);
+                queryablePosts = _postContext.Posts.Where(p => p.PostType == PostType.Post);
             else
                 queryablePosts = GetAvailablePosts(myId);
 
@@ -379,6 +380,10 @@ namespace Photography.Services.Post.Infrastructure.Queries
             // 搜索城市代码
             if (!string.IsNullOrEmpty(cityCode))
                 queryablePosts = queryablePosts.Where(p => p.CityCode != null && p.CityCode.ToLower() == cityCode.ToLower());
+
+            // 筛选可见性
+            if (visibility != null)
+                queryablePosts = queryablePosts.Where(p => p.Visibility == visibility);
 
             var queryableUserPosts = GetAvailableUserPosts(queryablePosts);
 
