@@ -187,10 +187,9 @@ namespace Photography.Services.Post.Infrastructure.Queries
 
             var queryableUserPosts = GetAvailableUserPosts(queryablePosts);
             if (systemTag == "百团创拍")
-                queryableUserPosts = queryableUserPosts.OrderByDescending(up => up.Post.LikeCount);
+                queryableUserPosts = queryableUserPosts.OrderByDescending(up => up.Post.LikeCount).ThenByDescending(up => up.Post.UpdatedTime);
             else
-                queryableUserPosts = queryableUserPosts.OrderByDescending(up => up.Post.Score);
-            queryableUserPosts = queryableUserPosts.OrderByDescending(up => up.Post.UpdatedTime);
+                queryableUserPosts = queryableUserPosts.OrderByDescending(up => up.Post.Score).ThenByDescending(up => up.Post.UpdatedTime);
 
             var queryableDto = GetQueryablePostViewModels(queryableUserPosts, myId);
 
