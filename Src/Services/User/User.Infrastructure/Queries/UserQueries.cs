@@ -185,29 +185,37 @@ namespace Photography.Services.User.Infrastructure.Queries
         /// </summary>
         /// <param name="pagingParameters"></param>
         /// <returns></returns>
-        public async Task<PagedList<ExaminingUserViewModel>> GetExaminingUsersAsync(PagingParameters pagingParameters)
+        public async Task<PagedList<ExaminingUserViewModel>> GetExaminingUsersAsync(string key, PagingParameters pagingParameters)
         {
-            var queryableDto = from u in _identityContext.Users
-                                 orderby u.Nickname
-                                 select new ExaminingUserViewModel
-                                 {
-                                     Id = u.Id,
-                                     Nickname = u.Nickname,
-                                     Avatar = u.Avatar,
-                                     Sign = u.Sign,
-                                     BackgroundImage = u.BackgroundImage,
-                                     Gender = u.Gender,
-                                     Birthday = u.Birthday,
-                                     UserType = u.UserType,
-                                     Province = u.Province,
-                                     City = u.City,
-                                     IdCardBack = u.IdCardBack,
-                                     IdCardFront = u.IdCardFront,
-                                     IdCardHold = u.IdCardHold,
-                                     Disabled = u.DisabledTime == null ? false : DateTime.UtcNow < u.DisabledTime.Value,
-                                     RealNameRegistrationStatus = u.RealNameRegistrationStatus,
-                                     OrgAuthStatus = u.OrgAuthStatus
-                                 };
+            IQueryable<Domain.AggregatesModel.UserAggregate.User> queryableUsers = _identityContext.Users;
+
+            if (!string.IsNullOrEmpty(key))
+            {
+                key = key.ToLower();
+                queryableUsers = _identityContext.Users.Where(u => u.Nickname.ToLower().Contains(key));
+            }
+
+            var queryableDto = from u in queryableUsers
+                               orderby u.Nickname
+                               select new ExaminingUserViewModel
+                               {
+                                   Id = u.Id,
+                                   Nickname = u.Nickname,
+                                   Avatar = u.Avatar,
+                                   Sign = u.Sign,
+                                   BackgroundImage = u.BackgroundImage,
+                                   Gender = u.Gender,
+                                   Birthday = u.Birthday,
+                                   UserType = u.UserType,
+                                   Province = u.Province,
+                                   City = u.City,
+                                   IdCardBack = u.IdCardBack,
+                                   IdCardFront = u.IdCardFront,
+                                   IdCardHold = u.IdCardHold,
+                                   Disabled = u.DisabledTime == null ? false : DateTime.UtcNow < u.DisabledTime.Value,
+                                   RealNameRegistrationStatus = u.RealNameRegistrationStatus,
+                                   OrgAuthStatus = u.OrgAuthStatus
+                               };
 
             return await PagedList<ExaminingUserViewModel>.ToPagedListAsync(queryableDto, pagingParameters);
         }

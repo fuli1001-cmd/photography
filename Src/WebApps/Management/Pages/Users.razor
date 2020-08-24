@@ -4,7 +4,15 @@
 @using Photography.WebApps.Management.Data
 @inject UserService UserService
 
-<h3>用户审核</h3>
+<div class="row">
+    <div class="col-auto"><h3>用户审核</h3></div>
+    <div class="col">
+        <input type="text" class="form-control float-right" style="min-width:100px; max-width:250px;" placeholder="搜索昵称" @bind="searchKey" />
+    </div>
+    <div class="col-auto">
+        <button type="button" class="btn btn-primary" @onclick="@(async () => await GetUsersAsync(1))">搜索</button>
+    </div>
+</div>
 
 @if (pagedData != null)
 {
@@ -102,22 +110,36 @@
     private PagedResponseWrapper<List<Photography.WebApps.Management.ViewModels.User>> pagedData;
     private bool hasNextPage;
     private bool hasPreviousPage;
+    private string searchKey;
 
     protected override async Task OnInitializedAsync()
     {
-        pagedData = await UserService.GetUsersAsync(1, 10);
-        SetProperties();
+        //pagedData = await UserService.GetUsersAsync(1, 10);
+        //SetProperties();
+        await GetUsersAsync(1);
     }
 
     public async void PageIndexChanged(int pageNumber)
     {
-        if (pageNumber < 1 || pageNumber > pagedData.PagingInfo.TotalPages)
-            return;
+        //if (pageNumber < 1 || pageNumber > pagedData.PagingInfo.TotalPages)
+        //    return;
 
-        pagedData = await UserService.GetUsersAsync(pageNumber, 10);
-        SetProperties();
+        //pagedData = await UserService.GetUsersAsync(pageNumber, 10);
+        //SetProperties();
+
+        await GetUsersAsync(pageNumber);
 
         StateHasChanged();
+    }
+
+    private async Task GetUsersAsync(int pageNumber)
+    {
+        if (pageNumber < 1 || pageNumber > (pagedData?.PagingInfo.TotalPages ?? 1))
+            return;
+
+        pagedData = await UserService.GetUsersAsync(searchKey, pageNumber, 10);
+
+        SetProperties();
     }
 
     private void SetProperties()

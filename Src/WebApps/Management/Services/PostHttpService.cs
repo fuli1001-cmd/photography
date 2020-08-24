@@ -46,14 +46,14 @@ namespace Photography.WebApps.Management.Services
             return JsonConvert.DeserializeObject<ResponseWrapper<bool>>(await response.Content.ReadAsStringAsync()).Data;
         }
 
-        public async Task<PagedResponseWrapper<List<Post>>> GetPostsAsync(int pageNumber, int pageSize)
+        public async Task<PagedResponseWrapper<List<Post>>> GetPostsAsync(string searchKey, int pageNumber, int pageSize)
         {
-            return await DoGetPostsAsync("posts", pageNumber, pageSize);
+            return await DoGetPostsAsync("posts", searchKey, pageNumber, pageSize);
         }
 
         public async Task<PagedResponseWrapper<List<Post>>> GetAppointsAsync(int pageNumber, int pageSize)
         {
-            return await DoGetPostsAsync("appointments", pageNumber, pageSize);
+            return await DoGetPostsAsync("appointments", null, pageNumber, pageSize);
         }
 
         public async Task<bool> DeletePostAsync(Post post)
@@ -66,9 +66,13 @@ namespace Photography.WebApps.Management.Services
             return await DoDeletePostAsync("appointments", post);
         }
 
-        private async Task<PagedResponseWrapper<List<Post>>> DoGetPostsAsync(string type, int pageNumber, int pageSize)
+        private async Task<PagedResponseWrapper<List<Post>>> DoGetPostsAsync(string type, string searchKey, int pageNumber, int pageSize)
         {
-            var response = await _client.GetAsync($"/api/{type}?visibility=0&PageNumber={pageNumber}&PageSize={pageSize}");
+            var url = $"/api/{type}?visibility=0&PageNumber={pageNumber}&PageSize={pageSize}";
+            if (!string.IsNullOrWhiteSpace(searchKey))
+                url += $"&key={searchKey}";
+
+            var response = await _client.GetAsync(url);
 
             response.EnsureSuccessStatusCode();
 

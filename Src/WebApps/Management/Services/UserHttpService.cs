@@ -30,9 +30,13 @@ namespace Photography.WebApps.Management.Services
             _client.BaseAddress = new Uri(_serviceSettings.UserService);
         }
 
-        public async Task<PagedResponseWrapper<List<User>>> GetUsersAsync(int pageNumber, int pageSize)
+        public async Task<PagedResponseWrapper<List<User>>> GetUsersAsync(string searchKey, int pageNumber, int pageSize)
         {
-            var response = await _client.GetAsync($"/api/users/examining?PageNumber={pageNumber}&PageSize={pageSize}");
+            var url = $"/api/users/examining?PageNumber={pageNumber}&PageSize={pageSize}";
+            if (!string.IsNullOrWhiteSpace(searchKey))
+                url += $"&key={searchKey}";
+
+            var response = await _client.GetAsync(url);
 
             response.EnsureSuccessStatusCode();
 

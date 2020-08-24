@@ -23,11 +23,11 @@ namespace Photography.WebApps.Management.Data
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<PagedResponseWrapper<List<Post>>> GetPostsAsync(int pageNumber, int pageSize)
+        public async Task<PagedResponseWrapper<List<Post>>> GetPostsAsync(string searchKey, int pageNumber, int pageSize)
         {
             try
             {
-                PagedData = await _postHttpService.GetPostsAsync(pageNumber, pageSize);
+                PagedData = await _postHttpService.GetPostsAsync(searchKey, pageNumber, pageSize);
                 return PagedData;
             }
             catch(Exception ex)

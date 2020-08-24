@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Photography.Services.User.API.Application.Commands.Login;
@@ -278,15 +279,16 @@ namespace Photography.Services.User.API.Controllers
         /// <summary>
         /// 获取用于审核的用户列表
         /// </summary>
+        /// <param name="key"></param>
         /// <param name="pagingParameters"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("examining")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [Authorize(Policy = "AdminOnly")]
-        public async Task<ActionResult<PagedResponseWrapper>> GetExaminingUsersAsync([FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<PagedResponseWrapper>> GetExaminingUsersAsync([FromQuery] string key, [FromQuery] PagingParameters pagingParameters)
         {
-            var users = await _userQueries.GetExaminingUsersAsync(pagingParameters);
+            var users = await _userQueries.GetExaminingUsersAsync(key, pagingParameters);
             return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(users));
         }
 

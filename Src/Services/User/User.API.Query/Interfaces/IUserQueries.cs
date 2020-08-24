@@ -49,7 +49,7 @@ namespace Photography.Services.User.API.Query.Interfaces
         /// <returns></returns>
         Task<List<UserSearchResult>> SearchUsersAsync(string key);
 
-        Task<PagedList<ExaminingUserViewModel>> GetExaminingUsersAsync(PagingParameters pagingParameters);
+        Task<PagedList<ExaminingUserViewModel>> GetExaminingUsersAsync(string key, PagingParameters pagingParameters);
 
         // 获取用户的团体认证信息
         Task<UserOrgAuthInfoViewModel> GetUserOrgAuthInfoAsync(Guid? userId = null);

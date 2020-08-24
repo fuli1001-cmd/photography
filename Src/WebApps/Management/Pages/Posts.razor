@@ -4,17 +4,25 @@
 @using Photography.WebApps.Management.Data
 @inject PostService PostService
 
-@if (!string.IsNullOrWhiteSpace(_type))
-{
-    @if (_type == "p")
+<div class="row">
+    @if (!string.IsNullOrWhiteSpace(_type))
     {
-        <h3>帖子审核</h3>
+        @if (_type == "p")
+        {
+            <h3>帖子审核</h3>
+        }
+        else if (_type == "a")
+        {
+            <h3>约拍审核</h3>
+        }
     }
-    else if (_type == "a")
-    {
-        <h3>约拍审核</h3>
-    }
-}
+    <div class="col">
+        <input type="text" class="form-control float-right" style="min-width:100px; max-width:250px;" placeholder="搜索昵称、文案、标签" @bind="searchKey" />
+    </div>
+    <div class="col-auto">
+        <button type="button" class="btn btn-primary" @onclick="@(async () => await GetDataAsync(1, 10))">搜索</button>
+    </div>
+</div>
 
 @if (pagedData != null)
 {
@@ -27,7 +35,7 @@
                 {
                     <th style="width:8%;">状态</th>
                 }
-                <th style="width:65%;">图片</th>
+                <th style="width:60%;">图片</th>
                 <th>操作</th>
             </tr>
         </thead>
@@ -109,6 +117,7 @@
     private bool hasNextPage;
     private bool hasPreviousPage;
     private string _type;
+    private string searchKey;
 
     [Parameter]
     public string Type
@@ -162,7 +171,7 @@
         if (!string.IsNullOrWhiteSpace(_type))
         {
             if (_type == "p")
-                pagedData = await PostService.GetPostsAsync(pageNumber, pageSize);
+                pagedData = await PostService.GetPostsAsync(searchKey, pageNumber, pageSize);
             else if (_type == "a")
                 pagedData = await PostService.GetAppointmentsAsync(pageNumber, pageSize);
 
