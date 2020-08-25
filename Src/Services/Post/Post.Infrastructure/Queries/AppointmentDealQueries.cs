@@ -59,15 +59,15 @@ namespace Photography.Services.Post.Infrastructure.Queries
 
             var pagedDto = await GetPagedAppointmentViewModelsAsync(queryableDto, pagingParameters);
 
-            // 设置付款方，由于这里查询的是收到的约拍交易，支付视角相对于发出的约拍交易是反的,
-            // 而约拍交易是由交易发出人创建的，所以支付方需要对调一下。
-            pagedDto.ForEach(vm =>
-            {
-                if (vm.PayerType == PayerType.Me)
-                    vm.PayerType = PayerType.You;
-                else if (vm.PayerType == PayerType.You)
-                    vm.PayerType = PayerType.Me;
-            });
+            //// 设置付款方，由于这里查询的是收到的约拍交易，支付视角相对于发出的约拍交易是反的,
+            //// 而约拍交易是由交易发出人创建的，所以支付方需要对调一下。
+            //pagedDto.ForEach(vm =>
+            //{
+            //    if (vm.PayerType == PayerType.Me)
+            //        vm.PayerType = PayerType.You;
+            //    else if (vm.PayerType == PayerType.You)
+            //        vm.PayerType = PayerType.Me;
+            //});
 
             return pagedDto;
         }

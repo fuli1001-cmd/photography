@@ -66,15 +66,15 @@ namespace Photography.Services.Post.API.Application.Commands.AppointmentDeal.App
             if ((await _postRepository.GetTodayUserReceivedAppointmentDealCountAsync(appointment.UserId)) >= _appointmentSettings.MaxReceiveDealCount)
                 throw new ClientException("对方已达今日最大被约数量");
 
-            // 在约别人发布的任务时，若付款类型是对方或己方付费，需要将付款类型对调
-            PayerType payerType = appointment.PayerType.Value;
-            if (appointment.PayerType == PayerType.Me)
-                payerType = PayerType.You;
-            else if (appointment.PayerType == PayerType.You)
-                payerType = PayerType.Me;
+            //// 在约别人发布的任务时，若付款类型是对方或己方付费，需要将付款类型对调
+            //PayerType payerType = appointment.PayerType.Value;
+            //if (appointment.PayerType == PayerType.Me)
+            //    payerType = PayerType.You;
+            //else if (appointment.PayerType == PayerType.You)
+            //    payerType = PayerType.Me;
 
             var deal = Domain.AggregatesModel.PostAggregate.Post.CreateAppointmentDeal(
-                request.Text, appointment.AppointedTime, appointment.Price, payerType, appointment.AppointmentedUserType.Value,
+                request.Text, appointment.AppointedTime, appointment.Price, appointment.PayerType, appointment.AppointmentedUserType.Value,
                 appointment.Latitude, appointment.Longitude, appointment.LocationName, appointment.Address, 
                 appointment.CityCode, attachments, myId, appointment.UserId, appointment.Id);
 
