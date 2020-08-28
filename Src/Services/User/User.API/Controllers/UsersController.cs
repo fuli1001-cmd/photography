@@ -173,7 +173,7 @@ namespace Photography.Services.User.API.Controllers
         public async Task<ActionResult<ResponseWrapper>> GetFollowersAsync(Guid userId, [FromQuery] PagingParameters pagingParameters)
         {
             var followers = await _userQueries.GetFollowersAsync(userId, pagingParameters);
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(followers));
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(followers));
         }
 
         /// <summary>
@@ -188,7 +188,7 @@ namespace Photography.Services.User.API.Controllers
         public async Task<ActionResult<ResponseWrapper>> GetFollowedUsersAsync(Guid userId, [FromQuery] PagingParameters pagingParameters)
         {
             var followedUsers = await _userQueries.GetFollowedUsersAsync(userId, pagingParameters);
-            return Ok(ResponseWrapper.CreateOkResponseWrapper(followedUsers));
+            return Ok(PagedResponseWrapper.CreateOkPagedResponseWrapper(followedUsers));
         }
 
         /// <summary>
