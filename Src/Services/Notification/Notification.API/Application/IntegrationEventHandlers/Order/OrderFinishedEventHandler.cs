@@ -18,8 +18,9 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
         private readonly IMediator _mediator;
         private readonly ILogger<OrderFinishedEventHandler> _logger;
 
-        public OrderFinishedEventHandler(IUserRepository userRepository, ILogger<OrderFinishedEventHandler> logger)
+        public OrderFinishedEventHandler(IUserRepository userRepository, IMediator mediator, ILogger<OrderFinishedEventHandler> logger)
         {
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -43,7 +44,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                     PushMessage = $"{nickName}已确认验收"
                 };
 
-                await _userRepository.UnitOfWork.SaveEntitiesAsync();
+                await _mediator.Send(command);
             }
         }
     }
