@@ -36,7 +36,7 @@ namespace Photography.Services.Order.API.Application.Commands.CheckProcessed
             _orderQueries = orderQueries ?? throw new ArgumentNullException(nameof(orderQueries));
             _orderRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
