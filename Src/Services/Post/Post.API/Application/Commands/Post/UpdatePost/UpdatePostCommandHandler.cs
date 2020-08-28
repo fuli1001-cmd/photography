@@ -60,10 +60,12 @@ namespace Photography.Services.Post.API.Application.Commands.Post.UpdatePost
                 throw new ClientException("操作失败", new List<string> { $"Post {post.Id} does not belong to user {userId}" });
 
             var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType, a.IsPrivate)).ToList();
+            var authPost = _configuration.GetValue<bool>("AuthPost", true); // AuthPost配置表示帖子审核是否打开
+            PostAuthStatus postAuthStatus = (authPost && request.Visibility == Visibility.Public) ? PostAuthStatus.Authenticating : PostAuthStatus.Authenticated;
 
             post.Update(request.Text, request.Commentable, request.ForwardType, request.ShareType, request.Visibility,
                 request.ViewPassword, request.SystemTag, request.PublicTags, request.PrivateTag, request.CircleId, request.Latitude, request.Longitude, request.LocationName, request.Address,
-                request.CityCode, request.FriendIds, attachments, request.ShowOriginalText);
+                request.CityCode, request.FriendIds, attachments, postAuthStatus, request.ShowOriginalText);
 
             #region arise内部用户更新帖子：无需审核
             var role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;

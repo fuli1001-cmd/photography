@@ -32,17 +32,20 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
         private readonly PostScoreRewardSettings _scoreRewardSettings;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<PublishPostCommandHandler> _logger;
+        private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
 
         private IMessageSession _messageSession;
 
-        public PublishPostCommandHandler(IPostRepository postRepository, 
+        public PublishPostCommandHandler(
+            IPostRepository postRepository, 
             IUserRepository userRepository, 
             ITagRepository tagRepository,
             IPostQueries postQueries,
             IOptionsSnapshot<PostScoreRewardSettings> scoreRewardOptions,
             IHttpContextAccessor httpContextAccessor,
-            IServiceProvider serviceProvider, 
+            IServiceProvider serviceProvider,
+            IConfiguration configuration,
             ILogger<PublishPostCommandHandler> logger)
         {
             _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
@@ -52,6 +55,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
             _scoreRewardSettings = scoreRewardOptions?.Value ?? throw new ArgumentNullException(nameof(scoreRewardOptions));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -72,9 +76,12 @@ namespace Photography.Services.Post.API.Application.Commands.Post.PublishPost
 
             var score = (DateTime.Now - DateTime.UnixEpoch.AddSeconds(user.CreatedTime)).TotalHours <= _scoreRewardSettings.NewUserHour ? user.PostScore + _scoreRewardSettings.NewUserPost : user.PostScore;
             var attachments = request.Attachments.Select(a => new PostAttachment(a.Name, a.Text, a.AttachmentType, a.IsPrivate)).ToList();
+            var authPost = _configuration.GetValue<bool>("AuthPost", true); // AuthPost配置表示帖子审核是否打开
+            PostAuthStatus postAuthStatus = (authPost && request.Visibility == Visibility.Public) ? PostAuthStatus.Authenticating : PostAuthStatus.Authenticated;
+
             var post = Domain.AggregatesModel.PostAggregate.Post.CreatePost(request.Text, request.Commentable, request.ForwardType, request.ShareType,
                 request.Visibility, request.ViewPassword, request.SystemTag, request.PublicTags, request.PrivateTag, request.CircleId, request.Latitude, request.Longitude, request.LocationName,
-                request.Address, request.CityCode, request.FriendIds, attachments, score, userId);
+                request.Address, request.CityCode, request.FriendIds, attachments, score, userId, postAuthStatus);
 
             _postRepository.Add(post);
 

@@ -41,15 +41,15 @@ namespace Photography.Services.Post.API.Application.IntegrationEventHandlers
                 _logger.LogInformation("----- Handling OrderFinishedEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
                 // 增加订单参与双方的约拍值
-                var users = await _userRepository.GetUsersAsync(new List<Guid> { message.User1Id, message.User2Id });
+                var users = await _userRepository.GetUsersAsync(new List<Guid> { message.AcceptUserId, message.AnotherUserId });
                 users.ForEach(u => u.AddAppointmentScore(_appointmentSettings.FinishDealScore));
                 await _userRepository.UnitOfWork.SaveEntitiesAsync();
 
                 // 发送用户约拍值变化事件
                 var eventTasks = new List<Task>
                 {
-                    SendAppointmentScoreChangedEventAsync(message.User1Id),
-                    SendAppointmentScoreChangedEventAsync(message.User2Id)
+                    SendAppointmentScoreChangedEventAsync(message.AcceptUserId),
+                    SendAppointmentScoreChangedEventAsync(message.AnotherUserId)
                 };
                 await Task.WhenAll(eventTasks);
             }

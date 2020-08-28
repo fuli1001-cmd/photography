@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
+using Photography.Services.Notification.API.Application.Commands;
 using Photography.Services.Notification.API.Application.Commands.CreateEvent;
 using Photography.Services.Notification.Domain.AggregatesModel.EventAggregate;
 using Photography.Services.Notification.Domain.AggregatesModel.UserAggregate;
@@ -11,38 +12,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Photography.Services.Notification.API.Application.IntegrationEventHandlers
+namespace Photography.Services.Notification.API.Application.IntegrationEventHandlers.Post
 {
-    public class CommentLikedEventHandler : IHandleMessages<CommentLikedEvent>
+    public class PostRepliedEventHandler : IHandleMessages<PostRepliedEvent>
     {
         private readonly IUserRepository _userRepository;
         private readonly IMediator _mediator;
-        private readonly ILogger<CommentLikedEventHandler> _logger;
+        private readonly ILogger<PostRepliedEventHandler> _logger;
 
-        public CommentLikedEventHandler(IUserRepository userRepository, IMediator mediator, ILogger<CommentLikedEventHandler> logger)
+        public PostRepliedEventHandler(IUserRepository userRepository, IMediator mediator, ILogger<PostRepliedEventHandler> logger)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Handle(CommentLikedEvent message, IMessageHandlerContext context)
+        public async Task Handle(PostRepliedEvent message, IMessageHandlerContext context)
         {
             using (LogContext.PushProperty("IntegrationEventContext", $"{message.Id}-{Program.AppName}"))
             {
-                _logger.LogInformation("----- Handling CommentLikedEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
+                _logger.LogInformation("----- Handling PostRepliedEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                var fromUser = await _userRepository.GetByIdAsync(message.LikingUserId);
+                var nickName = await _userRepository.GetNickNameAsync(message.FromUserId);
 
                 var command = new CreateEventCommand
                 {
-                    FromUserId = message.LikingUserId,
-                    ToUserId = message.CommentUserId,
+                    FromUserId = message.FromUserId,
+                    ToUserId = message.ToUserId,
                     PostId = message.PostId,
-                    CommentId = message.CommentId,
-                    CommentText = message.CommentText,
-                    EventType = EventType.LikeComment,
-                    PushMessage = $"{fromUser.Nickname}点赞了你的评论"
+                    CommentText = message.Text,
+                    EventType = EventType.ReplyPost,
+                    PushMessage = $"{nickName}评论了你的作品"
                 };
 
                 await _mediator.Send(command);

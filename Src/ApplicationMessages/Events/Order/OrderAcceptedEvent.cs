@@ -14,5 +14,8 @@ namespace ApplicationMessages.Events.Order
 
         // 约拍任务id
         public Guid DealId { get; set; }
+
+        // 订单id
+        public Guid OrderId { get; set; }
     }
 }

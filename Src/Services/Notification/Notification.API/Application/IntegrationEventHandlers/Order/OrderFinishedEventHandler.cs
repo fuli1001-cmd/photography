@@ -1,18 +1,21 @@
 ﻿using ApplicationMessages.Events.Order;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
-using Photography.Services.User.Domain.AggregatesModel.UserAggregate;
+using Photography.Services.Notification.API.Application.Commands.CreateEvent;
+using Photography.Services.Notification.Domain.AggregatesModel.UserAggregate;
 using Serilog.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Photography.Services.User.API.Application.IntegrationEventHandlers
+namespace Photography.Services.Notification.API.Application.IntegrationEventHandlers.Order
 {
     public class OrderFinishedEventHandler : IHandleMessages<OrderFinishedEvent>
     {
         private readonly IUserRepository _userRepository;
+        private readonly IMediator _mediator;
         private readonly ILogger<OrderFinishedEventHandler> _logger;
 
         public OrderFinishedEventHandler(IUserRepository userRepository, ILogger<OrderFinishedEventHandler> logger)
@@ -27,15 +30,18 @@ namespace Photography.Services.User.API.Application.IntegrationEventHandlers
             {
                 _logger.LogInformation("----- Handling OrderFinishedEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                // 减少用户1的出片阶段订单数量
-                var user1 = await _userRepository.GetByIdAsync(message.AcceptUserId);
-                //user1.DecreaseProductionStageOrderCount();
-                user1.DecreaseOngoingOrderCount();
+                var nickName = await _userRepository.GetNickNameAsync(message.AcceptUserId);
 
-                // 减少用户2的出片阶段订单数量
-                var user2 = await _userRepository.GetByIdAsync(message.AnotherUserId);
-                //user2.DecreaseProductionStageOrderCount();
-                user2.DecreaseOngoingOrderCount();
+                // 创建原片已上传的事件
+                var command = new CreateEventCommand
+                {
+                    FromUserId = message.AcceptUserId,
+                    ToUserId = message.AnotherUserId,
+                    EventType = Domain.AggregatesModel.EventAggregate.EventType.OrderFinished,
+                    CommentText = "已确认验收",
+                    OrderId = message.OrderId,
+                    PushMessage = $"{nickName}已确认验收"
+                };
 
                 await _userRepository.UnitOfWork.SaveEntitiesAsync();
             }

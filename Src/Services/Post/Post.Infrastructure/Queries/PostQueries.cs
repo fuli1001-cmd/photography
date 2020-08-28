@@ -62,8 +62,8 @@ namespace Photography.Services.Post.Infrastructure.Queries
             // 如果帖子种类不为空， 按帖子种类筛选一下
             if (!string.IsNullOrWhiteSpace(privateTag))
             {
-                // “未分类”未系统保留关键字，表示帖子不属于任何类别
-                if (privateTag == "未分类")
+                // “无专辑”为系统保留关键字，表示帖子不属于任何类别
+                if (privateTag == "无专辑")
                     queryablePosts = queryablePosts.Where(p => p.PrivateTag == null || p.PrivateTag == "");
                 else
                     queryablePosts = queryablePosts.Where(p => p.PrivateTag != null && p.PrivateTag.ToLower() == privateTag.ToLower());
@@ -283,7 +283,7 @@ namespace Photography.Services.Post.Infrastructure.Queries
                                      && p.PostAuthStatus == Domain.AggregatesModel.PostAggregate.PostAuthStatus.Authenticated
                                      select new UserPost { Post = p, User = u };
 
-            if (privateTag == "未分类")
+            if (privateTag == "无专辑")
                 queryableUserPosts = queryableUserPosts.Where(up => up.Post.PrivateTag == null || up.Post.PrivateTag == "");
             else
                 queryableUserPosts = queryableUserPosts.Where(up => up.Post.PrivateTag == privateTag);

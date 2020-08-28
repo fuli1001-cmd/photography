@@ -1,7 +1,7 @@
 ﻿using ApplicationMessages.Events;
-using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NServiceBus;
@@ -27,6 +27,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.ForwardPosts
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly PostScoreRewardSettings _scoreRewardSettings;
         private readonly ILogger<ForwardPostsCommandHandler> _logger;
+        private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
 
         private IMessageSession _messageSession;
@@ -37,7 +38,8 @@ namespace Photography.Services.Post.API.Application.Commands.Post.ForwardPosts
             IPostQueries postQueries,
             IHttpContextAccessor httpContextAccessor,
             IOptionsSnapshot<PostScoreRewardSettings> scoreRewardOptions,
-            IServiceProvider serviceProvider, 
+            IServiceProvider serviceProvider,
+            IConfiguration configuration,
             ILogger<ForwardPostsCommandHandler> logger)
         {
             _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
@@ -46,6 +48,7 @@ namespace Photography.Services.Post.API.Application.Commands.Post.ForwardPosts
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _scoreRewardSettings = scoreRewardOptions?.Value ?? throw new ArgumentNullException(nameof(scoreRewardOptions));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -65,9 +68,12 @@ namespace Photography.Services.Post.API.Application.Commands.Post.ForwardPosts
             {
                 // 创建新帖子
                 var score = (DateTime.Now - DateTime.UnixEpoch.AddSeconds(me.CreatedTime)).TotalHours <= _scoreRewardSettings.NewUserHour ? me.PostScore + _scoreRewardSettings.NewUserPost : me.PostScore;
+                var authPost = _configuration.GetValue<bool>("AuthPost", true); // AuthPost配置表示帖子审核是否打开
+                PostAuthStatus postAuthStatus = (authPost && request.Visibility == Visibility.Public) ? PostAuthStatus.Authenticating : PostAuthStatus.Authenticated;
+
                 var post = Domain.AggregatesModel.PostAggregate.Post.CreatePost(request.Text, request.Commentable, request.ForwardType, request.ShareType,
                     request.Visibility, request.ViewPassword, request.SystemTag, request.PublicTags, request.PrivateTag, null, request.Latitude, request.Longitude, request.LocationName,
-                    request.Address, request.CityCode, request.FriendIds, null, score, myId, request.ShowOriginalText);
+                    request.Address, request.CityCode, request.FriendIds, null, score, myId, postAuthStatus, request.ShowOriginalText);
 
                 post.SetForwardPostId(toBeForwardedPost);
                 _postRepository.Add(post);

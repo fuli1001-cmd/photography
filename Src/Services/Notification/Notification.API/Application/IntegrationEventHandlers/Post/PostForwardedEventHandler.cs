@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Photography.Services.Notification.API.Application.IntegrationEventHandlers
+namespace Photography.Services.Notification.API.Application.IntegrationEventHandlers.Post
 {
     public class PostForwardedEventHandler : IHandleMessages<PostForwardedEvent>
     {
@@ -48,7 +48,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                     await _mediator.Send(createPostCommand);
                     #endregion
 
-                    var fromUser = await _userRepository.GetByIdAsync(info.ForwardUserId);
+                    var nickName = await _userRepository.GetNickNameAsync(info.ForwardUserId);
 
                     #region 发布转发通知
                     var createEventCommand = new CreateEventCommand
@@ -57,7 +57,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                         ToUserId = info.OriginalPostUserId,
                         PostId = info.OriginalPostId,
                         EventType = EventType.ForwardPost,
-                        PushMessage = $"{fromUser.Nickname}转发了你的作品"
+                        PushMessage = $"{nickName}转发了你的作品"
                     };
                     await _mediator.Send(createEventCommand);
                     #endregion
@@ -71,7 +71,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                             ToUserId = atUserId,
                             PostId = info.OriginalPostId,
                             EventType = EventType.AtUserInPost,
-                            PushMessage = $"{fromUser.Nickname}在作品中@了你"
+                            PushMessage = $"{nickName}在作品中@了你"
                         };
 
                         await _mediator.Send(eventCommand);

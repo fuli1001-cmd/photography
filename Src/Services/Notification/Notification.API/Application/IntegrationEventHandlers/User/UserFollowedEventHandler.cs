@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Photography.Services.Notification.API.Application.IntegrationEventHandlers
+namespace Photography.Services.Notification.API.Application.IntegrationEventHandlers.User
 {
     public class UserFollowedEventHandler : IHandleMessages<UserFollowedEvent>
     {
@@ -36,14 +36,14 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                 var followCommand = new FollowCommand { FollowerId = message.FollowerId, FollowedUserId = message.FollowedUserId };
                 await _mediator.Send(followCommand);
 
-                var fromUser = await _userRepository.GetByIdAsync(message.FollowerId);
+                var nickName = await _userRepository.GetNickNameAsync(message.FollowerId);
 
                 var eventCommand = new CreateEventCommand
                 {
                     FromUserId = message.FollowerId,
                     ToUserId = message.FollowedUserId,
                     EventType = EventType.Follow,
-                    PushMessage = $"{fromUser.Nickname}开始关注你"
+                    PushMessage = $"{nickName}开始关注你"
                 };
                 await _mediator.Send(eventCommand);
             }

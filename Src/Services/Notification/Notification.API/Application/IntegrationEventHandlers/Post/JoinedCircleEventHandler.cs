@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Photography.Services.Notification.API.Application.IntegrationEventHandlers
+namespace Photography.Services.Notification.API.Application.IntegrationEventHandlers.Post
 {
     public class JoinedCircleEventHandler : IHandleMessages<JoinedCircleEvent>
     {
@@ -32,7 +32,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
             {
                 _logger.LogInformation("----- Handling JoinedCircleEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                var fromUser = await _userRepository.GetByIdAsync(message.JoinedUserId);
+                var nickName = await _userRepository.GetNickNameAsync(message.JoinedUserId);
 
                 #region 给圈主发通知
                 var createEventCommand = new CreateEventCommand
@@ -42,7 +42,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                     CircleId = message.CircleId,
                     CircleName = message.CircleName,
                     EventType = Domain.AggregatesModel.EventAggregate.EventType.JoinCircle,
-                    PushMessage = $"{fromUser.Nickname}加入{message.CircleName}"
+                    PushMessage = $"{nickName}加入{message.CircleName}"
                 };
 
                 await _mediator.Send(createEventCommand);

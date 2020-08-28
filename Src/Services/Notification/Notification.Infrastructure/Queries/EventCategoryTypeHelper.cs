@@ -34,7 +34,13 @@ namespace Photography.Services.Notification.Infrastructure.Queries
                 types = new List<EventType>
                 {
                     EventType.CancelOrder,
-                    EventType.RejectOrder
+                    EventType.RejectOrder,
+                    EventType.AppointmentDealCreated,
+                    EventType.OrderAccepted,
+                    EventType.OriginalPhotoUploaded,
+                    EventType.ProcessedPhotoUploaded,
+                    EventType.OriginalPhotoSelected,
+                    EventType.OrderFinished
                 };
             }
             else if (eventCategory == EventCategory.System)

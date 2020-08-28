@@ -125,7 +125,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         // 构造帖子对象
         private Post(string text, bool? showOriginalText, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
             string systemTag, string publicTags, string privateTag, Guid? circleId, double latitude, double longitude, string locationName, string address, string cityCode, 
-            List<Guid> friendIds, List<PostAttachment> postAttachments, int score, Guid userId)
+            List<Guid> friendIds, List<PostAttachment> postAttachments, int score, Guid userId, PostAuthStatus postAuthStatus)
             : this(text, latitude, longitude, locationName, address, cityCode, postAttachments, userId)
         {
             // 发送标签更新事件
@@ -145,8 +145,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             ShowOriginalText = showOriginalText;
             Score = score;
             LastScoreRefreshedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
-            // 公开帖子需要审核通过后才能显示
-            PostAuthStatus = visibility == Visibility.Public ? PostAuthStatus.Authenticating : PostAuthStatus.Authenticated;
+            PostAuthStatus = postAuthStatus;
         }
 
         // 构造约拍对象
@@ -178,10 +177,10 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         // 创建帖子对象
         public static Post CreatePost(string text, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
             string systemTag, string publicTags, string privateTag, Guid? circleId, double latitude, double longitude, string locationName, string address, string cityCode,
-            List<Guid> friendIds, List<PostAttachment> postAttachments, int score, Guid userId, bool? showOriginalText = null)
+            List<Guid> friendIds, List<PostAttachment> postAttachments, int score, Guid userId, PostAuthStatus postAuthStatus, bool? showOriginalText = null)
         {
             return new Post(text, showOriginalText, commentable, forwardType, shareType, visibility, viewPassword, systemTag, publicTags, privateTag, circleId, latitude, longitude,
-                locationName, address, cityCode, friendIds, postAttachments, score, userId);
+                locationName, address, cityCode, friendIds, postAttachments, score, userId, postAuthStatus);
         }
 
         // 创建约拍对象
@@ -201,7 +200,7 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
         // 更新帖子对象
         public void Update(string text, bool commentable, ForwardType forwardType, ShareType shareType, Visibility visibility, string viewPassword,
             string systemTag, string publicTags, string privateTag, Guid? circleId, double latitude, double longitude, string locationName, string address, string cityCode,
-            List<Guid> friendIds, List<PostAttachment> postAttachments, bool? showOriginalText = null)
+            List<Guid> friendIds, List<PostAttachment> postAttachments, PostAuthStatus postAuthStatus, bool? showOriginalText = null)
         {
             // 发送标签更新事件
             AddTagChangedDomainEvent(publicTags);
@@ -224,8 +223,9 @@ namespace Photography.Services.Post.Domain.AggregatesModel.PostAggregate
             CityCode = cityCode;
             ShowOriginalText = showOriginalText;
             UpdatedTime = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+            PostAuthStatus = postAuthStatus;
             // 公开帖子需要审核通过后才能显示
-            PostAuthStatus = visibility == Visibility.Public ? PostAuthStatus.Authenticating : PostAuthStatus.Authenticated;
+            //PostAuthStatus = visibility == Visibility.Public ? PostAuthStatus.Authenticating : PostAuthStatus.Authenticated;
 
             var relations = friendIds?.Select(id => new UserPostRelation(id, UserPostRelationType.View)).ToList() ?? new List<UserPostRelation>();
             for (var i = 0; i < _userPostRelations.Count; i++)

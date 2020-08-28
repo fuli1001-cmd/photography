@@ -47,15 +47,15 @@ namespace Photography.Services.Order.API.Application.Commands.AcceptOrder
             if (await _orderRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken))
             {
                 var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-                await SendOrderAcceptedEventAsync(userId, order.User1Id == userId ? order.User2Id : order.User1Id, request.DealId);
+                await SendOrderAcceptedEventAsync(userId, order.User1Id == userId ? order.User2Id : order.User1Id, request.DealId, order.Id);
             }
 
             return await _orderQueries.GetOrderAsync(order.Id);
         }
 
-        private async Task SendOrderAcceptedEventAsync(Guid userId, Guid anotherUserId, Guid dealId)
+        private async Task SendOrderAcceptedEventAsync(Guid userId, Guid anotherUserId, Guid dealId, Guid orderId)
         {
-            var @event = new OrderAcceptedEvent { UserId = userId, AnotherUserId = anotherUserId, DealId = dealId };
+            var @event = new OrderAcceptedEvent { UserId = userId, AnotherUserId = anotherUserId, DealId = dealId, OrderId = orderId };
             _messageSession = (IMessageSession)_serviceProvider.GetService(typeof(IMessageSession));
             await _messageSession.Publish(@event);
             _logger.LogInformation("----- Published OrderAcceptedEvent: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);

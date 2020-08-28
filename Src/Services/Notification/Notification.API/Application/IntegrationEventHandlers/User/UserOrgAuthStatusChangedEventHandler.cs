@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Photography.Services.Notification.API.Application.IntegrationEventHandlers
+namespace Photography.Services.Notification.API.Application.IntegrationEventHandlers.User
 {
     public class UserOrgAuthStatusChangedEventHandler : IHandleMessages<UserOrgAuthStatusChangedEvent>
     {

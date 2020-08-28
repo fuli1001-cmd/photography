@@ -18,16 +18,6 @@ namespace Photography.ApiGateways.ApiGwBase.Settings
         public int ChatSocketPort { get; set; }
 
         /// <summary>
-        /// 聊天服务API地址
-        /// </summary>
-        public string ChatAPI { get; set; }
-
-        /// <summary>
-        /// 聊天服务API端口
-        /// </summary>
-        public int ChatAPIPort { get; set; }
-
-        /// <summary>
         /// 文件服务器地址
         /// </summary>
         public string FileServer { get; set; }
@@ -76,6 +66,11 @@ namespace Photography.ApiGateways.ApiGwBase.Settings
         /// 分享贴子的地址
         /// </summary>
         public string PostShareServer { get; set; }
+
+        /// <summary>
+        /// 进入App时初始显示tab
+        /// </summary>
+        public string InitTab { get; set; }
 
         /// <summary>
         /// 系统帖子类别

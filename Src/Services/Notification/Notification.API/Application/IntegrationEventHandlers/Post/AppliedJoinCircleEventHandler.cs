@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Photography.Services.Notification.API.Application.IntegrationEventHandlers
+namespace Photography.Services.Notification.API.Application.IntegrationEventHandlers.Post
 {
     public class AppliedJoinCircleEventHandler : IHandleMessages<AppliedJoinCircleEvent>
     {
@@ -31,7 +31,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
             {
                 _logger.LogInformation("----- Handling AppliedJoinCircleEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                var fromUser = await _userRepository.GetByIdAsync(message.ApplyUserId);
+                var nickName = await _userRepository.GetNickNameAsync(message.ApplyUserId);
 
                 var command = new CreateEventCommand
                 {
@@ -41,7 +41,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                     CircleName = message.CircleName,
                     CommentText = message.ApplyDescription, // CommentText创建时还没有圈子功能，这里共用CommentText来存储加圈描述
                     EventType = Domain.AggregatesModel.EventAggregate.EventType.ApplyJoinCircle,
-                    PushMessage = $"{fromUser.Nickname}申请加入圈子{message.CircleName}"
+                    PushMessage = $"{nickName}申请加入圈子{message.CircleName}"
                 };
 
                 await _mediator.Send(command);

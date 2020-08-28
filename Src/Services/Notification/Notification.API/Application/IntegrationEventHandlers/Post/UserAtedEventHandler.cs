@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Photography.Services.Notification.API.Application.IntegrationEventHandlers
+namespace Photography.Services.Notification.API.Application.IntegrationEventHandlers.Post
 {
     public class UserAtedEventHandler : IHandleMessages<UserAtedEvent>
     {
@@ -32,7 +32,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
             {
                 _logger.LogInformation("----- Handling UserAtedEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                var user = await _userRepository.GetByIdAsync(message.PostUserId);
+                var nickName = await _userRepository.GetNickNameAsync(message.PostUserId);
 
                 foreach (var atUserId in message.AtUserIds)
                 {
@@ -42,7 +42,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                         ToUserId = atUserId,
                         PostId = message.PostId,
                         EventType = EventType.AtUserInPost,
-                        PushMessage = $"{user.Nickname}在作品中@了你"
+                        PushMessage = $"{nickName}在作品中@了你"
                     };
 
                     await _mediator.Send(eventCommand);

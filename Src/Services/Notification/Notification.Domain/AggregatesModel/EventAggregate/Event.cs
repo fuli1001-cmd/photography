@@ -94,7 +94,13 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
         FeedbackCreated, // 用户反馈
         UserOrgAuthSuccess, // 用户团体认证成功
         UserOrgAuthFailed, // 用户团体认证失败
-        ApplyJoinCircleAccepted // 用户申请入圈被批准
+        ApplyJoinCircleAccepted, // 用户申请入圈被批准
+        AppointmentDealCreated, // 约拍任务已创建
+        OrderAccepted, // 订单已接受
+        OriginalPhotoUploaded, // 原片已上传
+        ProcessedPhotoUploaded, // 精修片已上传
+        OriginalPhotoSelected, // 已选原片
+        OrderFinished // 订单已完成
     }
 
     // 事件类别

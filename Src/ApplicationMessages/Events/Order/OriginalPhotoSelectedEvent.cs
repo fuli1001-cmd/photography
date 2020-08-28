@@ -10,13 +10,15 @@ namespace ApplicationMessages.Events.Order
     public class OriginalPhotoSelectedEvent : BaseEvent
     {
         /// <summary>
-        /// 订单用户1的id
+        /// 订单中选片的用户id
         /// </summary>
-        public Guid User1Id { get; set; }
+        public Guid SelectPhotoUserId { get; set; }
 
         /// <summary>
-        /// 订单用户2的id
+        /// 订单中另一个用户id
         /// </summary>
-        public Guid User2Id { get; set; }
+        public Guid AnotherUserId { get; set; }
+
+        public Guid OrderId { get; set; }
     }
 }

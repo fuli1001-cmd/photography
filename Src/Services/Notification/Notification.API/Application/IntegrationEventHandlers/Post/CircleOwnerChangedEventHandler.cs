@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Photography.Services.Notification.API.Application.IntegrationEventHandlers
+namespace Photography.Services.Notification.API.Application.IntegrationEventHandlers.Post
 {
     public class CircleOwnerChangedEventHandler : IHandleMessages<CircleOwnerChangedEvent>
     {
@@ -31,7 +31,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
             {
                 _logger.LogInformation("----- Handling CircleOwnerChangedEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                var fromUser = await _userRepository.GetByIdAsync(message.OldOwnerId);
+                var nickName = await _userRepository.GetNickNameAsync(message.OldOwnerId);
 
                 var command = new CreateEventCommand
                 {
@@ -40,7 +40,7 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                     CircleId = message.CircleId,
                     CircleName = message.CircleName,
                     EventType = Domain.AggregatesModel.EventAggregate.EventType.CircleOwnerChanged,
-                    PushMessage = $"{fromUser.Nickname}将圈子{message.CircleName}转让给了你"
+                    PushMessage = $"{nickName}将圈子{message.CircleName}转让给了你"
                 };
 
                 await _mediator.Send(command);
