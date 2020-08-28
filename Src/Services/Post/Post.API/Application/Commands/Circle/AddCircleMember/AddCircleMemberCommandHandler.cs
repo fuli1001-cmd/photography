@@ -95,7 +95,8 @@ namespace Photography.Services.Post.API.Application.Commands.Circle.AddCircleMem
                 JoinedUserId = joinedUserId,
                 CircleOwnerId = circle.OwnerId,
                 CircleId = circle.Id,
-                CircleName = circle.Name
+                CircleName = circle.Name,
+                VerifyJoin = circle.VerifyJoin
             };
 
             await messageSession.Publish(@event);

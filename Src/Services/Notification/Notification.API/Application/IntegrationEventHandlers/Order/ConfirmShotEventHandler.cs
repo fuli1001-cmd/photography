@@ -12,36 +12,36 @@ using System.Threading.Tasks;
 
 namespace Photography.Services.Notification.API.Application.IntegrationEventHandlers.Order
 {
-    public class OrderAcceptedEventHandler : IHandleMessages<OrderAcceptedEvent>
+    public class ConfirmShotEventHandler : IHandleMessages<ConfirmShotEvent>
     {
         private readonly IUserRepository _userRepository;
         private readonly IMediator _mediator;
-        private readonly ILogger<OrderAcceptedEventHandler> _logger;
+        private readonly ILogger<ConfirmShotEventHandler> _logger;
 
-        public OrderAcceptedEventHandler(IUserRepository userRepository, IMediator mediator, ILogger<OrderAcceptedEventHandler> logger)
+        public ConfirmShotEventHandler(IUserRepository userRepository, IMediator mediator, ILogger<ConfirmShotEventHandler> logger)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Handle(OrderAcceptedEvent message, IMessageHandlerContext context)
+        public async Task Handle(ConfirmShotEvent message, IMessageHandlerContext context)
         {
             using (LogContext.PushProperty("IntegrationEventContext", $"{message.Id}-{Program.AppName}"))
             {
-                _logger.LogInformation("----- Handling OrderAcceptedEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
+                _logger.LogInformation("----- Handling ConfirmShotEvent: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", message.Id, Program.AppName, message);
 
-                var nickName = await _userRepository.GetNickNameAsync(message.UserId);
-                
+                var nickName = await _userRepository.GetNickNameAsync(message.ConfirmUserId);
+
                 // 创建订单已接受的事件
                 var command = new CreateEventCommand
                 {
-                    FromUserId = message.UserId,
+                    FromUserId = message.ConfirmUserId,
                     ToUserId = message.AnotherUserId,
-                    EventType = Domain.AggregatesModel.EventAggregate.EventType.OrderAccepted,
-                    CommentText = "已确认了您的约拍请求，请及时查看",
+                    EventType = Domain.AggregatesModel.EventAggregate.EventType.ConfirmShot,
+                    CommentText = "已确认拍片",
                     OrderId = message.OrderId,
-                    PushMessage = $"{nickName}已确认了您的约拍请求，请及时查看"
+                    PushMessage = $"{nickName}已确认拍片"
                 };
 
                 await _mediator.Send(command);

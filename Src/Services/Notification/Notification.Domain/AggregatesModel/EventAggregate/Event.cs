@@ -97,6 +97,7 @@ namespace Photography.Services.Notification.Domain.AggregatesModel.EventAggregat
         ApplyJoinCircleAccepted, // 用户申请入圈被批准
         AppointmentDealCreated, // 约拍任务已创建
         OrderAccepted, // 订单已接受
+        ConfirmShot, // 确认已拍片
         OriginalPhotoUploaded, // 原片已上传
         ProcessedPhotoUploaded, // 精修片已上传
         OriginalPhotoSelected, // 已选原片

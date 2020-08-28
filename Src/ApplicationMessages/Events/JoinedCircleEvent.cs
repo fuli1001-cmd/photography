@@ -17,5 +17,8 @@ namespace ApplicationMessages.Events
 
         // 圈子名
         public string CircleName { get; set; }
+
+        // 圈子是否需要入圈审核
+        public bool VerifyJoin { get; set; }
     }
 }

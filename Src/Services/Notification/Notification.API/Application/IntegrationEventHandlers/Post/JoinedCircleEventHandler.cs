@@ -49,17 +49,20 @@ namespace Photography.Services.Notification.API.Application.IntegrationEventHand
                 #endregion
 
                 #region 给申请入圈用户发通知
-                var joinCircleAcceptedCommand = new CreateEventCommand
+                if (message.VerifyJoin)
                 {
-                    FromUserId = message.CircleOwnerId,
-                    ToUserId = message.JoinedUserId,
-                    CircleId = message.CircleId,
-                    CircleName = message.CircleName,
-                    EventType = Domain.AggregatesModel.EventAggregate.EventType.ApplyJoinCircleAccepted,
-                    PushMessage = $"申请通过，已加入{message.CircleName}"
-                };
+                    var joinCircleAcceptedCommand = new CreateEventCommand
+                    {
+                        FromUserId = message.CircleOwnerId,
+                        ToUserId = message.JoinedUserId,
+                        CircleId = message.CircleId,
+                        CircleName = message.CircleName,
+                        EventType = Domain.AggregatesModel.EventAggregate.EventType.ApplyJoinCircleAccepted,
+                        PushMessage = $"申请通过，已加入{message.CircleName}"
+                    };
 
-                await _mediator.Send(joinCircleAcceptedCommand);
+                    await _mediator.Send(joinCircleAcceptedCommand);
+                }
                 #endregion
 
                 #region 将申请入圈事件标记为已处理
